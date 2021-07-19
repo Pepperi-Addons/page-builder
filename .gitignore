@@ -1,0 +1,17 @@
+publish/assets
+publish/
+**/publish/
+var_sk
+git init
+node_modules/
+sub-addons/sub-addon-1/publish/
+sub-addons/sub-addon-2/publish/
+sub-addons/sub-addon-3/publish/
+sub-addons/sub-addon-4/publish/
+sub-addons/sub-addon-5/publish/
+
+sub-addons/sub-addon-1/cpi-side/build/cpi-side
+sub-addons/sub-addon-2/cpi-side/build/cpi-side
+sub-addons/sub-addon-3/cpi-side/build/cpi-side
+sub-addons/sub-addon-4/cpi-side/build/cpi-side
+sub-addons/sub-addon-5/cpi-side/build/cpi-side

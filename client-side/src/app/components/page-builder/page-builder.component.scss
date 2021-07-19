@@ -1,0 +1,79 @@
+// mat-card{
+//     // min-width: 25%;
+//     // padding-top: 2rem;
+// }
+// @media screen and (max-width: 1200px) {
+//     .page-builder-container{
+//         .row1{
+//             flex-direction: column;
+//             .sub-addon-container{
+//                 margin-bottom: .5rem;
+//             }
+//         }
+//     }
+// }
+// .page-builder-container{
+//     .row1{
+//         display: flex;
+
+//         .sub-addon-container{
+//             display: inline-grid;
+//             flex: 1;
+//             margin-right: .25rem;
+//             // &:nth-child(2){
+//                 // flex: 2;
+//             // }
+
+
+//         }
+
+//     }
+// }
+
+
+
+// .table-content{
+//     height: 200px;
+//     overflow-y: auto;
+
+
+// }
+
+// :host ::ng-deep pep-list {
+//     .table-header {
+//         top: 0 !important;
+//     }
+// }
+
+$page-buildr-gap: 1rem;
+
+.page-builder-container{
+    padding: $page-buildr-gap;
+    display: flex;
+    // background-color: gold;
+    gap: $page-buildr-gap;
+    flex-direction: column;
+}
+
+.flex-container {
+
+    display: flex;
+    flex-direction: row;
+    // background-color: DodgerBlue;
+    flex-wrap: no-wrap;
+    gap: $page-buildr-gap;
+
+.flex-item {
+    // min-height: 400px;
+    // background-color: #f1f1f1;
+    flex: auto;
+    display: inline-grid;
+    border: 2px dashed gold;
+}
+}
+
+@media (max-width: 800px) {
+.flex-container {
+  flex-direction: column;
+}
+}

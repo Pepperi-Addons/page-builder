@@ -1,0 +1,19 @@
+.ng-component-container{
+    width: inherit;
+    // padding-top: 2rem;
+}
+
+
+.table-content{
+    height: 16rem;
+    overflow-y: auto;
+
+
+}
+
+:host ::ng-deep pep-list {
+    .table-header {
+        top: 0 !important;
+    }
+}
+

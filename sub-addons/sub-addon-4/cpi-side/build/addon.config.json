@@ -1,0 +1,44 @@
+{
+    "AddonUUID": "43265507-7ac4-44ab-8270-d3cf9b2608b4",
+    "AddonVersion": "0.0.0",
+    "DebugPort": 4500,
+    "WebappBaseUrl": "https://app.sandbox.pepperi.com",
+    "DefaultEditor": "main",
+    "Endpoints": [
+        "installation.ts",
+        "api.ts"
+    ],
+    "Editors": [
+        "main"
+    ],
+    "Assets": [
+        "de.json",
+        "en.json",
+        "en.ngx-lib.json",
+        "es.json",
+        "fr.json",
+        "he.json",
+        "hu.json",
+        "it.json",
+        "ja.json",
+        "nl.json",
+        "pl.json",
+        "pt.json",
+        "ru.json",
+        "zh.json"
+    ],
+    "PublishConfig": {
+        "ClientStack": "ng10",
+        "Editors": [
+            {
+                "ParentPackageName": "Page Layout",
+                "PackageName": "Sub Addon 4 4",
+                "Description": "Sub Addon 4 4"
+            }
+        ],
+        "Dependencies": {}
+    },
+    "CPISide": [
+        "addon-cpi.ts"
+    ]
+}
