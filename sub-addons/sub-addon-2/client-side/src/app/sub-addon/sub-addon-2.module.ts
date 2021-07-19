@@ -30,10 +30,10 @@ export function createTranslateLoader(
           suffix: translationsSuffix,
       },
       {
-          prefix: addonStaticFolder + '/assets/i18n/',
+          prefix: addonStaticFolder + 'assets/i18n/',
           // addonStaticFolder.length > 0
           // ? addonStaticFolder
-          // :'/assets/i18n/',
+          // :'assets/i18n/',
           suffix: '.json',
       },
   ]);

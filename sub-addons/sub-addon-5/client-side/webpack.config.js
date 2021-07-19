@@ -3,7 +3,7 @@ const webpack = require('webpack');
 
 module.exports = {
   output: {
-    uniqueName: "SubAddon3Module",
+    uniqueName: "sub_addon_5",
     publicPath: "auto"
   },
   optimization: {

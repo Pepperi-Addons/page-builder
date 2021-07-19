@@ -1,3 +1,3 @@
 export const config = {
-  "AddonUUID": "43265507-7ac4-44ab-8270-d3cf9b2608b4"
+  "AddonUUID": "9e129ab2-ac70-4dcf-8df5-c8daf24e82f3"
 }

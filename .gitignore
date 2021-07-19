@@ -2,7 +2,7 @@ publish/assets
 publish/
 **/publish/
 var_sk
-git init
+
 node_modules/
 sub-addons/sub-addon-1/publish/
 sub-addons/sub-addon-2/publish/

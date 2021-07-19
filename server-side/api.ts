@@ -28,32 +28,18 @@ function createRelationEntry(field: Relation, entryAddon){
  
         switch (type){
             case "NgComponent":
-                if (field?.ComponentName == 'SubAddon1Component'){
-                    const res = 'http://localhost:4401/sub_addon_1.js';
-                    return res;
-                }
-                if (field?.ComponentName == 'SubAddon2Component'){
-                    const res = 'http://localhost:4402/sub_addon_2.js';
-                    return res;
-                }
-                if (field?.ComponentName == 'SubAddon3Component'){
-                    const res = 'http://localhost:4403/sub_addon_3.js';
-                    return res;
-                }
+
                 if (field?.ComponentName == 'SubAddon4Component'){
                     const res = 'http://localhost:4404/sub_addon_4.js';
                     return res;
                 }
-                 if (field?.ComponentName == 'SubAddon5Component'){
-                    const res = 'http://localhost:4405/sub_addon_5.js';
-                    return res;
+
+                else if (field?.AddonRelativeURL){
+                    return entryAddon?.PublicBaseURL +  field?.AddonRelativeURL + '.js';
                 }
-                // if (field?.AddonRelativeURL){
-                //     return entryAddon?.PublicBaseURL +  field?.AddonRelativeURL + '.js';
-                // }
-                // else {
-                //     return entryAddon?.PublicBaseURL +  remoteName + '.js';
-                // }
+                else {
+                    return entryAddon?.PublicBaseURL +  remoteName + '.js';
+                }
                 break;
             default:
                 return field?.AddonRelativeURL;
