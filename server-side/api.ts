@@ -2,6 +2,7 @@ import MyService from './my.service'
 import { Client, Request } from '@pepperi-addons/debug-server'
 import { ATDMetaData, InstalledAddon} from '@pepperi-addons/papi-sdk';
 import { Relation, RemoteModuleOptions } from '../metadata';
+import { Configuration } from './page-builder.model';
 
 // add functions here
 // this function will run on the 'api/foo' endpoint
@@ -23,18 +24,14 @@ export async function relations(client: Client, request: Request): Promise<{rela
 };
 
 
+
+
 function createRelationEntry(field: Relation, entryAddon){
     const remoteEntryByType = (type, remoteName = 'remoteEntry') => {
  
         switch (type){
             case "NgComponent":
-
-                if (field?.ComponentName == 'SubAddon4Component'){
-                    const res = 'http://localhost:4404/sub_addon_4.js';
-                    return res;
-                }
-
-                else if (field?.AddonRelativeURL){
+                if (field?.AddonRelativeURL){
                     return entryAddon?.PublicBaseURL +  field?.AddonRelativeURL + '.js';
                 }
                 else {
@@ -47,6 +44,7 @@ function createRelationEntry(field: Relation, entryAddon){
         }
     } 
     const remoteName = field?.AddonRelativeURL ? field.AddonRelativeURL : field?.Type === "NgComponent" ? toSnakeCase(field.ModuleName.toString().replace('Module','')) : '';
+    const obj = Configuration;
     const menuEntry: RemoteModuleOptions & any = {  
         type: field.Type,
         subType: field.SubType, 
@@ -64,7 +62,7 @@ function createRelationEntry(field: Relation, entryAddon){
         layout: { section: 0, block: 0}
 
     }
-    return menuEntry;
+    return {...obj, ...menuEntry};
 }
 
 const toSnakeCase = str => 

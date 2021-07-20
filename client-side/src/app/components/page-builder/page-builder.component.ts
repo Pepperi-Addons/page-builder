@@ -68,8 +68,8 @@ export class PageBuilderComponent implements OnInit {
     getRelations(addonUUID): Observable<any[]> {
 
         // debug locally
-        return this.http.postHttpCall('http://localhost:4500/api/relations', {RelationName: `PageComponent` });
-        // return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/relations`, {RelationName: `PageComponent` });
+        // return this.http.postHttpCall('http://localhost:4500/api/relations', {RelationName: `PageComponent` });
+        return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/relations`, {RelationName: `PageComponent` });
 
     }
 
