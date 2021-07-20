@@ -61,7 +61,8 @@ export function createTranslateLoader(
     }),
     // //// Example for importing tree-shakeable @pepperi-addons/ngx-lib components to a module
     PepNgxLibModule,
-    PepImageModule
+    PepImageModule,
+    PepButtonModule
   ],
   exports: [SubAddon5Component],
   providers: [

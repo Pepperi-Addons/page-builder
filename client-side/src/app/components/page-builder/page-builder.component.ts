@@ -4,6 +4,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Observable, of, Subject, timer } from "rxjs";
 
 import { map, tap } from "rxjs/operators";
+import { propsSubject } from '@pepperi-addons/ngx-remote-loader';
 @Component({
   selector: 'pep-page-builder',
   templateUrl: './page-builder.component.html',
@@ -58,18 +59,19 @@ export class PageBuilderComponent implements OnInit {
     }
 
     onAddonChange(e){
-        // switch(e.action){
-        //     case 'addon-loaded':
+        switch(e.action){
+            case 'update-addons':
+                propsSubject.next(e);
+            break;
+        }
 
-
-        // }
     }
 
     getRelations(addonUUID): Observable<any[]> {
 
         // debug locally
-        // return this.http.postHttpCall('http://localhost:4500/api/relations', {RelationName: `PageComponent` });
-        return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/relations`, {RelationName: `PageComponent` });
+        return this.http.postHttpCall('http://localhost:4500/api/relations', {RelationName: `PageComponent` });
+        // return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/relations`, {RelationName: `PageComponent` });
 
     }
 

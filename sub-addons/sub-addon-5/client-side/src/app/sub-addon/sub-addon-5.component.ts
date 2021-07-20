@@ -21,4 +21,17 @@ export class SubAddon5Component implements OnInit {
 
   }
 
+  changeBlock3Image(){
+    const months = [1,2,3];
+
+    const random = Math.floor(Math.random() * months.length);
+    this.hostEvents.emit(
+        {
+            action: 'update-addons',
+            message: `Sent From Block 5:${random}`,
+            index: random
+    });
+
+  }
+
 }

@@ -1,10 +1,8 @@
 <div class="page-builder-container">
-    <div class="flex-container" *ngFor="let sectionOfAddons of sections$ | async; let i = index;">
+    <div class="flex-container" *ngFor="let sectionOfAddons of sections$ | async">
         <div class="flex-item" *ngFor="let addon of sectionOfAddons">
-            <!-- <mat-card> -->
-                <addon-proxy *ngIf="addon" [hostObject]="addon" (hostEvents)="onAddonChange($event);">
+                <addon-proxy #addons *ngIf="addon" [hostObject]="addon" (hostEvents)="onAddonChange($event);">
                 </addon-proxy>
-            <!-- </mat-card> -->
         </div>
     </div>
 </div>
