@@ -79,6 +79,11 @@ $page-buildr-gap: 1rem;
     }
 }
 }
+.remove-addon{
+    position: absolute;
+    text-align: right;
+
+}
 
 @media (max-width: 800px) {
 .flex-container {
