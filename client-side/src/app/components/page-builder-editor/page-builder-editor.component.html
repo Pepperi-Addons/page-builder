@@ -1,0 +1,45 @@
+<hr><p>Page Builder Editor</p><hr>
+
+<h5>Blocks Layout</h5><hr>
+<pep-select
+            #pepSelect
+            [emptyOption]="false"
+            [options]="sections"
+            [label]="'Choose Section'"
+            (valueChange)="sectionSelected($event);"
+></pep-select>
+<pep-select
+            #pepSelect
+            [emptyOption]="false"
+            [options]="blocks"
+            [label]="'Choose Block'"
+            (valueChange)="blockSelected($event);"
+></pep-select>
+<pep-select
+            #pepSelect
+            [emptyOption]="false"
+            [options]="options"
+            [label]="'Flex Size'"
+            (valueChange)="changeBlockSize($event);"
+></pep-select>
+<hr>
+
+<h5>Page Type</h5><hr>
+<pep-select
+            #pepSelect
+            [emptyOption]="false"
+            [options]="pageTypes"
+            [label]="'Choose Page'"
+></pep-select>
+<hr>
+
+
+<h5>Blocks</h5><hr>
+<div class="blocks" *ngFor="let block of addons">
+    <mat-card>{{block.title}}</mat-card><br>
+    <!-- <addon-proxy #addons *ngIf="addon" [hostObject]="addon">
+    </addon-proxy> -->
+</div>
+<hr>
+<pep-button [sizeType]="'md'" [styleType]="'strong'"[value]="'Publish'"></pep-button>
+<br>

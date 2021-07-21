@@ -1,5 +1,6 @@
+import { ActivatedRoute, NavigationEnd, Router, RouterEvent } from '@angular/router';
 import { from, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { AddonService } from './components/addon/addon.service';
 import { Component, OnInit } from '@angular/core';
 import { PepCustomizationService, PepLoaderService, PepStyleType } from '@pepperi-addons/ngx-lib';
@@ -19,12 +20,14 @@ export class AppComponent implements OnInit {
     clientMode: string;
     addon$: Observable<any>;
     menuItems: Array<PepMenuItem> = null;
-
+    showEditor = false;
 
     constructor(
         public customizationService: PepCustomizationService,
         public loaderService: PepLoaderService,
-        public addonService: AddonService
+        public addonService: AddonService,
+        private route: ActivatedRoute,
+        private router: Router
     ) {
         this.loaderService.onChanged$
             .subscribe((show) => {
@@ -44,6 +47,10 @@ export class AppComponent implements OnInit {
             key: 'ApiName',
             text: 'Title',
             type: 'regular'
+        });
+        this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(res => {
+            const queryParams = this.route.snapshot.queryParams;
+            this.showEditor = queryParams?.edit === "true" ?? false;
         })
     }
 

@@ -56,19 +56,27 @@ $page-buildr-gap: 1rem;
 }
 
 .flex-container {
-
+    min-height: 250px;
     display: flex;
     flex-direction: row;
     // background-color: DodgerBlue;
     flex-wrap: no-wrap;
     gap: $page-buildr-gap;
 
+    &.editable {
+        border: 2px dashed green;
+        padding: .5rem;
+    }
+
 .flex-item {
-    // min-height: 400px;
-    // background-color: #f1f1f1;
-    flex: auto;
+    min-height: 250px;
+    background-color: #f1f1f1;
+    flex: 1;
     display: inline-grid;
-    border: 2px dashed gold;
+    &.editable {
+        border: 2px dashed gold;
+        cursor: pointer;
+    }
 }
 }
 

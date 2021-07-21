@@ -11,25 +11,22 @@ export class SubAddon5Component implements OnInit {
   options: {key:string, value:string}[] = [];
   items;
   uiControl;
+  imageIndex = 1;
   @Input() hostObject: any;
   @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
   constructor(private translate: TranslateService) { }
 
   ngOnInit(): void {
-
     this.hostEvents.emit({action: 'addon-loaded'});
-
   }
 
   changeBlock3Image(){
-    const months = [1,2,3];
-
-    const random = Math.floor(Math.random() * months.length);
+    this.imageIndex = this.imageIndex === 1 ? 2 : 1;
     this.hostEvents.emit(
         {
             action: 'update-addons',
-            message: `Sent From Block 5:${random}`,
-            index: random
+            message: `Sent From Block 5:${this.imageIndex}`,
+            index: this.imageIndex
     });
 
   }

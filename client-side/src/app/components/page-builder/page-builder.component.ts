@@ -1,10 +1,11 @@
 import { ActivatedRoute } from '@angular/router';
 import { PepHttpService } from '@pepperi-addons/ngx-lib';
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, Renderer2, ViewChild, ViewChildren } from "@angular/core";
 import { Observable, of, Subject, timer } from "rxjs";
 
 import { map, tap } from "rxjs/operators";
 import { propsSubject } from '@pepperi-addons/ngx-remote-loader';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 @Component({
   selector: 'pep-page-builder',
   templateUrl: './page-builder.component.html',
@@ -12,6 +13,9 @@ import { propsSubject } from '@pepperi-addons/ngx-remote-loader';
 })
 export class PageBuilderComponent implements OnInit {
 
+    @ViewChildren('htmlSections') htmlSections: QueryList<ElementRef>;
+    @ViewChildren('htmlBlocks') htmlBlocks: QueryList<ElementRef>;
+    editable = false;
     carouselAddon;
     addonsTemp = [];
     addons$: Observable<any[]>;
@@ -28,9 +32,10 @@ export class PageBuilderComponent implements OnInit {
 
     constructor(
         private http: PepHttpService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private renderer: Renderer2
     ) {
-
+        this.editable = route?.snapshot?.queryParams?.edit === "true" ?? false;
 
 
     }
@@ -54,8 +59,32 @@ export class PageBuilderComponent implements OnInit {
                         });
                         section.sort((x,y) => x.layout.block - y.layout.block );
                     })
+                    propsSubject.next(sections);
                     return sections;
+
                 }));
+
+
+        propsSubject.subscribe(selectedBlock => {
+        if (selectedBlock?.section != null) {
+            this.htmlBlocks.forEach(block => {
+                this.renderer.setStyle(block.nativeElement, 'border', '2px dashed gold');
+            })
+            if (selectedBlock?.block != null){
+                const selectedBlockElement = this.htmlSections.get(selectedBlock.section).nativeElement.children[selectedBlock.block]
+                selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'border', '2px solid blue') : null;
+            }
+
+            if (selectedBlock?.flex){
+                const selectedBlockElement = this.htmlSections.get(selectedBlock.section).nativeElement.children[selectedBlock.block]
+                selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'flex', selectedBlock.flex) : null;
+
+
+            }
+        }
+
+        });
+
     }
 
     onAddonChange(e){
@@ -85,6 +114,17 @@ export class PageBuilderComponent implements OnInit {
             this.sectionColumnArray[i] = { 'id': i, 'width': colWidth};
         }
 
+    }
+
+    drop(event: CdkDragDrop<string[]>) {
+       if (event.previousContainer === event.container) {
+        moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data,
+                        event.container.data,
+                        event.previousIndex,
+                        event.currentIndex);
+    }
     }
 
 }

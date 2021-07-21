@@ -10,6 +10,7 @@ import { SectionModule } from '../section/section.module'
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
         SectionModule,
         PepPageLayoutModule,
         PepSelectModule,
-        PepTextboxModule
+        PepTextboxModule,
+        DragDropModule
 
 
         //// Example for importing tree-shakeable @pepperi-addons/ngx-lib components to a module

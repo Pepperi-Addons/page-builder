@@ -1,6 +1,16 @@
-<div class="page-builder-container">
-    <div class="flex-container" *ngFor="let sectionOfAddons of sections$ | async">
-        <div class="flex-item" *ngFor="let addon of sectionOfAddons">
+
+
+<div class="page-builder-container" cdkDropListGroup>
+    <div cdkDropList  cdkDropListOrientation="horizontal"
+    (cdkDropListDropped)="drop($event)"
+    [cdkDropListData]="sectionOfAddons"
+    [ngClass]="{'editable': editable}"
+    #htmlSections class="flex-container"
+     *ngFor="let sectionOfAddons of sections$ | async as sections;">
+        <div #htmlBlocks cdkDrag [cdkDragDisabled]="!editable"
+        [ngClass]="{'editable': editable}"
+        cdkDragBoundary=".page-builder-container"
+        class="flex-item" *ngFor="let addon of sectionOfAddons">
                 <addon-proxy #addons *ngIf="addon" [hostObject]="addon" (hostEvents)="onAddonChange($event);">
                 </addon-proxy>
         </div>

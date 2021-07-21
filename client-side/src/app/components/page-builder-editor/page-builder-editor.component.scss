@@ -1,0 +1,8 @@
+::ng-deep pep-select {
+    .mat-form-field{
+        max-width: calc(100% - 1rem);
+    }
+}
+.blocks{
+    max-width: 10rem;
+}
