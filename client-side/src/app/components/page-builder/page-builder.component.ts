@@ -1,6 +1,6 @@
 import { ActivatedRoute } from '@angular/router';
 import { PepHttpService } from '@pepperi-addons/ngx-lib';
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, Renderer2, ViewChild, ViewChildren } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, Renderer2, TemplateRef, ViewChild, ViewChildren, ViewContainerRef } from "@angular/core";
 import { Observable, of, Subject, timer } from "rxjs";
 
 import { map, tap } from "rxjs/operators";
@@ -21,7 +21,10 @@ export class PageBuilderComponent implements OnInit {
     addons$: Observable<any[]>;
     @Input() hostObject: any;
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
-    sections$: Observable<any[]>;
+    sections$: Observable<any[]> = null;
+    @ViewChild('section', { read: TemplateRef }) sectionTemplate:TemplateRef<any>;
+
+    noSections = false;
     /* Todo - need to be removed into componnent */
     public sectionColumnArray = new Array(3);
     public numOfSectionColumns = [{key: '1',value: '1'},
@@ -33,7 +36,8 @@ export class PageBuilderComponent implements OnInit {
     constructor(
         private http: PepHttpService,
         private route: ActivatedRoute,
-        private renderer: Renderer2
+        private renderer: Renderer2,
+        private vcRef: ViewContainerRef
     ) {
         this.editable = route?.snapshot?.queryParams?.edit === "true" ?? false;
 
@@ -99,8 +103,8 @@ export class PageBuilderComponent implements OnInit {
     getRelations(addonUUID): Observable<any[]> {
 
         // debug locally
-        return this.http.postHttpCall('http://localhost:4500/api/relations', {RelationName: `PageComponent` });
-        // return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/relations`, {RelationName: `PageComponent` });
+        // return this.http.postHttpCall('http://localhost:4500/api/relations', {RelationName: `PageComponent` });
+        return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/relations`, {RelationName: `PageComponent` });
 
     }
 
@@ -125,6 +129,15 @@ export class PageBuilderComponent implements OnInit {
                         event.previousIndex,
                         event.currentIndex);
     }
+    }
+
+    remove(section, i){
+        this.noSections = section?.length == 1 && section[i]?.length === 0
+        section.splice(i, 1);
+    }
+
+    addSection(){
+        this.vcRef.createEmbeddedView(this.sectionTemplate);
     }
 
 }
