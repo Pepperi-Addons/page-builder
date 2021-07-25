@@ -24,12 +24,29 @@ export class SectionComponent implements OnInit {
   ngOnInit(): void {
     this.sectionBlockArray = new Array(0);
     for(let i=0;i<this.numOfBlocks;i++){
-        this.sectionBlockArray.push({ 'index': i});
+        this.sectionBlockArray.push({ 'index': i, 'id': 'block_'+ i});
     }
 
   }
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.sectionBlockArray, event.previousIndex, event.currentIndex);
+
+}
+
+  removeBlock(id){
+    for(let i=0;i<this.sectionBlockArray.length;i++){
+        if( this.sectionBlockArray[i].id === id){
+        this.sectionBlockArray.splice(i , 1);
+        }
+    }
+  }
+  addBlock(event){
+      if(this.sectionBlockArray.length < 12){
+        this.sectionBlockArray.push({  'id': 'block_'+ this.sectionBlockArray.length+1});
+      }
+      else{
+          alert("reached to maximum columns !")
+      }
   }
 }
