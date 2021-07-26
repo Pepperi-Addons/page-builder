@@ -35,9 +35,12 @@
 
 
 <h5>Blocks</h5><hr>
-<div cdkDropList  cdkDropListOrientation="vertical">
-    <div class="blocks" *ngFor="let block of addons;" >
-        <mat-card cdkDrag [cdkDragDisabled]="false"
+<div cdkDropList
+[cdkDropListData]="addons"
+cdkDropListOrientation="vertical"
+cdkDropListConnectedTo="page-builder-list">
+    <div class="blocks" *ngFor="let block of addons;"  >
+        <mat-card cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block"
         cdkDragBoundary=".page-builder-container">{{block.title}}</mat-card><br>
         <!-- <addon-proxy #addons *ngIf="addon" [hostObject]="addon">
         </addon-proxy> -->

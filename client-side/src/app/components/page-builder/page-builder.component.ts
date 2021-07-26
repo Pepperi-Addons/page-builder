@@ -1,11 +1,11 @@
 import { ActivatedRoute } from '@angular/router';
 import { PepHttpService } from '@pepperi-addons/ngx-lib';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, Renderer2, TemplateRef, ViewChild, ViewChildren, ViewContainerRef } from "@angular/core";
-import { Observable, of, Subject, timer } from "rxjs";
+import { BehaviorSubject, forkJoin, Observable, of, Subject, timer } from "rxjs";
 
-import { map, tap } from "rxjs/operators";
+import { map, take, tap } from "rxjs/operators";
 import { propsSubject } from '@pepperi-addons/ngx-remote-loader';
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray, transferArrayItem, copyArrayItem, CdkDragExit  } from '@angular/cdk/drag-drop';
 @Component({
   selector: 'pep-page-builder',
   templateUrl: './page-builder.component.html',
@@ -21,8 +21,10 @@ export class PageBuilderComponent implements OnInit {
     addons$: Observable<any[]>;
     @Input() hostObject: any;
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
-    sections$: Observable<any[]> = null;
+    subject: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
+    sections$: Observable<any[]> = this.subject.asObservable();;
     @ViewChild('section', { read: TemplateRef }) sectionTemplate:TemplateRef<any>;
+    transferringItem: string | undefined = undefined;
 
     noSections = false;
     /* Todo - need to be removed into componnent */
@@ -45,28 +47,31 @@ export class PageBuilderComponent implements OnInit {
     }
 
     ngOnInit(){
-        this.sections$ = this.getRelations(this.route.snapshot.params.addon_uuid)
-            .pipe(
-                map( res => {
-                    const firstSection = res['relations'].pop();
-                    firstSection.layout.block = 0;
-                    firstSection.layout.section = 0;
-                    const lastSection = res['relations'].pop();
-                    lastSection.layout.block = 0;
-                    lastSection.layout.section = 2;
-                    const middleSection = res['relations'];
-                    const sections = [[firstSection], middleSection, [lastSection]];
-                    sections.forEach((section, sectionIndex) => {
-                        section.forEach((relation, blockIndex) =>  {
-                            relation.layout.block = blockIndex;
-                            relation.layout.section = sectionIndex;
-                        });
-                        section.sort((x,y) => x.layout.block - y.layout.block );
-                    })
-                    propsSubject.next(sections);
-                    return sections;
+        // this.sections$ = this.getRelations(this.route.snapshot.params.addon_uuid)
+        this.getRelations(this.route.snapshot.params.addon_uuid)
+            .subscribe(
+                // map(
+                     res => {
+                    // const firstSection = res['relations'].pop();
+                    // firstSection.layout.block = 0;
+                    // firstSection.layout.section = 0;
+                    // const lastSection = res['relations'].pop();
+                    // lastSection.layout.block = 0;
+                    // lastSection.layout.section = 2;
+                    // const middleSection = res['relations'];
+                    // const sections = [[]];
+                    // sections.forEach((section, sectionIndex) => {
+                    //     section.forEach((relation, blockIndex) =>  {
+                    //         relation.layout.block = blockIndex;
+                    //         relation.layout.section = sectionIndex;
+                    //     });
+                    //     section.sort((x,y) => x.layout.block - y.layout.block );
+                    // });
+                    propsSubject.next(res['relations']);
+                    // return sections;
 
-                }));
+                })
+                // );
 
 
         propsSubject.subscribe(selectedBlock => {
@@ -121,10 +126,15 @@ export class PageBuilderComponent implements OnInit {
     }
 
     drop(event: CdkDragDrop<string[]>) {
+
         // this.sections$ = of(event.container.data);
-       if (event.previousContainer === event.container) {
+    if (event.previousContainer === event.container) {
         moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
+    } else if (event.previousContainer.connectedTo == 'page-builder-list'){
+        copyArrayItem(event.previousContainer.data, event.container.data, event.previousIndex,
+            event.currentIndex);
+    }
+    else {
       transferArrayItem(event.previousContainer.data,
                         event.container.data,
                         event.previousIndex,
@@ -132,13 +142,27 @@ export class PageBuilderComponent implements OnInit {
     }
     }
 
+
+
     remove(section, i){
         this.noSections = section?.length == 1 && section[i]?.length === 0
         section.splice(i, 1);
     }
 
-    addSection(){
-        this.vcRef.createEmbeddedView(this.sectionTemplate);
+    addSection(e){
+        this.subject.pipe(take(1)).subscribe(val => {
+            console.log(val)
+            const newArr = [...val, []];
+            this.subject.next(newArr);
+          });
+    }
+
+    entered() {
+        this.transferringItem = undefined;
+    }
+
+    exited(e: CdkDragExit<string>) {
+      this.transferringItem = e.item.data;
     }
 
 }

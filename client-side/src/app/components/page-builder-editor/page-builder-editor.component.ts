@@ -63,7 +63,8 @@ export class PageBuilderEditorComponent implements OnInit {
     if (sections.length) {
         this.twoDArray = sections;
         // flatten 2d Array
-        this.addons = [].concat.apply([], sections);
+        // this.addons = [].concat.apply([], sections);
+        this.addons =  sections;
 
         sections.forEach((section, index) => {
             this.sections.push({value: 'Section '+index, key: index});
