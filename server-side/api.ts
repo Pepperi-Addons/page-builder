@@ -7,7 +7,14 @@ import { Configuration } from './page-builder.model';
 // add functions here
 // this function will run on the 'api/foo' endpoint
 // the real function is runnning on another typescript file
-export async function relations(client: Client, request: Request): Promise<{relations:RemoteModuleOptions[]}> {
+export async function init_page_builder(client: Client, request: Request): Promise<{relations:RemoteModuleOptions[]}> {
+    
+    
+   
+};
+
+
+async function getRelations(client: Client, request: Request){
     const service = new MyService(client);
     const addonsFields: Relation[] = await service.getRelations(request.body['RelationName']);
     const addonsUuids = [...new Set(addonsFields.filter( row => row.AddonUUID).map(obj => obj.AddonUUID))];
@@ -21,7 +28,7 @@ export async function relations(client: Client, request: Request): Promise<{rela
         menuEntries.push(menuEntry);
     });
     return { relations: menuEntries};
-};
+}
 
 
 
@@ -77,8 +84,6 @@ function createRelationEntry(field: Relation, entryAddon){
         uuid: field?.AddonUUID,
         key: `${field.Name}_${field.AddonUUID}_${field.RelationName}`,
         visibleEndpoint: field?.VisibilityRelativeURL,
-        noModule: field?.Type === "NgComponent" && !(field?.ModuleName) ? true : false,
-        update: false,
         addon: entryAddon,
         layout: { section: 0, block: 0}
 

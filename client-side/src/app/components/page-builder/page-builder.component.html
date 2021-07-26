@@ -14,37 +14,27 @@
     [ngClass]="{'editable': editable}"
     #htmlSections class="flex-container"
      *ngFor="let sectionOfAddons of sections$ | async as sections; let i=index;">
-     <!-- <button mat-button class="pep-spacing-element pep-button icon-button sm strong caution"
- *ngIf="editable"  (click)="remove(sections, i);"
- ><mat-icon>
-    <pep-icon name="system_close"></pep-icon>
- </mat-icon>
- Remove Section
- </button> -->
-     <div #htmlBlocks cdkDrag [cdkDragDisabled]="!editable"
-        [ngClass]="{'editable': editable}"
-        cdkDragBoundary=".page-builder-container"
-        class="flex-item" *ngFor="let addon of sectionOfAddons; let i=index;">
-        <!-- <button mat-button class="remove-addon pep-spacing-element pep-button icon-button pull-right sm strong caution"
-         *ngIf="editable" (click)="remove(sectionOfAddons, i);">
-        <mat-icon>
-            <pep-icon name="system_close"></pep-icon>
-         </mat-icon>
-        </button> -->
-
-                <addon-proxy #addons *ngIf="addon" [hostObject]="addon" (hostEvents)="onAddonChange($event);">
-                </addon-proxy>
+        <pep-button *ngIf="editable" [classNames]=""
+            [iconName]="'system_close'" (buttonClick)="remove(sections, i);">
+        </pep-button>
+        <div #htmlBlocks cdkDrag [cdkDragDisabled]="!editable"
+           [ngClass]="{'editable': editable}"
+           cdkDragBoundary=".page-builder-container"
+           class="flex-item" *ngFor="let addon of sectionOfAddons; let i=index;">
+               <pep-button *ngIf="editable" [classNames]="'remove-addon '"
+                    styleType="strong" styleStateType="caution" sizeType="sm"
+                   [iconName]="'system_close'" (buttonClick)="remove(sectionOfAddons, i);">
+               </pep-button>
+               <addon-proxy #addons *ngIf="addon" [hostObject]="addon" (hostEvents)="onAddonChange($event);">
+               </addon-proxy>
         </div>
     </div>
 
-    <!-- <button mat-button class="pep-spacing-element pep-button icon-button sm strong"
-    disabled  *ngIf="editable" (click)="addSection();"
-        >
-        <mat-icon>
-           <pep-icon name="number_plus"></pep-icon>
-        </mat-icon>
-        Add Section
-    </button> -->
+
+    <pep-button *ngIf="editable" [classNames]="'pep-spacing-element'" [value]="'Add Section'"
+        [iconName]="'number_plus'" >
+    </pep-button>
+
 </div>
 
 
@@ -56,12 +46,9 @@
         (cdkDropListDropped)="drop($event)"
         [ngClass]="{'editable': editable}"
         #htmlSections class="flex-container">
-        <button mat-button class="remove-addon pep-spacing-element
-        pep-button icon-button md strong caution" *ngIf="editable"
-        ><mat-icon>
-                   <pep-icon name="system_close"></pep-icon>
-            </mat-icon>
-        </button>
+        <pep-button *ngIf="editable" [classNames]="'pep-spacing-element remove-addon '"
+        [iconName]="'system_close'" >
+        </pep-button>
     </div>
 </ng-template>
 

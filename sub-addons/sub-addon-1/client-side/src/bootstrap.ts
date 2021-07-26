@@ -8,6 +8,7 @@ import { environment } from './environments/environment';
 import { singleSpaPropsSubject } from './single-spa/single-spa-props';
 
 declare var CLIENT_MODE: any;
+
 if (environment.production) {
     enableProdMode();
 }

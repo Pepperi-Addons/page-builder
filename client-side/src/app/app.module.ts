@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
@@ -45,6 +46,7 @@ import { MatCardModule } from '@angular/material/card';
         PepPageLayoutModule,
         PepSideBarModule,
         PepAddonLoaderModule,
+        DragDropModule,
         MatCardModule,
         TranslateModule.forRoot({
             loader: {
