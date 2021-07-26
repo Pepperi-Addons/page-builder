@@ -6,7 +6,7 @@
         [numOfBlocks]="2"
         [editable]="editable">
 </pep-section> -->
-<div class="page-builder-container" >
+<div class="page-builder-container" cdkDropListGroup>
 
     <div cdkDropList  cdkDropListOrientation="horizontal" id="page-builder-list"
     (cdkDropListDropped)="drop($event)"
