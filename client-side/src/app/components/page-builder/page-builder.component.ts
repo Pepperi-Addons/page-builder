@@ -76,7 +76,7 @@ export class PageBuilderComponent implements OnInit {
             })
             if (selectedBlock?.block != null){
                 const selectedBlockElement = this.htmlSections.get(selectedBlock.section).nativeElement.children[selectedBlock.block]
-                selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'border', '2px solid blue') : null;
+                selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'border', '4px solid blue') : null;
             }
 
             if (selectedBlock?.flex){
@@ -121,6 +121,7 @@ export class PageBuilderComponent implements OnInit {
     }
 
     drop(event: CdkDragDrop<string[]>) {
+        // this.sections$ = of(event.container.data);
        if (event.previousContainer === event.container) {
         moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {

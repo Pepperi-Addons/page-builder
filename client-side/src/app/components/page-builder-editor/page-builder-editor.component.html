@@ -35,11 +35,15 @@
 
 
 <h5>Blocks</h5><hr>
-<div class="blocks" *ngFor="let block of addons">
-    <mat-card>{{block.title}}</mat-card><br>
-    <!-- <addon-proxy #addons *ngIf="addon" [hostObject]="addon">
-    </addon-proxy> -->
+<div cdkDropList  cdkDropListOrientation="vertical">
+    <div class="blocks" *ngFor="let block of addons;" >
+        <mat-card cdkDrag [cdkDragDisabled]="false"
+        cdkDragBoundary=".page-builder-container">{{block.title}}</mat-card><br>
+        <!-- <addon-proxy #addons *ngIf="addon" [hostObject]="addon">
+        </addon-proxy> -->
+    </div>
 </div>
+
 <hr>
 <pep-button [sizeType]="'md'" [styleType]="'strong'"[value]="'Publish'"></pep-button>
 <br>
