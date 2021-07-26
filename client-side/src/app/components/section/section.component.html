@@ -1,5 +1,43 @@
-<div class="flex-container">
-    <ng-container *ngFor="let in of sectionColumnArray">
-        <div class="flex-item"></div>
-    </ng-container>
+<div class="page-builder-container" cdkDropListGroup>
+    <pep-button
+         value="Add block"
+         styleType="strong"
+         styleStateType="system"
+         sizeType="xs"
+         classNames=""
+         [disabled]="false"
+         iconName="number_plus"
+         iconPosition="end"
+         [visible]="true"
+         (buttonClick)="addBlock($event)"
+       ></pep-button>
+    <div class="flex-container"
+         #htmlSections
+         [ngClass]="{'editable': editable}"
+         cdkDropList
+         cdkDropListOrientation="horizontal"
+         (cdkDropListDropped)="drop($event)">
+
+        <div *ngFor="let block of sectionBlockArray"
+              class="flex-item"
+              #htmlBlocks
+              cdkDrag
+              cdkDragBoundary=".page-builder-container">
+              <pep-button
+                styleType="weak"
+                styleStateType="system"
+                sizeType="xs"
+                classNames=""
+                [disabled]="!editable"
+                iconName="system_close"
+                iconPosition="end"
+                (buttonClick)="removeBlock(block.id)"
+            ></pep-button>
+                    {{block.index}}
+                    <img src="https://idpfiles.sandbox.pepperi.com/f389fd2e-4a31-4965-a21e-3a98b4553300/images/logo.svg">
+        </div>
+    </div>
 </div>
+<!-- <ng-content>
+
+</ng-content> -->
