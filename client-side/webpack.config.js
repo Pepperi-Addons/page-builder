@@ -3,8 +3,10 @@ const singleSpaAngularWebpack = require('single-spa-angular-webpack5/lib/webpack
 const webpack = require('webpack');
 const { merge } = require('webpack-merge');
 // const deps = require('./package.json').dependencies;
+// const WebpackRequireFrom = require("webpack-require-from");
 
 module.exports = (config, options, env) => {
+    // config.plugins.push(new WebpackRequireFrom({methodName: 'getAssetsURL'}));
 
     config.plugins.push(
         new webpack.DefinePlugin({
