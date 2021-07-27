@@ -1,16 +1,24 @@
-<pep-page-layout class="page-layout-base" cdkDropListGroup>
+<pep-page-layout cdkDropListGroup>
         <ng-container pep-side-area *ngIf="showEditor">
-            <pep-side-bar #sideNav >
+            <pep-side-bar #pepSideBar>
+                <div header-content>
+                    Main
+                </div>
                 <page-builder-editor></page-builder-editor>
             </pep-side-bar>
 
         </ng-container>
-
-        <ng-container class="main-area" pep-main-area>
+        <ng-container pep-top-area>
+            <pep-top-bar [inline]="false" [title]="('Title_Sub_Addon' | translate)">
+                <div header-end-content>
+                    <pep-button [value]="'Publish' | translate" [sizeType]="'sm'" [styleType]="'strong'">
+                    </pep-button>
+                </div>
+            </pep-top-bar>
+        </ng-container>
+        <ng-container pep-main-area>
                 <router-outlet></router-outlet>
         </ng-container>
 </pep-page-layout>
-
-
 
 <pep-size-detector></pep-size-detector>
