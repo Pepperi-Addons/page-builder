@@ -5,6 +5,7 @@ import { AddonService } from './components/addon/addon.service';
 import { Component, OnInit } from '@angular/core';
 import { PepCustomizationService, PepLoaderService, PepStyleType } from '@pepperi-addons/ngx-lib';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
+import { subject } from './components/page-builder';
 
 declare var CLIENT_MODE: any;
 
@@ -37,6 +38,7 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
+
         this.customizationService.setThemeVariables();
         this.customizationService.footerHeight.subscribe(footerHeight => this.footerHeight = footerHeight);
         this.addon$ = from(this.addonService.get(`/addons/installed_addons`)).pipe(
@@ -67,5 +69,8 @@ export class AppComponent implements OnInit {
     }
 
     onMenuItemClicked(event: IPepMenuItemClickEvent) {}
+
+    triggerPublish(){
+    }
 
 }

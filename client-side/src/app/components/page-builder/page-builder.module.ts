@@ -1,3 +1,5 @@
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTableModule } from '@angular/material/table';
 import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -48,7 +50,8 @@ const pepIcons = [
         PepCheckboxModule,
         PepGroupButtonsModule,
         PepIconModule,
-        MatIconModule
+        MatIconModule,
+        // MatTabsModule
 
 
         //// Example for importing tree-shakeable @pepperi-addons/ngx-lib components to a module

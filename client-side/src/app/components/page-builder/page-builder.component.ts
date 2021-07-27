@@ -18,21 +18,21 @@ export class PageBuilderComponent implements OnInit {
 
     @ViewChild(CdkDropListGroup) listGroup: CdkDropListGroup<CdkDropList>;
 
-    @ViewChildren('htmlSections') htmlSections: QueryList<ElementRef>;
+    @ViewChildren(CdkDropList) htmlSections: QueryList<CdkDropList>;
     @ViewChildren('htmlBlocks') htmlBlocks: QueryList<ElementRef>;
     editable = false;
     carouselAddon;
-    subject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
+    sectionsSubject$: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
     addonsTemp = [];
     groupButtons;
-
+    pageLayout;
     addons$: Observable<any[]>;
     @Input() hostObject: any;
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
-    sections$: Observable<any[]> = this.subject.asObservable();;
+    sections$: Observable<any[]> = this.sectionsSubject$.asObservable();;
     @ViewChild('section', { read: TemplateRef }) sectionTemplate:TemplateRef<any>;
     transferringItem: string | undefined = undefined;
-
+    viewportWidth;
     noSections = false;
     /* Todo - need to be removed into componnent */
     public sectionColumnArray = new Array(3);
@@ -50,7 +50,8 @@ export class PageBuilderComponent implements OnInit {
         private vcRef: ViewContainerRef
     ) {
         this.editable = route?.snapshot?.queryParams?.edit === "true" ?? false;
-        this.subject = subject;
+        this.sectionsSubject$ = subject;
+        this.viewportWidth = window.innerWidth;
 
     }
 
@@ -60,23 +61,8 @@ export class PageBuilderComponent implements OnInit {
             { key: '', value: 'Tablet', class: 'system', callback: null, icon: null },
             { key: '', value: 'Mobile', class: 'system', callback: null, icon: null }
         ];
-        // this.sections$ = this.getRelations(this.route.snapshot.params.addon_uuid)
-        this.getRelations(this.route.snapshot.params.addon_uuid)
-            .subscribe(
-                // map(
-                     res => {
-                    // sections.forEach((section, sectionIndex) => {
-                    //     section.forEach((relation, blockIndex) =>  {
-                    //         relation.layout.block = blockIndex;
-                    //         relation.layout.section = sectionIndex;
-                    //     });
-                    //     section.sort((x,y) => x.layout.block - y.layout.block );
-                    // });
-                    propsSubject.next(res['relations']);
-                    // return sections;
-
-                })
-                // );
+        this.getPage(this.route.snapshot.params.addon_uuid)
+            .subscribe(res => propsSubject.next(res['relations']));
 
 
         propsSubject.subscribe(selectedBlock => {
@@ -85,13 +71,13 @@ export class PageBuilderComponent implements OnInit {
                 this.renderer.setStyle(block.nativeElement, 'border', '2px dashed gold');
             })
             if (selectedBlock?.block != null){
-                const selectedBlockElement = this.htmlSections.get(selectedBlock.section).nativeElement.children[selectedBlock.block]
-                selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'border', '4px solid blue') : null;
+                const selectedBlockElement = this.htmlSections.get(selectedBlock.section).data.children[selectedBlock.block]
+                // selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'border', '4px solid blue') : null;
             }
 
             if (selectedBlock?.flex){
-                const selectedBlockElement = this.htmlSections.get(selectedBlock.section).nativeElement.children[selectedBlock.block]
-                selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'flex', selectedBlock.flex) : null;
+                // const selectedBlockElement = this.htmlSections.get(selectedBlock.section).nativeElement.children[selectedBlock.block]
+                // selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'flex', selectedBlock.flex) : null;
 
 
             }
@@ -99,6 +85,16 @@ export class PageBuilderComponent implements OnInit {
 
         });
 
+    }
+
+    buildSections(sections){
+          sections.forEach((section, sectionIndex) => {
+                        section.forEach((relation, blockIndex) =>  {
+                            relation.layout.block = blockIndex;
+                            relation.layout.section = sectionIndex;
+                        });
+                        section.sort((x,y) => x.layout.block - y.layout.block );
+                    });
     }
 
     onAddonChange(e){
@@ -110,7 +106,7 @@ export class PageBuilderComponent implements OnInit {
 
     }
 
-    getRelations(addonUUID): Observable<any[]> {
+    getPage(addonUUID): Observable<any[]> {
 
         // debug locally
         // return this.http.postHttpCall('http://localhost:4500/api/relations', {RelationName: `PageComponent` });
@@ -131,20 +127,30 @@ export class PageBuilderComponent implements OnInit {
     }
 
     drop(event: CdkDragDrop<string[]>) {
-
-        // this.sections$ = of(event.container.data);
-    if (event.previousContainer === event.container) {
-        moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else if (event.previousContainer.id == 'availableBlocks'){
-        copyArrayItem(event.previousContainer.data, event.container.data, event.previousIndex,
-            event.currentIndex);
-    }
-    else {
-      transferArrayItem(event.previousContainer.data,
-                        event.container.data,
-                        event.previousIndex,
-                        event.currentIndex);
-    }
+        if (event.previousContainer === event.container) {
+            moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+        } else if (event.previousContainer.id == 'availableBlocks'){
+            copyArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+        }
+        else {
+            transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+        }
+        const flatLayout = this.htmlSections.toArray()
+            .map((section, sectionIndex) => section.getSortedItems()
+                .map((block, blockIndex) => {
+                    const flex = block.element.nativeElement.style.flexGrow != '' ?
+                                block.element.nativeElement.style.flexGrow : '1'
+                    return {
+                        'key': block.data.key,
+                        'layout':  {
+                            section: sectionIndex,
+                            block: blockIndex,
+                            flex: flex
+                        }
+                        }
+                    }
+            ));
+          this.pageLayout =  [].concat.apply([], flatLayout);
     }
 
 
@@ -155,11 +161,15 @@ export class PageBuilderComponent implements OnInit {
     }
 
     addSection(e){
-        this.subject.pipe(take(1)).subscribe(val => {
-            const newArr = [...val, []];
-            this.subject.next(newArr);
-
+        this.sectionsSubject$.pipe(take(1)).subscribe(val => {
+                const sections = [...val, []];
+                this.sectionsSubject$.next(sections);
           });
+    }
+
+    publishPage(){
+        // this.http.postPapiApiCall('/addons/api')
+        debugger;
     }
 
     entered() {

@@ -22,6 +22,7 @@ export class PageBuilderEditorComponent implements OnInit {
   twoDArray = [];
   selectedBlock = { section: null, block: null, flex: null};
   availableBlocks = [];
+  tabs = ['General', 'Design'];
   constructor(
     private http: PepHttpService,
     private route: ActivatedRoute

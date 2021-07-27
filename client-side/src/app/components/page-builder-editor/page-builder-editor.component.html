@@ -1,5 +1,14 @@
-<!-- <hr><p>Page Builder Editor</p><hr> -->
 
+<h3>Main</h3>
+
+<mat-tab-group
+dynamicHeight #tabGroup
+animationDuration="0ms" class="fixed-header"
+>
+<mat-tab  *ngFor="let tab of tabs; let i = index; "
+id="tab"  label="{{ tab | translate}}">
+</mat-tab>
+</mat-tab-group>
 <pep-textbox
   value=""
   label="Page Name"
@@ -20,7 +29,22 @@
   [showTitle]="true"
 ></pep-textarea>
 
-<h5>Blocks Layout</h5><hr>
+<h4>Blocks</h4>
+<div id="availableBlocks"
+    cdkDropList
+    [cdkDropListData]="availableBlocks"
+    cdkDropListOrientation="vertical"
+    [cdkDropListConnectedTo]="dropList">
+    <div class="blocks" *ngFor="let block of availableBlocks;"  >
+        <pep-button  [value]="block.title" cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block"
+        cdkDragBoundary=".page-builder-container"
+            [iconName]="'number_plus'"  [classNames]="'pep-spacing-element '" >
+        </pep-button>
+    </div>
+</div>
+
+
+<h4>Blocks Layout</h4>
 <pep-select
             #pepSelect
             [emptyOption]="false"
@@ -42,30 +66,7 @@
             [label]="'Flex Size'"
             (valueChange)="changeBlockSize($event);"
 ></pep-select>
-<hr>
-
-<h5>Page Type</h5><hr>
-<pep-select
-            #pepSelect
-            [emptyOption]="false"
-            [options]="pageTypes"
-            [label]="'Choose Page'"
-></pep-select>
-<hr>
 
 
-<h5>Blocks</h5><hr>
-<div cdkDropList
-id="availableBlocks"
-[cdkDropListData]="availableBlocks"
-cdkDropListOrientation="vertical"
-[cdkDropListConnectedTo]="dropList">
-    <div class="blocks" *ngFor="let block of availableBlocks;"  >
-        <mat-card cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block"
-        cdkDragBoundary=".page-builder-container">{{block.title}}</mat-card><br>
-        <!-- <addon-proxy #addons *ngIf="addon" [hostObject]="addon">
-        </addon-proxy> -->
-    </div>
-</div>
 
-<hr>
+

@@ -24,6 +24,7 @@ import { PepSideBarModule } from '@pepperi-addons/ngx-lib/side-bar';
 import { PageBuilderEditorComponent } from './components/page-builder-editor/page-builder-editor.component';
 import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
 import { MatCardModule } from '@angular/material/card';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
     declarations: [
@@ -52,6 +53,7 @@ import { MatCardModule } from '@angular/material/card';
         PepAddonLoaderModule,
         DragDropModule,
         MatCardModule,
+        MatTabsModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,

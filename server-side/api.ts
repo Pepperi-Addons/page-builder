@@ -14,9 +14,9 @@ export async function init_page_builder(client: Client, request: Request): Promi
 };
 
 
-async function getRelations(client: Client, request: Request){
+async function getPage(client: Client, request: Request){
     const service = new MyService(client);
-    const addonsFields: Relation[] = await service.getRelations(request.body['RelationName']);
+    const addonsFields: Relation[] = await service.getPage(request.body['RelationName']);
     const addonsUuids = [...new Set(addonsFields.filter( row => row.AddonUUID).map(obj => obj.AddonUUID))];
     const addonsPromises: Promise<any>[] = [];
     addonsUuids.forEach( (uuid: any) => addonsPromises.push(service.getInstalledAddon(uuid))); 

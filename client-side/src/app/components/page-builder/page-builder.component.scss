@@ -45,7 +45,7 @@
 //     }
 // }
 
-$page-buildr-gap: 1rem;
+$page-buildr-gap: .1rem;
 
 .page-builder-container{
     // padding: $page-buildr-gap;
@@ -55,6 +55,9 @@ $page-buildr-gap: 1rem;
     flex-direction: column;
 }
 
+.section-edit{
+    background: #e0e0e0;
+}
 .flex-container {
     min-height: 250px;
     display: flex;
@@ -64,8 +67,8 @@ $page-buildr-gap: 1rem;
     gap: $page-buildr-gap;
 
     &.editable {
-        border: 2px dashed green;
-        padding: .5rem;
+        border: 2px dashed black;
+        // padding: .5rem;
     }
 
 .flex-item {
@@ -91,24 +94,36 @@ $page-buildr-gap: 1rem;
 }
 }
 
-// .top-area{
-//     background: gray;
-//     display: flex;
-//     .right{
-//         grid-template-columns: auto auto;
-//     }
-//     .center{
-//         ::ng-deep pep-group-buttons{
-//             .split-buttons{
-//                 grid-template-columns: auto auto auto;
-//             }
-
-//         }
-//     }
-// }
+.top-area{
+    padding: 0 .5rem;
+    background: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    div{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    #top-area-center{
+        flex: 2;
+    }
+    #top-area-right{
+        ::ng-deep pep-checkbox{
+            margin: 0;
+        }
+        ::ng-deep pep-field-title{
+            display: none;
+        }
+    }
+}
 
 .pep-page-main-layout{
     padding: 0;
+}
+
+.add-section-button{
+    text-align: center;
 }
 
 
