@@ -1,27 +1,34 @@
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PepHttpService } from '@pepperi-addons/ngx-lib';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, Renderer2, TemplateRef, ViewChild, ViewChildren, ViewContainerRef } from "@angular/core";
 import { BehaviorSubject, forkJoin, Observable, of, Subject, timer } from "rxjs";
 
 import { map, take, tap } from "rxjs/operators";
 import { propsSubject } from '@pepperi-addons/ngx-remote-loader';
-import { CdkDragDrop, moveItemInArray, transferArrayItem, copyArrayItem, CdkDragExit  } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray, transferArrayItem, copyArrayItem, CdkDragExit, CdkDropListGroup, CdkDropList  } from '@angular/cdk/drag-drop';
+export const subject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
+
 @Component({
   selector: 'pep-page-builder',
   templateUrl: './page-builder.component.html',
   styleUrls: ['./page-builder.component.scss']
 })
+
 export class PageBuilderComponent implements OnInit {
+
+    @ViewChild(CdkDropListGroup) listGroup: CdkDropListGroup<CdkDropList>;
 
     @ViewChildren('htmlSections') htmlSections: QueryList<ElementRef>;
     @ViewChildren('htmlBlocks') htmlBlocks: QueryList<ElementRef>;
     editable = false;
     carouselAddon;
+    subject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
     addonsTemp = [];
+    groupButtons;
+
     addons$: Observable<any[]>;
     @Input() hostObject: any;
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
-    subject: BehaviorSubject<any[]> = new BehaviorSubject<any>([]);
     sections$: Observable<any[]> = this.subject.asObservable();;
     @ViewChild('section', { read: TemplateRef }) sectionTemplate:TemplateRef<any>;
     transferringItem: string | undefined = undefined;
@@ -38,28 +45,26 @@ export class PageBuilderComponent implements OnInit {
     constructor(
         private http: PepHttpService,
         private route: ActivatedRoute,
+        private router: Router,
         private renderer: Renderer2,
         private vcRef: ViewContainerRef
     ) {
         this.editable = route?.snapshot?.queryParams?.edit === "true" ?? false;
-
+        this.subject = subject;
 
     }
 
     ngOnInit(){
+        this.groupButtons = [
+            { key: '', value: 'Desktop', class: 'system', callback: null, icon: null },
+            { key: '', value: 'Tablet', class: 'system', callback: null, icon: null },
+            { key: '', value: 'Mobile', class: 'system', callback: null, icon: null }
+        ];
         // this.sections$ = this.getRelations(this.route.snapshot.params.addon_uuid)
         this.getRelations(this.route.snapshot.params.addon_uuid)
             .subscribe(
                 // map(
                      res => {
-                    // const firstSection = res['relations'].pop();
-                    // firstSection.layout.block = 0;
-                    // firstSection.layout.section = 0;
-                    // const lastSection = res['relations'].pop();
-                    // lastSection.layout.block = 0;
-                    // lastSection.layout.section = 2;
-                    // const middleSection = res['relations'];
-                    // const sections = [[]];
                     // sections.forEach((section, sectionIndex) => {
                     //     section.forEach((relation, blockIndex) =>  {
                     //         relation.layout.block = blockIndex;
@@ -130,7 +135,7 @@ export class PageBuilderComponent implements OnInit {
         // this.sections$ = of(event.container.data);
     if (event.previousContainer === event.container) {
         moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else if (event.previousContainer.connectedTo == 'page-builder-list'){
+    } else if (event.previousContainer.id == 'availableBlocks'){
         copyArrayItem(event.previousContainer.data, event.container.data, event.previousIndex,
             event.currentIndex);
     }
@@ -151,9 +156,9 @@ export class PageBuilderComponent implements OnInit {
 
     addSection(e){
         this.subject.pipe(take(1)).subscribe(val => {
-            console.log(val)
             const newArr = [...val, []];
             this.subject.next(newArr);
+
           });
     }
 
@@ -165,4 +170,9 @@ export class PageBuilderComponent implements OnInit {
       this.transferringItem = e.item.data;
     }
 
+    changeQueryParam(e){
+
+        const edit = JSON.parse(e);
+        this.router.navigate([], { queryParams: { edit, dev: true }, relativeTo: this.route})
+    }
 }

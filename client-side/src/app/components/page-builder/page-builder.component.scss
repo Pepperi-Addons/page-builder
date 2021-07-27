@@ -48,7 +48,7 @@
 $page-buildr-gap: 1rem;
 
 .page-builder-container{
-    padding: $page-buildr-gap;
+    // padding: $page-buildr-gap;
     display: flex;
     // background-color: gold;
     gap: $page-buildr-gap;
@@ -90,3 +90,25 @@ $page-buildr-gap: 1rem;
   flex-direction: column;
 }
 }
+
+// .top-area{
+//     background: gray;
+//     display: flex;
+//     .right{
+//         grid-template-columns: auto auto;
+//     }
+//     .center{
+//         ::ng-deep pep-group-buttons{
+//             .split-buttons{
+//                 grid-template-columns: auto auto auto;
+//             }
+
+//         }
+//     }
+// }
+
+.pep-page-main-layout{
+    padding: 0;
+}
+
+

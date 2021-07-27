@@ -1,3 +1,4 @@
+import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PepIconModule, pepIconNumberPlus, PepIconRegistry, pepIconSystemBin, pepIconSystemBolt, pepIconSystemClose } from '@pepperi-addons/ngx-lib/icon';
@@ -16,6 +17,7 @@ import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 
 const pepIcons = [
     pepIconSystemClose,
@@ -43,6 +45,8 @@ const pepIcons = [
         DragDropModule,
         OverlayModule,
         PepButtonModule,
+        PepCheckboxModule,
+        PepGroupButtonsModule,
         PepIconModule,
         MatIconModule
 

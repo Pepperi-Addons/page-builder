@@ -1,3 +1,4 @@
+import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { MatCardModule } from '@angular/material/card';
 import { AddonService } from './addon.service';
 import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
@@ -58,7 +59,9 @@ export function createTranslateLoader(http: HttpClient, fileService: PepFileServ
         PepNgxLibModule,
         PepButtonModule,
         PepSelectModule,
-        PepTopBarModule
+        PepTopBarModule,
+        PepCheckboxModule
+
 
 
     ],

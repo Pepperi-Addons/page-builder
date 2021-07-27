@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { PepHttpService } from '@pepperi-addons/ngx-lib';
 import { propsSubject } from '@pepperi-addons/ngx-remote-loader';
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { subject } from '../page-builder';
 
 @Component({
   selector: 'page-builder-editor',
@@ -17,11 +17,11 @@ export class PageBuilderEditorComponent implements OnInit {
   pageTypes: {key:any, value:string}[] = [];
   flexArray = [0.25, 0.5, 0.75, 1, 2];
   addons$: Observable<any[]> = null;
-
+  dropList = [];
   supportedPages = ['homepage'];
   twoDArray = [];
   selectedBlock = { section: null, block: null, flex: null};
-  addons = [];
+  availableBlocks = [];
   constructor(
     private http: PepHttpService,
     private route: ActivatedRoute
@@ -33,7 +33,20 @@ export class PageBuilderEditorComponent implements OnInit {
     // this.addons$ = this.http.postPapiApiCall(
     //     `/addons/api/${addonUUID}/api/relations`,
     //     {RelationName: `PageComponent` })
-    propsSubject.subscribe( res => { this.initPageEditor(res)});
+    subject.subscribe(res =>{
+
+        res.forEach((item, i) => this.dropList.push('section-'+(i+1)));
+        //     }
+        //  } else {
+        // }
+
+    })
+    propsSubject.subscribe( res => {
+
+            this.initPageEditor(res)
+
+
+    });
   }
 
   sectionSelected(index){
@@ -59,19 +72,19 @@ export class PageBuilderEditorComponent implements OnInit {
     propsSubject.next(this.selectedBlock);
   }
 
-  initPageEditor(sections) {
-    if (sections.length) {
-        this.twoDArray = sections;
+  initPageEditor(blocks) {
+    if (blocks.length) {
+        // this.twoDArray = blocks;
         // flatten 2d Array
         // this.addons = [].concat.apply([], sections);
-        this.addons =  sections;
+        this.availableBlocks =  blocks;
 
-        sections.forEach((section, index) => {
-            this.sections.push({value: 'Section '+index, key: index});
-        })
+        // blocks.forEach((section, index) => {
+        //     this.sections.push({value: 'Section '+index, key: index});
+        // })
     }
-    this.flexArray.forEach(item => this.options.push({key: item, value: item.toString()}))
-    this.supportedPages.forEach(item => this.pageTypes.push({key: item.toString(), value: item.toString()}));
+    // this.flexArray.forEach(item => this.options.push({key: item, value: item.toString()}))
+    // this.supportedPages.forEach(item => this.pageTypes.push({key: item.toString(), value: item.toString()}));
     // debug locally
     // return this.http.postHttpCall('http://localhost:4500/api/relations', {RelationName: `PageComponent` });
 
