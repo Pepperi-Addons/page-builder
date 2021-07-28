@@ -6,6 +6,7 @@ import { BehaviorSubject, forkJoin, Observable, of, Subject, timer } from "rxjs"
 import { map, take, tap } from "rxjs/operators";
 import { propsSubject } from '@pepperi-addons/ngx-remote-loader';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, copyArrayItem, CdkDragExit, CdkDropListGroup, CdkDropList  } from '@angular/cdk/drag-drop';
+import { Overlay } from '@angular/cdk/overlay';
 export const subject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
 
 @Component({
@@ -29,7 +30,6 @@ export class PageBuilderComponent implements OnInit {
     addons$: Observable<any[]>;
     @Input() hostObject: any;
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
-    sections$: Observable<any[]> = this.sectionsSubject$.asObservable();;
     @ViewChild('section', { read: TemplateRef }) sectionTemplate:TemplateRef<any>;
     transferringItem: string | undefined = undefined;
     viewportWidth;
@@ -47,7 +47,8 @@ export class PageBuilderComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private renderer: Renderer2,
-        private vcRef: ViewContainerRef
+        private vcRef: ViewContainerRef,
+        private overlay: Overlay
     ) {
         this.editable = route?.snapshot?.queryParams?.edit === "true" ?? false;
         this.sectionsSubject$ = subject;
@@ -109,8 +110,8 @@ export class PageBuilderComponent implements OnInit {
     getPage(addonUUID): Observable<any[]> {
 
         // debug locally
-        // return this.http.postHttpCall('http://localhost:4500/api/relations', {RelationName: `PageComponent` });
-        return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/relations`, {RelationName: `PageComponent` });
+        return this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageComponent` });
+        // return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page`, {RelationName: `PageComponent` });
 
     }
 
@@ -151,9 +152,8 @@ export class PageBuilderComponent implements OnInit {
                     }
             ));
           this.pageLayout =  [].concat.apply([], flatLayout);
+
     }
-
-
 
     remove(section, i){
         this.noSections = section?.length == 1 && section[i]?.length === 0

@@ -51,24 +51,44 @@ $page-buildr-gap: .1rem;
     // padding: $page-buildr-gap;
     display: flex;
     // background-color: gold;
-    gap: $page-buildr-gap;
+    // gap: $page-buildr-gap;
     flex-direction: column;
 }
 
 .section-edit{
-    background: #e0e0e0;
+
+    display: flex;
+    .textbox{
+        max-width: 3rem;
+    }
+    div:first-child {
+        flex: 1;
+    }
+    .section-name{
+        display: inline-flex;
+        vertical-align: super;
+    }
+    &.editable {
+        background: #f0f0f0;
+        border-top:.25rem solid #f0f0f0;
+        box-shadow: var(--pep-shadow-xs-offset, 0 0.125rem 0.25rem 0) hsla(var(--pep-color-system-primary-h, 0), var(--pep-color-system-primary-s, 0%), var(--pep-color-system-primary-l, 10%), 0.08);
+    }
 }
 .flex-container {
+
     min-height: 250px;
     display: flex;
     flex-direction: row;
-    // background-color: DodgerBlue;
     flex-wrap: no-wrap;
-    gap: $page-buildr-gap;
+    // gap: $page-buildr-gap;
 
     &.editable {
-        border: 2px dashed black;
+        // border: 2px dashed black;
+        background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23333' stroke-width='4' stroke-dasharray='11%2c 23' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
         // padding: .5rem;
+        background-color: #dbdbdb;
+
+
     }
 
 .flex-item {
@@ -77,9 +97,14 @@ $page-buildr-gap: .1rem;
     flex: 1;
     display: inline-grid;
     &.editable {
-        border: 2px dashed gold;
+        background: white;
+        border: 2px dashed black;
         cursor: pointer;
     }
+}
+
+.cdk-drag-preview {
+    background: white;
 }
 }
 .remove-addon{

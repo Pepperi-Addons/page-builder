@@ -8,7 +8,9 @@
 </pep-section> -->
 
 
-<div class="page-builder-container" cdkDropListGroup>
+<div class="page-builder-container" cdkDropListGroup
+
+>
     <div class="top-area">
         <div id="top-area-left">
             <span>{{('ViewportWidth' | translate) + ': ' + viewportWidth}}</span>
@@ -20,10 +22,12 @@
         </div>
 
         <div id="top-area-right">
+            <pep-button  [sizeType]="'md'" [styleType]="'system'" [iconName]="'view_card_md'">
+            </pep-button>
             <pep-checkbox
                     class="pep-spacing-element"
                     [value]="true"
-                    [label]="'Preview'"
+                    [label]="'Edit/Preview'"
                     type="checkbox"
                     [mandatory]="false"
                     [disabled]="false"
@@ -35,38 +39,57 @@
             <pep-button [value]="'Publish' | translate" [sizeType]="'md'" [styleType]="'strong'" (buttonClick)="publishPage();">
             </pep-button>
         </div>
-
-
-
     </div>
 
+    <div
+     *ngFor="let section of sectionsSubject$ | async as sections; let i=index;">
+        <div *ngIf="editable" class="section-edit" [ngClass]="{'editable': editable}">
+            <div>
+                <pep-button *ngIf="editable" [classNames]="'pep-spacing-element '" [sizeType]="'sm'"
+                [iconName]="'system_move'">
+            </pep-button>
+            <div class="section-name">{{'Section ' + (i+1)}}</div>
 
-    <div cdkDropList  cdkDropListOrientation="horizontal" id="{{'section-' + (i+1)}}"
-        (cdkDropListDropped)="drop($event)"
-        [cdkDropListData]="section"
-        (cdkDropListEntered)="entered()"
-        (cdkDropListExited)="exited($event)"
-        [ngClass]="{'editable': editable}"
-        #htmlSections class="flex-container"
-         *ngFor="let section of sectionsSubject$ | async as sections; let i=index;">
-                <pep-button *ngIf="editable" [classNames]="" [sizeType]="'sm'"
-                    [iconName]="'system_close'" (buttonClick)="remove(sections, i);">
-                </pep-button>
+            </div>
+            <div>
+                <pep-button *ngIf="editable" [classNames]="'caution pep-spacing-element '" [sizeType]="'sm'"
 
-
-            <div #htmlBlocks cdkDrag [cdkDragDisabled]="!editable" [cdkDragData]="block"
-               [ngClass]="{'editable': editable}"
-               cdkDragBoundary=".page-builder-container"
-               class="flex-item" *ngFor="let block of section; let i=index;">
-                   <pep-button  *ngIf="editable" [classNames]="'remove-addon '"
-                        styleType="strong" styleStateType="caution" sizeType="sm"
-                       [iconName]="'system_close'" (buttonClick)="remove(section, i);">
-                   </pep-button>
-                   <addon-proxy *ngIf="block" [hostObject]="block" (hostEvents)="onAddonChange($event);">
-                   </addon-proxy>
+                [iconName]="'system_bin'" (buttonClick)="remove(sections, i);">
+            </pep-button>
+            <pep-button *ngIf="editable" [classNames]="'pep-spacing-element '" [sizeType]="'sm'"
+            [iconName]="'system_edit'">
+        </pep-button>
             </div>
 
+
+        </div>
+        <div cdkDropList  cdkDropListOrientation="horizontal" id="{{'section-' + (i+1)}}"
+            (cdkDropListDropped)="drop($event)"
+            [cdkDropListData]="section"
+            (cdkDropListEntered)="entered()"
+            (cdkDropListExited)="exited($event)"
+
+                   [ngClass]="{'editable': editable}"
+                   cdkDragBoundary=".page-builder-container"
+            [ngClass]="{'editable': editable}"
+            #htmlSections class="flex-container"
+             >
+                <div #htmlBlocks cdkDrag [cdkDragDisabled]="!editable" [cdkDragData]="block"
+                   [ngClass]="{'editable': editable}"
+                   cdkDragBoundary=".page-builder-container"
+                   class="flex-item" *ngFor="let block of section; let i=index;">
+                       <pep-button  *ngIf="editable" [classNames]="'caution remove-addon '"
+                             sizeType="sm"
+                           [iconName]="'system_bin'" (buttonClick)="remove(section, i);">
+                       </pep-button>
+                       <addon-proxy *ngIf="block" [hostObject]="block" (hostEvents)="onAddonChange($event);">
+                       </addon-proxy>
+                </div>
+
+        </div>
     </div>
+
+
 
     <br>
     <pep-button *ngIf="editable" [value]="'Add Section'" class="add-section-button"

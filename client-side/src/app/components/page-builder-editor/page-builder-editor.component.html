@@ -28,8 +28,9 @@ id="tab"  label="{{ tab | translate}}">
   [visible]="true"
   [showTitle]="true"
 ></pep-textarea>
-
+<br>
 <h4>Blocks</h4>
+
 <div id="availableBlocks"
     cdkDropList
     [cdkDropListData]="availableBlocks"
@@ -38,12 +39,12 @@ id="tab"  label="{{ tab | translate}}">
     <div class="blocks" *ngFor="let block of availableBlocks;"  >
         <pep-button  [value]="block.title" cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block"
         cdkDragBoundary=".page-builder-container"
-            [iconName]="'number_plus'"  [classNames]="'pep-spacing-element '" >
+            [iconName]="'system_move'"  [classNames]="' pep-spacing-element available-blocks '" >
         </pep-button>
     </div>
 </div>
 
-
+<br>
 <h4>Blocks Layout</h4>
 <pep-select
             #pepSelect

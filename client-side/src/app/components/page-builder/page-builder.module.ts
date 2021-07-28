@@ -1,9 +1,9 @@
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatTableModule } from '@angular/material/table';
 import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { PepIconModule, pepIconNumberPlus, PepIconRegistry, pepIconSystemBin, pepIconSystemBolt, pepIconSystemClose } from '@pepperi-addons/ngx-lib/icon';
+import { PepIconModule, pepIconNumberPlus, PepIconRegistry,
+    pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit,
+pepIconSystemMove, pepIconSystemBin, pepIconViewCardLg, pepIconViewCardMd } from '@pepperi-addons/ngx-lib/icon';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
@@ -24,7 +24,11 @@ import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 const pepIcons = [
     pepIconSystemClose,
     pepIconNumberPlus,
-    pepIconSystemBolt
+    pepIconSystemBolt,
+    pepIconSystemEdit,
+    pepIconSystemMove,
+    pepIconSystemBin,
+    pepIconViewCardMd
 ];
 
 @NgModule({
@@ -50,7 +54,9 @@ const pepIcons = [
         PepCheckboxModule,
         PepGroupButtonsModule,
         PepIconModule,
-        MatIconModule,
+        MatIconModule
+
+
         // MatTabsModule
 
 

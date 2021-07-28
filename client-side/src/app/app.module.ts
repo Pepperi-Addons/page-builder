@@ -14,7 +14,7 @@ import { NgModule, NgZone } from '@angular/core';
 import { AppRoutingModule } from './app.routes';
 import { AppComponent } from './app.component';
 import { MatIconModule } from '@angular/material/icon';
-import { PepIconModule } from '@pepperi-addons/ngx-lib/icon';
+import { PepIconModule, pepIconNumberPlus, PepIconRegistry, pepIconSystemBin, pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit, pepIconSystemMove } from '@pepperi-addons/ngx-lib/icon';
 import { PepSizeDetectorModule } from '@pepperi-addons/ngx-lib/size-detector';
 import { createTranslateLoader } from './components/addon';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -26,6 +26,14 @@ import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 
+const pepIcons = [
+    pepIconSystemClose,
+    pepIconNumberPlus,
+    pepIconSystemBolt,
+    pepIconSystemEdit,
+    pepIconSystemMove,
+    pepIconSystemBin
+];
 @NgModule({
     declarations: [
         AppComponent,
@@ -67,9 +75,16 @@ import { MatTabsModule } from '@angular/material/tabs';
     bootstrap: [AppComponent]
 })
 export class AppModule {
-    constructor(private ngZone: NgZone) {
+
+
+      constructor(
+        private ngZone: NgZone,
+        private pepIconRegistry: PepIconRegistry
+      ) {
         (window as any).ngZone = this.ngZone;
-      }
+        this.pepIconRegistry.registerIcons(pepIcons);
+
+    }
 }
 
 

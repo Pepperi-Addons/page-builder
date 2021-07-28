@@ -32,7 +32,7 @@ export class PageBuilderEditorComponent implements OnInit {
   ngOnInit(): void {
     // const addonUUID = this.route.snapshot.params.addon_uuid
     // this.addons$ = this.http.postPapiApiCall(
-    //     `/addons/api/${addonUUID}/api/relations`,
+    //     `/addons/api/${addonUUID}/api/init_page`,
     //     {RelationName: `PageComponent` })
     subject.subscribe(res =>{
 
@@ -87,7 +87,7 @@ export class PageBuilderEditorComponent implements OnInit {
     // this.flexArray.forEach(item => this.options.push({key: item, value: item.toString()}))
     // this.supportedPages.forEach(item => this.pageTypes.push({key: item.toString(), value: item.toString()}));
     // debug locally
-    // return this.http.postHttpCall('http://localhost:4500/api/relations', {RelationName: `PageComponent` });
+    // return this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageComponent` });
 
   }
 
