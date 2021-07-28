@@ -47,7 +47,7 @@ async function addRelations(client: Client, relations: Relation[], relationName)
         relation.RelationName = relationName;
         const key = `${relation.Name}_${relation.AddonUUID}_${relation.RelationName}`;
         relation.Key = key;
-        promises.push(service.createRelation(relation));
+        promises.push(service.upsertRelation(relation));
     });
     const result = await Promise.all(promises);
     return result;

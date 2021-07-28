@@ -19,7 +19,7 @@ class MyService {
         return this.papiClient.get(`/addons/data/relations?where=RelationName=${relationName}`);
     }
 
-    createRelation(relation): Promise<any> {
+    upsertRelation(relation): Promise<any> {
                 return this.papiClient.post('/addons/data/relations', relation);
     }
 }

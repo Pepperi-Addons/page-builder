@@ -20,9 +20,16 @@ class MyService {
         return this.papiClient.get(`/addons/data/relations?where=RelationName=${relationName}`);
     }
 
-    createRelation(relation): Promise<any> {
-                return this.papiClient.post('/addons/data/relations', relation);
+    upsertRelation(relations): Promise<any> {
+        const promises: Array<Promise<any>> = [];
+        relations.forEach(relation => {
+            promises.push(this.papiClient.post('/addons/data/relations', relation));
+        })
+
+        return Promise.all(promises)
+                
     }
+  
 }
 
 export default MyService;

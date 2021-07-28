@@ -36,8 +36,14 @@
                     [visible]="true"
                     (valueChange)="changeQueryParam($event)"
             ></pep-checkbox>
-            <pep-button [value]="'Publish' | translate" [sizeType]="'md'" [styleType]="'strong'" (buttonClick)="publishPage();">
+            <pep-button [value]="'Publish' | translate" [sizeType]="'md'" [styleType]="'strong'" (buttonClick)="publishPage(addonUUID);">
             </pep-button>
+            <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
+            </pep-button>
+            <pep-button [value]="'Clear Page' | translate" [sizeType]="'md'" [styleType]="'strong'" (buttonClick)="clearPage();">
+            </pep-button>
+
+
         </div>
     </div>
 

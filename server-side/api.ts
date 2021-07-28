@@ -4,18 +4,19 @@ import { ATDMetaData, InstalledAddon} from '@pepperi-addons/papi-sdk';
 import { Relation, RemoteModuleOptions } from '../metadata';
 import { Configuration } from './page-builder.model';
 
-// add functions here
-// this function will run on the 'api/foo' endpoint
-// the real function is runnning on another typescript file
-export async function init_page(client: Client, request: Request): Promise<{relations:RemoteModuleOptions[]}> {
-    
+export async function init_page(client: Client, request: Request): Promise<any> {
+    // if (request.body.Layout){
+    //     return publish_page(client, request);
+
+    // } else if  (request.body.RelationName){
     return getPage(client, request);
+
+    // }
    
 
 
 
 };
-
 
 async function getPage(client: Client, request: Request){
     const service = new MyService(client);
@@ -32,9 +33,6 @@ async function getPage(client: Client, request: Request){
     });
     return { relations: menuEntries};
 }
-
-
-
 
 function createRelationEntry(field: Relation, entryAddon){
     const remoteEntryByType = (type, remoteName = 'remoteEntry') => {

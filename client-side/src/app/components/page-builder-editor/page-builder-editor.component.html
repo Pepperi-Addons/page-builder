@@ -39,7 +39,7 @@ id="tab"  label="{{ tab | translate}}">
     <div class="blocks" *ngFor="let block of availableBlocks;"  >
         <pep-button  [value]="block.title" cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block"
         cdkDragBoundary=".page-builder-container"
-            [iconName]="'system_move'"  [classNames]="' pep-spacing-element available-blocks '" >
+           [iconPosition]="'start'" [iconName]="'system_move'"  [classNames]="' pep-spacing-element available-blocks '" >
         </pep-button>
     </div>
 </div>

@@ -151,4 +151,9 @@ $page-buildr-gap: .1rem;
     text-align: center;
 }
 
-
+// .cdk-drop-list-receiving,
+// .cdk-drop-list-dragging,
+.cdk-drag-preview {
+    background-color: white ;
+    border: 2px dashed black;
+}

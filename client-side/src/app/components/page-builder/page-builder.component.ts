@@ -34,6 +34,7 @@ export class PageBuilderComponent implements OnInit {
     transferringItem: string | undefined = undefined;
     viewportWidth;
     noSections = false;
+    addonUUID;
     /* Todo - need to be removed into componnent */
     public sectionColumnArray = new Array(3);
     public numOfSectionColumns = [{key: '1',value: '1'},
@@ -57,13 +58,17 @@ export class PageBuilderComponent implements OnInit {
     }
 
     ngOnInit(){
+        this.addonUUID = this.route.snapshot.params.addon_uuid;
         this.groupButtons = [
             { key: '', value: 'Desktop', class: 'system', callback: null, icon: null },
             { key: '', value: 'Tablet', class: 'system', callback: null, icon: null },
             { key: '', value: 'Mobile', class: 'system', callback: null, icon: null }
         ];
-        this.getPage(this.route.snapshot.params.addon_uuid)
-            .subscribe(res => propsSubject.next(res['relations']));
+        this.getPage(this.addonUUID)
+            .subscribe(res => {
+                // sessionStorage.setItem('blocks',JSON.stringify(res['relations']));
+                propsSubject.next(res['relations']);
+            });
 
 
         propsSubject.subscribe(selectedBlock => {
@@ -89,13 +94,32 @@ export class PageBuilderComponent implements OnInit {
     }
 
     buildSections(sections){
-          sections.forEach((section, sectionIndex) => {
-                        section.forEach((relation, blockIndex) =>  {
-                            relation.layout.block = blockIndex;
-                            relation.layout.section = sectionIndex;
-                        });
-                        section.sort((x,y) => x.layout.block - y.layout.block );
-                    });
+        const addons = JSON.parse(sessionStorage.getItem('blocks'));
+        let layoutOutput = {};
+        addons.forEach(addon => {
+            if (layoutOutput[addon.layout.section] != undefined){
+                layoutOutput[addon.layout.section][addon.layout.block] = addon.Block;
+            }
+            else {
+                layoutOutput[addon.layout.section] = {};
+                layoutOutput[addon.layout.section][addon.layout.block] = addon.Block;
+            }
+        })
+
+
+        Object.keys(layoutOutput).forEach((section,i) => this.addSection(null));
+        setTimeout(() => {Object.keys(layoutOutput).forEach((section,i) =>{
+            const currentSection = this.htmlSections.toArray()[section] ?? null;
+            Object.keys(layoutOutput[section]).forEach(block => currentSection?.data?.push(layoutOutput[section][block]));
+        })}, 500);
+
+        //   sections.forEach((section, sectionIndex) => {
+        //                 section.forEach((relation, blockIndex) =>  {
+        //                     relation.layout.block = blockIndex;
+        //                     relation.layout.section = sectionIndex;
+        //                 });
+        //                 section.sort((x,y) => x.layout.block - y.layout.block );
+        //             });
     }
 
     onAddonChange(e){
@@ -142,16 +166,18 @@ export class PageBuilderComponent implements OnInit {
                     const flex = block.element.nativeElement.style.flexGrow != '' ?
                                 block.element.nativeElement.style.flexGrow : '1'
                     return {
-                        'key': block.data.key,
+                        'Key': block.data.key,
                         'layout':  {
                             section: sectionIndex,
                             block: blockIndex,
                             flex: flex
-                        }
+                        },
+                        'Block': block.data
                         }
                     }
             ));
           this.pageLayout =  [].concat.apply([], flatLayout);
+          sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
 
     }
 
@@ -167,10 +193,20 @@ export class PageBuilderComponent implements OnInit {
           });
     }
 
-    publishPage(){
-        // this.http.postPapiApiCall('/addons/api')
-        debugger;
+    async publishPage(addonUUID){
+        // const body = JSON.stringify({RelationName: `PageComponent`, Layout: this.pageLayout });
+        // const ans =  await this.http.postHttpCall('http://localhost:4500/api/publish', body).toPromise();
+        // console.log(ans)
+        // return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page`, {RelationName: `PageComponent` });
+        // const blocks = JSON.parse(sessionStorage.getItem('blocks'));
+        // blocks.map(block => {
+        //     block.layout = this.pageLayout.find(layoutBlock => layoutBlock.Key === block.key)?.layout;
+        //     return block;
+        // });
+        sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
+
     }
+
 
     entered() {
         this.transferringItem = undefined;
@@ -185,5 +221,9 @@ export class PageBuilderComponent implements OnInit {
         const edit = JSON.parse(e);
         this.editable = edit;
         this.router.navigate([], { queryParams: { edit, dev: true }, relativeTo: this.route})
+    }
+
+    clearPage(){
+        this.sectionsSubject$.next([]);
     }
 }
