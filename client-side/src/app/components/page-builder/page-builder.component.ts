@@ -17,7 +17,7 @@ export const subject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
 
 export class PageBuilderComponent implements OnInit {
 
-    @ViewChild(CdkDropListGroup) listGroup: CdkDropListGroup<CdkDropList>;
+    @ViewChild('sectionsCont') sectionsCont: ElementRef;
 
     @ViewChildren(CdkDropList) htmlSections: QueryList<CdkDropList>;
     @ViewChildren('htmlBlocks') htmlBlocks: QueryList<ElementRef>;
@@ -60,9 +60,9 @@ export class PageBuilderComponent implements OnInit {
     ngOnInit(){
         this.addonUUID = this.route.snapshot.params.addon_uuid;
         this.groupButtons = [
-            { key: '', value: 'Desktop', class: 'system', callback: null, icon: null },
-            { key: '', value: 'Tablet', class: 'system', callback: null, icon: null },
-            { key: '', value: 'Mobile', class: 'system', callback: null, icon: null }
+            { key: '', value: 'Desktop', class: 'system', callback: () => this.changeScreenSize('Desktop'), icon: null },
+            { key: '', value: 'Tablet', class: 'system', callback: () => this.changeScreenSize('Tablet'), icon: null },
+            { key: '', value: 'Mobile', class: 'system', callback: () => this.changeScreenSize('Mobile'), icon: null }
         ];
         this.getPage(this.addonUUID)
             .subscribe(res => {
@@ -225,5 +225,25 @@ export class PageBuilderComponent implements OnInit {
 
     clearPage(){
         this.sectionsSubject$.next([]);
+    }
+
+    changeScreenSize(screenSize){
+        switch(screenSize){
+            case 'Desktop':
+                this.renderer.setStyle(this.sectionsCont.nativeElement, 'width', '100%');
+                this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'row'));
+                break;
+            case 'Tablet':
+                this.renderer.setStyle(this.sectionsCont.nativeElement, 'width', '800px');
+                this.renderer.setStyle(this.sectionsCont.nativeElement, 'margin', '0 auto');
+                this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'column'));
+                break;
+            case 'Mobile':
+                this.renderer.setStyle(this.sectionsCont.nativeElement, 'width', '360px');
+                this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'column'));
+                break;
+
+        }
+
     }
 }

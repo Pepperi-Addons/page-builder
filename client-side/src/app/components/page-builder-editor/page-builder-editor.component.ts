@@ -75,7 +75,7 @@ export class PageBuilderEditorComponent implements OnInit {
 
   initPageEditor(blocks) {
     if (blocks.length) {
-        // this.twoDArray = blocks;
+        this.twoDArray = blocks;
         // flatten 2d Array
         // this.addons = [].concat.apply([], sections);
         this.availableBlocks =  blocks;
@@ -84,8 +84,8 @@ export class PageBuilderEditorComponent implements OnInit {
         //     this.sections.push({value: 'Section '+index, key: index});
         // })
     }
-    // this.flexArray.forEach(item => this.options.push({key: item, value: item.toString()}))
-    // this.supportedPages.forEach(item => this.pageTypes.push({key: item.toString(), value: item.toString()}));
+    this.flexArray.forEach(item => this.options.push({key: item, value: item.toString()}))
+    this.supportedPages.forEach(item => this.pageTypes.push({key: item.toString(), value: item.toString()}));
     // debug locally
     // return this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageComponent` });
 
