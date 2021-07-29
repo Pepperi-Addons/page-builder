@@ -7914,9 +7914,9 @@ signature_pad@^2.3.2:
   resolved "https://registry.yarnpkg.com/signature_pad/-/signature_pad-2.3.2.tgz#ca7230021c89cedeead27b33d8d16ff254e5f04a"
   integrity sha512-peYXLxOsIY6MES2TrRLDiNg2T++8gGbpP2yaC+6Ohtxr+a2dzoaqWosWDY9sWqTAAk6E/TyQO+LJw9zQwyu5kA==
 
-single-spa-angular-webpack5@4.9.2:
+single-spa-angular@4.9.2:
   version "4.9.2"
-  resolved "https://registry.yarnpkg.com/single-spa-angular-webpack5/-/single-spa-angular-webpack5-4.9.2.tgz#481aa72bca49d8755ea0d9ae77b312d3146958a9"
+  resolved "https://registry.yarnpkg.com/single-spa-angular/-/single-spa-angular-4.9.2.tgz#481aa72bca49d8755ea0d9ae77b312d3146958a9"
   integrity sha512-nZ9CkiHFNTusSaIvxB6zUOp1YdFosU0v51+DmQROdeCDXK3zS57Llga5oSmqhEKfQmd/7M1i18YEoZWA1FeiyA==
   dependencies:
     tslib "^2.1.0"

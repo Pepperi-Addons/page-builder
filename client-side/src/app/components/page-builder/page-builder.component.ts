@@ -66,6 +66,7 @@ export class PageBuilderComponent implements OnInit {
         ];
         this.getPage(this.addonUUID)
             .subscribe(res => {
+          
                 // sessionStorage.setItem('blocks',JSON.stringify(res['relations']));
                 propsSubject.next(res['relations']);
             });
@@ -201,7 +202,7 @@ export class PageBuilderComponent implements OnInit {
         // const body = JSON.stringify({RelationName: `PageComponent`, Layout: this.pageLayout });
         // const ans =  await this.http.postHttpCall('http://localhost:4500/api/publish', body).toPromise();
         // console.log(ans)
-        // return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page`, {RelationName: `PageComponent` });
+        // return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/publish`, {RelationName: `PageComponent` });
         // const blocks = JSON.parse(sessionStorage.getItem('blocks'));
         // blocks.map(block => {
         //     block.layout = this.pageLayout.find(layoutBlock => layoutBlock.Key === block.key)?.layout;
@@ -210,7 +211,6 @@ export class PageBuilderComponent implements OnInit {
         sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
 
     }
-
 
     entered() {
         this.transferringItem = undefined;
