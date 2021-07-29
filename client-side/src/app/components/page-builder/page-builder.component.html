@@ -16,6 +16,7 @@
             <div header-start-content>
                     <span>{{('ViewportWidth' | translate) + ': ' + viewportWidth}}</span>
             </div>
+
             <div header-end-content>
                 <pep-button  [sizeType]="'md'" [styleType]="'system'" [iconName]="'view_card_md'">
                 </pep-button>
@@ -68,12 +69,11 @@
                     [visible]="true"
                     (valueChange)="changeQueryParam($event)"
             ></pep-checkbox>
-            <pep-button [classNames]="'pep-spacing-element '" [value]="'Publish' | translate" [sizeType]="'md'" [styleType]="'strong'" (buttonClick)="publishPage(addonUUID);">
+            <pep-button [value]="'Publish' | translate" [sizeType]="'md'" [styleType]="'strong'" (buttonClick)="publishPage(addonUUID);">
             </pep-button>
-            <pep-button [classNames]="'pep-spacing-element '" [value]="'Load Page' | translate" [sizeType]="'md'" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
+            <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
             </pep-button>
-            <pep-button [classNames]="'caution remove-addon pep-spacing-element '" sizeType="md"
-                        [iconName]="'system_bin'" (buttonClick)="clearPage();">
+            <pep-button [value]="'Clear Page' | translate" [sizeType]="'md'" [styleType]="'strong'" (buttonClick)="clearPage();">
             </pep-button>
 
 
@@ -119,10 +119,10 @@
                       class="flex-item" *ngFor="let block of section; let i=index;">
                            <div *ngIf="editable" [ngClass]="{'editable': editable}" class="block-edit">
                                <pep-button [classNames]="'caution remove-addon '"
-                                     sizeType="xs"
+                                     sizeType="sm"
                                    [iconName]="'system_bin'" (buttonClick)="remove(section, i);">
                                </pep-button>
-                               <pep-button  [classNames]="'pep-spacing-element '" [sizeType]="'xs'"
+                               <pep-button  [classNames]="'pep-spacing-element '" [sizeType]="'sm'"
                                [iconName]="'system_edit'">
                                 </pep-button>
                            </div>
