@@ -8,13 +8,16 @@
         .main-content{
             padding-top: 1rem;
             .content{
-                margin: 0;
-                padding: .25rem;
+                //margin: 0;
+                //padding: .25rem;
+                .mat-tab-header{
+                    width: unset;
+                }
             }
         }
         .header-content {
-            display: none;
-            padding-top: 1rem !important;
+            // display: none;
+            // padding-top: 1rem !important;
             // .content{
             //     margin: 0;
             //     padding: .25rem;

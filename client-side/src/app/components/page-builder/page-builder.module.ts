@@ -12,8 +12,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { PepNgxLibModule  } from '@pepperi-addons/ngx-lib';
 import { PageBuilderComponent} from './index';
 import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
-import {OverlayModule} from '@angular/cdk/overlay';
-
+import { OverlayModule} from '@angular/cdk/overlay';
+import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
 import { SectionModule } from '../section/section.module'
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
@@ -41,6 +41,7 @@ const pepIcons = [
         HttpClientModule,
         PepNgxLibModule,
         PepAddonLoaderModule,
+        PepTopBarModule,
         //// When not using module as sub-addon please remark this for not loading twice resources
         MatCardModule,
         MatButtonModule,

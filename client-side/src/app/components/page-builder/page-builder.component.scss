@@ -49,10 +49,10 @@ $page-buildr-gap: .1rem;
 
 .page-builder-container{
     // padding: $page-buildr-gap;
-    display: flex;
+    // display: flex;
     // background-color: gold;
     // gap: $page-buildr-gap;
-    flex-direction: column;
+    // flex-direction: column;
 }
 
 .section-edit{
@@ -119,29 +119,40 @@ $page-buildr-gap: .1rem;
 }
 }
 
-.top-area{
-    padding: 0 .5rem;
-    background: #e0e0e0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    div{
-        display: flex;
-        align-items: center;
-        justify-content: center;
+::ng-deep .top-bar-container{
+
+    .pep-button{
+        height: 2rem !important;
+        line-height: 2rem !important;
     }
-    #top-area-center{
-        flex: 2;
-    }
-    #top-area-right{
-        ::ng-deep pep-checkbox{
-            margin: 0;
-        }
-        ::ng-deep pep-field-title{
-            display: none;
-        }
+
+    .split-buttons{
+        grid-template-columns: auto auto auto !important;
     }
 }
+// .top-area{
+//     padding: 0 .5rem;
+//     background: #e0e0e0;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     div{
+//         display: flex;
+//         align-items: center;
+//         justify-content: center;
+//     }
+//     #top-area-center{
+//         flex: 2;
+//     }
+//     #top-area-right{
+//         ::ng-deep pep-checkbox{
+//             margin: 0;
+//         }
+//         ::ng-deep pep-field-title{
+//             display: none;
+//         }
+//     }
+// }
 
 .pep-page-main-layout{
     padding: 0;
@@ -170,5 +181,5 @@ $page-buildr-gap: .1rem;
 }
 
 .page-builder-container{
-    // background: #e0e0e0
+    // background: #e0e0e0;
 }
