@@ -23,8 +23,8 @@ module.exports = {
 
       },
       shared: {
-        "@angular/core": {  strictVersion: false  },
-        "@angular/common": {strictVersion: false   }
+        "@angular/core": { singleton: true, strictVersion: false  },
+        "@angular/common": {singleton: true, strictVersion: false   }
       }
     }),
   ]
