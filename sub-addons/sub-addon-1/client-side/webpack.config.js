@@ -39,8 +39,10 @@ module.exports = (config, options, env) => {
                 },
                 shared: {
                   // ...deps,
-                  "@angular/core": {  strictVersion: false  },
-                  "@angular/common": {strictVersion: false   },
+                  "@angular/core": { singleton: true,  strictVersion: false  },
+                  "@angular/common": {singleton: true,strictVersion: false   },
+                  "rxjs": { singleton: true,strictVersion: false   },
+                  "@ngx-translate/core": { singleton: true, strictVersion: false   }
 
                 }
               })
