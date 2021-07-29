@@ -12,16 +12,48 @@
 
 >
     <div class="top-area">
-        <div id="top-area-left">
+        <pep-top-bar [inline]="false" [title]="">
+            <div header-start-content>
+                    <span>{{('ViewportWidth' | translate) + ': ' + viewportWidth}}</span>
+            </div>
+            <div header-end-content>
+                <pep-button  [sizeType]="'md'" [styleType]="'system'" [iconName]="'view_card_md'">
+                </pep-button>
+                <!-- <pep-checkbox
+                        class="pep-spacing-element"
+                        [value]="true"
+                        [label]="'Edit/Preview'"
+                        type="checkbox"
+                        [mandatory]="false"
+                        [showTitle]="false"
+                        [disabled]="false"
+                        xAlignment="left"
+
+                        [visible]="true"
+                        (valueChange)="changeQueryParam($event)"
+                ></pep-checkbox> -->
+                <pep-group-buttons sizeType="sm"  [buttons]="groupButtons" [buttonsClass]="'sm regular'" [buttonsDisabled]="false"
+                [viewType]="'split'" >
+                </pep-group-buttons>
+
+                <pep-button [value]="'Publish' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="publishPage(addonUUID);">
+                </pep-button>
+                <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
+                </pep-button>
+                <pep-button [value]="'Clear Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="clearPage();">
+                </pep-button>
+            </div>
+        </pep-top-bar>
+        <!-- <div id="top-area-left">
             <span>{{('ViewportWidth' | translate) + ': ' + viewportWidth}}</span>
-        </div>
-        <div id="top-area-center">
+        </div> -->
+        <!-- <div id="top-area-center">
             <pep-group-buttons sizeType="sm"  [buttons]="groupButtons" [buttonsClass]="'md regular'" [buttonsDisabled]="false"
             [viewType]="'regular'" >
             </pep-group-buttons>
-        </div>
+        </div> -->
 
-        <div id="top-area-right">
+        <!-- <div id="top-area-right">
             <pep-button  [sizeType]="'md'" [styleType]="'system'" [iconName]="'view_card_md'">
             </pep-button>
             <pep-checkbox
@@ -44,7 +76,7 @@
             </pep-button>
 
 
-        </div>
+        </div> -->
     </div>
     <div #sectionsCont  class="sections-container" cdkDropListGroup>
         <div
