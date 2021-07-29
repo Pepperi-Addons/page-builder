@@ -94,32 +94,36 @@ export class PageBuilderComponent implements OnInit {
     }
 
     buildSections(sections){
-        const addons = JSON.parse(sessionStorage.getItem('blocks'));
-        let layoutOutput = {};
-        addons.forEach(addon => {
-            if (layoutOutput[addon.layout.section] != undefined){
-                layoutOutput[addon.layout.section][addon.layout.block] = addon.Block;
-            }
-            else {
-                layoutOutput[addon.layout.section] = {};
-                layoutOutput[addon.layout.section][addon.layout.block] = addon.Block;
-            }
-        })
+        const block = sessionStorage.getItem('blocks');
+        if (block){
+            const addons = JSON.parse(block);
+            let layoutOutput = {};
+            addons.forEach(addon => {
+                if (layoutOutput[addon.layout.section] != undefined){
+                    layoutOutput[addon.layout.section][addon.layout.block] = addon.Block;
+                }
+                else {
+                    layoutOutput[addon.layout.section] = {};
+                    layoutOutput[addon.layout.section][addon.layout.block] = addon.Block;
+                }
+            })
 
 
-        Object.keys(layoutOutput).forEach((section,i) => this.addSection(null));
-        setTimeout(() => {Object.keys(layoutOutput).forEach((section,i) =>{
-            const currentSection = this.htmlSections.toArray()[section] ?? null;
-            Object.keys(layoutOutput[section]).forEach(block => currentSection?.data?.push(layoutOutput[section][block]));
-        })}, 500);
+            Object.keys(layoutOutput).forEach((section,i) => this.addSection(null));
+            setTimeout(() => {Object.keys(layoutOutput).forEach((section,i) =>{
+                const currentSection = this.htmlSections.toArray()[section] ?? null;
+                Object.keys(layoutOutput[section]).forEach(block => currentSection?.data?.push(layoutOutput[section][block]));
+            })}, 500);
 
-        //   sections.forEach((section, sectionIndex) => {
-        //                 section.forEach((relation, blockIndex) =>  {
-        //                     relation.layout.block = blockIndex;
-        //                     relation.layout.section = sectionIndex;
-        //                 });
-        //                 section.sort((x,y) => x.layout.block - y.layout.block );
-        //             });
+            //   sections.forEach((section, sectionIndex) => {
+            //                 section.forEach((relation, blockIndex) =>  {
+            //                     relation.layout.block = blockIndex;
+            //                     relation.layout.section = sectionIndex;
+            //                 });
+            //                 section.sort((x,y) => x.layout.block - y.layout.block );
+            //             });
+        }
+
     }
 
     onAddonChange(e){

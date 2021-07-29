@@ -41,7 +41,8 @@ module.exports = (config, options, env) => {
                   // ...deps,
                   "@angular/core": { eager: true, singleton: true,  strictVersion: false  },
                   "@angular/common": { eager: true,singleton: true,strictVersion: false   },
-                  "rxjs": { eager: true,singleton: true,strictVersion: false   }
+                  "rxjs": { eager: true,singleton: true,strictVersion: false   },
+                  "@ngx-translate/core": { eager: true, singleton: true, strictVersion: false   }
                 }
               })
             ],
