@@ -2,6 +2,22 @@
     position: sticky;
     top: 0;
     height: 100%;
+
+    ::ng-deep .mat-tab-header-pagination{
+        display: none;
+    }
+    ::ng-deep .mat-tab-labels{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+
+        .mat-tab-label{
+            padding: 0 .75rem !important;
+        }
+    }
+
+    ::ng-deep .mat-tab-body-wrapper{
+        display: block;
+    }
 }
 
 ::ng-deep pep-select {

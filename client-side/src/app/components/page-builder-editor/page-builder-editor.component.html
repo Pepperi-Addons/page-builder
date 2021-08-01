@@ -1,65 +1,71 @@
 <mat-tab-group class="editor-tabs" dynamicHeight #tabGroup animationDuration="0ms">
-    <mat-tab  *ngFor="let tab of tabs; let i = index; " id="tab"  label="{{ tab | translate}}">
+    <!-- <mat-tab  *ngFor="let tab of tabs; let i = index; " id="tab"  label="{{ tab | translate}}">
+    </mat-tab> -->
+    <mat-tab label="General">
+        <pep-textbox
+        value=""
+        label="Page Name"
+        type="text"
+        xAlignment="left"
+        [showTitle]="true"
+        [renderTitle]="true"
+      ></pep-textbox>
+      <pep-textarea
+        value=""
+        label="Description"
+        [mandatory]="false"
+        [disabled]="true"
+        textColor=""
+        xAlignment="left"
+        [rowSpan]="2"
+        [visible]="true"
+        [showTitle]="true"
+      ></pep-textarea>
+      <br>
+      <h4>Blocks</h4>
+
+      <div id="availableBlocks"
+          cdkDropList
+          [cdkDropListData]="availableBlocks"
+          cdkDropListOrientation="vertical"
+          [cdkDropListConnectedTo]="dropList">
+          <div class="blocks" *ngFor="let block of availableBlocks;"  >
+              <pep-button  [value]="block.title" cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block"
+              cdkDragBoundary=".page-builder-container"
+                 [iconPosition]="'start'" [iconName]="'system_move'"  [classNames]="' pep-spacing-element available-blocks '" >
+              </pep-button>
+          </div>
+      </div>
+
+      <br>
+      <h4>Blocks Layout</h4>
+      <pep-select
+                  #pepSelect
+                  [emptyOption]="false"
+                  [options]="sections"
+                  [label]="'Choose Section'"
+                  (valueChange)="sectionSelected($event);"
+      ></pep-select>
+      <pep-select
+                  #pepSelect
+                  [emptyOption]="false"
+                  [options]="blocks"
+                  [label]="'Choose Block'"
+                  (valueChange)="blockSelected($event);"
+      ></pep-select>
+      <pep-select
+                  #pepSelect
+                  [emptyOption]="false"
+                  [options]="options"
+                  [label]="'Flex Size'"
+                  (valueChange)="changeBlockSize($event);"
+      ></pep-select>
+    </mat-tab>
+    <mat-tab label="Design">
+
     </mat-tab>
 </mat-tab-group>
-<pep-textbox
-  value=""
-  label="Page Name"
-  type="text"
-  xAlignment="left"
-  [showTitle]="true"
-  [renderTitle]="true"
-></pep-textbox>
-<pep-textarea
-  value=""
-  label="Description"
-  [mandatory]="false"
-  [disabled]="true"
-  textColor=""
-  xAlignment="left"
-  [rowSpan]="2"
-  [visible]="true"
-  [showTitle]="true"
-></pep-textarea>
-<br>
-<h4>Blocks</h4>
 
-<div id="availableBlocks"
-    cdkDropList
-    [cdkDropListData]="availableBlocks"
-    cdkDropListOrientation="vertical"
-    [cdkDropListConnectedTo]="dropList">
-    <div class="blocks" *ngFor="let block of availableBlocks;"  >
-        <pep-button  [value]="block.title" cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block"
-        cdkDragBoundary=".page-builder-container"
-           [iconPosition]="'start'" [iconName]="'system_move'"  [classNames]="' pep-spacing-element available-blocks '" >
-        </pep-button>
-    </div>
-</div>
-
-<br>
-<h4>Blocks Layout</h4>
-<pep-select
-            #pepSelect
-            [emptyOption]="false"
-            [options]="sections"
-            [label]="'Choose Section'"
-            (valueChange)="sectionSelected($event);"
-></pep-select>
-<pep-select
-            #pepSelect
-            [emptyOption]="false"
-            [options]="blocks"
-            [label]="'Choose Block'"
-            (valueChange)="blockSelected($event);"
-></pep-select>
-<pep-select
-            #pepSelect
-            [emptyOption]="false"
-            [options]="options"
-            [label]="'Flex Size'"
-            (valueChange)="changeBlockSize($event);"
-></pep-select>
 
 
 

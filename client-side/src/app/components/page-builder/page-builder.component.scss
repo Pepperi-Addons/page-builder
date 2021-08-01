@@ -119,8 +119,21 @@ $page-buildr-gap: .1rem;
 }
 }
 
-::ng-deep .top-bar-container{
+::ng-deep .pep-top-bar-container{
 
+    .left-container{
+        display: block;
+        width: 100%;
+
+        .flex-wrapper{
+            width: inherit;
+
+            .header-start-content{
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+    }
     .pep-button{
         height: 2rem !important;
         line-height: 2rem !important;

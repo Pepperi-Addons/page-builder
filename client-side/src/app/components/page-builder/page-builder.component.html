@@ -8,21 +8,30 @@
 </pep-section> -->
 
 
-<div class="page-builder-container"
-
->
+<div class="page-builder-container">
     <div class="top-area">
         <pep-top-bar [inline]="false" [title]="">
-            <div header-start-content>
+            <div header-start-content class="header-start-content">
                     <div class="title">{{('ViewportWidth' | translate) + ': ' + viewportWidth}}</div>
+
                     <pep-group-buttons sizeType="sm"  [buttons]="groupButtons" [buttonsClass]="'sm regular'" [buttonsDisabled]="false"
-                    [viewType]="'split'" >
+                        [viewType]="'split'" >
                     </pep-group-buttons>
+                    <div>
+                    <pep-button  [sizeType]="'md'" [styleType]="'system'" [iconName]="'view_card_md'">
+                    </pep-button>
+
+                    <pep-button [value]="'Publish' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="publishPage(addonUUID);">
+                    </pep-button>
+                    <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
+                    </pep-button>
+                    <pep-button [value]="'Clear Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="clearPage();">
+                    </pep-button>
+                </div>
             </div>
 
             <div header-end-content>
-                <pep-button  [sizeType]="'md'" [styleType]="'system'" [iconName]="'view_card_md'">
-                </pep-button>
+
                 <!-- <pep-checkbox
                         class="pep-spacing-element"
                         [value]="true"
@@ -36,14 +45,6 @@
                         [visible]="true"
                         (valueChange)="changeQueryParam($event)"
                 ></pep-checkbox> -->
-
-
-                <pep-button [value]="'Publish' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="publishPage(addonUUID);">
-                </pep-button>
-                <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
-                </pep-button>
-                <pep-button [value]="'Clear Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="clearPage();">
-                </pep-button>
             </div>
         </pep-top-bar>
         <!-- <div id="top-area-left">

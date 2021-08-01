@@ -6,26 +6,15 @@
 ::ng-deep pep-side-bar{
     .side-layout{
         .main-content{
-            padding-top: 1rem;
+            padding-top: 0rem;
             .content{
-                //margin: 0;
-                //padding: .25rem;
+
                 .mat-tab-header{
                     width: unset;
                 }
             }
         }
-        .header-content {
-            // display: none;
-            // padding-top: 1rem !important;
-            // .content{
-            //     margin: 0;
-            //     padding: .25rem;
-            // }
-        }
-        // .header-content {
-        //     display: none;
-        // }
+
     }
 
 }
