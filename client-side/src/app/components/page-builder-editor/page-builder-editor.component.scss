@@ -1,3 +1,9 @@
+.editor-tabs {
+    position: sticky;
+    top: 0;
+    height: 100%;
+}
+
 ::ng-deep pep-select {
     .mat-form-field{
         max-width: calc(100% - 1rem);

@@ -14,7 +14,10 @@
     <div class="top-area">
         <pep-top-bar [inline]="false" [title]="">
             <div header-start-content>
-                    <span>{{('ViewportWidth' | translate) + ': ' + viewportWidth}}</span>
+                    <div class="title">{{('ViewportWidth' | translate) + ': ' + viewportWidth}}</div>
+                    <pep-group-buttons sizeType="sm"  [buttons]="groupButtons" [buttonsClass]="'sm regular'" [buttonsDisabled]="false"
+                    [viewType]="'split'" >
+                    </pep-group-buttons>
             </div>
 
             <div header-end-content>
@@ -33,9 +36,7 @@
                         [visible]="true"
                         (valueChange)="changeQueryParam($event)"
                 ></pep-checkbox> -->
-                <pep-group-buttons sizeType="sm"  [buttons]="groupButtons" [buttonsClass]="'sm regular'" [buttonsDisabled]="false"
-                [viewType]="'split'" >
-                </pep-group-buttons>
+
 
                 <pep-button [value]="'Publish' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="publishPage(addonUUID);">
                 </pep-button>
