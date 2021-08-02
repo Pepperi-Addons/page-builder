@@ -1,0 +1,10 @@
+@mixin page-builder($pepperi-theme) {
+    body{
+        background-color: Red !important;
+    }
+    .section-edit {
+        color: Red;
+        border: 1px solid Red;
+        background-color: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
+    }
+}

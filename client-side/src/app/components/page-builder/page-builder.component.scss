@@ -47,14 +47,6 @@
 
 $page-buildr-gap: .1rem;
 
-.page-builder-container{
-    // padding: $page-buildr-gap;
-    // display: flex;
-    // background-color: gold;
-    // gap: $page-buildr-gap;
-    // flex-direction: column;
-}
-
 .section-edit{
 
     display: flex;
@@ -69,8 +61,8 @@ $page-buildr-gap: .1rem;
         vertical-align: super;
     }
     &.editable {
-        background: #f0f0f0;
-        border-top:.25rem solid #f0f0f0;
+        // background: #f0f0f0;
+        // border-top:.25rem solid #f0f0f0;
         box-shadow: var(--pep-shadow-xs-offset, 0 0.125rem 0.25rem 0) hsla(var(--pep-color-system-primary-h, 0), var(--pep-color-system-primary-s, 0%), var(--pep-color-system-primary-l, 10%), 0.08);
     }
 }
@@ -143,29 +135,6 @@ $page-buildr-gap: .1rem;
         grid-template-columns: auto auto auto !important;
     }
 }
-// .top-area{
-//     padding: 0 .5rem;
-//     background: #e0e0e0;
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//     div{
-//         display: flex;
-//         align-items: center;
-//         justify-content: center;
-//     }
-//     #top-area-center{
-//         flex: 2;
-//     }
-//     #top-area-right{
-//         ::ng-deep pep-checkbox{
-//             margin: 0;
-//         }
-//         ::ng-deep pep-field-title{
-//             display: none;
-//         }
-//     }
-// }
 
 .pep-page-main-layout{
     padding: 0;
@@ -175,8 +144,6 @@ $page-buildr-gap: .1rem;
     text-align: center;
 }
 
-// .cdk-drop-list-receiving,
-// .cdk-drop-list-dragging,
 .cdk-drag-preview {
     background-color: white ;
     border: 2px dashed black;
@@ -193,6 +160,14 @@ $page-buildr-gap: .1rem;
 
 }
 
-.page-builder-container{
-    // background: #e0e0e0;
+@mixin page-builder($pepperi-theme) {
+    body{
+        background-color: Red !important;
+    }
+    .section-edit {
+        color: Red;
+        border: 1px solid Red;
+        background-color: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
+    }
 }
+
