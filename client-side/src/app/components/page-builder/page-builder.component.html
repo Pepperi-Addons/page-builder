@@ -81,24 +81,22 @@
 
         </div> -->
     </div>
-    <div #sectionsCont  class="sections-container" cdkDropListGroup>
-        <div *ngFor="let section of sectionsSubject$ | async as sections; let i=index;">
+    <div #sectionsCont   cdkDropListGroup>
+        <div class="sections-container" *ngFor="let section of sectionsSubject$ | async as sections; let i=index;">
            <div *ngIf="editable" class="section-edit" [ngClass]="{'editable': editable}">
-               <div>
-                   <pep-button *ngIf="editable" [classNames]="'pep-spacing-element '" [sizeType]="'sm'"
-                   [iconName]="'system_move'">
-               </pep-button>
-               <div class="section-name">{{'Section ' + (i+1)}}</div>
-
-               </div>
-               <div>
-                   <pep-button *ngIf="editable" [classNames]="'caution pep-spacing-element '" [sizeType]="'sm'"
-
+                <div class="start-cont">
+                    <pep-button *ngIf="editable" [sizeType]="'sm'" [classNames]="'pep-spacing-element'"
+                        [iconName]="'system_move'">
+                    </pep-button>
+                    <label class="header-label body-sm pep-spacing-element">{{'Section ' + (i+1)}}</label>
+                    </div>
+                <div>
+                <pep-button *ngIf="editable" [classNames]="'caution pep-spacing-element'" [sizeType]="'sm'"
                    [iconName]="'system_bin'" (buttonClick)="remove(sections, i);">
                </pep-button>
-               <pep-button *ngIf="editable" [classNames]="'pep-spacing-element '" [sizeType]="'sm'"
-               [iconName]="'system_edit'">
-           </pep-button>
+               <pep-button *ngIf="editable" [sizeType]="'sm'" [classNames]="'pep-spacing-element'"
+                    [iconName]="'system_edit'">
+                </pep-button>
                </div>
 
 

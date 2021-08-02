@@ -47,23 +47,36 @@
 
 $page-buildr-gap: .1rem;
 
-.section-edit{
+.sections-container{
+    background: rgb(255, 255, 255);
+    border: 1px solid rgb(153, 153, 153);
+    box-shadow: 0px 1px 2px 0px rgb(0 0 0 / 4%), 0px 2px 4px 0px rgb(0 0 0 / 4%), 0px 4px 8px 0px rgb(0 0 0 / 4%);
+    border-radius: 4px;
+    margin-top: 1rem;
 
-    display: flex;
-    .textbox{
-        max-width: 3rem;
-    }
-    div:first-child {
-        flex: 1;
-    }
-    .section-name{
-        display: inline-flex;
-        vertical-align: super;
-    }
-    &.editable {
-        // background: #f0f0f0;
-        // border-top:.25rem solid #f0f0f0;
-        box-shadow: var(--pep-shadow-xs-offset, 0 0.125rem 0.25rem 0) hsla(var(--pep-color-system-primary-h, 0), var(--pep-color-system-primary-s, 0%), var(--pep-color-system-primary-l, 10%), 0.08);
+    .section-edit{
+
+        height: 2.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .start-cont{
+            display: flex;
+            align-items: center;
+
+            label{
+                margin-bottom: 0;
+            }
+        }
+        // div:first-child {
+        //     flex: 1;
+        // }
+        // &.editable {
+            // background: #f0f0f0;
+            // border-top:.25rem solid #f0f0f0;
+            // box-shadow: var(--pep-shadow-xs-offset, 0 0.125rem 0.25rem 0) hsla(var(--pep-color-system-primary-h, 0), var(--pep-color-system-primary-s, 0%), var(--pep-color-system-primary-l, 10%), 0.08);
+        // }
     }
 }
 .flex-container {
@@ -76,9 +89,9 @@ $page-buildr-gap: .1rem;
 
     &.editable {
         // border: 2px dashed black;
-        background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23333' stroke-width='4' stroke-dasharray='11%2c 23' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+        // background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23333' stroke-width='4' stroke-dasharray='11%2c 23' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
         // padding: .5rem;
-        background-color: #dbdbdb;
+        background-color: #f1f1f1;
 
 
     }
@@ -155,19 +168,6 @@ $page-buildr-gap: .1rem;
     padding-left: .25rem;
 }
 
-.sections-container{
-    background: white;
 
-}
 
-@mixin page-builder($pepperi-theme) {
-    body{
-        background-color: Red !important;
-    }
-    .section-edit {
-        color: Red;
-        border: 1px solid Red;
-        background-color: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
-    }
-}
 
