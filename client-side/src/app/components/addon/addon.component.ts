@@ -9,10 +9,10 @@ import { InstalledAddon } from '@pepperi-addons/papi-sdk';
 
 
 @Component({
-  selector: 'addon-module',
-  templateUrl: './addon.component.html',
-  styleUrls: ['./addon.component.scss'],
-  providers: [TranslatePipe]
+    selector: 'addon-module',
+    templateUrl: './addon.component.html',
+    styleUrls: ['./addon.component.scss'],
+    providers: [TranslatePipe]
 })
 export class AddonComponent implements OnInit {
 

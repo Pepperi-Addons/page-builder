@@ -1,41 +1,23 @@
-<mat-tab-group class="editor-tabs" dynamicHeight #tabGroup animationDuration="0ms">
+<mat-tab-group #tabGroup class="editor-tabs" dynamicHeight animationDuration="0ms">
     <!-- <mat-tab  *ngFor="let tab of tabs; let i = index; " id="tab"  label="{{ tab | translate}}">
     </mat-tab> -->
     <mat-tab label="General">
-        <pep-textbox
-        value=""
-        label="Page Name"
-        type="text"
-        xAlignment="left"
-        [showTitle]="true"
-        [renderTitle]="true"
-      ></pep-textbox>
-      <pep-textarea
-        value=""
-        label="Description"
-        [mandatory]="false"
-        [disabled]="true"
-        textColor=""
-        xAlignment="left"
-        [rowSpan]="2"
-        [visible]="true"
-        [showTitle]="true"
-      ></pep-textarea>
-      <br>
-      <h4>Blocks</h4>
+        <pep-textbox value="" label="Page Name"></pep-textbox>
+        <pep-textarea value="" label="Description" [disabled]="true" [rowSpan]="2"></pep-textarea>
+        <br/>
+      
+        <h4>Blocks</h4>
 
-      <div id="availableBlocks"
-          cdkDropList
-          [cdkDropListData]="availableBlocks"
-          cdkDropListOrientation="vertical"
-          [cdkDropListConnectedTo]="dropList">
-          <div class="blocks" *ngFor="let block of availableBlocks;"  >
-              <pep-button  [value]="block.title" cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block"
-              cdkDragBoundary=".page-builder-container"
-                 [iconPosition]="'start'" [iconName]="'system_move'"  [classNames]="' pep-spacing-element available-blocks '" >
-              </pep-button>
-          </div>
-      </div>
+        <div id="availableBlocks"
+            cdkDropList
+            [cdkDropListData]="availableBlocks"
+            cdkDropListOrientation="vertical"
+            [cdkDropListConnectedTo]="dropList">
+            <div class="blocks" *ngFor="let block of availableBlocks;"  >
+                <pep-button [value]="block.title" cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block" cdkDragBoundary=".page-builder-container"
+                    iconPosition="start" iconName="system_move" classNames="pep-spacing-element available-blocks" ></pep-button>
+            </div>
+        </div>
 
       <!-- <br>
       <h4>Blocks Layout</h4>

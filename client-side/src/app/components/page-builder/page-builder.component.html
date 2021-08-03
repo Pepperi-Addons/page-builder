@@ -10,7 +10,6 @@
                 <div class="header-end heder-content">
                     <pep-button iconName="view_card_md" classNames="pep-spacing-element"></pep-button>
                     <pep-button value="Preview" classNames="pep-spacing-element" (buttonClick)="changeQueryParam(false)"></pep-button>
-
                     <pep-button [value]="'Publish' | translate" classNames="pep-spacing-element" styleType="strong" (buttonClick)="publishPage(addonUUID);">
                     </pep-button>
                     <!-- <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
@@ -71,7 +70,7 @@
 
         </div> -->
     </div>
-    <div #sectionsCont   cdkDropListGroup>
+    <div #sectionsCont cdkDropListGroup>
         <div class="sections-container" *ngFor="let section of sectionsSubject$ | async as sections; let i=index;">
            <div *ngIf="editable" class="section-edit" [ngClass]="{'editable': editable}">
                 <div class="start-cont">
@@ -118,27 +117,13 @@
                                <addon-proxy *ngIf="block" [hostObject]="block" (hostEvents)="onAddonChange($event);">
                                </addon-proxy>
                            </div>
-
-
                    </div>
-
            </div>
        </div>
     </div>
 
-
-
-
-    <pep-button
-        class="add-section-button"
-        value="Add Section "
-        styleType="regular"
-        styleStateType="system"
-        sizeType="md"
-        iconName="number_plus"
-        iconPosition="end"
-        (buttonClick)="addSection($event)"
-    ></pep-button>
+    <pep-button class="add-section-button" value="Add Section " styleType="regular" iconName="number_plus" iconPosition="end"
+        (buttonClick)="addSection($event)"></pep-button>
     <!-- <pep-button *ngIf="editable" [value]="'Add Section'" class="add-section-button"
         [iconName]="'number_plus'" (buttonClick)="addSection($event)" [classNames]="'pep-spacing-element '" >
     </pep-button> -->

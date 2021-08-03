@@ -2,7 +2,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PepHttpService } from '@pepperi-addons/ngx-lib';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, Renderer2, TemplateRef, ViewChild, ViewChildren, ViewContainerRef } from "@angular/core";
 import { BehaviorSubject, forkJoin, Observable, of, Subject, timer } from "rxjs";
-
 import { map, take, tap } from "rxjs/operators";
 import { propsSubject } from '@pepperi-addons/ngx-remote-loader';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, copyArrayItem, CdkDragExit, CdkDropListGroup, CdkDropList  } from '@angular/cdk/drag-drop';
@@ -11,9 +10,9 @@ import { pepIconSystemBin } from '@pepperi-addons/ngx-lib/icon';
 export const subject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
 
 @Component({
-  selector: 'pep-page-builder',
-  templateUrl: './page-builder.component.html',
-  styleUrls: ['./page-builder.component.scss']
+    selector: 'page-builder',
+    templateUrl: './page-builder.component.html',
+    styleUrls: ['./page-builder.component.scss']
 })
 export class PageBuilderComponent implements OnInit {
     @Input() hostObject: any;
@@ -75,7 +74,6 @@ export class PageBuilderComponent implements OnInit {
             propsSubject.next(res['relations']);
         });
 
-
         propsSubject.subscribe(selectedBlock => {
             if (selectedBlock?.section != null) {
                 this.htmlBlocks.forEach(block => {
@@ -89,12 +87,9 @@ export class PageBuilderComponent implements OnInit {
                 if (selectedBlock?.flex){
                     // const selectedBlockElement = this.htmlSections.get(selectedBlock.section).nativeElement.children[selectedBlock.block]
                     // selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'flex', selectedBlock.flex) : null;
-
-
                 }
             }
         });
-
     }
 
     buildSections(sections) {
@@ -136,15 +131,12 @@ export class PageBuilderComponent implements OnInit {
                 propsSubject.next(e);
             break;
         }
-
     }
 
     getPage(addonUUID): Observable<any[]> {
-
         // debug locally
         return this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageComponent` });
         // return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page`, {RelationName: `PageComponent` });
-
     }
 
     numOfSectionColumnsChange(event) {
@@ -156,7 +148,6 @@ export class PageBuilderComponent implements OnInit {
         for( let i=0; i<numOfColumns; i++){
             this.sectionColumnArray[i] = { 'id': i, 'width': colWidth};
         }
-
     }
 
     drop(event: CdkDragDrop<string[]>) {
@@ -168,25 +159,25 @@ export class PageBuilderComponent implements OnInit {
         else {
             transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
         }
-        const flatLayout = this.htmlSections.toArray()
-            .map((section, sectionIndex) => section.getSortedItems()
-                .map((block, blockIndex) => {
-                    const flex = block.element.nativeElement.style.flexGrow != '' ?
-                                block.element.nativeElement.style.flexGrow : '1'
-                    return {
-                        'Key': block.data.key,
-                        'layout':  {
-                            section: sectionIndex,
-                            block: blockIndex,
-                            flex: flex
-                        },
-                        'Block': block.data
-                    }
+        
+        const flatLayout = this.htmlSections.toArray().map((section, sectionIndex) =>
+            section.getSortedItems().map((block, blockIndex) => {
+                const flex = block.element.nativeElement.style.flexGrow != '' ?
+                            block.element.nativeElement.style.flexGrow : '1'
+                return {
+                    'Key': block.data.key,
+                    'layout':  {
+                        section: sectionIndex,
+                        block: blockIndex,
+                        flex: flex
+                    },
+                    'Block': block.data
                 }
-            ));
-          this.pageLayout =  [].concat.apply([], flatLayout);
-          sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
-
+            }
+        ));
+        
+        this.pageLayout =  [].concat.apply([], flatLayout);
+        sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
     }
 
     removeSection(sections, i) {
@@ -198,9 +189,9 @@ export class PageBuilderComponent implements OnInit {
 
     addSection(e) {
         this.sectionsSubject$.pipe(take(1)).subscribe(val => {
-                const sections = [...val, []];
-                this.sectionsSubject$.next(sections);
-          });
+            const sections = [...val, []];
+            this.sectionsSubject$.next(sections);
+        });
     }
 
     editSection(section){
@@ -242,7 +233,6 @@ export class PageBuilderComponent implements OnInit {
     }
 
     changeQueryParam(e) {
-
         const edit = JSON.parse(e);
         this.editable = edit;
         this.router.navigate([], { queryParams: { edit, dev: true }, relativeTo: this.route})
@@ -267,8 +257,6 @@ export class PageBuilderComponent implements OnInit {
                 this.renderer.setStyle(this.sectionsCont.nativeElement, 'width', '360px');
                 this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'column'));
                 break;
-
         }
-
     }
 }

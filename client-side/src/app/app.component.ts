@@ -16,11 +16,11 @@ declare var CLIENT_MODE: any;
 })
 export class AppComponent implements OnInit {
 
-    footerHeight: number;
-    showLoading = false;
-    clientMode: string;
-    addon$: Observable<any>;
-    menuItems: Array<PepMenuItem> = null;
+    // footerHeight: number;
+    // showLoading = false;
+    // clientMode: string;
+    // addon$: Observable<any>;
+    // menuItems: Array<PepMenuItem> = null;
     showEditor = false;
 
     constructor(
@@ -30,26 +30,26 @@ export class AppComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router
     ) {
-        this.loaderService.onChanged$
-            .subscribe((show) => {
-                this.showLoading = show;
-            });
-            this.clientMode = CLIENT_MODE;
+        // this.loaderService.onChanged$
+        //     .subscribe((show) => {
+        //         this.showLoading = show;
+        //     });
+            // this.clientMode = CLIENT_MODE;
     }
 
     ngOnInit() {
 
-        this.customizationService.setThemeVariables();
-        this.customizationService.footerHeight.subscribe(footerHeight => this.footerHeight = footerHeight);
-        this.addon$ = from(this.addonService.get(`/addons/installed_addons`)).pipe(
-            map(res => {return res[0]?.Addon}));
+        // this.customizationService.setThemeVariables();
+        // this.customizationService.footerHeight.subscribe(footerHeight => this.footerHeight = footerHeight);
+        // this.addon$ = from(this.addonService.get(`/addons/installed_addons`)).pipe(
+        //     map(res => {return res[0]?.Addon}));
 
-        this.menuItems = [];
-        this.menuItems.push({
-            key: 'ApiName',
-            text: 'Title',
-            type: 'regular'
-        });
+        // this.menuItems = [];
+        // this.menuItems.push({
+        //     key: 'ApiName',
+        //     text: 'Title',
+        //     type: 'regular'
+        // });
         this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(res => {
             const queryParams = this.route.snapshot.queryParams;
             this.showEditor = queryParams?.edit === "true" ?? false;

@@ -1,31 +1,31 @@
 <pep-page-layout cdkDropListGroup>
-        <ng-container pep-side-area *ngIf="showEditor">
-            <pep-side-bar #pepSideBar>
-                <div header-content>
-                    <h3>Main</h3>
-                </div>
-                <!-- if page-editor  (objectChange)="" -->
-                <page-builder-editor ></page-builder-editor>
+    <ng-container pep-side-area *ngIf="showEditor">
+        <pep-side-bar #pepSideBar>
+            <div header-content>
+                <h3>Main</h3>
+            </div>
+            <!-- if page-editor  (objectChange)="" -->
+            <page-builder-editor ></page-builder-editor>
 <!-- 
-                if section-editor
-                <section-editor
+            if section-editor
+            <section-editor
 
-                if block-editor
-                <proxy [exposedModue]="block.editorModuleName" -->
-            </pep-side-bar>
+            if block-editor
+            <proxy [exposedModue]="block.editorModuleName" -->
+        </pep-side-bar>
+    </ng-container>
 
-        </ng-container>
-        <!-- <ng-container pep-top-area>
-            <pep-top-bar [inline]="false" [title]="('Title_Sub_Addon' | translate)">
-                <div header-end-content>
-                    <pep-button [value]="'Publish' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="triggerPublish();">
-                    </pep-button>
-                </div>
-            </pep-top-bar>
-        </ng-container> -->
-        <ng-container pep-main-area>
-                <router-outlet></router-outlet>
-        </ng-container>
+    <!-- <ng-container pep-top-area>
+        <pep-top-bar [inline]="false" [title]="('Title_Sub_Addon' | translate)">
+            <div header-end-content>
+                <pep-button [value]="'Publish' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="triggerPublish();">
+                </pep-button>
+            </div>
+        </pep-top-bar>
+    </ng-container> -->
+    <ng-container pep-main-area>
+        <router-outlet></router-outlet>
+    </ng-container>
 </pep-page-layout>
 
-<pep-size-detector></pep-size-detector>
+<!-- <pep-size-detector></pep-size-detector> -->

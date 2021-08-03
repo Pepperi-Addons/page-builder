@@ -34,7 +34,6 @@ const pepIcons = [
 @NgModule({
     declarations: [
         PageBuilderComponent
-
     ],
     imports: [
         CommonModule,
@@ -56,15 +55,6 @@ const pepIcons = [
         PepGroupButtonsModule,
         PepIconModule,
         MatIconModule
-
-
-        // MatTabsModule
-
-
-        //// Example for importing tree-shakeable @pepperi-addons/ngx-lib components to a module
-
-
-
     ],
     exports:[PageBuilderComponent],
     providers: [
@@ -72,10 +62,7 @@ const pepIcons = [
     ]
 })
 export class PageBuilderModule {
-    constructor(
-        private pepIconRegistry: PepIconRegistry
-      ) {
+    constructor(private pepIconRegistry: PepIconRegistry) {
         this.pepIconRegistry.registerIcons(pepIcons);
-
     }
 }

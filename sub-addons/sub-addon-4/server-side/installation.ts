@@ -33,7 +33,7 @@ export async function downgrade(client: Client, request: Request): Promise<any> 
 
 async function runMigration(client){
     try {
-        await addRelations(client, PageComponentRelations, "PageComponent");
+        await addRelations(client, PageComponentRelations, "PageBlock");
         return { success: true };
     } catch(e){
         return { success: false };

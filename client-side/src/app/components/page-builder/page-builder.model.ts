@@ -16,7 +16,6 @@ export type RemoteModuleOptions = {
     addon?: object;
 }
 
-
 export const hostObject ={
     "configuration": {
         "consume": {

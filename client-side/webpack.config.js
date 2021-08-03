@@ -10,43 +10,43 @@ module.exports = (config, options, env) => {
 
     config.plugins.push(
         new webpack.DefinePlugin({
-          CLIENT_MODE: JSON.stringify(env.configuration),
+            CLIENT_MODE: JSON.stringify(env.configuration),
         })
     )
-// Only if you need standalone
+    // Only if you need standalone
     if (env.configuration === 'Standalone') {
         return config;
     }
     else {
         const mfConfig = {
             output: {
-              uniqueName: "addon",
-              publicPath: "http://localhost:4400/"
+                uniqueName: "addon",
+                publicPath: "http://localhost:4400/"
             },
             optimization: {
-              // Only needed to bypass a temporary bug
-              runtimeChunk: false
+                // Only needed to bypass a temporary bug
+                runtimeChunk: false
             },
             plugins: [
-              new ModuleFederationPlugin({
-                // remotes: {},
-                name: "addon",
-                filename: "addon.js",
-                exposes: {
-                  './AddonComponent': './src/app/components/addon/index.ts',
-                  './AddonModule': './src/app/components/addon/index.ts'
-
-                },
-                shared: {
-                  // ...deps,
-                  "@angular/core": { eager: true, singleton: true,  strictVersion: false  },
-                  "@angular/common": { eager: true,singleton: true,strictVersion: false   },
-                  "rxjs": { eager: true,singleton: true,strictVersion: false   },
-                  "@ngx-translate/core": { eager: true, singleton: true, strictVersion: false   }
-                }
-              })
+                new ModuleFederationPlugin({
+                    // remotes: {},
+                    name: "addon",
+                    filename: "addon.js",
+                    exposes: {
+                        './AddonComponent': './src/app/components/addon/index.ts',
+                        './AddonModule': './src/app/components/addon/index.ts'
+                    },
+                    shared: {
+                        // ...deps,
+                        "@angular/core": { eager: true, singleton: true,  strictVersion: false  },
+                        "@angular/common": { eager: true,singleton: true,strictVersion: false   },
+                        "rxjs": { eager: true,singleton: true,strictVersion: false   },
+                        "@ngx-translate/core": { eager: true, singleton: true, strictVersion: false   }
+                    }
+                })
             ],
-          };
+        };
+        
         const merged = merge(config, mfConfig);
         const singleSpaWebpackConfig = singleSpaAngularWebpack(merged, options);
         return singleSpaWebpackConfig;

@@ -28,7 +28,6 @@ const pepIcons = [
 @NgModule({
     declarations: [
         PageBuilderEditorComponent
-
     ],
     imports: [
         CommonModule,
@@ -50,10 +49,7 @@ const pepIcons = [
     ]
 })
 export class PageBuilderEditorModule {
-    constructor(
-        private pepIconRegistry: PepIconRegistry
-      ) {
+    constructor(private pepIconRegistry: PepIconRegistry) {
         this.pepIconRegistry.registerIcons(pepIcons);
-
     }
 }

@@ -26,7 +26,7 @@ export interface RemoteModuleOptions{
 
 export const PageComponentRelations: Relation[]  =[
     {
-        RelationName: "PageComponent",
+        RelationName: "PageBlock",
         Name:"SubAddon5",
         Description:"SubAddon5",
         Type: "NgComponent",

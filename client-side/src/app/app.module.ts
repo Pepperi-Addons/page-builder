@@ -25,6 +25,7 @@ import { PageBuilderEditorComponent } from './components/page-builder-editor/pag
 import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
+import { SectionEditorComponent } from './components/section-editor/section-editor.component';
 
 const pepIcons = [
     pepIconSystemClose,
@@ -37,8 +38,8 @@ const pepIcons = [
 @NgModule({
     declarations: [
         AppComponent,
-        PageBuilderEditorComponent
-
+        PageBuilderEditorComponent,
+        SectionEditorComponent
     ],
     imports: [
         BrowserModule,
@@ -69,21 +70,14 @@ const pepIcons = [
                 deps: [HttpClient, PepFileService, PepAddonService]
             }
         })
-
     ],
     providers: [],
     bootstrap: [AppComponent]
 })
 export class AppModule {
-
-
-      constructor(
-        private ngZone: NgZone,
-        private pepIconRegistry: PepIconRegistry
-      ) {
+      constructor(private ngZone: NgZone, private pepIconRegistry: PepIconRegistry) {
         (window as any).ngZone = this.ngZone;
         this.pepIconRegistry.registerIcons(pepIcons);
-
     }
 }
 
