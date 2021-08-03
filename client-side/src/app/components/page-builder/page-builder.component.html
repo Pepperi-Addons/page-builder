@@ -1,41 +1,37 @@
-<!-- <pep-section
-        [numOfBlocks]="6"
-        [editable]="editable">
-</pep-section>
-<pep-section
-        [numOfBlocks]="2"
-        [editable]="editable">
-</pep-section> -->
-
 
 <div class="page-builder-container">
     <div class="top-area">
         <pep-top-bar [inline]="false" [title]="">
             <div header-start-content class="header-start-content">
-                    <div class="header-start">{{('ViewportWidth' | translate)}} : <b>{{viewportWidth}}</b></div>
+                    <div class="header-start heder-content">{{('ViewportWidth' | translate)}} : <b>{{viewportWidth}}</b></div>
 
-                    <pep-group-buttons sizeType="sm"  [buttons]="groupButtons" [buttonsClass]="'sm regular'" [buttonsDisabled]="false"
+                    <pep-group-buttons sizeType="sm"  [buttons]="groupButtons" class="heder-content" [buttonsClass]="'sm regular'" [buttonsDisabled]="false"
                         [viewType]="'split'" >
                     </pep-group-buttons>
-                    <div class="header-end">
-                    <pep-button  [sizeType]="'md'" [styleType]="'system'" [iconName]="'view_card_md'">
-                    </pep-button>
+                    <div class="header-end heder-content">
+                        <pep-button
+                            styleType="weak"
+                            styleStateType="system"
+                            sizeType="md"
+                            iconName="view_card_md"
+                            classNames="pep-spacing-element"
+                      ></pep-button>
+
                     <pep-button
                         value="Preview"
                         styleType="weak"
                         styleStateType="system"
                         sizeType="md"
-                        classNames=""
-                        [disabled]="false"
-                        iconPosition="end"
-                        [visible]="true"
-></pep-button>
-                    <pep-button [value]="'Publish' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="publishPage(addonUUID);">
+                        classNames="pep-spacing-element"
+                        (buttonClick)="changeQueryParam(false)"
+                    ></pep-button>
+
+                    <pep-button [value]="'Publish' | translate" sizeType="md" classNames="pep-spacing-element" styleType="strong" (buttonClick)="publishPage(addonUUID);">
                     </pep-button>
-                    <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
+                    <!-- <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
                     </pep-button>
                     <pep-button [value]="'Clear Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="clearPage();">
-                    </pep-button>
+                    </pep-button> -->
                 </div>
             </div>
 
@@ -107,21 +103,20 @@
                     [iconName]="'system_edit'" (buttonClick)="editSection(section);">
                 </pep-button>
                </div>
-
-
            </div>
            <div cdkDropList  cdkDropListOrientation="horizontal" id="{{'section-' + (i+1)}}"
                (cdkDropListDropped)="drop($event)"
                [cdkDropListData]="section"
                (cdkDropListEntered)="entered()"
                (cdkDropListExited)="exited($event)"
-
                       [ngClass]="{'editable': editable}"
                       cdkDragBoundary=".page-builder-container"
                [ngClass]="{'editable': editable}"
-               #htmlSections class="flex-container active"
-                >
-                   <div #htmlBlocks cdkDrag [cdkDragDisabled]="!editable" [cdkDragData]="block"
+               #htmlSections class="flex-container active">
+                <div class="background">
+                    <div class="back-template" *ngFor="let number of [0,1,2,3,4,5,6,7,8,9,10,11]"></div>
+                </div>
+                <div #htmlBlocks cdkDrag [cdkDragDisabled]="!editable" [cdkDragData]="block"
                       [ngClass]="{'editable': editable}"
                       cdkDragBoundary=".page-builder-container"
                       class="flex-item" *ngFor="let block of section; let i=index;">
@@ -139,6 +134,7 @@
                                </addon-proxy>
                            </div>
 
+
                    </div>
 
            </div>
@@ -148,10 +144,19 @@
 
 
 
-    <br>
-    <pep-button *ngIf="editable" [value]="'Add Section'" class="add-section-button"
+    <pep-button
+        class="add-section-button"
+        value="Add Section "
+        styleType="regular"
+        styleStateType="system"
+        sizeType="md"
+        iconName="number_plus"
+        iconPosition="end"
+        (buttonClick)="addSection($event)"
+    ></pep-button>
+    <!-- <pep-button *ngIf="editable" [value]="'Add Section'" class="add-section-button"
         [iconName]="'number_plus'" (buttonClick)="addSection($event)" [classNames]="'pep-spacing-element '" >
-    </pep-button>
+    </pep-button> -->
 
 </div>
 
