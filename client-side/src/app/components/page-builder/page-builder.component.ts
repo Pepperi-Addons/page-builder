@@ -66,7 +66,7 @@ export class PageBuilderComponent implements OnInit {
         ];
         this.getPage(this.addonUUID)
             .subscribe(res => {
-          
+
                 // sessionStorage.setItem('blocks',JSON.stringify(res['relations']));
                 propsSubject.next(res['relations']);
             });
@@ -91,7 +91,7 @@ export class PageBuilderComponent implements OnInit {
         }
 
         });
-
+        this.addSection(null);
     }
 
     buildSections(sections){
