@@ -97,10 +97,10 @@
                     </div>
                 <div>
                 <pep-button *ngIf="editable" [classNames]="'caution pep-spacing-element'" [sizeType]="'sm'"
-                   [iconName]="'system_bin'" (buttonClick)="remove(sections, i);">
+                   [iconName]="'system_bin'" (buttonClick)="removeSection(sections, i);">
                </pep-button>
                <pep-button *ngIf="editable" [sizeType]="'sm'" [classNames]="'pep-spacing-element'"
-                    [iconName]="'system_edit'">
+                    [iconName]="'system_edit'" (buttonClick)="editSection(section);">
                 </pep-button>
                </div>
            </div>
@@ -123,10 +123,10 @@
                            <div *ngIf="editable" [ngClass]="{'editable': editable}" class="block-edit">
                                <pep-button [classNames]="'caution remove-addon '"
                                      sizeType="sm"
-                                   [iconName]="'system_bin'" (buttonClick)="remove(section, i);">
+                                   [iconName]="'system_bin'" (buttonClick)="removeSection(section, i);">
                                </pep-button>
                                <pep-button  [classNames]="'pep-spacing-element '" [sizeType]="'sm'"
-                               [iconName]="'system_edit'">
+                               [iconName]="'system_edit'" (buttonClick)="editBlock(block);">
                                 </pep-button>
                            </div>
                            <div>

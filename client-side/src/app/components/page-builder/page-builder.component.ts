@@ -7,6 +7,7 @@ import { map, take, tap } from "rxjs/operators";
 import { propsSubject } from '@pepperi-addons/ngx-remote-loader';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, copyArrayItem, CdkDragExit, CdkDropListGroup, CdkDropList  } from '@angular/cdk/drag-drop';
 import { Overlay } from '@angular/cdk/overlay';
+import { pepIconSystemBin } from '@pepperi-addons/ngx-lib/icon';
 export const subject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
 
 @Component({
@@ -14,27 +15,29 @@ export const subject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
   templateUrl: './page-builder.component.html',
   styleUrls: ['./page-builder.component.scss']
 })
-
 export class PageBuilderComponent implements OnInit {
+    @Input() hostObject: any;
+    @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
 
+    @ViewChild('section', { read: TemplateRef }) sectionTemplate:TemplateRef<any>;
     @ViewChild('sectionsCont') sectionsCont: ElementRef;
 
     @ViewChildren(CdkDropList) htmlSections: QueryList<CdkDropList>;
     @ViewChildren('htmlBlocks') htmlBlocks: QueryList<ElementRef>;
+
     editable = false;
-    carouselAddon;
+    // carouselAddon;
+    // addonsTemp = [];
     sectionsSubject$: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-    addonsTemp = [];
     groupButtons;
     pageLayout;
     addons$: Observable<any[]>;
-    @Input() hostObject: any;
-    @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
-    @ViewChild('section', { read: TemplateRef }) sectionTemplate:TemplateRef<any>;
-    transferringItem: string | undefined = undefined;
+    
+    // transferringItem: string | undefined = undefined;
     viewportWidth;
-    noSections = false;
+    // noSections = false;
     addonUUID;
+    
     /* Todo - need to be removed into componnent */
     public sectionColumnArray = new Array(3);
     public numOfSectionColumns = [{key: '1',value: '1'},
@@ -54,47 +57,45 @@ export class PageBuilderComponent implements OnInit {
         this.editable = route?.snapshot?.queryParams?.edit === "true" ?? false;
         this.sectionsSubject$ = subject;
         this.viewportWidth = window.innerWidth;
-
     }
 
     ngOnInit(){
+        debugger;
+
         this.addonUUID = this.route.snapshot.params.addon_uuid;
         this.groupButtons = [
-            { key: '', value: 'Desktop', class: 'system', callback: () => this.changeScreenSize('Desktop'), icon: null },
-            { key: '', value: 'Tablet', class: 'system', callback: () => this.changeScreenSize('Tablet'), icon: null },
-            { key: '', value: 'Mobile', class: 'system', callback: () => this.changeScreenSize('Mobile'), icon: null }
+            { key: '', value: 'Desktop', class: 'system', callback: () => this.changeScreenSize('Desktop'), icon: pepIconSystemBin.name },
+            { key: '', value: 'Tablet', class: 'system', callback: () => this.changeScreenSize('Tablet'), icon: pepIconSystemBin.name },
+            { key: '', value: 'Mobile', class: 'system', callback: () => this.changeScreenSize('Mobile'), icon: pepIconSystemBin.name }
         ];
-        this.getPage(this.addonUUID)
-            .subscribe(res => {
-
-                // sessionStorage.setItem('blocks',JSON.stringify(res['relations']));
-                propsSubject.next(res['relations']);
-            });
+        this.getPage(this.addonUUID).subscribe(res => {
+            // sessionStorage.setItem('blocks',JSON.stringify(res['relations']));
+            propsSubject.next(res['relations']);
+        });
 
 
         propsSubject.subscribe(selectedBlock => {
-        if (selectedBlock?.section != null) {
-            this.htmlBlocks.forEach(block => {
-                this.renderer.setStyle(block.nativeElement, 'border', '2px dashed gold');
-            })
-            if (selectedBlock?.block != null){
-                const selectedBlockElement = this.htmlSections.get(selectedBlock.section).data.children[selectedBlock.block]
-                // selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'border', '4px solid blue') : null;
+            if (selectedBlock?.section != null) {
+                this.htmlBlocks.forEach(block => {
+                    this.renderer.setStyle(block.nativeElement, 'border', '2px dashed gold');
+                })
+                if (selectedBlock?.block != null){
+                    const selectedBlockElement = this.htmlSections.get(selectedBlock.section).data.children[selectedBlock.block]
+                    // selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'border', '4px solid blue') : null;
+                }
+
+                if (selectedBlock?.flex){
+                    // const selectedBlockElement = this.htmlSections.get(selectedBlock.section).nativeElement.children[selectedBlock.block]
+                    // selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'flex', selectedBlock.flex) : null;
+
+
+                }
             }
-
-            if (selectedBlock?.flex){
-                // const selectedBlockElement = this.htmlSections.get(selectedBlock.section).nativeElement.children[selectedBlock.block]
-                // selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'flex', selectedBlock.flex) : null;
-
-
-            }
-        }
-
         });
-        this.addSection(null);
+
     }
 
-    buildSections(sections){
+    buildSections(sections) {
         const block = sessionStorage.getItem('blocks');
         if (block){
             const addons = JSON.parse(block);
@@ -127,7 +128,7 @@ export class PageBuilderComponent implements OnInit {
 
     }
 
-    onAddonChange(e){
+    onAddonChange(e) {
         switch(e.action){
             case 'update-addons':
                 propsSubject.next(e);
@@ -144,7 +145,7 @@ export class PageBuilderComponent implements OnInit {
 
     }
 
-    numOfSectionColumnsChange(event){
+    numOfSectionColumnsChange(event) {
         const numOfColumns = parseInt(event);
         const colWidth = 100 / numOfColumns;
 
@@ -178,27 +179,45 @@ export class PageBuilderComponent implements OnInit {
                             flex: flex
                         },
                         'Block': block.data
-                        }
                     }
+                }
             ));
           this.pageLayout =  [].concat.apply([], flatLayout);
           sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
 
     }
 
-    remove(section, i){
-        this.noSections = section?.length == 1 && section[i]?.length === 0
-        section.splice(i, 1);
+    removeSection(sections, i) {
+        // this.noSections = sections?.length == 1 && sections[i]?.length === 0
+        sections.splice(i, 1);
+
+        // this.sectionsSubject$.getValue().splice(i, 1);
     }
 
-    addSection(e){
+    addSection(e) {
         this.sectionsSubject$.pipe(take(1)).subscribe(val => {
                 const sections = [...val, []];
                 this.sectionsSubject$.next(sections);
           });
     }
 
-    async publishPage(addonUUID){
+    editSection(section){
+        section.exposedModue = section.editorModuleName;
+        section.compoenntName = section.editorComponentName;
+        // blockEditorSubject.next(section);
+    }
+
+    removeBlock() {
+
+    }
+
+    editBlock(block){
+        block.exposedModue = block.editorModuleName;
+        block.compoenntName = block.editorComponentName;
+        // blockEditorSubject.next(block);
+    }
+
+    async publishPage(addonUUID) {
         // const body = JSON.stringify({RelationName: `PageComponent`, Layout: this.pageLayout });
         // const ans =  await this.http.postHttpCall('http://localhost:4500/api/publish', body).toPromise();
         // console.log(ans)
@@ -213,25 +232,25 @@ export class PageBuilderComponent implements OnInit {
     }
 
     entered() {
-        this.transferringItem = undefined;
+        // this.transferringItem = undefined;
     }
 
     exited(e: CdkDragExit<string>) {
-      this.transferringItem = e.item.data;
+    //   this.transferringItem = e.item.data;
     }
 
-    changeQueryParam(e){
+    changeQueryParam(e) {
 
         const edit = JSON.parse(e);
         this.editable = edit;
         this.router.navigate([], { queryParams: { edit, dev: true }, relativeTo: this.route})
     }
 
-    clearPage(){
+    clearPage() {
         this.sectionsSubject$.next([]);
     }
 
-    changeScreenSize(screenSize){
+    changeScreenSize(screenSize) {
         switch(screenSize){
             case 'Desktop':
                 this.renderer.setStyle(this.sectionsCont.nativeElement, 'width', '100%');
