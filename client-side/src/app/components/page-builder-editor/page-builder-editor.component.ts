@@ -48,6 +48,8 @@ export class PageBuilderEditorComponent implements OnInit {
 
 
     });
+
+    // blockEditorSubject.subscribe(blockEditor => this.)
   }
 
   sectionSelected(index){

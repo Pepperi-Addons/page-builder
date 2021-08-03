@@ -56,19 +56,19 @@ export class AppComponent implements OnInit {
         })
     }
 
-    getTopBarStyle() {
-        return document.documentElement.style.getPropertyValue(PepCustomizationService.STYLE_TOP_HEADER_KEY) as PepStyleType;
-    }
+    // getTopBarStyle() {
+    //     return document.documentElement.style.getPropertyValue(PepCustomizationService.STYLE_TOP_HEADER_KEY) as PepStyleType;
+    // }
 
     navigateHome() {
         alert('Home');
     }
 
-    getButtonClassName() {
-        return this.getTopBarStyle() === 'strong' ? 'keep-background-on-focus' : 'invert';
-    }
+    // getButtonClassName() {
+    //     return this.getTopBarStyle() === 'strong' ? 'keep-background-on-focus' : 'invert';
+    // }
 
-    onMenuItemClicked(event: IPepMenuItemClickEvent) {}
+    // onMenuItemClicked(event: IPepMenuItemClickEvent) {}
 
     triggerPublish(){
     }
