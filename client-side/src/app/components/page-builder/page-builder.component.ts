@@ -60,13 +60,13 @@ export class PageBuilderComponent implements OnInit {
     }
 
     ngOnInit(){
-        debugger;
+        // debugger;
 
         this.addonUUID = this.route.snapshot.params.addon_uuid;
         this.groupButtons = [
-            { key: '', value: 'Desktop', class: 'system', callback: () => this.changeScreenSize('Desktop'), icon: pepIconSystemBin.name },
-            { key: '', value: 'Tablet', class: 'system', callback: () => this.changeScreenSize('Tablet'), icon: pepIconSystemBin.name },
-            { key: '', value: 'Mobile', class: 'system', callback: () => this.changeScreenSize('Mobile'), icon: pepIconSystemBin.name }
+            { value: 'Desktop', callback: () => this.changeScreenSize('Desktop'), iconName: pepIconSystemBin.name, iconPosition: 'end' },
+            { value: 'Tablet', callback: () => this.changeScreenSize('Tablet'), iconName: pepIconSystemBin.name, iconPosition: 'end' },
+            { value: 'Mobile', callback: () => this.changeScreenSize('Mobile'), iconName: pepIconSystemBin.name, iconPosition: 'end' }
         ];
         this.getPage(this.addonUUID).subscribe(res => {
             // sessionStorage.setItem('blocks',JSON.stringify(res['relations']));
