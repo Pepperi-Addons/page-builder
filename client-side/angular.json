@@ -40,7 +40,7 @@
               }
             ],
             "styles": [
-                "src/app/theme.scss"
+                "src/theme.scss"
             ],
             "scripts": [
               // "node_modules/quill/dist/quill.core.js"

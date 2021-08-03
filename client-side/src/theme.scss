@@ -9,7 +9,7 @@ $pepperi-theme: get-pepperi-theme();
 @import './app/components/page-builder/page-builder.component.theme.scss';
 body {
     @include addon-theme($pepperi-theme);
-    @include page-builder($pepperi-theme);
+    @include page-builder-theme($pepperi-theme);
 }
 
 
