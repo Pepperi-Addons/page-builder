@@ -32,12 +32,12 @@ export class PageBuilderComponent implements OnInit {
     groupButtons;
     pageLayout;
     addons$: Observable<any[]>;
-    
+
     // transferringItem: string | undefined = undefined;
     viewportWidth;
     // noSections = false;
     addonUUID;
-    
+
     /* Todo - need to be removed into componnent */
     public sectionColumnArray = new Array(3);
     public numOfSectionColumns = [{key: '1',value: '1'},
@@ -57,6 +57,8 @@ export class PageBuilderComponent implements OnInit {
         this.editable = route?.snapshot?.queryParams?.edit === "true" ?? false;
         this.sectionsSubject$ = subject;
         this.viewportWidth = window.innerWidth;
+
+        this.buildSections(null);
     }
 
     ngOnInit(){
