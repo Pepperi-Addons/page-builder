@@ -143,6 +143,11 @@ $page-buildr-gap: .1rem;
 
 ::ng-deep .pep-top-bar-container{
 
+    height: 3rem !important;
+
+    .header-content{
+        margin-top: 0 !important;
+    }
     .left-container{
         display: block;
         width: 100%;
@@ -151,8 +156,24 @@ $page-buildr-gap: .1rem;
             width: inherit;
 
             .header-start-content{
+                height: 3rem;
                 align-items: center;
                 justify-content: space-between;
+
+                .header-start{
+                    color: rgba(26, 26, 26, 0.7);
+                    font-size: 12px;
+                    font-family: Inter-Regular;
+                    letter-spacing: 0.11px;
+
+                    b{
+                        color: #000;
+                    }
+                }
+
+                .header-end{
+                    display: flex;
+                }
             }
         }
     }
