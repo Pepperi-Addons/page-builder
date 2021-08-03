@@ -20,7 +20,17 @@
                     <div class="header-end">
                     <pep-button  [sizeType]="'md'" [styleType]="'system'" [iconName]="'view_card_md'">
                     </pep-button>
-
+                    <pep-button
+  value="Preview"
+  styleType="weak"
+  styleStateType="system"
+  sizeType="md"
+  classNames=""
+  [disabled]="false"
+  iconPosition="end"
+  [visible]="true"
+  (buttonClick)="buttonClick($event)"
+></pep-button>
                     <pep-button [value]="'Publish' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="publishPage(addonUUID);">
                     </pep-button>
                     <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
