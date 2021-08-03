@@ -39,8 +39,11 @@
                 "output": "./assets/ngx-lib"
               }
             ],
+            "styles": [
+                "src/app/theme.scss"
+            ],
             "scripts": [
-              "node_modules/quill/dist/quill.core.js"
+              // "node_modules/quill/dist/quill.core.js"
             ],
             "customWebpackConfig": {
               "path": "webpack.config.js",
