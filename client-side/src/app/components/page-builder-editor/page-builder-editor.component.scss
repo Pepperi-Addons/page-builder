@@ -19,7 +19,16 @@
 
     ::ng-deep .mat-tab-body-wrapper{
         overflow: auto;
+        margin: 0;
         display: block;
+
+        .mat-tab-body {
+            &.mat-tab-body-active {
+                .mat-tab-body-content{
+                    padding-inline: 0.25rem;
+                }
+            }
+        }
     }
 }
 
