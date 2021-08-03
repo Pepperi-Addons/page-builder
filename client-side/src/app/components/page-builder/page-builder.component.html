@@ -12,12 +12,12 @@
     <div class="top-area">
         <pep-top-bar [inline]="false" [title]="">
             <div header-start-content class="header-start-content">
-                    <div class="title">{{('ViewportWidth' | translate) + ': ' + viewportWidth}}</div>
+                    <div class="header-start">{{('ViewportWidth' | translate)}} : <b>{{viewportWidth}}</b></div>
 
                     <pep-group-buttons sizeType="sm"  [buttons]="groupButtons" [buttonsClass]="'sm regular'" [buttonsDisabled]="false"
                         [viewType]="'split'" >
                     </pep-group-buttons>
-                    <div>
+                    <div class="header-end">
                     <pep-button  [sizeType]="'md'" [styleType]="'system'" [iconName]="'view_card_md'">
                     </pep-button>
 
