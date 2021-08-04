@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { PepHttpService } from '@pepperi-addons/ngx-lib';
 import { propsSubject } from '@pepperi-addons/ngx-remote-loader';
 import { Observable } from 'rxjs';
-import { subject } from '../page-builder';
+import { subject } from '../page-builder/page-builder.component';
 
 @Component({
     selector: 'page-builder-editor',
@@ -80,7 +80,7 @@ export class PageBuilderEditorComponent implements OnInit {
             //     this.sections.push({value: 'Section '+index, key: index});
             // })
         }
-      
+
         this.flexArray.forEach(item => this.options.push({key: item, value: item.toString()}))
         this.supportedPages.forEach(item => this.pageTypes.push({key: item.toString(), value: item.toString()}));
         // debug locally

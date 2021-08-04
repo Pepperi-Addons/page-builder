@@ -4,7 +4,7 @@ import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
 import { PepTextareaModule } from '@pepperi-addons/ngx-lib/textarea';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
-import { PageBuilderModule } from './components/page-builder/index';
+import { PageBuilderModule } from './components/page-builder/page-builder.module';
 import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
 import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
 import { AddonModule } from './components/addon/index';
@@ -21,12 +21,11 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { PepFileService, PepAddonService } from '@pepperi-addons/ngx-lib';
 import { PepSideBarModule } from '@pepperi-addons/ngx-lib/side-bar';
-import { PageBuilderEditorComponent } from './components/page-builder-editor/page-builder-editor.component';
 import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { SectionEditorComponent } from './components/section-editor/section-editor.component';
-
+import { PageBuilderEditorModule } from './components/page-builder-editor/page-builder-editor.module';
 const pepIcons = [
     pepIconSystemClose,
     pepIconNumberPlus,
@@ -38,7 +37,6 @@ const pepIcons = [
 @NgModule({
     declarations: [
         AppComponent,
-        PageBuilderEditorComponent,
         SectionEditorComponent
     ],
     imports: [
@@ -47,6 +45,7 @@ const pepIcons = [
         HttpClientModule,
         AddonModule,
         PageBuilderModule,
+        PageBuilderEditorModule,
         AppRoutingModule,
         PepSizeDetectorModule,
         MatIconModule,

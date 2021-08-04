@@ -1,4 +1,4 @@
-import { PageBuilderComponent } from './components/page-builder/index';
+import { PageBuilderComponent } from './components/page-builder/page-builder.component';
 import { NgModule } from '@angular/core';
 import { Component } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
@@ -17,13 +17,9 @@ const routes: Routes = [
         children: [
             {
                 path: 'page_builder',
-                component: PageBuilderComponent
+                // component: PageBuilderComponent
                 // TODO: solve routing
-                // loadChildren: () => import('./components/addon/index').then(m => m.AddonModule)
-            },
-            {
-                path: ':editor',
-                component: AddonComponent
+                loadChildren: () => import('./components/page-builder/page-builder.module').then(m => m.PageBuilderModule)
             }
         ]
     },

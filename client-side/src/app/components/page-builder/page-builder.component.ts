@@ -235,7 +235,7 @@ export class PageBuilderComponent implements OnInit {
     changeQueryParam(e) {
         const edit = JSON.parse(e);
         this.editable = edit;
-        this.router.navigate([], { queryParams: { edit, dev: true }, relativeTo: this.route})
+        this.router.navigate([], { queryParams: { edit }, relativeTo: this.route})
     }
 
     clearPage() {

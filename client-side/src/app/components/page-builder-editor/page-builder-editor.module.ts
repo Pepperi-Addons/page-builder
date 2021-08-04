@@ -1,3 +1,5 @@
+import { PepTextareaModule } from '@pepperi-addons/ngx-lib/textarea';
+import { MatTabsModule } from '@angular/material/tabs';
 import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
 import { PepIconModule, pepIconNumberPlus, PepIconRegistry,
     pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit,
@@ -38,10 +40,12 @@ const pepIcons = [
         PepTextboxModule,
         DragDropModule,
         OverlayModule,
+        MatTabsModule,
         PepButtonModule,
         PepCheckboxModule,
         PepGroupButtonsModule,
         PepIconModule,
+        PepTextareaModule
     ],
     exports:[PageBuilderEditorComponent],
     providers: [
