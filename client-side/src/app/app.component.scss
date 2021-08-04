@@ -11,6 +11,10 @@
 
                 .mat-tab-header{
                     width: unset;
+
+                    .mat-tab-labels{
+                        height: 3rem;
+                    }
                 }
             }
         }
