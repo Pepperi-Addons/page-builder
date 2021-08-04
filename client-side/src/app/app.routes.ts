@@ -13,6 +13,17 @@ export class EmptyRouteComponent {}
 
 const routes: Routes = [
     {
+        path: ``,
+        children: [
+            {
+                path: '',
+                // component: PageBuilderComponent
+                // TODO: solve routing
+                loadChildren: () => import('./components/page-builder/page-builder.module').then(m => m.PageBuilderModule)
+            }
+        ]
+    },
+    {
         path: `:settings/:addon_uuid`,
         children: [
             {
