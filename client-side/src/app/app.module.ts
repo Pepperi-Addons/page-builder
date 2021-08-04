@@ -26,6 +26,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { SectionEditorComponent } from './components/section-editor/section-editor.component';
 import { PageBuilderEditorModule } from './components/page-builder-editor/page-builder-editor.module';
+import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
+import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
+
 const pepIcons = [
     pepIconSystemClose,
     pepIconNumberPlus,
@@ -62,6 +65,8 @@ const pepIcons = [
         DragDropModule,
         MatCardModule,
         MatTabsModule,
+        PepCheckboxModule,
+        PepGroupButtonsModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
