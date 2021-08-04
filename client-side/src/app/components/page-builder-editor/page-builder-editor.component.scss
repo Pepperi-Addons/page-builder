@@ -2,9 +2,11 @@
 label {
     font-weight: 400;
 }
+
+.group-buttons-container{
+    margin-bottom: 1rem;
+}
 .editor-tabs {
-    // position: sticky;
-    // top: 0;
     height: 100%;
 
     ::ng-deep .mat-tab-header-pagination{
@@ -34,22 +36,33 @@ label {
     }
 }
 
-::ng-deep pep-select {
-    .mat-form-field{
-        max-width: calc(100% - 1rem);
-    }
-}
-.blocks{
-    max-width: 10rem;
-    margin-bottom: .5rem;
-}
+// ::ng-deep pep-select {
+//     .mat-form-field{
+//         max-width: calc(100% - 1rem);
+//     }
+// }
+// .blocks{
+//     max-width: 10rem;
+//     margin-bottom: .5rem;
+// }
 
 ::ng-deep pep-button{
     button.available-blocks{
+        width: 99%;
+        margin-bottom: .5rem;
         background: hsl(var(--pep-color-system-primary-invert-h, 255), var(--pep-color-system-primary-invert-s, 100%), var(--pep-color-system-primary-invert-l, 100%)) !important;
         box-shadow: var(--pep-shadow-xs-offset, 0 0.125rem 0.25rem 0) hsla(var(--pep-color-system-primary-h, 0), var(--pep-color-system-primary-s, 0%), var(--pep-color-system-primary-l, 10%), 0.08) !important;
         border-radius: var(--pep-border-radius-md, 0.25rem) !important;
         border: 1px solid hsl(var(--pep-color-weak-h, 0), var(--pep-color-weak-s, 0%), var(--pep-color-weak-l, 10%)) !important;
 
+        ::ng-deep .mat-button-wrapper{
+            max-width: unset !important;
+            grid-template-columns: min-content max-content;
+            justify-content: start !important;
+
+            .button-title-with-icon{
+                max-width: max-content;
+            }
+        }
     }
 }

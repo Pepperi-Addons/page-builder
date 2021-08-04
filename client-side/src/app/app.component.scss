@@ -5,10 +5,16 @@
 
 ::ng-deep pep-side-bar {
     .side-layout{
+        padding-inline-end: 0 !important;
+        .header-content{
+            .content{
+                margin-inline-start: 0;
+            }
+        }
         .main-content{
             padding-top: 0rem;
             .content{
-
+                margin: 0;
                 .mat-tab-header{
                     width: unset;
 
