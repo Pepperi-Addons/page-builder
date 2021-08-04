@@ -5,7 +5,7 @@ import { AddonService } from './components/addon/addon.service';
 import { Component, OnInit } from '@angular/core';
 import { PepCustomizationService, PepLoaderService, PepStyleType } from '@pepperi-addons/ngx-lib';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
-import { subject } from './components/page-builder';
+import { subject } from './components/page-builder/page-builder.component';
 
 declare var CLIENT_MODE: any;
 

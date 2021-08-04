@@ -33,20 +33,21 @@ module.exports = (config, options, env) => {
                     name: "addon",
                     filename: "addon.js",
                     exposes: {
-                        './AddonComponent': './src/app/components/addon/index.ts',
-                        './AddonModule': './src/app/components/addon/index.ts'
+                        './PageBuilderModule': './src/app/components/page-builder/page-builder.module.ts',
+                        './AppModule': './src/app/app.module.ts'
                     },
                     shared: {
                         // ...deps,
-                        "@angular/core": { eager: true, singleton: true,  strictVersion: false  },
+                        "@angular/core": { eager: true, singleton: true,  strictVersion: false },
                         "@angular/common": { eager: true,singleton: true,strictVersion: false   },
                         "rxjs": { eager: true,singleton: true,strictVersion: false   },
-                        "@ngx-translate/core": { eager: true, singleton: true, strictVersion: false   }
+                        "@ngx-translate/core": { eager: true, singleton: true, strictVersion: false   },
+                        "@angular/router": { eager: true, singleton: true,  strictVersion: false }
                     }
                 })
             ],
         };
-        
+
         const merged = merge(config, mfConfig);
         const singleSpaWebpackConfig = singleSpaAngularWebpack(merged, options);
         return singleSpaWebpackConfig;

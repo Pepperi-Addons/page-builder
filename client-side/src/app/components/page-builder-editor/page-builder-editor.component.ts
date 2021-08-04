@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { PepHttpService } from '@pepperi-addons/ngx-lib';
 import { propsSubject } from '@pepperi-addons/ngx-remote-loader';
 import { Observable } from 'rxjs';
-import { subject } from '../page-builder';
+import { subject } from '../page-builder/page-builder.component';
 
 @Component({
     selector: 'page-builder-editor',
@@ -47,10 +47,10 @@ export class PageBuilderEditorComponent implements OnInit {
         });
 
         this.sizesGroupButtons = [
-            { value: 'None', callback: () => this.setScreenSpacing() },
-            { value: 'SM', callback: () => this.setScreenSpacing() },
-            { value: 'MD', callback: () => this.setScreenSpacing()},
-            { value: 'LG', callback: () => this.setScreenSpacing()}
+            { key: 'None', value: 'None', callback: () => this.setScreenSpacing() },
+            { key: 'SM', value: 'SM', callback: () => this.setScreenSpacing() },
+            { key: 'MD', value: 'MD', callback: () => this.setScreenSpacing()},
+            { key: 'LG', value: 'LG', callback: () => this.setScreenSpacing()}
         ];
     }
 

@@ -1,8 +1,9 @@
-import { PageBuilderComponent } from './components/page-builder/index';
+import { PageBuilderComponent } from './components/page-builder/page-builder.component';
 import { NgModule } from '@angular/core';
 import { Component } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AddonComponent } from './components/addon/addon.component';
+import { AppComponent } from './app.component';
 
 // Important for single spa
 @Component({
@@ -13,17 +14,23 @@ export class EmptyRouteComponent {}
 
 const routes: Routes = [
     {
+        path: ``,
+        component: AppComponent,
+        children: [
+           {
+            path: ``,
+            loadChildren: () => import('./components/page-builder/page-builder.module').then(m => m.PageBuilderModule)
+            },
+        ]
+    },
+    {
         path: `:settings/:addon_uuid`,
         children: [
             {
                 path: 'page_builder',
-                component: PageBuilderComponent
+                // component: PageBuilderComponent
                 // TODO: solve routing
-                // loadChildren: () => import('./components/addon/index').then(m => m.AddonModule)
-            },
-            {
-                path: ':editor',
-                component: AddonComponent
+                loadChildren: () => import('./components/page-builder/page-builder.module').then(m => m.PageBuilderModule)
             }
         ]
     },
@@ -34,7 +41,10 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
+    imports: [
+        // RouterModule.forChild(routes),
+        RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })
+    ],
     exports: [RouterModule]
 })
 export class AppRoutingModule { }
