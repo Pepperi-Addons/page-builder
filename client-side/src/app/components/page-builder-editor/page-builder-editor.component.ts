@@ -23,6 +23,7 @@ export class PageBuilderEditorComponent implements OnInit {
     selectedBlock = { section: null, block: null, flex: null};
     availableBlocks = [];
     tabs = ['General', 'Design'];
+    sizesGroupButtons;
 
     constructor(
         private http: PepHttpService,
@@ -45,7 +46,16 @@ export class PageBuilderEditorComponent implements OnInit {
             this.initPageEditor(res)
         });
 
-        // blockEditorSubject.subscribe(blockEditor => this.)
+        this.sizesGroupButtons = [
+            { value: 'None', callback: () => this.setScreenSpacing() },
+            { value: 'SM', callback: () => this.setScreenSpacing() },
+            { value: 'MD', callback: () => this.setScreenSpacing()},
+            { value: 'LG', callback: () => this.setScreenSpacing()}
+        ];
+    }
+
+    setScreenSpacing(){
+
     }
 
     sectionSelected(index) {
@@ -80,7 +90,7 @@ export class PageBuilderEditorComponent implements OnInit {
             //     this.sections.push({value: 'Section '+index, key: index});
             // })
         }
-      
+
         this.flexArray.forEach(item => this.options.push({key: item, value: item.toString()}))
         this.supportedPages.forEach(item => this.pageTypes.push({key: item.toString(), value: item.toString()}));
         // debug locally

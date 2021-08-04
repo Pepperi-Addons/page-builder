@@ -1,5 +1,7 @@
 // @import '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
-
+label {
+    font-weight: 400;
+}
 .editor-tabs {
     // position: sticky;
     // top: 0;

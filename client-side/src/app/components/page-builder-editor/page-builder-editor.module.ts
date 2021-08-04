@@ -41,7 +41,7 @@ const pepIcons = [
         PepButtonModule,
         PepCheckboxModule,
         PepGroupButtonsModule,
-        PepIconModule,
+        PepIconModule
     ],
     exports:[PageBuilderEditorComponent],
     providers: [
