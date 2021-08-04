@@ -114,60 +114,33 @@ $section-edit-height: 2.5rem;
     }
     }
 
-    ::ng-deep .pep-top-bar-container{
+    .header-container{
+        display: flex;
+        height: 3rem;
+        align-items: center;
+        justify-content: space-between;
+        background: rgb(255, 255, 255);
+        box-shadow: 0px 2px 4px 0px rgb(0 0 0 / 4%), 0px 4px 8px 0px rgb(0 0 0 / 4%), 0px 8px 16px 0px rgb(0 0 0 / 4%);
+        margin-bottom: 1rem; // TODO - TALKED WITH YUNATAN
 
-        height: 3rem !important;
+        .heder-content{
+            flex: 1 1 0px;
+        }
 
-        .header-content{
-            margin-top: 0 !important;
+        .header-title{
+            color: rgba(26, 26, 26, 0.7);
+            font-size: 12px;
+            font-family: Inter-Regular;
+            letter-spacing: 0.11px;
 
-            .pep-border-bottom{
-                border: 0 none;
+            b{
+                color: #000;
             }
         }
-        .left-container{
-            display: block;
-            width: 100%;
 
-            .flex-wrapper{
-                width: inherit;
-
-                .header-start-content{
-                    height: 3rem;
-                    align-items: center;
-                    justify-content: space-between;
-                    .heder-content{
-                        flex: 1 1 0px;
-                    }
-
-                    .header-start{
-                        color: rgba(26, 26, 26, 0.7);
-                        font-size: 12px;
-                        font-family: Inter-Regular;
-                        letter-spacing: 0.11px;
-
-                        b{
-                            color: #000;
-                        }
-                    }
-                    pep-group-buttons{
-                        display: flex;
-                        justify-content: center;
-                    }
-                    .header-end{
-                        display: flex;
-                        justify-content: flex-end;
-                    }
-                }
-            }
-        }
-        .pep-button{
-            height: 2rem !important;
-            line-height: 2rem !important;
-        }
-
-        .split-buttons{
-            grid-template-columns: auto auto auto !important;
+        .header-end{
+            display: flex;
+            justify-content: flex-end;
         }
     }
 

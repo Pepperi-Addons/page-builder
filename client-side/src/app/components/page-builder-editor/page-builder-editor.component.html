@@ -5,7 +5,7 @@
         <pep-textbox value="" label="Page Name"></pep-textbox>
         <pep-textarea value="" label="Description" [rowSpan]="2"></pep-textarea>
         <br/>
-      
+
         <h4>Blocks</h4>
 
         <div id="availableBlocks"
@@ -13,10 +13,10 @@
             [cdkDropListData]="availableBlocks"
             cdkDropListOrientation="vertical"
             [cdkDropListConnectedTo]="dropList">
-            <div class="blocks" *ngFor="let block of availableBlocks;"  >
-                <pep-button [value]="block.title" cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block" cdkDragBoundary=".page-builder-container"
+
+                <pep-button *ngFor="let block of availableBlocks;" [value]="block.title" cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block" cdkDragBoundary=".page-builder-container"
                     iconPosition="start" iconName="system_move" classNames="pep-spacing-element available-blocks" ></pep-button>
-            </div>
+
         </div>
 
       <!-- <br>
@@ -44,7 +44,42 @@
       ></pep-select> -->
     </mat-tab>
     <mat-tab label="Design">
-
+        <pep-checkbox
+            value="true"
+            label="Full Width"
+            type="checkbox"
+            [mandatory]="false"
+            [disabled]="false"
+            xAlignment="left"
+            showTitle="false"
+            renderTitle="false"
+      ></pep-checkbox>
+      <pep-textbox
+        value=""
+        label="Max Width"
+        type="int"
+        [disabled]="true"
+        xAlignment="left"
+        [showTitle]="true"
+        [renderTitle]="true"
+        [renderError]="true"
+        [renderSymbol]="true"
+      ></pep-textbox> <!-- (valueChange)="valueChange($event)" -->
+      <label class="body-xl bold ellipsis">Spacing</label>
+      <label class="body-sm ellipsis">Slides - Left & Right</label>
+      <pep-group-buttons [buttons]="sizesGroupButtons" class="heder-content" buttonsClass="md regular" [viewType]="'split'" >
+    </pep-group-buttons>
+      <label class="body-sm ellipsis">Slides - Top & Button</label>
+      <pep-group-buttons [buttons]="sizesGroupButtons" class="heder-content" buttonsClass="md regular" [viewType]="'split'" >
+    </pep-group-buttons>
+    <label class="body-xl bold ellipsis">Gaps</label>
+    <label class="body-sm ellipsis">Gap size between sections</label>
+    <pep-group-buttons [buttons]="sizesGroupButtons" class="heder-content" buttonsClass="md regular" [viewType]="'split'" >
+  </pep-group-buttons>
+  <label class="body-xl bold ellipsis">Rounded Corners</label>
+  <label class="body-sm ellipsis">Global border radius</label>
+  <pep-group-buttons [buttons]="sizesGroupButtons" class="heder-content" buttonsClass="ms regular" [viewType]="'split'" >
+</pep-group-buttons>
     </mat-tab>
 </mat-tab-group>
 
