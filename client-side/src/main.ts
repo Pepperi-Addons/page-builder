@@ -2,7 +2,7 @@ import { enableProdMode, NgZone } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Router } from '@angular/router';
 import { singleSpaAngular, getSingleSpaExtraProviders } from 'single-spa-angular';
-import { PageAppModule } from './app/app.module';
+import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 import { singleSpaPropsSubject } from './single-spa/single-spa-props';
 
@@ -15,7 +15,7 @@ if (environment.production) {
 let lifecycles = null;
 
 if (CLIENT_MODE === 'Standalone') {
-    platformBrowserDynamic().bootstrapModule(PageAppModule)
+    platformBrowserDynamic().bootstrapModule(AppModule)
     .catch(err => console.error(err));
 }
 
@@ -23,7 +23,7 @@ else {
     lifecycles = singleSpaAngular({
         bootstrapFunction: singleSpaProps => {
             singleSpaPropsSubject.next(singleSpaProps);
-            return platformBrowserDynamic(getSingleSpaExtraProviders()).bootstrapModule(PageAppModule);
+            return platformBrowserDynamic(getSingleSpaExtraProviders()).bootstrapModule(AppModule);
         },
         template: '<addon-root />',
         Router,

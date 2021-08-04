@@ -7,6 +7,7 @@ import { propsSubject } from '@pepperi-addons/ngx-remote-loader';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, copyArrayItem, CdkDragExit, CdkDropListGroup, CdkDropList  } from '@angular/cdk/drag-drop';
 import { Overlay } from '@angular/cdk/overlay';
 import { pepIconSystemBin } from '@pepperi-addons/ngx-lib/icon';
+import { config} from './addon.config';
 export const subject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
 
 @Component({
@@ -61,13 +62,14 @@ export class PageBuilderComponent implements OnInit {
     ngOnInit(){
         // debugger;
 
-        this.addonUUID = this.route.snapshot.params.addon_uuid;
+        this.addonUUID = this.route.snapshot.params.addon_uuid || config.AddonUUID;
         this.groupButtons = [
             { value: 'Desktop', callback: () => this.changeScreenSize('Desktop'), iconName: pepIconSystemBin.name, iconPosition: 'end' },
             { value: 'Tablet', callback: () => this.changeScreenSize('Tablet'), iconName: pepIconSystemBin.name, iconPosition: 'end' },
             { value: 'Mobile', callback: () => this.changeScreenSize('Mobile'), iconName: pepIconSystemBin.name, iconPosition: 'end' }
         ];
         this.getPage(this.addonUUID).subscribe(res => {
+            this.buildSections(null);
             // sessionStorage.setItem('blocks',JSON.stringify(res['relations']));
             propsSubject.next(res['relations']);
         });
@@ -93,8 +95,8 @@ export class PageBuilderComponent implements OnInit {
     }
 
     buildSections(sections) {
-        const block = sessionStorage.getItem('blocks');
-        if (block){
+        const block = sessionStorage.getItem('blocks') ?? '{}';
+        if (block && block != 'undefined'){
             const addons = JSON.parse(block);
             let layoutOutput = {};
             addons.forEach(addon => {
@@ -135,8 +137,8 @@ export class PageBuilderComponent implements OnInit {
 
     getPage(addonUUID): Observable<any[]> {
         // debug locally
-        return this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageComponent` });
-        // return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page`, {RelationName: `PageComponent` });
+        // return this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageComponent` });
+        return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page`, {RelationName: `PageComponent` });
     }
 
     numOfSectionColumnsChange(event) {

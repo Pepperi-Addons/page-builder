@@ -34,7 +34,7 @@ module.exports = (config, options, env) => {
                     filename: "addon.js",
                     exposes: {
                         './PageBuilderModule': './src/app/components/page-builder/page-builder.module.ts',
-                        './PageAppModule': './src/app/app.module.ts'
+                        './AppModule': './src/app/app.module.ts'
                     },
                     shared: {
                         // ...deps,

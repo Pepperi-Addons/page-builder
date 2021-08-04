@@ -73,7 +73,7 @@ const pepIcons = [
     providers: [],
     bootstrap: [AppComponent]
 })
-export class PageAppModule {
+export class AppModule {
       constructor(private ngZone: NgZone, private pepIconRegistry: PepIconRegistry) {
         (window as any).ngZone = this.ngZone;
         this.pepIconRegistry.registerIcons(pepIcons);
