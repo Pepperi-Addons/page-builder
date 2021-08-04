@@ -56,8 +56,6 @@ export class PageBuilderComponent implements OnInit {
         this.editable = route?.snapshot?.queryParams?.edit === "true" ?? false;
         this.sectionsSubject$ = subject;
         this.viewportWidth = window.innerWidth;
-
-        this.buildSections(null);
     }
 
     ngOnInit(){
@@ -90,6 +88,8 @@ export class PageBuilderComponent implements OnInit {
                 }
             }
         });
+
+        this.addSection(null);
     }
 
     buildSections(sections) {
@@ -159,7 +159,7 @@ export class PageBuilderComponent implements OnInit {
         else {
             transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
         }
-        
+
         const flatLayout = this.htmlSections.toArray().map((section, sectionIndex) =>
             section.getSortedItems().map((block, blockIndex) => {
                 const flex = block.element.nativeElement.style.flexGrow != '' ?
@@ -175,7 +175,7 @@ export class PageBuilderComponent implements OnInit {
                 }
             }
         ));
-        
+
         this.pageLayout =  [].concat.apply([], flatLayout);
         sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
     }
