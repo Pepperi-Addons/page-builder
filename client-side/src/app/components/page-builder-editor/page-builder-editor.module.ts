@@ -14,6 +14,7 @@ import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
+import { PepTextareaModule } from '@pepperi-addons/ngx-lib/textarea';
 
 const pepIcons = [
     pepIconSystemClose,
@@ -41,7 +42,8 @@ const pepIcons = [
         PepButtonModule,
         PepCheckboxModule,
         PepGroupButtonsModule,
-        PepIconModule
+        PepIconModule,
+        PepTextareaModule
     ],
     exports:[PageBuilderEditorComponent],
     providers: [

@@ -3,7 +3,7 @@ label {
     font-weight: 400;
 }
 
-.group-buttons-container{
+::ng-deep .group-buttons-container{
     margin-bottom: 1rem;
 }
 .editor-tabs {
@@ -29,6 +29,8 @@ label {
         .mat-tab-body {
             &.mat-tab-body-active {
                 .mat-tab-body-content{
+                    display: flex;
+                    flex-direction: column;
                     padding-inline: 0.25rem;
                 }
             }

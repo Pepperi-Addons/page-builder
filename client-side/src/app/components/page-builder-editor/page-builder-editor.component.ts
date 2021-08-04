@@ -47,10 +47,10 @@ export class PageBuilderEditorComponent implements OnInit {
         });
 
         this.sizesGroupButtons = [
-            { value: 'None', callback: () => this.setScreenSpacing() },
-            { value: 'SM', callback: () => this.setScreenSpacing() },
-            { value: 'MD', callback: () => this.setScreenSpacing()},
-            { value: 'LG', callback: () => this.setScreenSpacing()}
+            { key: 'None', value: 'None', callback: () => this.setScreenSpacing() },
+            { key: 'SM', value: 'SM', callback: () => this.setScreenSpacing() },
+            { key: 'MD', value: 'MD', callback: () => this.setScreenSpacing()},
+            { key: 'LG', value: 'LG', callback: () => this.setScreenSpacing()}
         ];
     }
 
