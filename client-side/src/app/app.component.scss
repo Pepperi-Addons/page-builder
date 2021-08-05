@@ -3,6 +3,8 @@
         padding-inline-end: 0 !important;
 
         .header-content{
+            padding-inline-start: 0.5rem;
+            padding-inline-end: 1.5rem;
             .content{
                 margin-inline: 0;
             }
@@ -31,6 +33,9 @@
                             padding-inline: 0;
                             background-color: #fff;
 
+                            .mat-checkbox-label{
+                                margin-inline-start: .25rem;
+                            }
                             label{
                                 font-weight: 600;
                                 font-size: 1rem;

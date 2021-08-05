@@ -138,6 +138,12 @@ $section-edit-height: 2.5rem;
             }
         }
 
+        .header-group-btn{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
         .header-end{
             display: flex;
             justify-content: flex-end;
