@@ -1,0 +1,23 @@
+:host{
+    height: 2.5rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #999999;
+    box-shadow: 0px 1px 2px 0px rgb(0 0 0 / 4%), 0px 2px 4px 0px rgb(0 0 0 / 4%), 0px 4px 8px 0px rgb(0 0 0 / 4%);
+    border-radius: 0.25rem;
+    position: absolute;
+    z-index: 2;
+    position: absolute;
+    background-color: #fff;
+}
+
+.start{
+    display: flex;
+    align-items: center;
+
+    label{
+        margin-bottom: 0;
+    }
+}

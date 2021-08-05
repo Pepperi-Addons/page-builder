@@ -14,7 +14,6 @@ import { PageBuilderComponent} from './page-builder.component';
 import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
 import { OverlayModule} from '@angular/cdk/overlay';
 import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
-import { SectionModule } from '../section/section.module'
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
@@ -22,6 +21,9 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { RouterModule, Routes } from '@angular/router';
+
+import { SectionModule } from '../section/section.module'
+import { ToolbarModule } from '../toolbar/toolbar.module'
 
 const pepIcons = [
     pepIconSystemClose,
@@ -54,6 +56,7 @@ const routes: Routes = [
         MatCardModule,
         MatButtonModule,
         SectionModule,
+        ToolbarModule,
         PepPageLayoutModule,
         PepSelectModule,
         PepTextboxModule,

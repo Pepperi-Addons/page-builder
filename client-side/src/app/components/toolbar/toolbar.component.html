@@ -1,0 +1,14 @@
+<div class="start">
+        <pep-button sizeType="sm" [classNames]="'pep-spacing-element'"
+            [iconName]="'system_move'">
+        </pep-button>
+        <label *ngIf="title !== ''" class="header-label body-sm pep-spacing-element">{{title}}</label>
+    </div>
+    <div  class="end">
+    <pep-button *ngIf="showActionBtn" [classNames]="'caution pep-spacing-element'" sizeType="sm"
+       [iconName]="'system_bin'" (buttonClick)="delete();">
+   </pep-button>
+   <pep-button *ngIf="showActionBtn" sizeType="sm" [classNames]="'pep-spacing-element'"
+        [iconName]="'system_edit'">
+    </pep-button>
+</div>

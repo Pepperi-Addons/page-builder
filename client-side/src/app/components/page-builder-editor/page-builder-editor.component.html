@@ -14,8 +14,9 @@
             cdkDropListOrientation="vertical"
             [cdkDropListConnectedTo]="dropList">
 
-                <pep-button *ngFor="let block of availableBlocks;" [value]="block.title" cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block" cdkDragBoundary=".page-builder-container"
-                    iconPosition="start" iconName="system_move" classNames="pep-spacing-element available-blocks" ></pep-button>
+            <addon-toolbar  *ngFor="let block of availableBlocks;" [title]="block.title" [showActionBtn]="false" cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block" cdkDragBoundary=".page-builder-container"></addon-toolbar>
+                <!-- <pep-button *ngFor="let block of availableBlocks;" [value]="block.title" cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block" cdkDragBoundary=".page-builder-container"
+                    iconPosition="start" iconName="system_move" classNames="pep-spacing-element available-blocks" ></pep-button> -->
 
         </div>
         <page-builder-section-editor></page-builder-section-editor>

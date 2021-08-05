@@ -21,7 +21,7 @@
     </div>
     <div #sectionsCont cdkDropListGroup>
         <div class="sections-container" *ngFor="let section of sectionsSubject$ | async as sections; let i=index;">
-           <div *ngIf="editable" class="section-edit" [ngClass]="{'editable': editable}">
+           <!-- <div *ngIf="editable" class="section-edit" [ngClass]="{'editable': editable}">
                 <div class="start-cont">
                     <pep-button *ngIf="editable" [sizeType]="'sm'" [classNames]="'pep-spacing-element'"
                         [iconName]="'system_move'">
@@ -36,7 +36,8 @@
                     [iconName]="'system_edit'" (buttonClick)="editSection(section);">
                 </pep-button>
                </div>
-           </div>
+           </div> -->
+           <addon-toolbar [title]="'Section header ' +i"></addon-toolbar>
            <div cdkDropList  cdkDropListOrientation="horizontal" id="{{'section-' + (i+1)}}"
                (cdkDropListDropped)="drop($event)"
                [cdkDropListData]="section"
