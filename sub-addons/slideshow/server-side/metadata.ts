@@ -27,13 +27,13 @@ export interface RemoteModuleOptions{
 export const PageComponentRelations: Relation[]  =[
     {
         RelationName: "PageBlock",
-        Name:"SubAddon1",
-        Description:"SubAddon1",
+        Name:"Slideshow",
+        Description:"Slideshow",
         Type: "NgComponent",
         SubType: "NG11",
         AddonUUID: "",
-        AddonRelativeURL: "sub_addon_1",
-        ComponentName: 'SubAddon1Component',
-        ModuleName: 'SubAddon1Module'
+        AddonRelativeURL: "slideshow",
+        ComponentName: 'SlideshowComponent',
+        ModuleName: 'SlideshowModule'
     }  
 ];

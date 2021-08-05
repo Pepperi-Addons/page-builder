@@ -19,7 +19,7 @@ module.exports = (config, options, env) => {
     else {
         const mfConfig = {
             output: {
-              uniqueName: "sub_addon_1",
+              uniqueName: "slideshow",
               publicPath: "auto"
             },
             optimization: {
@@ -29,11 +29,11 @@ module.exports = (config, options, env) => {
             plugins: [
               new ModuleFederationPlugin({
             // remotes: {},
-                name: "sub_addon_1",
-                filename: "sub_addon_1.js",
+                name: "slideshow",
+                filename: "slideshow.js",
                 exposes: {
-                  './SubAddon1Component': './src/app/components/addon/index.ts',
-                  './SubAddon1Module': './src/app/components/addon/index.ts'
+                  './SlideshowComponent': './src/app/components/slideshow/index.ts',
+                  './SlideshowModule': './src/app/components/slideshow/index.ts'
 
 
                 },

@@ -44,7 +44,7 @@ const routes: Routes = [
         children: [
             {
                 path: 'addon',
-                component: SubAddon1Component
+                component: SlideshowComponent
             },
         ]
     },
