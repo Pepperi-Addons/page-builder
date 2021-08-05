@@ -137,8 +137,8 @@ export class PageBuilderComponent implements OnInit {
 
     getPage(addonUUID): Observable<any[]> {
         // debug locally
-        return this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageBlock` });
-        // return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page`, {RelationName: `PageBlock` });
+        // return this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageBlock` });
+        return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page`, {RelationName: `PageBlock` });
     }
 
     numOfSectionColumnsChange(event) {
