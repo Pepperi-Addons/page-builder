@@ -7,7 +7,6 @@ import { PepCustomizationService, PepLoaderService, PepStyleType } from '@pepper
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 import { subject } from './components/page-builder/page-builder.component';
 
-declare var CLIENT_MODE: any;
 
 @Component({
     selector: 'addon-root',
@@ -34,7 +33,6 @@ export class AppComponent implements OnInit {
         //     .subscribe((show) => {
         //         this.showLoading = show;
         //     });
-            // this.clientMode = CLIENT_MODE;
     }
 
     ngOnInit() {

@@ -13,21 +13,12 @@ import { AppComponent } from './app.component';
 export class EmptyRouteComponent {}
 
 const routes: Routes = [
+
     {
         path: ``,
-        component: AppComponent,
-        children: [
-           {
-            path: ``,
-            loadChildren: () => import('./components/page-builder/page-builder.module').then(m => m.PageBuilderModule)
-            },
-        ]
-    },
-    {
-        path: `:settings/:addon_uuid`,
         children: [
             {
-                path: 'page_builder',
+                path: 'page_builder/:page_id',
                 // component: PageBuilderComponent
                 // TODO: solve routing
                 loadChildren: () => import('./components/page-builder/page-builder.module').then(m => m.PageBuilderModule)
