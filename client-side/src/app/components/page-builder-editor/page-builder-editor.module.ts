@@ -9,13 +9,14 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { PepNgxLibModule  } from '@pepperi-addons/ngx-lib';
-import { PageBuilderEditorComponent} from  './index';
+import { PageBuilderEditorComponent} from  './page-builder-editor.component';
 import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
 import { OverlayModule} from '@angular/cdk/overlay';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
+import { SectionEditorModule } from '../section-editor/section-editor.module';
 
 const pepIcons = [
     pepIconSystemClose,
@@ -45,7 +46,8 @@ const pepIcons = [
         PepCheckboxModule,
         PepGroupButtonsModule,
         PepIconModule,
-        PepTextareaModule
+        PepTextareaModule,
+        SectionEditorModule
     ],
     exports:[PageBuilderEditorComponent],
     providers: [

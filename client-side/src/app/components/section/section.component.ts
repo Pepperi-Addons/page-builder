@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnChanges, OnInit, QueryList, SimpleChanges, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, OnInit, QueryList, Renderer2, SimpleChanges, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 @Component({
@@ -7,6 +7,7 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/dr
     styleUrls: ['./section.component.scss']
 })
 export class SectionComponent implements OnInit, OnChanges {
+    
     @ViewChildren('htmlSections') htmlSections: QueryList<ElementRef>;
     @ViewChildren('htmlBlocks') htmlBlocks: QueryList<ElementRef>;
 
@@ -20,13 +21,28 @@ export class SectionComponent implements OnInit, OnChanges {
     @ViewChild('sectionContainer') sectionContainer: ElementRef;
 
     // @Input() partsNumber: number = 1;
-    @Input() splitData: string;
+    private _splitData: string = '';
+    @Input() 
+    set splitData(value: string) {
+        this._splitData = value;
+       
+        this.refreshSplitData();
+    }
+    get splitData(): string {
+        return this._splitData;
+    }
 
-    constructor() {
+    constructor(private renderer: Renderer2) {
 
     }
-    
+
+    private refreshSplitData() {
+        this.renderer.setStyle(this.sectionContainer.nativeElement, 'grid-template-columns', this.splitData);
+    }
+
     ngOnInit(): void {
+        this.refreshSplitData();
+
         this.sectionBlockArray = new Array(0);
         for(let i=0;i<this.numOfBlocks;i++){
             this.sectionBlockArray.push({ 'index': i, 'id': 'block_'+ i});

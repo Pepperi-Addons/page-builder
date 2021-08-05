@@ -1,7 +1,13 @@
 .section-container {
     display: grid;
-    grid-template-columns: auto;
+    // grid-template-columns: auto;
     grid-auto-flow: column;
+    border: 1px dashed gray;
+    min-height: 250px;
+    
+    @media (max-width: 800px) {
+        grid-auto-flow: row;
+    }
 }
 
 
