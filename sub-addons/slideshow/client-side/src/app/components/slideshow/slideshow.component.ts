@@ -3,19 +3,19 @@ import {  map, tap } from 'rxjs/operators';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
-import { AddonService, PepperiTableComponent } from './index';
+import { SlideshowService, PepperiTableComponent } from './index';
 import { Observable } from 'rxjs';
 import { InstalledAddon } from '@pepperi-addons/papi-sdk';
 import { PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 
 
 @Component({
-  selector: 'sub-addon-1',
-  templateUrl: './sub-addon-1.component.html',
-  styleUrls: ['./sub-addon-1.component.scss'],
+  selector: 'slideshow',
+  templateUrl: './slideshow.component.html',
+  styleUrls: ['./slideshow.component.scss'],
   providers: [TranslatePipe]
 })
-export class SubAddon1Component implements OnInit {
+export class SlideshowComponent implements OnInit {
 
     menuItems: Array<PepMenuItem> = [];
     showListActions = false;
@@ -29,7 +29,7 @@ export class SubAddon1Component implements OnInit {
 
 
     constructor(
-        public addonService: AddonService,
+        public addonService: SlideshowService,
         public layoutService: PepLayoutService,
         public dialog: PepDialogService,
         public translate: TranslateService

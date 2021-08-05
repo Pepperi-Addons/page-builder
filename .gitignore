@@ -4,13 +4,13 @@ publish/
 var_sk
 
 node_modules/
-sub-addons/sub-addon-1/publish/
+sub-addons/slideshow/publish/
 sub-addons/sub-addon-2/publish/
 sub-addons/sub-addon-3/publish/
 sub-addons/sub-addon-4/publish/
 sub-addons/sub-addon-5/publish/
 
-sub-addons/sub-addon-1/cpi-side/build/cpi-side
+sub-addons/slideshow/cpi-side/build/cpi-side
 sub-addons/sub-addon-2/cpi-side/build/cpi-side
 sub-addons/sub-addon-3/cpi-side/build/cpi-side
 sub-addons/sub-addon-4/cpi-side/build/cpi-side
