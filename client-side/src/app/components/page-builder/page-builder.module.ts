@@ -18,7 +18,7 @@ import { SectionModule } from '../section/section.module'
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
-import {DragDropModule} from '@angular/cdk/drag-drop';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -89,17 +89,17 @@ export class PageBuilderModule {
         private pepIconRegistry: PepIconRegistry
 
     ) {
-      this.pepIconRegistry.registerIcons(pepIcons);
-      let userLang = 'en';
-      translate.setDefaultLang(userLang);
-      userLang = translate.getBrowserLang().split('-')[0]; // use navigator lang if available
+        this.pepIconRegistry.registerIcons(pepIcons);
+        let userLang = 'en';
+        translate.setDefaultLang(userLang);
+        userLang = translate.getBrowserLang().split('-')[0]; // use navigator lang if available
 
-      if (location.href.indexOf('userLang=en') > -1) {
-          userLang = 'en';
-      }
-      // the lang to use, if the lang isn't available, it will use the current loader to get them
-      translate.use(userLang).subscribe((res: any) => {
-          // In here you can put the code you want. At this point the lang will be loaded
-      });
+        if (location.href.indexOf('userLang=en') > -1) {
+            userLang = 'en';
+        }
+        // the lang to use, if the lang isn't available, it will use the current loader to get them
+        translate.use(userLang).subscribe((res: any) => {
+            // In here you can put the code you want. At this point the lang will be loaded
+        });
     }
 }

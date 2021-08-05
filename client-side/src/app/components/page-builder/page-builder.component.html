@@ -3,8 +3,10 @@
     <div class="top-area">
             <div class="header-container">
                 <div class="header-title heder-content">{{('ViewportWidth' | translate)}} : <b>{{viewportWidth}}</b></div>
-                    <pep-group-buttons [buttons]="groupButtons" class="heder-content" sizeType="sm" viewType="toggle" >
+                    <div class="header-group-btn">
+                <pep-group-buttons [buttons]="groupButtons" class="heder-content" sizeType="sm" viewType="toggle" >
                     </pep-group-buttons>
+                    </div>
                     <div class="header-end heder-content">
                         <pep-button iconName="view_card_md" sizeType="sm" classNames="pep-spacing-element"></pep-button>
                         <pep-button value="Preview" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="changeQueryParam(false)"></pep-button>
@@ -43,7 +45,7 @@
                       [ngClass]="{'editable': editable}"
                       cdkDragBoundary=".page-builder-container"
                [ngClass]="{'editable': editable}"
-               #htmlSections class="flex-container active">
+               #htmlSections class="flex-container">
                 <div class="background">
                     <div class="back-template" *ngFor="let number of [0,1,2,3,4,5,6,7,8,9,10,11]"></div>
                 </div>
@@ -67,6 +69,7 @@
                    </div>
            </div>
        </div>
+       <page-builder-section></page-builder-section>
     </div>
 
     <pep-button class="add-section-button" value="Add Section " styleType="regular" iconName="number_plus" iconPosition="end"

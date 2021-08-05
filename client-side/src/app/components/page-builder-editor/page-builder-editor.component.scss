@@ -3,11 +3,10 @@ label {
     font-weight: 400;
 }
 
-::ng-deep .group-buttons-container{
-    margin-bottom: 1rem;
-}
 .editor-tabs {
     height: 100%;
+    // padding-inline-start: 0.5rem;
+    // padding-inline-end: 1.5rem;
 
     ::ng-deep .mat-tab-header-pagination{
         display: none;
@@ -21,6 +20,10 @@ label {
         }
     }
 
+    ::ng-deep .group-buttons-container{
+        margin-bottom: 1rem;
+    }
+
     ::ng-deep .mat-tab-body-wrapper{
         overflow: auto;
         margin: 0;
@@ -31,7 +34,8 @@ label {
                 .mat-tab-body-content{
                     display: flex;
                     flex-direction: column;
-                    padding-inline: 0.25rem;
+                    padding-inline: 0;
+
                 }
             }
         }

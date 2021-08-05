@@ -24,7 +24,7 @@ import { PepSideBarModule } from '@pepperi-addons/ngx-lib/side-bar';
 import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
-import { SectionEditorComponent } from './components/section-editor/section-editor.component';
+import { SectionEditorModule } from './components/section-editor/section-editor.module';
 import { PageBuilderEditorModule } from './components/page-builder-editor/page-builder-editor.module';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
@@ -39,8 +39,7 @@ const pepIcons = [
 ];
 @NgModule({
     declarations: [
-        AppComponent,
-        SectionEditorComponent
+        AppComponent
     ],
     imports: [
         BrowserModule,
@@ -49,6 +48,7 @@ const pepIcons = [
         AddonModule,
         PageBuilderModule,
         PageBuilderEditorModule,
+        SectionEditorModule,
         AppRoutingModule,
         PepSizeDetectorModule,
         MatIconModule,

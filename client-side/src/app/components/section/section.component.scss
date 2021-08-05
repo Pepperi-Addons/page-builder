@@ -1,11 +1,23 @@
-$page-buildr-gap: 1rem;
+.section-container {
+    display: grid;
+    // grid-template-columns: auto;
+    grid-auto-flow: column;
+    border: 1px dashed gray;
+    min-height: 250px;
+    
+    @media (max-width: 800px) {
+        grid-auto-flow: row;
+    }
+}
 
+
+// Old code
 .flex-container {
     min-height: 250px;
     display: flex;
     flex-direction: row;
     flex-wrap: no-wrap;
-    gap: $page-buildr-gap;
+    gap: 1rem;
 
 
     .flex-item{
