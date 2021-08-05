@@ -1,6 +1,6 @@
 import { MatCardModule } from '@angular/material/card';
 import { PepListModule } from '@pepperi-addons/ngx-lib/list';
-import { AddonService } from './sub-addon-1.service';
+import { SlideshowService } from './slideshow.service';
 import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
 // import { RouterModule, Routes } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,7 @@ import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { PepHttpService, PepFileService, PepNgxLibModule, PepAddonService, PepCustomizationService } from '@pepperi-addons/ngx-lib';
-import { SubAddon1Component } from './index';
+import { SlideshowComponent } from './index';
 import {PepperiTableComponent} from './pepperi-table.component'
 import { MatDialogModule } from '@angular/material/dialog';
 import { PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
@@ -43,7 +43,7 @@ export function createTranslateLoader(http: HttpClient, fileService: PepFileServ
 
 @NgModule({
     declarations: [
-        SubAddon1Component,
+        SlideshowComponent,
         PepperiTableComponent
     ],
     imports: [
@@ -69,9 +69,9 @@ export function createTranslateLoader(http: HttpClient, fileService: PepFileServ
 
 
     ],
-    exports:[SubAddon1Component],
+    exports:[SlideshowComponent],
     providers: [
-        AddonService,
+        SlideshowService,
         HttpClient,
         TranslateStore,
         PepHttpService,
@@ -81,7 +81,7 @@ export function createTranslateLoader(http: HttpClient, fileService: PepFileServ
         PepDialogService
     ]
 })
-export class SubAddon1Module {
+export class SlideshowModule {
     constructor(
           translate: TranslateService
       ) {

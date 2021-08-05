@@ -1,7 +1,7 @@
 import { ActivatedRoute } from '@angular/router';
 import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AddonService } from './components/addon/sub-addon-1.service';
+import { SlideshowService } from './components/slideshow/slideshow.service';
 import { Component, OnInit } from '@angular/core';
 import { PepCustomizationService, PepLoaderService, PepStyleType } from '@pepperi-addons/ngx-lib';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
@@ -25,7 +25,7 @@ export class AppComponent implements OnInit {
     constructor(
         public customizationService: PepCustomizationService,
         public loaderService: PepLoaderService,
-        public addonService: AddonService
+        public addonService: SlideshowService
     ) {
         this.loaderService.onChanged$
             .subscribe((show) => {

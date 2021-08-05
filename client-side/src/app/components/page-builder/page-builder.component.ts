@@ -95,27 +95,27 @@ export class PageBuilderComponent implements OnInit {
     }
 
     buildSections(sections) {
-        const block = sessionStorage.getItem('blocks') ?? '{}';
-        if (block && block != 'undefined'){
-            const addons = JSON.parse(block);
+        const pageBlocksString = sessionStorage.getItem('blocks') ?? '{}';
+        if (pageBlocksString && pageBlocksString != 'undefined'){
+
+            const pageBlocks = JSON.parse(pageBlocksString);
             let layoutOutput = {};
-            addons.forEach(addon => {
-                if (layoutOutput[addon.layout.section] != undefined){
-                    layoutOutput[addon.layout.section][addon.layout.block] = addon.Block;
-                }
-                else {
-                    layoutOutput[addon.layout.section] = {};
-                    layoutOutput[addon.layout.section][addon.layout.block] = addon.Block;
-                }
-            })
-
-
-            Object.keys(layoutOutput).forEach((section,i) => this.addSection(null));
-            setTimeout(() => {Object.keys(layoutOutput).forEach((section,i) =>{
-                const currentSection = this.htmlSections.toArray()[section] ?? null;
-                Object.keys(layoutOutput[section]).forEach(block => currentSection?.data?.push(layoutOutput[section][block]));
-            })}, 500);
-
+            if (pageBlocks?.length){
+                pageBlocks.forEach(block => {
+                    if (layoutOutput[block.layout.section] != undefined){
+                        layoutOutput[block.layout.section][block.layout.block] = block.Block;
+                    }
+                    else {
+                        layoutOutput[block.layout.section] = {};
+                        layoutOutput[block.layout.section][block.layout.block] = block.Block;
+                    }
+                })
+                Object.keys(layoutOutput).forEach((section,i) => this.addSection(null));
+                setTimeout(() => {Object.keys(layoutOutput).forEach((section,i) =>{
+                    const currentSection = this.htmlSections.toArray()[section] ?? null;
+                    Object.keys(layoutOutput[section]).forEach(block => currentSection?.data?.push(layoutOutput[section][block]));
+                })}, 500);
+            }
             //   sections.forEach((section, sectionIndex) => {
             //                 section.forEach((relation, blockIndex) =>  {
             //                     relation.layout.block = blockIndex;
@@ -137,8 +137,8 @@ export class PageBuilderComponent implements OnInit {
 
     getPage(addonUUID): Observable<any[]> {
         // debug locally
-        // return this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageComponent` });
-        return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page`, {RelationName: `PageComponent` });
+        return this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageBlock` });
+        // return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page`, {RelationName: `PageBlock` });
     }
 
     numOfSectionColumnsChange(event) {
@@ -213,10 +213,10 @@ export class PageBuilderComponent implements OnInit {
     }
 
     async publishPage(addonUUID) {
-        // const body = JSON.stringify({RelationName: `PageComponent`, Layout: this.pageLayout });
+        // const body = JSON.stringify({RelationName: `PageBlock`, Layout: this.pageLayout });
         // const ans =  await this.http.postHttpCall('http://localhost:4500/api/publish', body).toPromise();
         // console.log(ans)
-        // return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/publish`, {RelationName: `PageComponent` });
+        // return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/publish`, {RelationName: `PageBlock` });
         // const blocks = JSON.parse(sessionStorage.getItem('blocks'));
         // blocks.map(block => {
         //     block.layout = this.pageLayout.find(layoutBlock => layoutBlock.Key === block.key)?.layout;

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Component } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { SubAddon1Component } from './components/addon/sub-addon-1.component';
+import { SlideshowComponent } from './components/slideshow/slideshow.component';
 
 // Important for single spa
 @Component({
@@ -16,9 +16,9 @@ const routes: Routes = [
         children: [
             {
                 path: ':editor',
-                component: SubAddon1Component
+                component: SlideshowComponent
                 // TODO: solve routing
-                // loadChildren: () => import('./components/addon/index').then(m => m.SubAddon1Module)
+                // loadChildren: () => import('./components/addon/index').then(m => m.SlideshowModule)
             }
         ]
     },

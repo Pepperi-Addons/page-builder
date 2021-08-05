@@ -7,7 +7,7 @@ import {PepHttpService, PepDataConvertorService, PepSessionService} from '@peppe
 
 
 @Injectable({ providedIn: 'root' })
-export class AddonService {
+export class SlideshowService {
 
     accessToken = '';
     parsedToken: any

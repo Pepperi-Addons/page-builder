@@ -34,7 +34,7 @@ export class PageBuilderEditorComponent implements OnInit {
         // const addonUUID = this.route.snapshot.params.addon_uuid
         // this.addons$ = this.http.postPapiApiCall(
         //     `/addons/api/${addonUUID}/api/init_page`,
-        //     {RelationName: `PageComponent` })
+        //     {RelationName: `PageBlock` })
         subject.subscribe(res => {
             res.forEach((item, i) => this.dropList.push('section-'+(i+1)));
             //     }
@@ -94,6 +94,6 @@ export class PageBuilderEditorComponent implements OnInit {
         this.flexArray.forEach(item => this.options.push({key: item, value: item.toString()}))
         this.supportedPages.forEach(item => this.pageTypes.push({key: item.toString(), value: item.toString()}));
         // debug locally
-        // return this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageComponent` });
+        // return this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageBlock` });
     }
 }
