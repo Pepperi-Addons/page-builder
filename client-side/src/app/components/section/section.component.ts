@@ -17,7 +17,6 @@ export class SectionComponent implements OnInit, OnChanges {
 
     public numOfBlocksArr = new Array(0);
 
-
     @ViewChild('sectionContainer') sectionContainer: ElementRef;
 
     // @Input() partsNumber: number = 1;
@@ -37,7 +36,9 @@ export class SectionComponent implements OnInit, OnChanges {
     }
 
     private refreshSplitData() {
-        this.renderer.setStyle(this.sectionContainer.nativeElement, 'grid-template-columns', this.splitData);
+        if (this.sectionContainer) {
+            this.renderer.setStyle(this.sectionContainer.nativeElement, 'grid-template-columns', this.splitData);
+        }
     }
 
     ngOnInit(): void {

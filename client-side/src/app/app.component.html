@@ -1,5 +1,5 @@
 <pep-page-layout cdkDropListGroup [addPadding]="false" [showShadow]="true">
-    <ng-container pep-side-area *ngIf="showEditor">
+    <div pep-side-area *ngIf="showEditor" style="padding-inline-start: 1rem;">
         <pep-side-bar #pepSideBar >
             <div header-content>
                 <label class="body-xl bold ellipsis">Main</label>
@@ -13,7 +13,7 @@
             if block-editor
             <proxy [exposedModue]="block.editorModuleName" -->
         </pep-side-bar>
-    </ng-container>
+    </div>
 
     <!-- <ng-container pep-top-area>
         <pep-top-bar [inline]="false" [title]="('Title_Sub_Addon' | translate)">
