@@ -29,6 +29,7 @@
     },
     "dependencies": {
         "@pepperi-addons/debug-server": "0.0.30",
+        "@pepperi-addons/ngx-remote-loader": "0.0.31",
         "@pepperi-addons/papi-sdk": "^1.24.0"
     }
 }

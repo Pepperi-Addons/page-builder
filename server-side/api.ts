@@ -1,24 +1,14 @@
 import MyService from './my.service'
 import { Client, Request } from '@pepperi-addons/debug-server'
-import { ATDMetaData, InstalledAddon} from '@pepperi-addons/papi-sdk';
-import { Relation, RemoteModuleOptions } from '../metadata';
+import { ATDMetaData, InstalledAddon, Relation} from '@pepperi-addons/papi-sdk';
+import { RemoteModuleOptions } from '@pepperi-addons/ngx-remote-loader';
 import { Configuration } from './page-builder.model';
 
 export async function init_page(client: Client, request: Request): Promise<any> {
-    // if (request.body.Layout){
-    //     return publish_page(client, request);
-
-    // } else if  (request.body.RelationName){
     return getPage(client, request);
-
-    // }
-   
-
-
-
 };
 
-async function getPage(client: Client, request: Request){
+async function getPage(client: Client, request: Request) {
     const service = new MyService(client);
     const addonsFields: Relation[] = await service.getRelations(request.body['RelationName']);
     const addonsUuids = [...new Set(addonsFields.filter( row => row.AddonUUID).map(obj => obj.AddonUUID))];
@@ -26,15 +16,17 @@ async function getPage(client: Client, request: Request){
     addonsUuids.forEach( (uuid: any) => addonsPromises.push(service.getInstalledAddon(uuid))); 
     const addons: InstalledAddon[] = await Promise.all(addonsPromises).then(res => res);
     const menuEntries: RemoteModuleOptions[] = [];
-    addonsFields.forEach( (field: Relation)=> {
+    
+    addonsFields.forEach((field: Relation) => {
         const entryAddon: InstalledAddon & any = addons.find( (addon: InstalledAddon) => addon?.Addon?.UUID === field?.AddonUUID);
         const menuEntry = createRelationEntry(field, entryAddon);
         menuEntries.push(menuEntry);
     });
+
     return { relations: menuEntries};
 }
 
-function createRelationEntry(field: Relation, entryAddon){
+function createRelationEntry(field: Relation, entryAddon) {
     const remoteEntryByType = (type, remoteName = 'remoteEntry') => {
  
         switch (type){
@@ -73,8 +65,9 @@ function createRelationEntry(field: Relation, entryAddon){
                 return field?.AddonRelativeURL;
                 break;
         }
-    } 
-    const remoteName = field?.AddonRelativeURL ? field.AddonRelativeURL : field?.Type === "NgComponent" ? toSnakeCase(field.ModuleName.toString().replace('Module','')) : '';
+    }
+
+    const remoteName = field?.AddonRelativeURL ? field.AddonRelativeURL : field?.Type === "NgComponent" ? toSnakeCase(field.ModuleName?.toString().replace('Module','')) : '';
     const obj = Configuration;
     const menuEntry: RemoteModuleOptions & any = {  
         type: field.Type,
@@ -83,7 +76,7 @@ function createRelationEntry(field: Relation, entryAddon){
         remoteEntry: remoteEntryByType(field?.Type, remoteName),
         componentName: field?.Type === "NgComponent" ? field?.ComponentName : "",
         exposedModule:  field?.Type === "NgComponent" ? "./" + field?.ModuleName : "",
-        title: field?.Description.split(' ').map(w => w[0].toUpperCase() + w.substr(1).toLowerCase()).join(' '),
+        title: field?.Description?.split(' ').map(w => w[0].toUpperCase() + w.substr(1).toLowerCase()).join(' '),
         uuid: field?.AddonUUID,
         key: `${field.Name}_${field.AddonUUID}_${field.RelationName}`,
         visibleEndpoint: field?.VisibilityRelativeURL,
@@ -91,6 +84,7 @@ function createRelationEntry(field: Relation, entryAddon){
         layout: { section: 0, block: 0}
 
     }
+
     return {...obj, ...menuEntry};
 }
 
