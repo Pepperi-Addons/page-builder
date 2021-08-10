@@ -14,9 +14,8 @@ import { NgModule, NgZone } from '@angular/core';
 import { AppRoutingModule } from './app.routes';
 import { AppComponent } from './app.component';
 import { MatIconModule } from '@angular/material/icon';
-import { PepIconModule, pepIconNumberPlus, PepIconRegistry, pepIconSystemBin, pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit, pepIconSystemMove } from '@pepperi-addons/ngx-lib/icon';
+import { pepIconArrowLeftAlt, PepIconModule, pepIconNumberPlus, PepIconRegistry, pepIconSystemBin, pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit, pepIconSystemMove } from '@pepperi-addons/ngx-lib/icon';
 import { PepSizeDetectorModule } from '@pepperi-addons/ngx-lib/size-detector';
-import { createTranslateLoader } from './components/addon';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { PepFileService, PepAddonService } from '@pepperi-addons/ngx-lib';
@@ -35,7 +34,8 @@ const pepIcons = [
     pepIconSystemBolt,
     pepIconSystemEdit,
     pepIconSystemMove,
-    pepIconSystemBin
+    pepIconSystemBin,
+    pepIconArrowLeftAlt
 ];
 @NgModule({
     declarations: [
@@ -70,7 +70,7 @@ const pepIcons = [
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: createTranslateLoader,
+                useFactory: PepAddonService.createDefaultMultiTranslateLoader,
                 deps: [HttpClient, PepFileService, PepAddonService]
             }
         })
@@ -79,7 +79,7 @@ const pepIcons = [
     bootstrap: [AppComponent]
 })
 export class AppModule {
-      constructor(private ngZone: NgZone, private pepIconRegistry: PepIconRegistry) {
+    constructor(private ngZone: NgZone, private pepIconRegistry: PepIconRegistry) {
         (window as any).ngZone = this.ngZone;
         this.pepIconRegistry.registerIcons(pepIcons);
     }

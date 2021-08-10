@@ -1,15 +1,13 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { PepHttpService } from '@pepperi-addons/ngx-lib';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, Renderer2, TemplateRef, ViewChild, ViewChildren, ViewContainerRef } from "@angular/core";
-import { BehaviorSubject, forkJoin, Observable, of, Subject, timer } from "rxjs";
-import { map, take, tap } from "rxjs/operators";
-import { propsSubject } from '@pepperi-addons/ngx-remote-loader';
-import { CdkDragDrop, moveItemInArray, transferArrayItem, copyArrayItem, CdkDragExit, CdkDropListGroup, CdkDropList  } from '@angular/cdk/drag-drop';
-import { Overlay } from '@angular/cdk/overlay';
+import { Observable } from "rxjs";
+import { CdkDragDrop, CdkDropList  } from '@angular/cdk/drag-drop';
+import { PageBuilderService, Section } from '../../services/page-builder.service';
 import { pepIconSystemBin } from '@pepperi-addons/ngx-lib/icon';
 import { config} from './addon.config';
-export const subject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
+import { TranslateService } from '@ngx-translate/core';
 
+// export const subject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
 @Component({
     selector: 'page-builder',
     templateUrl: './page-builder.component.html',
@@ -23,12 +21,12 @@ export class PageBuilderComponent implements OnInit {
     @ViewChild('sectionsCont') sectionsCont: ElementRef;
 
     @ViewChildren(CdkDropList) htmlSections: QueryList<CdkDropList>;
-    @ViewChildren('htmlBlocks') htmlBlocks: QueryList<ElementRef>;
+    // @ViewChildren('htmlBlocks') htmlBlocks: QueryList<ElementRef>;
 
     editable = false;
     // carouselAddon;
     // addonsTemp = [];
-    sectionsSubject$: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
+    // sectionsSubject$: BehaviorSubject<Section[]>;
     groupButtons;
     pageLayout;
     addons$: Observable<any[]>;
@@ -39,23 +37,22 @@ export class PageBuilderComponent implements OnInit {
     addonUUID;
 
     /* Todo - need to be removed into componnent */
-    public sectionColumnArray = new Array(3);
-    public numOfSectionColumns = [{key: '1',value: '1'},
-                                  {key: '2',value: '2'},
-                                  {key: '3',value: '3'},
-                                  {key: '4',value: '4'},
-                                  {key: '5',value: '5'}];
+    // public sectionColumnArray = new Array(3);
+    // public numOfSectionColumns = [{key: '1',value: '1'},
+    //                               {key: '2',value: '2'},
+    //                               {key: '3',value: '3'},
+    //                               {key: '4',value: '4'},
+    //                               {key: '5',value: '5'}];
 
     constructor(
-        private http: PepHttpService,
         private route: ActivatedRoute,
         private router: Router,
         private renderer: Renderer2,
-        private vcRef: ViewContainerRef,
-        private overlay: Overlay
+        private translate: TranslateService,
+        public pageBuilderService: PageBuilderService
     ) {
         this.editable = route?.snapshot?.queryParams?.edit === "true" ?? false;
-        this.sectionsSubject$ = subject;
+        // this.sectionsSubject$ = new BehaviorSubject<Section[]>([]);
         this.viewportWidth = window.innerWidth;
     }
 
@@ -68,149 +65,158 @@ export class PageBuilderComponent implements OnInit {
             { key:'Tablet', value: 'Tablet', callback: () => this.changeScreenSize('Tablet'), iconName: pepIconSystemBin.name, iconPosition: 'end' },
             { key:'Mobile', value: 'Mobile', callback: () => this.changeScreenSize('Mobile'), iconName: pepIconSystemBin.name, iconPosition: 'end' }
         ];
-        this.getPage(this.addonUUID).subscribe(res => {
-            this.buildSections(null);
-            // sessionStorage.setItem('blocks',JSON.stringify(res['relations']));
-            propsSubject.next(res['relations']);
+        
+        this.pageBuilderService.initPage(this.addonUUID);
+        
+        // .subscribe(res => {
+        //     this.buildSections(null);
+        //     // sessionStorage.setItem('blocks',JSON.stringify(res['relations']));
+        //     propsSubject.next(res['relations']);
+        // });
+
+        this.pageBuilderService.availableBlocksLoadedSubject$.subscribe(selectedBlock => {
+            // if (selectedBlock?.section != null) {
+            //     this.htmlBlocks.forEach(block => {
+            //         this.renderer.setStyle(block.nativeElement, 'border', '2px dashed gold');
+            //     })
+            //     if (selectedBlock?.block != null) {
+            //         const selectedBlockElement = this.htmlSections.get(selectedBlock.section).data.children[selectedBlock.block]
+            //         // selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'border', '4px solid blue') : null;
+            //     }
+
+            //     if (selectedBlock?.flex) {
+            //         // const selectedBlockElement = this.htmlSections.get(selectedBlock.section).nativeElement.children[selectedBlock.block]
+            //         // selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'flex', selectedBlock.flex) : null;
+            //     }
+            // }
         });
-
-        propsSubject.subscribe(selectedBlock => {
-            if (selectedBlock?.section != null) {
-                this.htmlBlocks.forEach(block => {
-                    this.renderer.setStyle(block.nativeElement, 'border', '2px dashed gold');
-                })
-                if (selectedBlock?.block != null){
-                    const selectedBlockElement = this.htmlSections.get(selectedBlock.section).data.children[selectedBlock.block]
-                    // selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'border', '4px solid blue') : null;
-                }
-
-                if (selectedBlock?.flex){
-                    // const selectedBlockElement = this.htmlSections.get(selectedBlock.section).nativeElement.children[selectedBlock.block]
-                    // selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'flex', selectedBlock.flex) : null;
-                }
-            }
-        });
-
-        this.addSection(null);
     }
 
-    buildSections(sections) {
-        const pageBlocksString = sessionStorage.getItem('blocks') ?? '{}';
-        if (pageBlocksString && pageBlocksString != 'undefined'){
+    // buildSections(sections) {
+    //     const pageBlocksString = sessionStorage.getItem('blocks') ?? '{}';
+    //     if (pageBlocksString && pageBlocksString != 'undefined'){
 
-            const pageBlocks = JSON.parse(pageBlocksString);
-            let layoutOutput = {};
-            if (pageBlocks?.length){
-                pageBlocks.forEach(block => {
-                    if (layoutOutput[block.layout.section] != undefined){
-                        layoutOutput[block.layout.section][block.layout.block] = block.Block;
-                    }
-                    else {
-                        layoutOutput[block.layout.section] = {};
-                        layoutOutput[block.layout.section][block.layout.block] = block.Block;
-                    }
-                })
-                Object.keys(layoutOutput).forEach((section,i) => this.addSection(null));
-                setTimeout(() => {Object.keys(layoutOutput).forEach((section,i) =>{
-                    const currentSection = this.htmlSections.toArray()[section] ?? null;
-                    Object.keys(layoutOutput[section]).forEach(block => currentSection?.data?.push(layoutOutput[section][block]));
-                })}, 500);
-            }
-            //   sections.forEach((section, sectionIndex) => {
-            //                 section.forEach((relation, blockIndex) =>  {
-            //                     relation.layout.block = blockIndex;
-            //                     relation.layout.section = sectionIndex;
-            //                 });
-            //                 section.sort((x,y) => x.layout.block - y.layout.block );
-            //             });
-        }
+    //         const pageBlocks = JSON.parse(pageBlocksString);
+    //         let layoutOutput = {};
+    //         if (pageBlocks?.length){
+    //             pageBlocks.forEach(block => {
+    //                 if (layoutOutput[block.layout.section] != undefined){
+    //                     layoutOutput[block.layout.section][block.layout.block] = block.Block;
+    //                 }
+    //                 else {
+    //                     layoutOutput[block.layout.section] = {};
+    //                     layoutOutput[block.layout.section][block.layout.block] = block.Block;
+    //                 }
+    //             })
+    //             Object.keys(layoutOutput).forEach((section,i) => this.addSection(null));
+    //             setTimeout(() => {Object.keys(layoutOutput).forEach((section,i) =>{
+    //                 const currentSection = this.htmlSections.toArray()[section] ?? null;
+    //                 Object.keys(layoutOutput[section]).forEach(block => currentSection?.data?.push(layoutOutput[section][block]));
+    //             })}, 500);
+    //         }
+    //         //   sections.forEach((section, sectionIndex) => {
+    //         //                 section.forEach((relation, blockIndex) =>  {
+    //         //                     relation.layout.block = blockIndex;
+    //         //                     relation.layout.section = sectionIndex;
+    //         //                 });
+    //         //                 section.sort((x,y) => x.layout.block - y.layout.block );
+    //         //             });
+    //     }
 
-    }
+    // }
 
-    onAddonChange(e) {
+    onBlockChange(e) {
         switch(e.action){
             case 'update-addons':
-                propsSubject.next(e);
+                // propsSubject.next(e);
             break;
         }
     }
 
-    getPage(addonUUID): Observable<any[]> {
-        // debug locally
-        // return this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageBlock` });
-        return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page`, {RelationName: `PageBlock` });
-    }
+    // numOfSectionColumnsChange(event) {
+    //     const numOfColumns = parseInt(event);
+    //     const colWidth = 100 / numOfColumns;
 
-    numOfSectionColumnsChange(event) {
-        const numOfColumns = parseInt(event);
-        const colWidth = 100 / numOfColumns;
+    //     this.sectionColumnArray = new Array(numOfColumns);
 
-        this.sectionColumnArray = new Array(numOfColumns);
+    //     for( let i=0; i<numOfColumns; i++){
+    //         this.sectionColumnArray[i] = { 'id': i, 'width': colWidth};
+    //     }
+    // }
 
-        for( let i=0; i<numOfColumns; i++){
-            this.sectionColumnArray[i] = { 'id': i, 'width': colWidth};
-        }
-    }
+    // drop(event: CdkDragDrop<string[]>) {
+    //     debugger;
+    //     if (event.previousContainer === event.container) {
+    //         moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    //     } else if (event.previousContainer.id == 'availableBlocks') {
+    //         copyArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+    //     }
+    //     else {
+    //         transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+    //     }
 
-    drop(event: CdkDragDrop<string[]>) {
-        if (event.previousContainer === event.container) {
-            moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-        } else if (event.previousContainer.id == 'availableBlocks'){
-            copyArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
-        }
-        else {
-            transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
-        }
+    //     const flatLayout = this.htmlSections.toArray().map((section, sectionIndex) =>
+    //         section.getSortedItems().map((block, blockIndex) => {
+    //             const flex = block.element.nativeElement.style.flexGrow != '' ?
+    //                         block.element.nativeElement.style.flexGrow : '1'
+    //             return {
+    //                 'Key': block.data.key,
+    //                 'layout':  {
+    //                     section: sectionIndex,
+    //                     block: blockIndex,
+    //                     flex: flex
+    //                 },
+    //                 'Block': block.data
+    //             }
+    //         }
+    //     ));
 
-        const flatLayout = this.htmlSections.toArray().map((section, sectionIndex) =>
-            section.getSortedItems().map((block, blockIndex) => {
-                const flex = block.element.nativeElement.style.flexGrow != '' ?
-                            block.element.nativeElement.style.flexGrow : '1'
-                return {
-                    'Key': block.data.key,
-                    'layout':  {
-                        section: sectionIndex,
-                        block: blockIndex,
-                        flex: flex
-                    },
-                    'Block': block.data
-                }
-            }
-        ));
+    //     this.pageLayout =  [].concat.apply([], flatLayout);
+    //     sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
+    // }
 
-        this.pageLayout =  [].concat.apply([], flatLayout);
-        sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
-    }
+    // removeSection(sections, i) {
+    //     // TODO: Show dialog msg are u sure?
+    //     // this.noSections = sections?.length == 1 && sections[i]?.length === 0
+    //     sections.splice(i, 1);
 
-    removeSection(sections, i) {
-        // this.noSections = sections?.length == 1 && sections[i]?.length === 0
-        sections.splice(i, 1);
-
-        // this.sectionsSubject$.getValue().splice(i, 1);
-    }
+    //     // this.sectionsSubject$.getValue().splice(i, 1);
+    // }
 
     addSection(e) {
-        this.sectionsSubject$.pipe(take(1)).subscribe(val => {
-            const sections = [...val, []];
-            this.sectionsSubject$.next(sections);
-        });
+        // const sections = this.sectionsSubject$.value;
+        // sections.push(this.getEmptySection(sections.length))
+
+        // this.sectionsSubject$.next(sections);
+
+        // this.pageBuilderService.sectionsSubject.pipe(take(1)).subscribe(val => {
+        //     const sections = [...val, this.getEmptySection(this.pageBuilderService.sectionsSubject.value.length)];
+        //     this.pageBuilderService.sectionsSubject.next(sections);
+        // });
+
+        // this.pageBuilderService.sectionsSubject.pipe(take(1)).subscribe(val => {
+        //     const sections = [...val, []];
+        //     this.pageBuilderService.sectionsSubject.next(sections);
+        // });
+
+        this.pageBuilderService.addSection();
     }
 
-    editSection(section){
-        section.exposedModue = section.editorModuleName;
-        section.compoenntName = section.editorComponentName;
-        // blockEditorSubject.next(section);
-    }
+    // editSection(section){
+    //     section.exposedModue = section.editorModuleName;
+    //     section.compoenntName = section.editorComponentName;
+    //     // blockEditorSubject.next(section);
+    // }
 
-    removeBlock() {
+    // removeBlock() {
 
-    }
+    // }
 
-    editBlock(block){
-        block.exposedModue = block.editorModuleName;
-        block.compoenntName = block.editorComponentName;
-        // blockEditorSubject.next(block);
-    }
+    // editBlock(block){
+    //     block.exposedModue = block.editorModuleName;
+    //     block.compoenntName = block.editorComponentName;
+    //     // blockEditorSubject.next(block);
+    // }
 
     async publishPage(addonUUID) {
         // const body = JSON.stringify({RelationName: `PageBlock`, Layout: this.pageLayout });
@@ -222,17 +228,18 @@ export class PageBuilderComponent implements OnInit {
         //     block.layout = this.pageLayout.find(layoutBlock => layoutBlock.Key === block.key)?.layout;
         //     return block;
         // });
-        sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
+        // sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
 
+        this.pageBuilderService.publish();
     }
 
-    entered() {
-        // this.transferringItem = undefined;
-    }
+    // entered() {
+    //     // this.transferringItem = undefined;
+    // }
 
-    exited(e: CdkDragExit<string>) {
-    //   this.transferringItem = e.item.data;
-    }
+    // exited(e: CdkDragExit<string>) {
+    // //   this.transferringItem = e.item.data;
+    // }
 
     changeQueryParam(e) {
         const edit = JSON.parse(e);
@@ -241,7 +248,7 @@ export class PageBuilderComponent implements OnInit {
     }
 
     clearPage() {
-        this.sectionsSubject$.next([]);
+        this.pageBuilderService.clearSections();
     }
 
     changeScreenSize(screenSize) {
@@ -261,4 +268,22 @@ export class PageBuilderComponent implements OnInit {
                 break;
         }
     }
+
+    onEditSectionClick(section) {
+        this.pageBuilderService.navigateToEditor({
+            title: this.translate.instant('Section'),
+            type : 'section',
+            currentEditableObject: section
+        })
+    }
+
+    onRemoveSectionClick(sectionId: string) {
+        this.pageBuilderService.removeSection(sectionId);
+    }
+
+    
+    onSectionDropped(event: CdkDragDrop<any[]>) {
+        this.pageBuilderService.onSectionDropped(event);
+    }
+
 }

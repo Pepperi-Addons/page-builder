@@ -1,17 +1,18 @@
 <pep-page-layout cdkDropListGroup [addPadding]="false" [showShadow]="true">
     <div pep-side-area *ngIf="showEditor" style="padding-inline-start: 1rem;">
         <pep-side-bar #pepSideBar >
-            <div header-content>
-                <label class="body-xl bold ellipsis">Main</label>
+            <div header-content class="side-bar-title">
+                <pep-button *ngIf="currentEditor?.type !== 'page-builder'" class="back-button" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="navigateBackFromEditor();"></pep-button> 
+                <div class=" title-xl ellipsis" title="{{ currentEditor?.title }}">
+                    <span>{{ currentEditor?.title }}</span>
+                </div>
+                <!-- <span class="body-xl bold ellipsis">{{ currentEditor?.title }}</span> -->
             </div>
             <!-- if page-editor  (objectChange)="" -->
-            <page-builder-editor ></page-builder-editor>
-<!--
-            if section-editor
-            <section-editor
-
-            if block-editor
-            <proxy [exposedModue]="block.editorModuleName" -->
+            <page-builder-editor *ngIf="currentEditor?.type === 'page-builder'"></page-builder-editor>
+            <page-builder-section-editor *ngIf="currentEditor?.type === 'section'"></page-builder-section-editor>
+            <addon-proxy *ngIf="currentEditor?.type === 'block'" [options]="currentEditor?.remoteModuleOptions" 
+                [hostObject]="currentEditor?.hostObject" (hostEvents)="onBlockEditorChange($event);"></addon-proxy>
         </pep-side-bar>
     </div>
 
@@ -28,4 +29,7 @@
     </ng-container>
 </pep-page-layout>
 
-<!-- <pep-size-detector></pep-size-detector> -->
+<!--
+    If the addon is not inside webapp container we gonna need this line. 
+    <pep-size-detector></pep-size-detector> 
+-->

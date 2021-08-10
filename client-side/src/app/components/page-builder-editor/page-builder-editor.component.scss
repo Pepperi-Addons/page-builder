@@ -3,6 +3,13 @@ label {
     font-weight: 400;
 }
 
+.general-container,
+.available-blocks {
+    .cdk-drag-placeholder {
+        opacity: 1;
+    }
+}
+
 .editor-tabs {
     height: 100%;
     // padding-inline-start: 0.5rem;
@@ -11,30 +18,30 @@ label {
     ::ng-deep .mat-tab-header-pagination{
         display: none;
     }
-    ::ng-deep .mat-tab-labels{
+    ::ng-deep .mat-tab-labels {
         display: grid;
         grid-template-columns: 1fr 1fr;
 
-        .mat-tab-label{
+        .mat-tab-label {
             padding: 0 .75rem !important;
         }
     }
 
-    ::ng-deep .group-buttons-container{
+    ::ng-deep .group-buttons-container {
         margin-bottom: 1rem;
     }
 
-    ::ng-deep .mat-tab-body-wrapper{
+    ::ng-deep .mat-tab-body-wrapper {
         overflow: auto;
         margin: 0;
         display: block;
 
         .mat-tab-body {
             &.mat-tab-body-active {
-                .mat-tab-body-content{
+                .mat-tab-body-content {
                     display: flex;
                     flex-direction: column;
-                    padding-inline: 0;
+                    padding-inline: 0.25rem;
 
                 }
             }
@@ -52,23 +59,23 @@ label {
 //     margin-bottom: .5rem;
 // }
 
-::ng-deep pep-button{
-    button.available-blocks{
-        width: 99%;
-        margin-bottom: .5rem;
-        background: hsl(var(--pep-color-system-primary-invert-h, 255), var(--pep-color-system-primary-invert-s, 100%), var(--pep-color-system-primary-invert-l, 100%)) !important;
-        box-shadow: var(--pep-shadow-xs-offset, 0 0.125rem 0.25rem 0) hsla(var(--pep-color-system-primary-h, 0), var(--pep-color-system-primary-s, 0%), var(--pep-color-system-primary-l, 10%), 0.08) !important;
-        border-radius: var(--pep-border-radius-md, 0.25rem) !important;
-        border: 1px solid hsl(var(--pep-color-weak-h, 0), var(--pep-color-weak-s, 0%), var(--pep-color-weak-l, 10%)) !important;
+// ::ng-deep pep-button{
+//     button.available-blocks{
+//         width: 99%;
+//         margin-bottom: .5rem;
+//         background: hsl(var(--pep-color-system-primary-invert-h, 255), var(--pep-color-system-primary-invert-s, 100%), var(--pep-color-system-primary-invert-l, 100%)) !important;
+//         box-shadow: var(--pep-shadow-xs-offset, 0 0.125rem 0.25rem 0) hsla(var(--pep-color-system-primary-h, 0), var(--pep-color-system-primary-s, 0%), var(--pep-color-system-primary-l, 10%), 0.08) !important;
+//         border-radius: var(--pep-border-radius-md, 0.25rem) !important;
+//         border: 1px solid hsl(var(--pep-color-weak-h, 0), var(--pep-color-weak-s, 0%), var(--pep-color-weak-l, 10%)) !important;
 
-        ::ng-deep .mat-button-wrapper{
-            max-width: unset !important;
-            grid-template-columns: min-content max-content;
-            justify-content: start !important;
+//         ::ng-deep .mat-button-wrapper{
+//             max-width: unset !important;
+//             grid-template-columns: min-content max-content;
+//             justify-content: start !important;
 
-            .button-title-with-icon{
-                max-width: max-content;
-            }
-        }
-    }
-}
+//             .button-title-with-icon{
+//                 max-width: max-content;
+//             }
+//         }
+//     }
+// }

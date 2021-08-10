@@ -1,21 +1,3 @@
-export type RemoteModuleOptions = {
-    addonData?: object;
-    componentName: string;
-    exposedModule?: string;
-    remoteEntry?: string;
-    remoteName: string;
-    update?: boolean;
-    noModule?: boolean;
-    title: string;
-    visibleEndpoint?: string;
-    multiSelection?: boolean | string ;
-    confirmation?: boolean;
-    type: string | string[];
-    subType: string | string[];
-    uuid: string;
-    addon?: object;
-}
-
 export const hostObject ={
     "configuration": {
         "consume": {
@@ -23,7 +5,6 @@ export const hostObject ={
                 "resource": "transaction_lines",
                 "fields":  ["UnitsQuantity", "Item.TSABrand", "Transaction.Account.Type", "Transaction.Status"],
             },
-
             "context": {
                 "resource": "transaction"
             }

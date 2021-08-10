@@ -1,14 +1,30 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
 
 @Component({
-  selector: 'addon-toolbar',
-  templateUrl: './toolbar.component.html',
-  styleUrls: ['./toolbar.component.scss']
+    selector: 'toolbar-actions',
+    templateUrl: './toolbar.component.html',
+    styleUrls: ['./toolbar.component.scss'],
+
 })
 export class ToolbarComponent implements OnInit {
 
+    @HostBinding('style.cursor') _cursor = 'inherit';
+
     @Input() title = '';
-    @Input() showActionBtn = true;
+    
+    private _isDraggable = false;
+    @Input()
+    set isDraggable(value: boolean) {
+        this._isDraggable = value;
+
+        this._cursor = value ? 'move' : 'inherit'
+    }
+    get isDraggable(): boolean {
+        return this._isDraggable;
+    }
+
+    @Input() showActions = true;
+
     @Output() remove: EventEmitter<void> = new EventEmitter();
     @Output() edit: EventEmitter<void> = new EventEmitter();
 
@@ -17,8 +33,12 @@ export class ToolbarComponent implements OnInit {
     ngOnInit(): void {
     }
 
-    delete(){
-     this.remove.emit();
+    onRemoveClick() {
+        this.remove.emit();
+    }
+
+    onEditClick() {
+        this.edit.emit();
     }
 
 }

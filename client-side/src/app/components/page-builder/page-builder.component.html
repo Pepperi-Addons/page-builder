@@ -1,44 +1,43 @@
 
 <div class="page-builder-container">
     <div class="top-area">
-            <div class="header-container">
-                <div class="header-title heder-content">{{('ViewportWidth' | translate)}} : <b>{{viewportWidth}}</b></div>
-                    <div class="header-group-btn">
+        <div class="header-container">
+            <div class="header-title heder-content">{{('ViewportWidth' | translate)}} : <b>{{viewportWidth}}</b></div>
+            <div class="header-group-btn">
                 <pep-group-buttons [buttons]="groupButtons" class="heder-content" sizeType="sm" viewType="toggle" >
-                    </pep-group-buttons>
-                    </div>
-                    <div class="header-end heder-content">
-                        <pep-button iconName="view_card_md" sizeType="sm" classNames="pep-spacing-element"></pep-button>
-                        <pep-button value="Preview" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="changeQueryParam(false)"></pep-button>
-                        <pep-button [value]="'Publish' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="publishPage(addonUUID);">
-                        </pep-button>
-                        <!-- <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
-                        </pep-button>
-                        <pep-button [value]="'Clear Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="clearPage();">
-                        </pep-button> -->
-                    </div>
+                </pep-group-buttons>
             </div>
+            <div class="header-end heder-content">
+                <pep-button iconName="view_card_md" sizeType="sm" classNames="pep-spacing-element"></pep-button>
+                <pep-button value="Preview" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="changeQueryParam(false)"></pep-button>
+                <pep-button [value]="'Publish' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="publishPage(addonUUID);">
+                </pep-button>
+                <!-- <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
+                </pep-button>
+                <pep-button [value]="'Clear Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="clearPage();">
+                </pep-button> -->
+            </div>
+        </div>
     </div>
     <div #sectionsCont cdkDropListGroup>
-        <div class="sections-container" *ngFor="let section of sectionsSubject$ | async as sections; let i=index;">
-           <!-- <div *ngIf="editable" class="section-edit" [ngClass]="{'editable': editable}">
-                <div class="start-cont">
-                    <pep-button *ngIf="editable" [sizeType]="'sm'" [classNames]="'pep-spacing-element'"
-                        [iconName]="'system_move'">
-                    </pep-button>
-                    <label class="header-label body-sm pep-spacing-element">{{'Section ' + (i+1)}}</label>
-                    </div>
-                <div>
-                <pep-button *ngIf="editable" [classNames]="'caution pep-spacing-element'" [sizeType]="'sm'"
-                   [iconName]="'system_bin'" (buttonClick)="removeSection(sections, i);">
-               </pep-button>
-               <pep-button *ngIf="editable" [sizeType]="'sm'" [classNames]="'pep-spacing-element'"
-                    [iconName]="'system_edit'" (buttonClick)="editSection(section);">
-                </pep-button>
-               </div>
-           </div> -->
-           <addon-toolbar [title]="'Section header ' +i"></addon-toolbar>
-           <div cdkDropList  cdkDropListOrientation="horizontal" id="{{'section-' + (i+1)}}"
+        <div class="sections-container"
+            cdkDropList (cdkDropListDropped)="onSectionDropped($event)" >
+            <page-builder-section class="draggable-section" *ngFor="let section of pageBuilderService.sectionsSubject$ | async as sections; let i=index;" 
+                [id]="section.id" [name]="section.name || section.id" [splitData]="section.splitData" [blocks]="section.blocks" 
+                (remove)="onRemoveSectionClick($event)"
+                cdkDrag
+                >
+                <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
+            </page-builder-section>
+    <!-- <div #sectionsCont cdkDropListGroup>
+        <div class="sections-container" *ngFor="let section of pageBuilderService.sectionsSubject$ | async as sections; let i=index;">
+            <page-builder-section [id]="section.id" [name]="section.name || section.id" [splitData]="section.splitData" [blocks]="section.blocks" 
+                (remove)="onRemoveSectionClick($event)"></page-builder-section> -->
+
+
+
+            <!-- <toolbar-actions [title]="'Section header ' +i" (edit)="onEditSectionClick(section);"></toolbar-actions>
+            <div cdkDropList cdkDropListOrientation="horizontal" id="{{'section-' + (i+1)}}"
                (cdkDropListDropped)="drop($event)"
                [cdkDropListData]="section"
                (cdkDropListEntered)="entered()"
@@ -54,23 +53,22 @@
                       [ngClass]="{'editable': editable}"
                       cdkDragBoundary=".page-builder-container"
                       class="flex-item" *ngFor="let block of section; let i=index;">
-                           <div *ngIf="editable" [ngClass]="{'editable': editable}" class="block-edit">
-                               <pep-button [classNames]="'caution remove-addon '"
-                                     sizeType="sm"
-                                   [iconName]="'system_bin'" (buttonClick)="removeSection(section, i);">
-                               </pep-button>
-                               <pep-button  [classNames]="'pep-spacing-element '" [sizeType]="'sm'"
-                               [iconName]="'system_edit'" (buttonClick)="editBlock(block);">
-                                </pep-button>
-                           </div>
-                           <div>
-                               <addon-proxy *ngIf="block" [hostObject]="block" (hostEvents)="onAddonChange($event);">
-                               </addon-proxy>
-                           </div>
-                   </div>
-           </div>
+                    <div *ngIf="editable" [ngClass]="{'editable': editable}" class="block-edit">
+                        <pep-button [classNames]="'caution remove-block '"
+                                sizeType="sm"
+                            [iconName]="'system_bin'" (buttonClick)="removeSection(section, i);">
+                        </pep-button>
+                        <pep-button  [classNames]="'pep-spacing-element '" [sizeType]="'sm'"
+                        [iconName]="'system_edit'" (buttonClick)="editBlock(block);">
+                        </pep-button>
+                    </div>
+                    <div>
+                        <addon-proxy *ngIf="block" [hostObject]="block" (hostEvents)="onBlockChange($event);">
+                        </addon-proxy>
+                    </div>
+                </div>
+           </div> -->
        </div>
-       <page-builder-section></page-builder-section>
     </div>
 
     <pep-button class="add-section-button" value="Add Section " styleType="regular" iconName="number_plus" iconPosition="end"
