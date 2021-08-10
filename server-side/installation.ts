@@ -9,39 +9,23 @@ The error Message is importent! it will be written in the audit log and help the
 */
 
 import { Client, Request } from '@pepperi-addons/debug-server'
-import { PapiClient } from '@pepperi-addons/papi-sdk'
+import { AddonDataScheme, PapiClient } from '@pepperi-addons/papi-sdk'
+import MyService from './my.service';
 
 export async function install(client: Client, request: Request): Promise<any> {
-    
-    const papiClient = new PapiClient({
-        baseURL: client.BaseURL,
-        token: client.OAuthAccessToken,
-        addonUUID: client.AddonUUID,
-        addonSecretKey: client.AddonSecretKey,
-        // actionUUID: client["ActionUUID"]
-    });
-    
-    await papiClient.addons.data.schemes.post({
-        Name: 'Pages',
-        Type: 'data',
-        Fields: {
-            Name: {
-                Type: 'String'
-            },
-            Description: {
-                Type: 'String'
-            },
-            Type: {
-                Type: 'String'
-            }
-        }
-    });
+    const service = new MyService(client);
+    const result = await createPagesTable(service, client);
+    return {success: result ? true : false,resultObject:{result}}
 
-    return {success:true,resultObject:{}}
+
+   
 }
 
 export async function uninstall(client: Client, request: Request): Promise<any> {
-    return {success:true,resultObject:{}}
+    const service = new MyService(client);
+
+    const res = await service.dropTable('Pages');
+    return {success:true,resultObject:{res}}
 }
 
 export async function upgrade(client: Client, request: Request): Promise<any> {
@@ -51,3 +35,30 @@ export async function upgrade(client: Client, request: Request): Promise<any> {
 export async function downgrade(client: Client, request: Request): Promise<any> {
     return {success:true,resultObject:{}}
 }
+
+async function createPagesTable(service: MyService, client: Client): Promise<any> {
+ 
+    // const pages = await service.getPages(client.AddonUUID);
+
+    // if (!pages) {
+        const pagesDataScheme: AddonDataScheme = {
+            "Name": "Pages",
+            "Type": "data",
+            "Fields": {
+                "Name": {
+                    "Type": "String"
+                },
+                "Description": {
+                    "Type": "String"
+                },
+                "Type": {
+                    "Type": "String"
+                }
+            }
+        };
+
+        return service.createDataScheme(pagesDataScheme);
+    // } else {
+    //     return Promise.resolve(pages);
+    // }
+    }

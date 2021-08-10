@@ -1,8 +1,9 @@
 import MyService from './my.service'
 import { Client, Request } from '@pepperi-addons/debug-server'
 import { ATDMetaData, InstalledAddon, Relation} from '@pepperi-addons/papi-sdk';
-import { RemoteModuleOptions } from '@pepperi-addons/ngx-remote-loader';
+
 import { Configuration } from './page-builder.model';
+import { RemoteModuleOptions } from '@pepperi-addons/ngx-remote-loader/loader.model';
 
 export async function init_page(client: Client, request: Request): Promise<any> {
     return getPage(client, request);
