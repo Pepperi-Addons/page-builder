@@ -9,15 +9,13 @@ import { AppComponent } from './app.component';
 import { MatIconModule } from '@angular/material/icon';
 import { PepIconModule } from '@pepperi-addons/ngx-lib/icon';
 import { PepSizeDetectorModule } from '@pepperi-addons/ngx-lib/size-detector';
-import { createTranslateLoader } from './components/slideshow';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { PepFileService, PepAddonService } from '@pepperi-addons/ngx-lib';
+
 @NgModule({
     declarations: [
         AppComponent
-
-
     ],
     imports: [
         BrowserModule,
@@ -33,11 +31,10 @@ import { PepFileService, PepAddonService } from '@pepperi-addons/ngx-lib';
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: createTranslateLoader,
+                useFactory: PepAddonService.createDefaultMultiTranslateLoader,
                 deps: [HttpClient, PepFileService, PepAddonService]
             }
         })
-
     ],
     providers: [],
     bootstrap: [AppComponent]
