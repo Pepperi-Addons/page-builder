@@ -11,7 +11,7 @@ export type EditorType = 'page-builder' | 'section' | 'block';
 export interface Editor {
     title: string,
     type: EditorType,
-    currentEditableObject: any,
+    // currentEditableObject: any,
     remoteModuleOptions?: RemoteModuleOptions,
     hostObject?: any
 }
@@ -55,7 +55,7 @@ export class PageBuilderService {
         this.editorsBreadCrumb.push({
             title: this.translate.instant('Main'),
             type : 'page-builder',
-            currentEditableObject: null
+            // currentEditableObject: null
         });
 
         this.editorChangeSubject = new BehaviorSubject<Editor>(this.editorsBreadCrumb[0]);
@@ -81,35 +81,21 @@ export class PageBuilderService {
 
     private loadSections() {
         const savedSections: Section[] = JSON.parse(sessionStorage.getItem('sections')) ?? [];
-
-        // let i = 1;
-        // savedSections.forEach(section => {
-            // setTimeout(() => {
-                // const sections = [...this.sectionsSubject.value, section];
-
-                // section.blocks.forEach(block => {
-                //     debugger;
-
-                //     const abIndex = this.availableBlocksSubject.value.findIndex(ab => ab.)
-                // });
-
-
-                // this.sectionsSubject.next(sections);
-            // }, 1000 * i);
-        //     i++;
-        // });
-
         this.sectionsSubject.next(savedSections);
     }
 
-    initPage(addonUUID: string): void {
+    initPageBuilder(): void {
+        // TODO: Get the sections and the blocks data from the server.
+        this.loadSections();
+    }
+
+    initPageEditor(addonUUID: string): void {
         // debug locally
-        this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageBlock` })
-        // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page`, { RelationName: `PageBlock` })
+        this.http.postHttpCall('http://localhost:4500/api/init_page_editor', { PageType: ''}) // {RelationName: `PageBlock` }
+        // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page_editor`, {})
             .subscribe(res => {
             
-            this.availableBlocksSubject.next(res['relations']);
-            this.loadSections();
+            this.availableBlocksSubject.next(res['availableBlocks']);
         });
     }
 

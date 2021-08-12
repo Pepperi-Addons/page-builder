@@ -48,9 +48,9 @@ import { config } from '../addon.config';
 })
 export class SlideshowEditorModule { 
     constructor(
-        // translate: TranslateService,
-        // private addonService: PepAddonService,
+        translate: TranslateService,
+        private addonService: PepAddonService,
     ) {
-        // this.addonService.setDefaultTranslateLang(translate);
+        this.addonService.setDefaultTranslateLang(translate);
     }
 }

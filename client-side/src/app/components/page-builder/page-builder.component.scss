@@ -3,15 +3,17 @@
 $page-buildr-gap: .1rem;
 $section-edit-height: 2.5rem;
 
-.page-builder-container{
+.page-builder-container {
     display: flex;
     flex-direction: column;
 
-    .sections-container{
+    .sections-container {
+        width: 100%;
+        margin: 0 auto;
+        position: relative;
         // border: 1px solid #999999;
         // box-shadow: 0px 1px 2px 0px rgb(0 0 0 / 4%), 0px 2px 4px 0px rgb(0 0 0 / 4%), 0px 4px 8px 0px rgb(0 0 0 / 4%);
         // border-radius: 4px;
-        position: relative;
 
         .draggable-section {
             display: block;

@@ -4,8 +4,9 @@ import { Observable } from "rxjs";
 import { CdkDragDrop, CdkDropList  } from '@angular/cdk/drag-drop';
 import { PageBuilderService, Section } from '../../services/page-builder.service';
 import { pepIconSystemBin } from '@pepperi-addons/ngx-lib/icon';
-import { config} from './addon.config';
 import { TranslateService } from '@ngx-translate/core';
+import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
+import { PepButton } from '@pepperi-addons/ngx-lib/button';
 
 // export const subject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
 @Component({
@@ -17,79 +18,45 @@ export class PageBuilderComponent implements OnInit {
     @Input() hostObject: any;
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
 
-    @ViewChild('section', { read: TemplateRef }) sectionTemplate:TemplateRef<any>;
+    // @ViewChild('section', { read: TemplateRef }) sectionTemplate:TemplateRef<any>;
     @ViewChild('sectionsCont') sectionsCont: ElementRef;
 
-    @ViewChildren(CdkDropList) htmlSections: QueryList<CdkDropList>;
+    // @ViewChildren(CdkDropList) htmlSections: QueryList<CdkDropList>;
     // @ViewChildren('htmlBlocks') htmlBlocks: QueryList<ElementRef>;
 
-    editable = false;
     // carouselAddon;
     // addonsTemp = [];
     // sectionsSubject$: BehaviorSubject<Section[]>;
-    groupButtons;
-    pageLayout;
+    // pageLayout;
+    editable = false;
+    screenOptions: Array<PepButton>;
+    selectedScreenKey: string;
     addons$: Observable<any[]>;
-
-    // transferringItem: string | undefined = undefined;
-    viewportWidth;
-    // noSections = false;
-    addonUUID;
-
-    /* Todo - need to be removed into componnent */
-    // public sectionColumnArray = new Array(3);
-    // public numOfSectionColumns = [{key: '1',value: '1'},
-    //                               {key: '2',value: '2'},
-    //                               {key: '3',value: '3'},
-    //                               {key: '4',value: '4'},
-    //                               {key: '5',value: '5'}];
+    viewportWidth: number;
 
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private renderer: Renderer2,
         private translate: TranslateService,
+        private layoutService: PepLayoutService,
         public pageBuilderService: PageBuilderService
     ) {
         this.editable = route?.snapshot?.queryParams?.edit === "true" ?? false;
-        // this.sectionsSubject$ = new BehaviorSubject<Section[]>([]);
         this.viewportWidth = window.innerWidth;
     }
 
     ngOnInit(){
-        // debugger;
-
-        this.addonUUID = this.route.snapshot.params.addon_uuid || config.AddonUUID;
-        this.groupButtons = [
-            { key:'Desktop', value: 'Desktop', callback: () => this.changeScreenSize('Desktop'), iconName: pepIconSystemBin.name, iconPosition: 'end' },
-            { key:'Tablet', value: 'Tablet', callback: () => this.changeScreenSize('Tablet'), iconName: pepIconSystemBin.name, iconPosition: 'end' },
-            { key:'Mobile', value: 'Mobile', callback: () => this.changeScreenSize('Mobile'), iconName: pepIconSystemBin.name, iconPosition: 'end' }
+        
+        
+        this.screenOptions = [
+            { key:'Desktop', value: 'Desktop', callback: () => this.changeScreenSize(PepScreenSizeType.XL), iconName: pepIconSystemBin.name, iconPosition: 'end' },
+            { key:'Tablet', value: 'Tablet', callback: () => this.changeScreenSize(PepScreenSizeType.MD), iconName: pepIconSystemBin.name, iconPosition: 'end' },
+            { key:'Mobile', value: 'Mobile', callback: () => this.changeScreenSize(PepScreenSizeType.SM), iconName: pepIconSystemBin.name, iconPosition: 'end' }
         ];
+        this.selectedScreenKey = 'Desktop';
         
-        this.pageBuilderService.initPage(this.addonUUID);
-        
-        // .subscribe(res => {
-        //     this.buildSections(null);
-        //     // sessionStorage.setItem('blocks',JSON.stringify(res['relations']));
-        //     propsSubject.next(res['relations']);
-        // });
-
-        this.pageBuilderService.availableBlocksLoadedSubject$.subscribe(selectedBlock => {
-            // if (selectedBlock?.section != null) {
-            //     this.htmlBlocks.forEach(block => {
-            //         this.renderer.setStyle(block.nativeElement, 'border', '2px dashed gold');
-            //     })
-            //     if (selectedBlock?.block != null) {
-            //         const selectedBlockElement = this.htmlSections.get(selectedBlock.section).data.children[selectedBlock.block]
-            //         // selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'border', '4px solid blue') : null;
-            //     }
-
-            //     if (selectedBlock?.flex) {
-            //         // const selectedBlockElement = this.htmlSections.get(selectedBlock.section).nativeElement.children[selectedBlock.block]
-            //         // selectedBlockElement ? this.renderer.setStyle(selectedBlockElement, 'flex', selectedBlock.flex) : null;
-            //     }
-            // }
-        });
+        this.pageBuilderService.initPageBuilder();
     }
 
     // buildSections(sections) {
@@ -218,7 +185,7 @@ export class PageBuilderComponent implements OnInit {
     //     // blockEditorSubject.next(block);
     // }
 
-    async publishPage(addonUUID) {
+    async publishPage() {
         // const body = JSON.stringify({RelationName: `PageBlock`, Layout: this.pageLayout });
         // const ans =  await this.http.postHttpCall('http://localhost:4500/api/publish', body).toPromise();
         // console.log(ans)
@@ -251,20 +218,23 @@ export class PageBuilderComponent implements OnInit {
         this.pageBuilderService.clearSections();
     }
 
-    changeScreenSize(screenSize) {
-        switch(screenSize){
-            case 'Desktop':
+    changeScreenSize(screenSize: PepScreenSizeType) {
+        this.layoutService.onResize(screenSize);
+
+        switch(screenSize) {
+            case PepScreenSizeType.XL:
+            case PepScreenSizeType.LG: // 'Desktop':
                 this.renderer.setStyle(this.sectionsCont.nativeElement, 'width', '100%');
-                this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'row'));
+                // this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'row'));
                 break;
-            case 'Tablet':
+            case PepScreenSizeType.MD: // 'Tablet':
                 this.renderer.setStyle(this.sectionsCont.nativeElement, 'width', '800px');
-                this.renderer.setStyle(this.sectionsCont.nativeElement, 'margin', '0 auto');
-                this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'column'));
+                // this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'column'));
                 break;
-            case 'Mobile':
+            case PepScreenSizeType.SM:
+            case PepScreenSizeType.XS: // 'Mobile':
                 this.renderer.setStyle(this.sectionsCont.nativeElement, 'width', '360px');
-                this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'column'));
+                // this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'column'));
                 break;
         }
     }
@@ -273,7 +243,7 @@ export class PageBuilderComponent implements OnInit {
         this.pageBuilderService.navigateToEditor({
             title: this.translate.instant('Section'),
             type : 'section',
-            currentEditableObject: section
+            // currentEditableObject: section
         })
     }
 

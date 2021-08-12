@@ -13,7 +13,6 @@ import { AppComponent } from './app.component';
 export class EmptyRouteComponent {}
 
 const routes: Routes = [
-
     {
         path: ``,
         children: [

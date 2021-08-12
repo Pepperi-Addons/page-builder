@@ -5,6 +5,7 @@ import { PepHttpService } from '@pepperi-addons/ngx-lib';
 import { Observable, ReplaySubject } from 'rxjs';
 import { PageBuilderService } from '../../services/page-builder.service';
 // import { subject } from '../page-builder/page-builder.component';
+import { config } from '../addon.config';
 
 @Component({
     selector: 'page-builder-editor',
@@ -27,6 +28,7 @@ export class PageBuilderEditorComponent implements OnInit {
     availableBlocks = [];
     sectionsDropList = [];
     sizesGroupButtons;
+    addonUUID: string;
 
     constructor(
         private pageBuilderService: PageBuilderService,
@@ -34,41 +36,19 @@ export class PageBuilderEditorComponent implements OnInit {
         private route: ActivatedRoute
     ) { }
 
-    private initPageEditor(availableBlocks) {
-        if (availableBlocks.length) {
-            // this.twoDArray = blocks;
-            // flatten 2d Array
-            // this.addons = [].concat.apply([], sections);
-
-            // const firstBlock = Object.create(availableBlocks[0]);
-            // Object.assign(availableBlocks[0], firstBlock);
-            // firstBlock.title = 'slideshow copy';
-            // this.availableBlocks = [...availableBlocks, firstBlock];
-            
-            this.availableBlocks = availableBlocks;
-
-            // blocks.forEach((section, index) => {
-            //     this.sections.push({value: 'Section '+index, key: index});
-            // })
-        }
-
-        // this.flexArray.forEach(item => this.options.push({key: item, value: item.toString()}))
-        // this.supportedPages.forEach(item => this.pageTypes.push({key: item.toString(), value: item.toString()}));
-        // debug locally
-        // return this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageBlock` });
-    }
-
     ngOnInit(): void {
         // const addonUUID = this.route.snapshot.params.addon_uuid
         // this.addons$ = this.http.postPapiApiCall(
         //     `/addons/api/${addonUUID}/api/init_page`,
         //     {RelationName: `PageBlock` })
+        this.addonUUID = this.route.snapshot.params.addon_uuid || config.AddonUUID;
         this.pageBuilderService.sectionsSubject$.subscribe(res => {
             this.sectionsDropList = res.map(section => section.id);
         })
 
+        this.pageBuilderService.initPageEditor(this.addonUUID);
         this.pageBuilderService.availableBlocksLoadedSubject$.subscribe(availableBlocks => {
-            this.initPageEditor(availableBlocks);
+            this.availableBlocks = availableBlocks;
         });
 
         this.sizesGroupButtons = [

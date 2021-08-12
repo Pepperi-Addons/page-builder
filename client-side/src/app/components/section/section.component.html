@@ -15,7 +15,7 @@
     >
     <toolbar-actions class="section-toolbar" [title]="name" [isDraggable]="true" (edit)="onEditSectionClick();" (remove)="onRemoveSectionClick()"></toolbar-actions>
     <div [ngClass]="{'editable': editable}"
-        #htmlSections class="flex-container"
+        #htmlSections class="html-sections"
         id="{{id}}" 
         cdkDropList
         cdkDropListOrientation="horizontal" 

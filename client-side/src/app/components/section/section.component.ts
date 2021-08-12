@@ -2,6 +2,7 @@ import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, 
 import { CdkDrag, CdkDragDrop, CdkDragExit, CdkDropList, copyArrayItem, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { PageBuilderService, Section } from 'src/app/services/page-builder.service';
 import { TranslateService } from '@ngx-translate/core';
+import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 
 @Component({
     selector: 'page-builder-section',
@@ -10,9 +11,9 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class SectionComponent implements OnInit, OnChanges {
     
-    // @ViewChildren('htmlSections') htmlSections: QueryList<ElementRef>;
-    @ViewChildren(CdkDropList) htmlSections: QueryList<CdkDropList>;
-    @ViewChildren('htmlBlocks') htmlBlocks: QueryList<ElementRef>;
+    @ViewChildren('htmlSections') htmlSections: QueryList<ElementRef>;
+    // @ViewChildren(CdkDropList) htmlSections: QueryList<CdkDropList>;
+    // @ViewChildren('htmlBlocks') htmlBlocks: QueryList<ElementRef>;
 
     // @Input() section: any;
 
@@ -50,19 +51,49 @@ export class SectionComponent implements OnInit, OnChanges {
 
     pageLayout;
     sectionsDropList;
+    screenSize: PepScreenSizeType;
 
     constructor(
         private renderer: Renderer2,
         private translate: TranslateService,
+        private layoutService: PepLayoutService,
         private pageBuilderService: PageBuilderService
     ) {
+        this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
+            this.screenSize = size;
+            this.refreshSplitData();
+        });
 
     }
 
     private refreshSplitData() {
         if (this.sectionContainer) {
-            this.renderer.setStyle(this.sectionContainer.nativeElement, 'grid-template-columns', this.splitData);
+            if (this.screenSize <= PepScreenSizeType.LG) {
+                this.htmlSections.toArray().map((section, sectionIndex) => {
+                    this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'column');
+                    this.renderer.setStyle(section.nativeElement, 'grid-template-columns', this.splitData);
+                });
+
+                this.renderer.setStyle(this.sectionContainer.nativeElement, 'grid-auto-flow', 'column');
+                this.renderer.setStyle(this.sectionContainer.nativeElement, 'grid-template-columns', this.splitData);
+            } else {
+                this.htmlSections.toArray().map((section, sectionIndex) => {
+                    this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'row');
+                    this.renderer.setStyle(section.nativeElement, 'grid-template-rows', this.splitData);
+                });
+
+                this.renderer.setStyle(this.sectionContainer.nativeElement, 'grid-auto-flow', 'row');
+                this.renderer.setStyle(this.sectionContainer.nativeElement, 'grid-template-rows', this.splitData);
+            }
         }
+    }
+
+    private getBlockEditor(block: any) {
+        let blockEditor: any = {};
+        Object.assign(blockEditor, block);
+        blockEditor.exposedModule = block.editorModuleName;
+        blockEditor.componentName = block.editorComponentName;
+        return blockEditor;
     }
 
     ngOnInit(): void {
@@ -87,7 +118,7 @@ export class SectionComponent implements OnInit, OnChanges {
         this.pageBuilderService.navigateToEditor({
             title: this.translate.instant('Section'),
             type : 'section',
-            currentEditableObject: null // TODO:
+            // currentEditableObject: null // TODO:
         })
     }
 
@@ -149,15 +180,14 @@ export class SectionComponent implements OnInit, OnChanges {
     }
 
     editBlock(block) {
-        debugger;
-        block.exposedModule = block.editorModuleName;
-        block.componentName = block.editorComponentName;
+        const blockEditor = this.getBlockEditor(block);
+        
         this.pageBuilderService.navigateToEditor(
         {
-            title: this.translate.instant('Section'),
+            title: blockEditor.title,
             type : 'block',
-            currentEditableObject: block,
-            remoteModuleOptions: block,
+            // currentEditableObject: blockEditor,
+            remoteModuleOptions: blockEditor,
             hostObject: null
         });
         // blockEditorSubject.next(block);
