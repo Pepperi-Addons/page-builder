@@ -1,3 +1,8 @@
+.addon-proxy-cont{
+    pointer-events: none;
+    opacity: 0.5;
+}
+
 @mixin block-editor-toolbar() {
     position: relative;
     top: calc(50% - 2.5rem);
@@ -19,7 +24,7 @@
     .cdk-drag-placeholder {
         opacity: 1;
     }
-    
+
     .section-toolbar {
         position: absolute;
         top: -1px;
@@ -30,7 +35,7 @@
     .block-toolbar {
         @include block-editor-toolbar();
     }
-    
+
     .background {
         position: absolute;
         width: 100%;
@@ -110,9 +115,9 @@
 
     .block-toolbar {
         @include block-editor-toolbar();
-    }      
+    }
 }
-  
+
 // .cdk-drag-placeholder {
 //     opacity: 0;
 //     // background-color: red;

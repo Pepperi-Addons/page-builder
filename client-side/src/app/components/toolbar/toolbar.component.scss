@@ -9,10 +9,14 @@
     border-radius: 0.25rem;
     z-index: 2;
     background-color: #fff;
-    
+
 }
 
-.start {
+.start, .end {
     display: flex;
     align-items: center;
+}
+
+pep-button{
+    display: inline-flex;
 }
