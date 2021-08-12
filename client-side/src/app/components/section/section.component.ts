@@ -10,16 +10,14 @@ import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
     styleUrls: ['./section.component.scss']
 })
 export class SectionComponent implements OnInit, OnChanges {
+    @ViewChildren('blocksWrapper') blocksElementRef: QueryList<ElementRef>;
     
-    @ViewChildren('htmlSections') htmlSections: QueryList<ElementRef>;
-    // @ViewChildren(CdkDropList) htmlSections: QueryList<CdkDropList>;
-    // @ViewChildren('htmlBlocks') htmlBlocks: QueryList<ElementRef>;
-
-    // @Input() section: any;
-
     @Input() id: string;
     @Input() name: string;
     @Input() editable = false;
+    @Input() screenSize: PepScreenSizeType;
+
+    PepScreenSizeType = PepScreenSizeType;
     // @Input() numOfBlocks = 3;
     
     private _blocks = [];
@@ -51,7 +49,6 @@ export class SectionComponent implements OnInit, OnChanges {
 
     pageLayout;
     sectionsDropList;
-    screenSize: PepScreenSizeType;
 
     constructor(
         private renderer: Renderer2,
@@ -64,12 +61,16 @@ export class SectionComponent implements OnInit, OnChanges {
             this.refreshSplitData();
         });
 
+        this.pageBuilderService.onScreenSizeChange$.subscribe((size: PepScreenSizeType) => {
+            this.screenSize = size;
+            this.refreshSplitData();
+        });
     }
 
     private refreshSplitData() {
         if (this.sectionContainer) {
             if (this.screenSize <= PepScreenSizeType.LG) {
-                this.htmlSections.toArray().map((section, sectionIndex) => {
+                this.blocksElementRef.toArray().map((section, sectionIndex) => {
                     this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'column');
                     this.renderer.setStyle(section.nativeElement, 'grid-template-columns', this.splitData);
                 });
@@ -77,7 +78,7 @@ export class SectionComponent implements OnInit, OnChanges {
                 this.renderer.setStyle(this.sectionContainer.nativeElement, 'grid-auto-flow', 'column');
                 this.renderer.setStyle(this.sectionContainer.nativeElement, 'grid-template-columns', this.splitData);
             } else {
-                this.htmlSections.toArray().map((section, sectionIndex) => {
+                this.blocksElementRef.toArray().map((section, sectionIndex) => {
                     this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'row');
                     this.renderer.setStyle(section.nativeElement, 'grid-template-rows', this.splitData);
                 });
@@ -99,15 +100,10 @@ export class SectionComponent implements OnInit, OnChanges {
     ngOnInit(): void {
         this.refreshSplitData();
 
+        // Get the sections id's into sectionsDropList for the drag & drop.
         this.pageBuilderService.sectionsSubject$.subscribe(res => {
             this.sectionsDropList = res.map(section => section.id);
         })
-
-        // this.blocks = new Array(0);
-        // for(let i=0;i<this.numOfBlocks;i++){
-        //     this.blocks.push({ 'index': i, 'id': 'block_'+ i});
-        // }
-
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -126,42 +122,6 @@ export class SectionComponent implements OnInit, OnChanges {
         // TODO: Remove section.
         this.remove.emit(this.id);
     }
-
-    // drop(event: CdkDragDrop<string[]>) {
-    //     debugger;
-    //     moveItemInArray(this.blocks, event.previousIndex, event.currentIndex);
-
-    // }
-    // drop(event: CdkDragDrop<string[]>) {
-    //     debugger;
-    //     if (event.previousContainer === event.container) {
-    //         moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    //     } else if (event.previousContainer.id == 'availableBlocks') {
-    //         copyArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
-    //     }
-    //     else {
-    //         transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
-    //     }
-
-    //     const flatLayout = this.htmlSections.toArray().map((section, sectionIndex) =>
-    //         section.getSortedItems().map((block, blockIndex) => {
-    //             const flex = block.element.nativeElement.style.flexGrow != '' ?
-    //                         block.element.nativeElement.style.flexGrow : '1'
-    //             return {
-    //                 'Key': block.data.key,
-    //                 'layout':  {
-    //                     section: sectionIndex,
-    //                     block: blockIndex,
-    //                     flex: flex
-    //                 },
-    //                 'Block': block.data
-    //             }
-    //         }
-    //     ));
-
-    //     this.pageLayout =  [].concat.apply([], flatLayout);
-    //     sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
-    // }
     
     entered() {
         // this.transferringItem = undefined;

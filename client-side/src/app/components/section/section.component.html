@@ -1,31 +1,18 @@
-<!-- <div class="page-builder-container" cdkDropListGroup>
-    <pep-button value="Add block" styleType="strong" sizeType="xs"
-        iconName="number_plus" iconPosition="end" (buttonClick)="addBlock($event)"></pep-button>
-    <div #htmlSections class="flex-container" [ngClass]="{'editable': editable}"
-        cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
-
-        <div #htmlBlocks *ngFor="let block of blocks" class="flex-item" cdkDrag cdkDragBoundary=".page-builder-container">
-            <pep-button sizeType="xs" [disabled]="!editable" iconName="system_close" iconPosition="end" (buttonClick)="removeBlock(block.id)"></pep-button>
-            {{block.index}}
-            <img src="https://idpfiles.sandbox.pepperi.com/f389fd2e-4a31-4965-a21e-3a98b4553300/images/logo.svg">
-        </div>
-    </div>
-</div> -->
 <div #sectionContainer class="section-container">
     <toolbar-actions class="section-toolbar" [title]="name" [isDraggable]="true" (edit)="onEditSectionClick();" (remove)="onRemoveSectionClick()"></toolbar-actions>
     <div [ngClass]="{'editable': editable}"
-        #htmlSections class="html-sections"
+        #blocksWrapper class="blocks-wrapper"
         id="{{id}}" 
         cdkDropList
-        cdkDropListOrientation="horizontal"
+        [cdkDropListOrientation]="screenSize <= PepScreenSizeType.LG ? 'horizontal' : 'vertical'"
         [cdkDropListData]="blocks"
         [cdkDropListConnectedTo]="sectionsDropList"
         (cdkDropListDropped)="onBlockDropped($event)">
         <div class="background">
             <div class="back-template" *ngFor="let number of [0,1,2,3,4,5,6,7,8,9,10,11]"></div>
         </div>
-        <div #htmlBlocks cdkDrag [cdkDragData]="block" *ngFor="let block of blocks; let i=index;">
-            <div *cdkDragPlaceholder class="field-placeholder"></div>
+        <div cdkDrag [cdkDragData]="block" *ngFor="let block of blocks; let i=index;">
+            <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
             <toolbar-actions
                 class="block-toolbar" [title]="block.title" [isDraggable]="true" (edit)="editBlock(block);" (remove)="removeBlock(block.id)">
             </toolbar-actions>

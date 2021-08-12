@@ -46,109 +46,28 @@ export class PageBuilderComponent implements OnInit {
         this.viewportWidth = window.innerWidth;
     }
 
-    ngOnInit(){
-        
-        
+    ngOnInit() {
+        this.pageBuilderService.onScreenMaxWidthChange$.subscribe((maxWidth: string) => {
+            if (this.sectionsCont?.nativeElement) {
+                this.renderer.setStyle(this.sectionsCont.nativeElement, 'max-width', maxWidth);
+            }
+        });
+
+        this.pageBuilderService.onScreenWidthChange$.subscribe((width: string) => {
+            if (this.sectionsCont?.nativeElement) {
+                this.renderer.setStyle(this.sectionsCont.nativeElement, 'width', width);
+            }
+        });
+
         this.screenOptions = [
-            { key:'Desktop', value: 'Desktop', callback: () => this.changeScreenSize(PepScreenSizeType.XL), iconName: pepIconSystemBin.name, iconPosition: 'end' },
-            { key:'Tablet', value: 'Tablet', callback: () => this.changeScreenSize(PepScreenSizeType.MD), iconName: pepIconSystemBin.name, iconPosition: 'end' },
-            { key:'Mobile', value: 'Mobile', callback: () => this.changeScreenSize(PepScreenSizeType.SM), iconName: pepIconSystemBin.name, iconPosition: 'end' }
+            { key:'Desktop', value: 'Desktop', callback: () => this.pageBuilderService.setScreenWidth('100%'), iconName: pepIconSystemBin.name, iconPosition: 'end' },
+            { key:'Tablet', value: 'Tablet', callback: () => this.pageBuilderService.setScreenWidth('800'), iconName: pepIconSystemBin.name, iconPosition: 'end' },
+            { key:'Mobile', value: 'Mobile', callback: () => this.pageBuilderService.setScreenWidth('360'), iconName: pepIconSystemBin.name, iconPosition: 'end' }
         ];
         this.selectedScreenKey = 'Desktop';
         
         this.pageBuilderService.initPageBuilder();
     }
-
-    // buildSections(sections) {
-    //     const pageBlocksString = sessionStorage.getItem('blocks') ?? '{}';
-    //     if (pageBlocksString && pageBlocksString != 'undefined'){
-
-    //         const pageBlocks = JSON.parse(pageBlocksString);
-    //         let layoutOutput = {};
-    //         if (pageBlocks?.length){
-    //             pageBlocks.forEach(block => {
-    //                 if (layoutOutput[block.layout.section] != undefined){
-    //                     layoutOutput[block.layout.section][block.layout.block] = block.Block;
-    //                 }
-    //                 else {
-    //                     layoutOutput[block.layout.section] = {};
-    //                     layoutOutput[block.layout.section][block.layout.block] = block.Block;
-    //                 }
-    //             })
-    //             Object.keys(layoutOutput).forEach((section,i) => this.addSection(null));
-    //             setTimeout(() => {Object.keys(layoutOutput).forEach((section,i) =>{
-    //                 const currentSection = this.htmlSections.toArray()[section] ?? null;
-    //                 Object.keys(layoutOutput[section]).forEach(block => currentSection?.data?.push(layoutOutput[section][block]));
-    //             })}, 500);
-    //         }
-    //         //   sections.forEach((section, sectionIndex) => {
-    //         //                 section.forEach((relation, blockIndex) =>  {
-    //         //                     relation.layout.block = blockIndex;
-    //         //                     relation.layout.section = sectionIndex;
-    //         //                 });
-    //         //                 section.sort((x,y) => x.layout.block - y.layout.block );
-    //         //             });
-    //     }
-
-    // }
-
-    // onBlockChange(e) {
-    //     switch(e.action){
-    //         case 'update-addons':
-    //             // propsSubject.next(e);
-    //         break;
-    //     }
-    // }
-
-    // numOfSectionColumnsChange(event) {
-    //     const numOfColumns = parseInt(event);
-    //     const colWidth = 100 / numOfColumns;
-
-    //     this.sectionColumnArray = new Array(numOfColumns);
-
-    //     for( let i=0; i<numOfColumns; i++){
-    //         this.sectionColumnArray[i] = { 'id': i, 'width': colWidth};
-    //     }
-    // }
-
-    // drop(event: CdkDragDrop<string[]>) {
-    //     debugger;
-    //     if (event.previousContainer === event.container) {
-    //         moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    //     } else if (event.previousContainer.id == 'availableBlocks') {
-    //         copyArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
-    //     }
-    //     else {
-    //         transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
-    //     }
-
-    //     const flatLayout = this.htmlSections.toArray().map((section, sectionIndex) =>
-    //         section.getSortedItems().map((block, blockIndex) => {
-    //             const flex = block.element.nativeElement.style.flexGrow != '' ?
-    //                         block.element.nativeElement.style.flexGrow : '1'
-    //             return {
-    //                 'Key': block.data.key,
-    //                 'layout':  {
-    //                     section: sectionIndex,
-    //                     block: blockIndex,
-    //                     flex: flex
-    //                 },
-    //                 'Block': block.data
-    //             }
-    //         }
-    //     ));
-
-    //     this.pageLayout =  [].concat.apply([], flatLayout);
-    //     sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
-    // }
-
-    // removeSection(sections, i) {
-    //     // TODO: Show dialog msg are u sure?
-    //     // this.noSections = sections?.length == 1 && sections[i]?.length === 0
-    //     sections.splice(i, 1);
-
-    //     // this.sectionsSubject$.getValue().splice(i, 1);
-    // }
 
     addSection(e) {
         // const sections = this.sectionsSubject$.value;
@@ -168,22 +87,6 @@ export class PageBuilderComponent implements OnInit {
 
         this.pageBuilderService.addSection();
     }
-
-    // editSection(section){
-    //     section.exposedModue = section.editorModuleName;
-    //     section.compoenntName = section.editorComponentName;
-    //     // blockEditorSubject.next(section);
-    // }
-
-    // removeBlock() {
-
-    // }
-
-    // editBlock(block){
-    //     block.exposedModue = block.editorModuleName;
-    //     block.compoenntName = block.editorComponentName;
-    //     // blockEditorSubject.next(block);
-    // }
 
     async publishPage() {
         // const body = JSON.stringify({RelationName: `PageBlock`, Layout: this.pageLayout });
@@ -218,26 +121,26 @@ export class PageBuilderComponent implements OnInit {
         this.pageBuilderService.clearSections();
     }
 
-    changeScreenSize(screenSize: PepScreenSizeType) {
-        this.layoutService.onResize(screenSize);
+    // changeScreenSize(screenSize: PepScreenSizeType) {
+    //     this.layoutService.onResize(screenSize);
 
-        switch(screenSize) {
-            case PepScreenSizeType.XL:
-            case PepScreenSizeType.LG: // 'Desktop':
-                this.renderer.setStyle(this.sectionsCont.nativeElement, 'width', '100%');
-                // this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'row'));
-                break;
-            case PepScreenSizeType.MD: // 'Tablet':
-                this.renderer.setStyle(this.sectionsCont.nativeElement, 'width', '800px');
-                // this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'column'));
-                break;
-            case PepScreenSizeType.SM:
-            case PepScreenSizeType.XS: // 'Mobile':
-                this.renderer.setStyle(this.sectionsCont.nativeElement, 'width', '360px');
-                // this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'column'));
-                break;
-        }
-    }
+    //     switch(screenSize) {
+    //         case PepScreenSizeType.XL:
+    //         case PepScreenSizeType.LG: // 'Desktop':
+    //             this.renderer.setStyle(this.sectionsCont.nativeElement, 'width', '100%');
+    //             // this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'row'));
+    //             break;
+    //         case PepScreenSizeType.MD: // 'Tablet':
+    //             this.renderer.setStyle(this.sectionsCont.nativeElement, 'width', '800px');
+    //             // this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'column'));
+    //             break;
+    //         case PepScreenSizeType.SM:
+    //         case PepScreenSizeType.XS: // 'Mobile':
+    //             this.renderer.setStyle(this.sectionsCont.nativeElement, 'width', '360px');
+    //             // this.htmlSections.forEach(section =>  this.renderer.setStyle(section.element.nativeElement, 'flex-direction', 'column'));
+    //             break;
+    //     }
+    // }
 
     onEditSectionClick(section) {
         this.pageBuilderService.navigateToEditor({

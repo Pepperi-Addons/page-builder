@@ -18,11 +18,9 @@
     border: 1px solid #999999;
     border-radius: 0.25rem;
     min-height: 250px;
-    // box-shadow: 0px 1px 2px 0px;
-    // border: 1px dashed gray;
-
+    
     .cdk-drag-placeholder {
-        opacity: 1;
+        opacity: 0;
     }
 
     .section-toolbar {
@@ -41,7 +39,7 @@
         width: 100%;
         height: 100%;
 
-        .back-template{
+        .back-template {
             width: 8.3333%;
             height: 100%;
             background-color: #BEC3E5;
@@ -56,11 +54,8 @@
         }
     }
 
-    .html-sections {
+    .blocks-wrapper {
         min-height: 250px;
-        // display: flex;
-        // flex-direction: row;
-        // flex-wrap: no-wrap;
         display: grid;
         grid-auto-flow: column;
 
@@ -91,67 +86,3 @@
 .cdk-drag-animating {
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
-
-// Old code
-// .flex-container {
-//     min-height: 250px;
-//     display: flex;
-//     flex-direction: row;
-//     flex-wrap: no-wrap;
-//     gap: 1rem;
-
-
-//     .flex-item{
-//         min-height: 250px;
-//         flex: 1;
-//         display: inline-grid;
-//         align-content: center;
-//     }
-
-//     &.editable {
-//         border: 2px dashed green;
-//         padding: .5rem;
-
-//         .flex-item{
-//             border: 2px dashed gold;
-//             background-color: #f1f1f1;
-//             cursor: move;
-//             padding: 1rem;
-
-//             img{
-//                 -webkit-filter: grayscale(100%);
-//                 filter: grayscale(100%);
-//                 opacity: 0.3;
-//             }
-//         }
-//     }
-// }
-
-
-// @media (max-width: 800px) {
-//     .flex-container {
-//         flex-direction: column;
-//     }
-// }
-
-// .cdk-drag-preview {
-//     box-sizing: border-box;
-//     border-radius: 4px;
-//     box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-//                 0 8px 10px 1px rgba(0, 0, 0, 0.14),
-//                 0 3px 14px 2px rgba(0, 0, 0, 0.12);
-//     align-content: center;
-// }
-
-// .cdk-drag-placeholder {
-//     opacity: 0.5;
-// }
-
-// .cdk-drag-animating {
-//     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-// }
-
-// .example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
-//     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-// }
-

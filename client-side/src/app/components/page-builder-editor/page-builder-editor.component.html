@@ -1,6 +1,4 @@
 <mat-tab-group  #tabGroup class="editor-tabs" animationDuration="0ms">
-    <!-- <mat-tab  *ngFor="let tab of tabs; let i = index; " id="tab"  label="{{ tab | translate}}">
-    </mat-tab> -->
     <mat-tab label="General">
         <div class="general-container ">
             <pep-textbox value="" label="Page Name"></pep-textbox>
@@ -18,37 +16,12 @@
                     (cdkDragStarted)="dragStart($event)"
                     (cdkDragMoved)="moved($event)"
                     >
-                    <div *cdkDragPlaceholder class="field-placeholder"></div>
+                    <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
                     <!-- <addon-proxy *cdkDragPreview [options]="block" [hostObject]="block">
                     </addon-proxy> -->
                 </toolbar-actions>
-                    <!-- <pep-button *ngFor="let block of availableBlocks;" [value]="block.title" cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block" cdkDragBoundary=".page-builder-container"
-                        iconPosition="start" iconName="system_move" classNames="available-blocks" ></pep-button> -->
             </div>
         </div>
-        <!-- <br>
-        <h4>Blocks Layout</h4>
-        <pep-select
-                    #pepSelect
-                    [emptyOption]="false"
-                    [options]="sections"
-                    [label]="'Choose Section'"
-                    (valueChange)="sectionSelected($event);"
-        ></pep-select>
-        <pep-select
-                    #pepSelect
-                    [emptyOption]="false"
-                    [options]="blocks"
-                    [label]="'Choose Block'"
-                    (valueChange)="blockSelected($event);"
-        ></pep-select>
-        <pep-select
-                    #pepSelect
-                    [emptyOption]="false"
-                    [options]="options"
-                    [label]="'Flex Size'"
-                    (valueChange)="changeBlockSize($event);"
-        ></pep-select> -->
     </mat-tab>
     <mat-tab label="Design">
         <div class="tab-container">

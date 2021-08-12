@@ -3,11 +3,8 @@ label {
     font-weight: 400;
 }
 
-.general-container,
-.available-blocks {
-    .cdk-drag-placeholder {
-        opacity: 1;
-    }
+.cdk-drag-placeholder {
+    opacity: 0;
 }
 
 .editor-tabs {

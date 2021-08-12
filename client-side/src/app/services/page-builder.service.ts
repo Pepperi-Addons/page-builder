@@ -1,7 +1,7 @@
 import { CdkDragDrop, copyArrayItem, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
 import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
-import { PepHttpService } from "@pepperi-addons/ngx-lib";
+import { PepHttpService, PepScreenSizeType, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { RemoteModuleOptions } from "@pepperi-addons/ngx-remote-loader";
 import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
@@ -29,25 +29,39 @@ export interface Section {
 })
 export class PageBuilderService {
     private editorsBreadCrumb = Array<Editor>();
-    private editorChangeSubject: BehaviorSubject<Editor>;
-
-    private availableBlocksSubject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-    private sectionsSubject: BehaviorSubject<Section[]> = new BehaviorSubject<Section[]>([]);;
     
+    private screenSizeSubject: BehaviorSubject<PepScreenSizeType> = new BehaviorSubject<PepScreenSizeType>(PepScreenSizeType.XL);
+    get onScreenSizeChange$(): Observable<PepScreenSizeType> {
+        return this.screenSizeSubject.asObservable().pipe(distinctUntilChanged());
+    }
 
+    private screenMaxWidthSubject: BehaviorSubject<string> = new BehaviorSubject<string>('unset');
+    get onScreenMaxWidthChange$(): Observable<string> {
+        return this.screenMaxWidthSubject.asObservable().pipe(distinctUntilChanged());
+    }
+
+    private screenWidthSubject: BehaviorSubject<string> = new BehaviorSubject<string>('100%');
+    get onScreenWidthChange$(): Observable<string> {
+        return this.screenWidthSubject.asObservable().pipe(distinctUntilChanged());
+    }
+    
+    private editorChangeSubject: BehaviorSubject<Editor>;
     get onEditorChange$(): Observable<Editor> {
         return this.editorChangeSubject.asObservable().pipe(distinctUntilChanged());
     }
-
+    
+    private availableBlocksSubject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
     get availableBlocksLoadedSubject$(): Observable<any> {
         return this.availableBlocksSubject.asObservable();
     }
-
+    
+    private sectionsSubject: BehaviorSubject<Section[]> = new BehaviorSubject<Section[]>([]);;
     get sectionsSubject$(): Observable<Section[]> {
         return this.sectionsSubject.asObservable()
     }
 
     constructor(
+        private utilitiesService: PepUtilitiesService,
         private translate: TranslateService,
         private http: PepHttpService,
     ) {
@@ -133,6 +147,39 @@ export class PageBuilderService {
         this.sectionsSubject.next(sections);
     }
     
+    setScreenMaxWidth(value: string) {
+        let maxWidth = this.utilitiesService.coerceNumberProperty(value, 0);
+
+        if (maxWidth === 0) {
+            this.screenMaxWidthSubject.next('unset');
+        } else {
+            this.screenMaxWidthSubject.next(`${maxWidth}px`);
+        }
+    }
+
+    setScreenWidth(value: string) {
+        let width = this.utilitiesService.coerceNumberProperty(value, 0);
+        if (width === 0) {
+            this.screenWidthSubject.next('100%');
+            this.screenSizeSubject.next(PepScreenSizeType.XL);
+        } else {
+            this.screenWidthSubject.next(`${width}px`);
+            
+            // Change the size according the width.
+            if (width >= 1920) {
+                this.screenSizeSubject.next(PepScreenSizeType.XL);
+            } else if (width >= 1280 && width < 1920) {
+                this.screenSizeSubject.next(PepScreenSizeType.LG);
+            } else if (width >= 960 && width < 1280) {
+                this.screenSizeSubject.next(PepScreenSizeType.MD);
+            } else if (width >= 600 && width < 960) {
+                this.screenSizeSubject.next(PepScreenSizeType.SM);
+            } else if (width < 600) {
+                this.screenSizeSubject.next(PepScreenSizeType.XS);
+            }
+        }
+    }
+
     removeSection(sectionId: string) {
         const index = this.sectionsSubject.value.findIndex(section => section.id === sectionId);
         if (index > -1) {

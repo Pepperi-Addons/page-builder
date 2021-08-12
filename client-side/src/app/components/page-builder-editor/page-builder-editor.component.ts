@@ -85,8 +85,7 @@ export class PageBuilderEditorComponent implements OnInit {
     }
 
     changeScreenSize(screenWidth: string) {
-        debugger;
-       //this.pageBuilderService.setScreenWidth(parseInt(screenWidth));
+        this.pageBuilderService.setScreenMaxWidth(screenWidth);
     }
     // changeBlockSize(size) {
     //     this.selectedBlock.flex = size;
