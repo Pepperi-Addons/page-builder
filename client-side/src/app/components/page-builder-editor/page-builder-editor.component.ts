@@ -25,6 +25,7 @@ export class PageBuilderEditorComponent implements OnInit {
     // twoDArray = [];
     // selectedBlock = { section: null, block: null, flex: null};
     // tabs = ['General', 'Design'];
+    isFullWidth: boolean = true;
     availableBlocks = [];
     sectionsDropList = [];
     sizesGroupButtons;
@@ -83,6 +84,10 @@ export class PageBuilderEditorComponent implements OnInit {
         // this.pageBuilderService.SelectBlock
     }
 
+    changeScreenSize(screenWidth: string) {
+        debugger;
+       //this.pageBuilderService.setScreenWidth(parseInt(screenWidth));
+    }
     // changeBlockSize(size) {
     //     this.selectedBlock.flex = size;
     //     propsSubject.next(this.selectedBlock);

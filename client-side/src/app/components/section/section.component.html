@@ -1,7 +1,7 @@
 <!-- <div class="page-builder-container" cdkDropListGroup>
     <pep-button value="Add block" styleType="strong" sizeType="xs"
         iconName="number_plus" iconPosition="end" (buttonClick)="addBlock($event)"></pep-button>
-    <div #htmlSections class="flex-container" [ngClass]="{'editable': editable}" 
+    <div #htmlSections class="flex-container" [ngClass]="{'editable': editable}"
         cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
 
         <div #htmlBlocks *ngFor="let block of blocks" class="flex-item" cdkDrag cdkDragBoundary=".page-builder-container">
@@ -11,14 +11,13 @@
         </div>
     </div>
 </div> -->
-<div #sectionContainer class="section-container" 
-    >
+<div #sectionContainer class="section-container">
     <toolbar-actions class="section-toolbar" [title]="name" [isDraggable]="true" (edit)="onEditSectionClick();" (remove)="onRemoveSectionClick()"></toolbar-actions>
     <div [ngClass]="{'editable': editable}"
         #htmlSections class="html-sections"
         id="{{id}}" 
         cdkDropList
-        cdkDropListOrientation="horizontal" 
+        cdkDropListOrientation="horizontal"
         [cdkDropListData]="blocks"
         [cdkDropListConnectedTo]="sectionsDropList"
         (cdkDropListDropped)="onBlockDropped($event)">
@@ -27,7 +26,7 @@
         </div>
         <div #htmlBlocks cdkDrag [cdkDragData]="block" *ngFor="let block of blocks; let i=index;">
             <div *cdkDragPlaceholder class="field-placeholder"></div>
-            <toolbar-actions 
+            <toolbar-actions
                 class="block-toolbar" [title]="block.title" [isDraggable]="true" (edit)="editBlock(block);" (remove)="removeBlock(block.id)">
             </toolbar-actions>
             <!-- <div *ngIf="editable" [ngClass]="{'editable': editable}" class="block-edit">
@@ -39,7 +38,7 @@
                 [iconName]="'system_edit'" (buttonClick)="editBlock(block);">
                 </pep-button>
             </div> -->
-            <div style="pointer-events: none; opacity: 0.5;">
+            <div class="addon-proxy-cont">
                 <addon-proxy *ngIf="block" [options]="block" [hostObject]="block" (hostEvents)="onBlockChange($event);">
                 </addon-proxy>
             </div>

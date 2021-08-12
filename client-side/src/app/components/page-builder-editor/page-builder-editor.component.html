@@ -10,11 +10,11 @@
                 cdkDropList
                 [cdkDropListData]="availableBlocks"
                 [cdkDropListConnectedTo]="sectionsDropList">
-                
+
                 <toolbar-actions *ngFor="let block of availableBlocks;" class="available-block"
                     [title]="block.title" [showActions]="false" [isDraggable]="true"
-                    cdkDrag 
-                    [cdkDragData]="block"   
+                    cdkDrag
+                    [cdkDragData]="block"
                     (cdkDragStarted)="dragStart($event)"
                     (cdkDragMoved)="moved($event)"
                     >
@@ -52,11 +52,11 @@
     </mat-tab>
     <mat-tab label="Design">
         <div class="tab-container">
-            <pep-checkbox value="true" label="Full Width" [renderTitle]="false"></pep-checkbox>
-            <pep-textbox label="Max Width" type="int" [disabled]="true"></pep-textbox>
+            <pep-checkbox value="isFullWidth" label="Full Width" [renderTitle]="false" (valueChange)="isFullWidth = $event"></pep-checkbox>
+            <pep-textbox label="Max Width" type="int" [disabled]="isFullWidth" (valueChange)="changeScreenSize($event)"></pep-textbox>
             <label class="body-xl bold ellipsis">Spacing</label>
             <label class="body-sm ellipsis">Slides - Left & Right</label>
-            <pep-group-buttons [buttons]="sizesGroupButtons" class="heder-content" buttonsClass="md regular" viewType="toggle" ></pep-group-buttons>
+            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="'SM'" class="heder-content" buttonsClass="md regular" viewType="toggle" ></pep-group-buttons>
             <label class="body-sm ellipsis">Slides - Top & Button</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" class="heder-content" buttonsClass="md regular" viewType="toggle" ></pep-group-buttons>
             <label class="body-xl bold ellipsis">Gaps</label>
