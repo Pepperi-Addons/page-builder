@@ -149,8 +149,17 @@ export class SectionComponent implements OnInit, OnChanges {
     }
 
     editBlock(block) {
-        block.exposedModue = block.editorModuleName;
-        block.compoenntName = block.editorComponentName;
+        debugger;
+        block.exposedModule = block.editorModuleName;
+        block.componentName = block.editorComponentName;
+        this.pageBuilderService.navigateToEditor(
+        {
+            title: this.translate.instant('Section'),
+            type : 'block',
+            currentEditableObject: block,
+            remoteModuleOptions: block,
+            hostObject: null
+        });
         // blockEditorSubject.next(block);
     }
 

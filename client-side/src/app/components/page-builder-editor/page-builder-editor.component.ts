@@ -40,11 +40,13 @@ export class PageBuilderEditorComponent implements OnInit {
             // flatten 2d Array
             // this.addons = [].concat.apply([], sections);
 
-            const firstBlock = Object.create(availableBlocks[0]);
-            // Object.assign(blocks[0], firstBlock);
-            firstBlock.title = 'slideshow copy';
-            this.availableBlocks = [...availableBlocks, firstBlock];
+            // const firstBlock = Object.create(availableBlocks[0]);
+            // Object.assign(availableBlocks[0], firstBlock);
+            // firstBlock.title = 'slideshow copy';
+            // this.availableBlocks = [...availableBlocks, firstBlock];
             
+            this.availableBlocks = availableBlocks;
+
             // blocks.forEach((section, index) => {
             //     this.sections.push({value: 'Section '+index, key: index});
             // })

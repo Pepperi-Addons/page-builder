@@ -82,8 +82,8 @@ export class PageBuilderService {
     private loadSections() {
         const savedSections: Section[] = JSON.parse(sessionStorage.getItem('sections')) ?? [];
 
-        let i = 1;
-        savedSections.forEach(section => {
+        // let i = 1;
+        // savedSections.forEach(section => {
             // setTimeout(() => {
                 // const sections = [...this.sectionsSubject.value, section];
 
@@ -96,16 +96,16 @@ export class PageBuilderService {
 
                 // this.sectionsSubject.next(sections);
             // }, 1000 * i);
-            i++;
-        });
+        //     i++;
+        // });
 
         this.sectionsSubject.next(savedSections);
     }
 
     initPage(addonUUID: string): void {
         // debug locally
-        // this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageBlock` })
-        this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page`, { RelationName: `PageBlock` })
+        this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageBlock` })
+        // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page`, { RelationName: `PageBlock` })
             .subscribe(res => {
             
             this.availableBlocksSubject.next(res['relations']);
@@ -128,7 +128,7 @@ export class PageBuilderService {
     navigateBackFromEditor() {
         // Keep the page builder editor.
         if (this.editorsBreadCrumb.length > 1) {
-            // Maybey we want to compare the last editor for validation ?
+            // Maybe we want to compare the last editor for validation ?
             const lastEditor = this.editorsBreadCrumb.pop();
             this.changeCurrentEditor();
         }
@@ -155,7 +155,6 @@ export class PageBuilderService {
     }
 
     onBlockDropped(event: CdkDragDrop<any[]>, sectionId: string) {
-        debugger;
         if (event.previousContainer === event.container) {
             moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
         } else if (event.previousContainer.id == 'availableBlocks') {

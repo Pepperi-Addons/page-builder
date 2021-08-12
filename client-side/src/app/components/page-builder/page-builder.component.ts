@@ -125,13 +125,13 @@ export class PageBuilderComponent implements OnInit {
 
     // }
 
-    onBlockChange(e) {
-        switch(e.action){
-            case 'update-addons':
-                // propsSubject.next(e);
-            break;
-        }
-    }
+    // onBlockChange(e) {
+    //     switch(e.action){
+    //         case 'update-addons':
+    //             // propsSubject.next(e);
+    //         break;
+    //     }
+    // }
 
     // numOfSectionColumnsChange(event) {
     //     const numOfColumns = parseInt(event);

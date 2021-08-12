@@ -1,3 +1,25 @@
+// TODOL: This is copied from ngx-loader cause we don't wan't to install Angular dependencies (need to find solution for this object).
+export type RemoteModuleOptions = {
+    // Those are LoadRemoteModuleOptions properties from '@angular-architects/module-federation';
+    // **********************************************************************************************
+    remoteEntry?: string;
+    remoteName: string;
+    exposedModule: string;
+    // **********************************************************************************************
+    moduleData?: object;
+    componentName: string;
+    title: string;
+    visibleEndpoint?: string;
+    multiSelection?: boolean | string ;
+    confirmation?: boolean;
+    // type: string | string[];
+    // subType: string | string[];
+    uuid: string;
+    update?: boolean;
+    noModule?: boolean;
+    // [key:string]: any; If anyone will need it then add it!!!
+}
+
 export const Configuration ={
     "configuration": {
         "consume": {

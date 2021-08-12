@@ -15,7 +15,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
 
-import { config } from './addon.config';
+import { config } from '../addon.config';
 
 @NgModule({
     declarations: [
@@ -31,8 +31,9 @@ import { config } from './addon.config';
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
-                useFactory: PepAddonService.createDefaultMultiTranslateLoader,
-                deps: [HttpClient, PepFileService, PepAddonService, config.AddonUUID]
+                useFactory: (http: HttpClient, fileService: PepFileService, addonService: PepAddonService) => 
+                    PepAddonService.createDefaultMultiTranslateLoader(http, fileService, addonService, config.AddonUUID),
+                deps: [HttpClient, PepFileService, PepAddonService],
             }, isolate: false
         }),
         PepNgxLibModule,

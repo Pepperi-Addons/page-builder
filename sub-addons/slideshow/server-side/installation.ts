@@ -41,7 +41,9 @@ async function runMigration(client){
             AddonUUID: client.AddonUUID,
             AddonRelativeURL: "slideshow",
             ComponentName: 'SlideshowComponent',
-            ModuleName: 'SlideshowModule'
+            ModuleName: 'SlideshowModule',
+            EditorComponentName: 'SlideshowEditorComponent',
+            EditorModuleName: 'SlideshowEditorModule'
         };
 
         pageComponentRelation.Key = `${pageComponentRelation.Name}_${pageComponentRelation.AddonUUID}_${pageComponentRelation.RelationName}`;

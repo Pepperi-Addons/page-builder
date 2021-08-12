@@ -1,4 +1,3 @@
-import { PepTextareaModule } from '@pepperi-addons/ngx-lib/textarea';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
 import { PepIconModule, pepIconNumberPlus, PepIconRegistry,
@@ -14,6 +13,7 @@ import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
 import { OverlayModule} from '@angular/cdk/overlay';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
+import { PepTextareaModule, } from '@pepperi-addons/ngx-lib/textarea';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { SectionEditorModule } from '../section-editor/section-editor.module';

@@ -37,15 +37,15 @@ export class AddonComponent implements OnInit {
 
     }
 
-    ngOnInit(){
-       this.dataSource$ = this.addonService.pepGet(`/addons/installed_addons`)
-       .pipe(
-           map((addons: InstalledAddon[]) =>
-             addons.filter(addon => addon?.Addon).map(addon => addon?.Addon))
+    ngOnInit() {
+        this.dataSource$ = this.addonService.pepGet(`/addons/installed_addons`)
+        .pipe(
+            map((addons: InstalledAddon[]) =>
+                addons.filter(addon => addon?.Addon).map(addon => addon?.Addon))
         );
     }
 
-    openDialog(){
+    openDialog(){ 
         const content = this.translate.instant('Dialog_Body');
         const title = this.translate.instant('Dialog_Title');
         const dataMsg = new PepDialogData({title, actionsType: "close", content});
