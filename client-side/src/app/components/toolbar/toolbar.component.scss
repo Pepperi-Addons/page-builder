@@ -9,11 +9,13 @@
     border-radius: 0.25rem;
     z-index: 2;
     background-color: #fff;
+    overflow: hidden;
 }
 
 .start, .end {
-    display: flex;
+    display: grid;
     align-items: center;
+    grid-template-columns: auto auto;
 }
 
 pep-button {

@@ -1,6 +1,6 @@
 <div class="start">
     <pep-button sizeType="xs" classNames="lock-events pep-spacing-element" iconName="system_move"></pep-button>
-    <span *ngIf="title !== ''" class="body-sm bold pep-spacing-element">{{title}}</span>
+    <span *ngIf="title !== ''" class="body-sm bold ellipsis pep-spacing-element">{{title}}</span>
 </div>
 <div *ngIf="showActions" class="end">
     <pep-button classNames="caution pep-spacing-element" sizeType="xs" iconName="system_bin" (buttonClick)="onRemoveClick();"></pep-button>

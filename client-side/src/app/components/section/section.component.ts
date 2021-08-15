@@ -12,7 +12,7 @@ import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 export class SectionComponent implements OnInit, OnChanges {
     @ViewChild('sectionContainer') sectionContainerRef: ElementRef;
     @ViewChildren('blocksWrapper') blocksElementRef: QueryList<ElementRef>;
-    
+
     @Input() id: string;
     @Input() name: string;
     @Input() editable = false;
@@ -28,7 +28,7 @@ export class SectionComponent implements OnInit, OnChanges {
     }
  
     private _splitData: string = '';
-    @Input() 
+    @Input()
     set splitData(value: string) {
         this._splitData = value;
         this.refreshSplitData();
@@ -105,8 +105,9 @@ export class SectionComponent implements OnInit, OnChanges {
     }
 
     onEditSectionClick() {
+        this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'border', '3px solid Red');
         this.pageBuilderService.navigateToEditor({
-            title: this.translate.instant('Section'),
+            title: this.name, //this.translate.instant('Section'),
             type : 'section',
             // currentEditableObject: null // TODO:
         })

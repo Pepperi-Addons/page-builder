@@ -29,7 +29,7 @@ export interface Section {
 })
 export class PageBuilderService {
     private editorsBreadCrumb = Array<Editor>();
-    
+
     private screenSizeSubject: BehaviorSubject<PepScreenSizeType> = new BehaviorSubject<PepScreenSizeType>(PepScreenSizeType.XL);
     get onScreenSizeChange$(): Observable<PepScreenSizeType> {
         return this.screenSizeSubject.asObservable().pipe(distinctUntilChanged());
@@ -44,17 +44,17 @@ export class PageBuilderService {
     get onScreenWidthChange$(): Observable<string> {
         return this.screenWidthSubject.asObservable().pipe(distinctUntilChanged());
     }
-    
+
     private editorChangeSubject: BehaviorSubject<Editor>;
     get onEditorChange$(): Observable<Editor> {
         return this.editorChangeSubject.asObservable().pipe(distinctUntilChanged());
     }
-    
+
     private availableBlocksSubject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
     get availableBlocksLoadedSubject$(): Observable<any> {
         return this.availableBlocksSubject.asObservable();
     }
-    
+
     private sectionsSubject: BehaviorSubject<Section[]> = new BehaviorSubject<Section[]>([]);;
     get sectionsSubject$(): Observable<Section[]> {
         return this.sectionsSubject.asObservable()
@@ -118,8 +118,14 @@ export class PageBuilderService {
         if (editor) {
             // Check which editor we have now
             const currentEditor = this.editorsBreadCrumb[this.editorsBreadCrumb.length - 1];
-            
+
             if (currentEditor.type === 'page-builder') {
+                this.editorsBreadCrumb.push(editor);
+                this.changeCurrentEditor();
+            } else { // if (currentEditor.type === 'section' && currentEditor.title !== editor.title) {
+                // Need to talk with tomer about the logic here
+                // also , need to handle the delete section when the editor is open
+                this.editorsBreadCrumb.pop();
                 this.editorsBreadCrumb.push(editor);
                 this.changeCurrentEditor();
             }
@@ -147,7 +153,7 @@ export class PageBuilderService {
         const sections = [...this.sectionsSubject.value, section];
         this.sectionsSubject.next(sections);
     }
-    
+
     setScreenMaxWidth(value: string) {
         let maxWidth = this.utilitiesService.coerceNumberProperty(value, 0);
 
@@ -165,7 +171,7 @@ export class PageBuilderService {
             this.screenSizeSubject.next(PepScreenSizeType.XL);
         } else {
             this.screenWidthSubject.next(`${width}px`);
-            
+
             // Change the size according the width.
             if (width >= 1920) {
                 this.screenSizeSubject.next(PepScreenSizeType.XL);
