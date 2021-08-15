@@ -1,5 +1,5 @@
 import { CdkDragMove, CdkDragStart } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PepHttpService } from '@pepperi-addons/ngx-lib';
 import { Observable, ReplaySubject } from 'rxjs';
@@ -14,8 +14,10 @@ import { config } from '../addon.config';
 })
 export class PageBuilderEditorComponent implements OnInit {
     @ViewChild('availableBlocksContainer', { read: ElementRef }) availableBlocksContainer: ElementRef;
-
+    
     isFullWidth: boolean = true;
+    maxWidth = '0';
+
     availableBlocks = [];
     sectionsDropList = [];
     sizesGroupButtons;
@@ -54,8 +56,24 @@ export class PageBuilderEditorComponent implements OnInit {
 
     }
 
-    changeScreenSize(screenWidth: string) {
-        this.pageBuilderService.setScreenMaxWidth(screenWidth);
+
+    isFullWidthChange(isChecked: boolean) {
+        this.isFullWidth = isChecked;
+
+        if (this.isFullWidth) {
+            this.setScreenMaxWidth('');
+        } else {
+            this.setScreenMaxWidth(this.maxWidth);
+        }
+    }
+
+    onMaxWidthChange(maxWidth: string) {
+        this.maxWidth = maxWidth;
+        this.setScreenMaxWidth(maxWidth);
+    }
+
+    setScreenMaxWidth(maxWidth) {
+        this.pageBuilderService.setScreenMaxWidth(maxWidth);
     }
 
 }

@@ -23,8 +23,8 @@
     </mat-tab>
     <mat-tab label="Design">
         <div class="tab-container">
-            <pep-checkbox value="isFullWidth" label="Full Width" [renderTitle]="false" (valueChange)="isFullWidth = $event"></pep-checkbox>
-            <pep-textbox label="Max Width" type="int" [disabled]="isFullWidth" (valueChange)="changeScreenSize($event)"></pep-textbox>
+            <pep-checkbox value="isFullWidth" label="Full Width" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
+            <pep-textbox label="Max Width" type="int" [disabled]="isFullWidth" [value]="maxWidth" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
             <label class="body-xl bold ellipsis">Spacing</label>
             <label class="body-sm ellipsis">Slides - Left & Right</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="'None'" class="heder-content" buttonsClass="md regular" viewType="toggle" ></pep-group-buttons>
