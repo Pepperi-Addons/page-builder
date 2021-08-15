@@ -10,16 +10,33 @@ import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
     styleUrls: ['./section.component.scss']
 })
 export class SectionComponent implements OnInit, OnChanges {
+    @ViewChild('sectionContainer') sectionContainerRef: ElementRef;
     @ViewChildren('blocksWrapper') blocksElementRef: QueryList<ElementRef>;
     
     @Input() id: string;
     @Input() name: string;
     @Input() editable = false;
-    @Input() screenSize: PepScreenSizeType;
-
-    PepScreenSizeType = PepScreenSizeType;
-    // @Input() numOfBlocks = 3;
     
+    private _screenSize: PepScreenSizeType;
+    @Input()
+    set screenSize(value: PepScreenSizeType) {
+        this._screenSize = value;
+        this.refreshSplitData();
+    }
+    get screenSize(): PepScreenSizeType {
+        return this._screenSize;
+    }
+ 
+    private _splitData: string = '';
+    @Input() 
+    set splitData(value: string) {
+        this._splitData = value;
+        this.refreshSplitData();
+    }
+    get splitData(): string {
+        return this._splitData;
+    }
+
     private _blocks = [];
     @Input()
     set blocks(value: Array<any>) {
@@ -29,64 +46,41 @@ export class SectionComponent implements OnInit, OnChanges {
         return this._blocks;
     } 
 
-    // public numOfBlocksArr = new Array(0);
-
     @Output() remove: EventEmitter<string> = new EventEmitter();
 
-    @ViewChild('sectionContainer') sectionContainer: ElementRef;
-
-    // @Input() partsNumber: number = 1;
-    private _splitData: string = '';
-    @Input() 
-    set splitData(value: string) {
-        this._splitData = value;
-       
-        this.refreshSplitData();
-    }
-    get splitData(): string {
-        return this._splitData;
-    }
-
-    pageLayout;
     sectionsDropList;
-
+    PepScreenSizeType = PepScreenSizeType;
+   
     constructor(
         private renderer: Renderer2,
         private translate: TranslateService,
         private layoutService: PepLayoutService,
         private pageBuilderService: PageBuilderService
     ) {
-        this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
-            this.screenSize = size;
-            this.refreshSplitData();
-        });
-
-        this.pageBuilderService.onScreenSizeChange$.subscribe((size: PepScreenSizeType) => {
-            this.screenSize = size;
-            this.refreshSplitData();
-        });
     }
 
     private refreshSplitData() {
-        if (this.sectionContainer) {
-            if (this.screenSize <= PepScreenSizeType.LG) {
-                this.blocksElementRef.toArray().map((section, sectionIndex) => {
-                    this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'column');
-                    this.renderer.setStyle(section.nativeElement, 'grid-template-columns', this.splitData);
-                });
+        setTimeout(() => {
+            if (this.sectionContainerRef) {
+                if (this.screenSize <= PepScreenSizeType.LG) {
+                    this.blocksElementRef.toArray().map((section, sectionIndex) => {
+                        this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'column');
+                        this.renderer.setStyle(section.nativeElement, 'grid-template-columns', this.splitData);
+                    });
 
-                this.renderer.setStyle(this.sectionContainer.nativeElement, 'grid-auto-flow', 'column');
-                this.renderer.setStyle(this.sectionContainer.nativeElement, 'grid-template-columns', this.splitData);
-            } else {
-                this.blocksElementRef.toArray().map((section, sectionIndex) => {
-                    this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'row');
-                    this.renderer.setStyle(section.nativeElement, 'grid-template-rows', this.splitData);
-                });
+                    this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-auto-flow', 'column');
+                    this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-template-columns', this.splitData);
+                } else {
+                    this.blocksElementRef.toArray().map((section, sectionIndex) => {
+                        this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'row');
+                        this.renderer.setStyle(section.nativeElement, 'grid-template-rows', this.splitData);
+                    });
 
-                this.renderer.setStyle(this.sectionContainer.nativeElement, 'grid-auto-flow', 'row');
-                this.renderer.setStyle(this.sectionContainer.nativeElement, 'grid-template-rows', this.splitData);
+                    this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-auto-flow', 'row');
+                    this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-template-rows', this.splitData);
+                }
             }
-        }
+        }, 0);
     }
 
     private getBlockEditor(block: any) {
@@ -119,48 +113,28 @@ export class SectionComponent implements OnInit, OnChanges {
     }
 
     onRemoveSectionClick() {
-        // TODO: Remove section.
-        this.remove.emit(this.id);
-    }
-    
-    entered() {
-        // this.transferringItem = undefined;
+        this.pageBuilderService.removeSection(this.id);
     }
 
-    exited(e: CdkDragExit<string>) {
-    //   this.transferringItem = e.item.data;
-    }
-
-    removeBlock(id) {
+    removeBlock(blockId: string) {
         for(let i=0; i < this.blocks.length; i++) {
-            if(this.blocks[i].id === id) {
+            if(this.blocks[i].id === blockId) {
                 this.blocks.splice(i , 1);
             }
         }
     }
 
-    editBlock(block) {
+    editBlock(block: any) {
         const blockEditor = this.getBlockEditor(block);
         
-        this.pageBuilderService.navigateToEditor(
-        {
+        this.pageBuilderService.navigateToEditor({
             title: blockEditor.title,
             type : 'block',
             // currentEditableObject: blockEditor,
             remoteModuleOptions: blockEditor,
             hostObject: null
         });
-        // blockEditorSubject.next(block);
     }
-
-    // addBlock(event) {
-    //     if(this.blocks.length < 12) {
-    //         this.blocks.push({ 'id': 'block_'+ this.blocks.length+1});
-    //     }
-    //     else {
-    //         alert("reached to maximum columns !")
-    //     }
-    // }
 
     onBlockChange(event) {
         switch(event.action){
@@ -171,38 +145,20 @@ export class SectionComponent implements OnInit, OnChanges {
     }
 
     onBlockDropped(event: CdkDragDrop<any[]>) {
-        // if (event.previousContainer === event.container) {
-        //     moveItemInArray(this.blocks, event.previousIndex, event.currentIndex);
-        // } else {
-        //     this.addField(event.item.data, event.currentIndex);
-        // }
         this.pageBuilderService.onBlockDropped(event, this.id);
-// debugger;
-//         if (event.previousContainer === event.container) {
-//             // moveItemInArray(this.blocks, event.previousIndex, event.currentIndex);
-//             moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-//         } else if (event.previousContainer.id == 'availableBlocks') {
-//             copyArrayItem(event.previousContainer.data, this.blocks, event.previousIndex, event.currentIndex);
-//             // copyArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
-//             // this.addField(event.item.data, event.currentIndex);
-//         }
-//         else {
-//             transferArrayItem(event.previousContainer.data, this.blocks, event.previousIndex, event.currentIndex);
-//             // transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
-//         }
     }
 
-    addField(blockType: string, index: number) {
-        this.blocks.splice(index, 0, blockType)
-    }
+    // addField(blockType: string, index: number) {
+    //     this.blocks.splice(index, 0, blockType)
+    // }
 
     /** Predicate function that only allows even numbers to be dropped into a list. */
-    evenPredicate(item: CdkDrag<any>) {
-        return item.data % 2 === 0;
-    }
+    // evenPredicate(item: CdkDrag<any>) {
+    //     return item.data % 2 === 0;
+    // }
 
-    /** Predicate function that doesn't allow items to be dropped into a list. */
-    noReturnPredicate() {
-        return false;
-    }
+    // /** Predicate function that doesn't allow items to be dropped into a list. */
+    // noReturnPredicate() {
+    //     return false;
+    // }
 }

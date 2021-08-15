@@ -1,4 +1,3 @@
-import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PepIconModule, pepIconNumberPlus, PepIconRegistry,
@@ -10,20 +9,16 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { PepNgxLibModule, PepAddonService, PepCustomizationService, PepFileService, PepHttpService } from '@pepperi-addons/ngx-lib';
-import { PageBuilderComponent} from './page-builder.component';
+import { PagesManagerComponent} from './pages-manager.component';
 import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
 import { OverlayModule} from '@angular/cdk/overlay';
 import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
-import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { RouterModule, Routes } from '@angular/router';
-
-import { SectionModule } from '../section/section.module'
-import { ToolbarModule } from '../toolbar/toolbar.module'
 
 const pepIcons = [
     pepIconSystemClose,
@@ -35,9 +30,16 @@ const pepIcons = [
     pepIconViewCardMd
 ];
 
+const routes: Routes = [
+    {
+      path: '',
+      component: PagesManagerComponent
+    }
+  ];
+
 @NgModule({
     declarations: [
-        PageBuilderComponent
+        PagesManagerComponent
     ],
     imports: [
         CommonModule,
@@ -48,16 +50,12 @@ const pepIcons = [
         //// When not using module as sub-addon please remark this for not loading twice resources
         MatCardModule,
         MatButtonModule,
-        SectionModule,
-        ToolbarModule,
         PepPageLayoutModule,
         PepSelectModule,
         PepTextboxModule,
-        DragDropModule,
         OverlayModule,
         PepButtonModule,
         PepCheckboxModule,
-        PepGroupButtonsModule,
         PepIconModule,
         MatIconModule,
         TranslateModule.forChild({
@@ -67,8 +65,9 @@ const pepIcons = [
                 deps: [HttpClient, PepFileService, PepAddonService]
             }, isolate: false
         }),
+        RouterModule.forChild(routes)
     ],
-    exports:[PageBuilderComponent],
+    exports:[PagesManagerComponent],
     providers: [
         HttpClient,
         TranslateStore,
@@ -78,7 +77,7 @@ const pepIcons = [
         PepCustomizationService
     ]
 })
-export class PageBuilderModule {
+export class PagesManagerModule {
     constructor(
         translate: TranslateService,
         private pepIconRegistry: PepIconRegistry,

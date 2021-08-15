@@ -1,34 +1,16 @@
 
-<div class="page-builder-container">
-    <div class="top-area">
-        <div class="header-container">
-            <div class="header-title heder-content">{{('ViewportWidth' | translate)}} : <b>{{viewportWidth}}</b></div>
-            <div class="header-group-btn">
-                <pep-group-buttons [buttons]="screenOptions" [selectedButtonKey]="selectedScreenKey" class="heder-content" sizeType="sm" viewType="toggle" >
-                </pep-group-buttons>
-            </div>
-            <div class="header-end heder-content">
-                <pep-button iconName="view_card_md" sizeType="sm" classNames="pep-spacing-element"></pep-button>
-                <pep-button value="Preview" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="changeQueryParam(false)"></pep-button>
-                <pep-button [value]="'Publish' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="publishPage();">
-                </pep-button>
-                <!-- <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
-                </pep-button>
-                <pep-button [value]="'Clear Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="clearPage();">
-                </pep-button> -->
-            </div>
-        </div>
-    </div>
+<!-- <div class="page-builder-container"> -->
+    
     <div #sectionsCont cdkDropListGroup class="sections-container" cdkDropList (cdkDropListDropped)="onSectionDropped($event)" >
         <page-builder-section class="draggable-section" *ngFor="let section of pageBuilderService.sectionsSubject$ | async as sections; let i=index;" 
             [id]="section.id" [name]="section.name || section.id" [splitData]="section.splitData" [blocks]="section.blocks" 
-            (remove)="onRemoveSectionClick($event)"
+            [screenSize]="screenSize"
             cdkDrag>
             <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
         </page-builder-section>
     </div>
     <pep-button class="add-section-button" value="Add Section " styleType="regular" iconName="number_plus" iconPosition="end"
         (buttonClick)="addSection($event)"></pep-button>
-</div>
+<!-- </div> -->
 
 

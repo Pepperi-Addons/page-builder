@@ -1,0 +1,43 @@
+<pep-page-layout cdkDropListGroup [addPadding]="false" [showShadow]="showEditor">
+    <div pep-side-area *ngIf="showEditor" style="padding-inline-start: 1rem;">
+        <pep-side-bar #sideBar [ignoreResize]="true">
+            <div header-content class="side-bar-title">
+                <pep-button *ngIf="currentEditor?.type !== 'page-builder'" class="back-button" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="navigateBackFromEditor();"></pep-button> 
+                <div class=" title-xl ellipsis" title="{{ currentEditor?.title }}">
+                    <span>{{ currentEditor?.title }}</span>
+                </div>
+            </div>
+            <page-builder-editor *ngIf="currentEditor?.type === 'page-builder'"></page-builder-editor>
+            <page-builder-section-editor *ngIf="currentEditor?.type === 'section'"></page-builder-section-editor>
+            <addon-proxy *ngIf="currentEditor?.type === 'block'" [options]="currentEditor?.remoteModuleOptions" 
+                [hostObject]="currentEditor?.hostObject" (hostEvents)="onBlockEditorChange($event);"></addon-proxy>
+        </pep-side-bar>
+    </div>
+    <ng-container pep-main-area>
+        <div class="header-container">
+            <div class="header-title header-content">{{('ViewportWidth' | translate)}} : <b>{{viewportWidth}}</b></div>
+            <div class="header-group-btn">
+                <pep-group-buttons [buttons]="screenOptions" [selectedButtonKey]="selectedScreenKey" class="header-content" sizeType="sm" viewType="toggle" >
+                </pep-group-buttons>
+            </div>
+            <div class="header-end header-content">
+                <pep-button iconName="view_card_md" sizeType="sm" classNames="pep-spacing-element"></pep-button>
+                <pep-button value="Preview" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="togglePreviewMode()"></pep-button>
+                <pep-button [value]="'Publish' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="publishPage();">
+                </pep-button>
+                <!-- <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
+                </pep-button>
+                <pep-button [value]="'Clear Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="clearPage();">
+                </pep-button> -->
+            </div>
+        </div>
+        <div #pageBuilderWrapper class="page-builder-wrapper">
+            <page-builder [editMode]="showEditor" [screenSize]="screenSize"></page-builder>
+        </div>
+    </ng-container>
+</pep-page-layout>
+
+<!--
+    If the addon is not inside webapp container we gonna need this line. 
+    <pep-size-detector></pep-size-detector> 
+-->

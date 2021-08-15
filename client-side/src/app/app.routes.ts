@@ -1,9 +1,6 @@
-import { PageBuilderComponent } from './components/page-builder/page-builder.component';
 import { NgModule } from '@angular/core';
 import { Component } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AddonComponent } from './components/addon/addon.component';
-import { AppComponent } from './app.component';
 
 // Important for single spa
 @Component({
@@ -17,10 +14,14 @@ const routes: Routes = [
         path: ``,
         children: [
             {
+                path: 'pages',
+                loadChildren: () => import('./components/pages-manager/pages-manager.module').then(m => m.PagesManagerModule)
+            },
+            {
                 path: 'page_builder/:page_id',
                 // component: PageBuilderComponent
                 // TODO: solve routing
-                loadChildren: () => import('./components/page-builder/page-builder.module').then(m => m.PageBuilderModule)
+                loadChildren: () => import('./components/page-manager/page-manager.module').then(m => m.PageManagerModule)
             }
         ]
     },

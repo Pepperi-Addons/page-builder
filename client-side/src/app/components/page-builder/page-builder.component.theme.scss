@@ -1,9 +1,0 @@
-@mixin page-builder-theme($pepperi-theme) {
-
-    .section-edit {
-        // background-color: #fff;
-        border-bottom: 1px solid rgb(153, 153, 153);
-        background: rgb(255, 255, 255);
-        background-color: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
-    }
-}

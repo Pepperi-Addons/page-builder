@@ -11,7 +11,7 @@ export type EditorType = 'page-builder' | 'section' | 'block';
 export interface Editor {
     title: string,
     type: EditorType,
-    // currentEditableObject: any,
+    currentEditableObject?: any,
     remoteModuleOptions?: RemoteModuleOptions,
     hostObject?: any
 }
@@ -69,7 +69,6 @@ export class PageBuilderService {
         this.editorsBreadCrumb.push({
             title: this.translate.instant('Main'),
             type : 'page-builder',
-            // currentEditableObject: null
         });
 
         this.editorChangeSubject = new BehaviorSubject<Editor>(this.editorsBreadCrumb[0]);
@@ -105,12 +104,14 @@ export class PageBuilderService {
 
     initPageEditor(addonUUID: string): void {
         // debug locally
-        this.http.postHttpCall('http://localhost:4500/api/init_page_editor', { PageType: ''}) // {RelationName: `PageBlock` }
-        // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page_editor`, {})
-            .subscribe(res => {
-            
-            this.availableBlocksSubject.next(res['availableBlocks']);
-        });
+        if (!this.availableBlocksSubject.value || this.availableBlocksSubject.value.length === 0) {
+            this.http.postHttpCall('http://localhost:4500/api/init_page_editor', { PageType: ''}) // {RelationName: `PageBlock` }
+            // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page_editor`, {})
+                .subscribe(res => {
+                
+                this.availableBlocksSubject.next(res['availableBlocks']);
+            });
+        }
     }
 
     navigateToEditor(editor: Editor) {

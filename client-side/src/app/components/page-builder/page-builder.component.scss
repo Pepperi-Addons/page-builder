@@ -1,161 +1,17 @@
+// $page-buildr-gap: .1rem;
+// $section-edit-height: 2.5rem;
 
-
-$page-buildr-gap: .1rem;
-$section-edit-height: 2.5rem;
-
-.page-builder-container {
-    display: flex;
-    flex-direction: column;
+// .page-builder-container {
+//     display: flex;
+//     flex-direction: column;
 
     .sections-container {
-        width: 100%;
-        margin: 0 auto;
-        position: relative;
-        // border: 1px solid #999999;
-        // box-shadow: 0px 1px 2px 0px rgb(0 0 0 / 4%), 0px 2px 4px 0px rgb(0 0 0 / 4%), 0px 4px 8px 0px rgb(0 0 0 / 4%);
-        // border-radius: 4px;
+    //     width: 100%;
+    //     margin: 0 auto;
+    //     position: relative;
 
         .draggable-section {
             display: block;
-        }
-
-        // background-color: #BEC3E5;
-        // background-image: linear-gradient(to top left, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 100) 100%), linear-gradient(to top right, rgba(255, 255, 255, 0) 20%, rgba(255, 255, 255, 25) 65%);
-        // background-size: 8.3% 100%, 0%, 0;
-        // background-position: left top, left bottom;
-        // background-repeat: repeat-x;
-
-        // .section-edit{
-        //     height: $section-edit-height;
-        //     display: flex;
-        //     justify-content: space-between;
-        //     align-items: center;
-        //     box-shadow: 0px 1px 2px 0px rgb(0 0 0 / 4%), 0px 2px 4px 0px rgb(0 0 0 / 4%), 0px 4px 8px 0px rgb(0 0 0 / 4%);
-        //     border-start-start-radius: .25rem;
-        //     border-start-end-radius: .25rem;
-        //     position: absolute;
-        //     z-index: 2;
-        //     width: calc(100% - 4px);
-        //     margin-inline-start: 2px;
-
-        //     .start-cont{
-        //         display: flex;
-        //         align-items: center;
-
-        //         label{
-        //             margin-bottom: 0;
-        //         }
-        //     }
-        // }
-
-        // .background{
-
-        //     position: absolute;
-        //     width: 100%;
-        //     height: 100%;
-
-        //     .back-template{
-        //         width: 8.3333%;
-        //         height: 100%;
-        //         background-color: #BEC3E5;
-        //         z-index: -100;
-        //         opacity: 0.1;
-        //         border-right: 2px dashed #000;
-        //         float: left;
-
-        //         &:last-of-type {
-        //             border-right: 0 none;
-        //         }
-        //     }
-        // }
-    }
-
-    .flex-container {
-
-        min-height: 250px;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: no-wrap;
-
-        &.active{
-            border: 2px dashed #000;
-            border-top: 0;
-        }
-
-
-        // gap: $page-buildr-gap;
-
-        // &.editable {
-            // border: 2px dashed black;
-            // background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23333' stroke-width='4' stroke-dasharray='11%2c 23' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
-            // padding: .5rem;
-            // background-color: #f1f1f1;
-
-
-        // }
-
-        .flex-item {
-            min-height: 250px;
-            // background-color: #f1f1f1;
-            flex: 1;
-            // display: inline-grid;
-            &.editable {
-                background: white;
-                // border: 2px dashed black;
-                cursor: pointer;
-            }
-        }
-
-        // .cdk-drag-preview {
-        //     background: white;
-        // }
-    }
-
-    .remove-block{
-        position: absolute;
-        text-align: right;
-
-    }
-
-    @media (max-width: 800px) {
-        .flex-container {
-            flex-direction: column;
-        }
-    }
-
-    .header-container {
-        display: flex;
-        height: 3rem;
-        align-items: center;
-        justify-content: space-between;
-        background: rgb(255, 255, 255);
-        box-shadow: 0px 2px 4px 0px rgb(0 0 0 / 4%), 0px 4px 8px 0px rgb(0 0 0 / 4%), 0px 8px 16px 0px rgb(0 0 0 / 4%);
-        margin-bottom: 1rem; // TODO - TALKED WITH YUNATAN
-
-        .heder-content{
-            flex: 1 1 0px;
-        }
-
-        .header-title{
-            color: rgba(26, 26, 26, 0.7);
-            font-size: 12px;
-            font-family: Inter-Regular;
-            letter-spacing: 0.11px;
-
-            b{
-                color: #000;
-            }
-        }
-
-        .header-group-btn{
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
-
-        .header-end{
-            display: flex;
-            justify-content: flex-end;
         }
     }
 
@@ -168,26 +24,7 @@ $section-edit-height: 2.5rem;
             max-width: unset;
         }
     }
-
-    .pep-page-main-layout {
-        padding: 0;
-    }
-
-    // .cdk-drag-preview {
-    //     background-color: white ;
-    //     border: 2px dashed black;
-    // }
-
-    // .block-edit {
-    //     background: #d9d9d9;
-    //     position: relative;
-    //     top: 50%;
-    //     left: 50%;
-    //     width: 200px;
-    //     z-index: 9999;
-    //     transform: translate(-50%, 50%);
-    // }
-}
+// }
 
 
 
