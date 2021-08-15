@@ -11,7 +11,7 @@ import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 })
 export class SectionComponent implements OnInit, OnChanges {
     @ViewChildren('blocksWrapper') blocksElementRef: QueryList<ElementRef>;
-    
+
     @Input() id: string;
     @Input() name: string;
     @Input() editable = false;
@@ -19,7 +19,7 @@ export class SectionComponent implements OnInit, OnChanges {
 
     PepScreenSizeType = PepScreenSizeType;
     // @Input() numOfBlocks = 3;
-    
+
     private _blocks = [];
     @Input()
     set blocks(value: Array<any>) {
@@ -27,7 +27,7 @@ export class SectionComponent implements OnInit, OnChanges {
     }
     get blocks(): Array<any> {
         return this._blocks;
-    } 
+    }
 
     // public numOfBlocksArr = new Array(0);
 
@@ -37,10 +37,10 @@ export class SectionComponent implements OnInit, OnChanges {
 
     // @Input() partsNumber: number = 1;
     private _splitData: string = '';
-    @Input() 
+    @Input()
     set splitData(value: string) {
         this._splitData = value;
-       
+
         this.refreshSplitData();
     }
     get splitData(): string {
@@ -111,8 +111,9 @@ export class SectionComponent implements OnInit, OnChanges {
     }
 
     onEditSectionClick() {
+
         this.pageBuilderService.navigateToEditor({
-            title: this.translate.instant('Section'),
+            title: this.name, //this.translate.instant('Section'),
             type : 'section',
             // currentEditableObject: null // TODO:
         })
@@ -122,7 +123,7 @@ export class SectionComponent implements OnInit, OnChanges {
         // TODO: Remove section.
         this.remove.emit(this.id);
     }
-    
+
     entered() {
         // this.transferringItem = undefined;
     }
@@ -141,7 +142,7 @@ export class SectionComponent implements OnInit, OnChanges {
 
     editBlock(block) {
         const blockEditor = this.getBlockEditor(block);
-        
+
         this.pageBuilderService.navigateToEditor(
         {
             title: blockEditor.title,
