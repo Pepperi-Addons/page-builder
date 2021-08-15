@@ -122,7 +122,9 @@ export class PageBuilderService {
                 this.editorsBreadCrumb.push(editor);
                 this.changeCurrentEditor();
             } else if (currentEditor.type === 'section' && currentEditor.title !== editor.title) {
-                this.editorsBreadCrumb.pop(); // Need to tal with tomer about the logic here
+                // Need to talk with tomer about the logic here
+                // also , need to handle the delete section when the editor is open
+                this.editorsBreadCrumb.pop();
                 this.editorsBreadCrumb.push(editor);
                 this.changeCurrentEditor();
             }
