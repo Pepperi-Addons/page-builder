@@ -111,7 +111,7 @@ export class SectionComponent implements OnInit, OnChanges {
     }
 
     onEditSectionClick() {
-
+        this.renderer.setStyle(this.sectionContainer.nativeElement, 'border', '3px solid Red');
         this.pageBuilderService.navigateToEditor({
             title: this.name, //this.translate.instant('Section'),
             type : 'section',
