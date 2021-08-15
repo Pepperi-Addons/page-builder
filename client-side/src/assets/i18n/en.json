@@ -8,6 +8,7 @@
     "Dialog_Body": "Dialog from sub addon",
     "Dialog_Title": "Dialog",
     "PageBuilder_Editor": "Page Editor",
-    "ViewportWidth": "View port width"
-
+    "ViewportWidth": "View port width",
+    "Main": "Main",
+    "Section": "Section"
 }

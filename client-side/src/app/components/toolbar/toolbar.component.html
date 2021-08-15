@@ -1,14 +1,8 @@
 <div class="start">
-        <pep-button sizeType="sm" [classNames]="'pep-spacing-element'"
-            [iconName]="'system_move'">
-        </pep-button>
-        <label *ngIf="title !== ''" class="header-label body-sm pep-spacing-element">{{title}}</label>
-    </div>
-    <div  class="end">
-    <pep-button *ngIf="showActionBtn" [classNames]="'caution pep-spacing-element'" sizeType="sm"
-       [iconName]="'system_bin'" (buttonClick)="delete();">
-   </pep-button>
-   <pep-button *ngIf="showActionBtn" sizeType="sm" [classNames]="'pep-spacing-element'"
-        [iconName]="'system_edit'">
-    </pep-button>
+    <pep-button sizeType="xs" classNames="lock-events pep-spacing-element" iconName="system_move"></pep-button>
+    <span *ngIf="title !== ''" class="body-sm bold pep-spacing-element">{{title}}</span>
+</div>
+<div *ngIf="showActions" class="end">
+    <pep-button classNames="caution pep-spacing-element" sizeType="xs" iconName="system_bin" (buttonClick)="onRemoveClick();"></pep-button>
+    <pep-button sizeType="xs" classNames="pep-spacing-element" iconName="system_edit" (buttonClick)="onEditClick();"></pep-button>
 </div>

@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { CdkDragMove, CdkDragStart } from '@angular/cdk/drag-drop';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PepHttpService } from '@pepperi-addons/ngx-lib';
-import { propsSubject } from '@pepperi-addons/ngx-remote-loader';
-import { Observable } from 'rxjs';
-import { subject } from '../page-builder/page-builder.component';
+import { Observable, ReplaySubject } from 'rxjs';
+import { PageBuilderService } from '../../services/page-builder.service';
+// import { subject } from '../page-builder/page-builder.component';
+import { config } from '../addon.config';
 
 @Component({
     selector: 'page-builder-editor',
@@ -11,21 +13,26 @@ import { subject } from '../page-builder/page-builder.component';
     styleUrls: ['./page-builder-editor.component.scss']
 })
 export class PageBuilderEditorComponent implements OnInit {
-    options: {key:any, value:string}[] = [];
-    sections: {key:any, value:string}[] = [];
-    blocks: {key:any, value:string}[] = [];
-    pageTypes: {key:any, value:string}[] = [];
-    flexArray = [0.25, 0.5, 0.75, 1, 2];
-    addons$: Observable<any[]> = null;
-    dropList = [];
-    supportedPages = ['homepage'];
-    twoDArray = [];
-    selectedBlock = { section: null, block: null, flex: null};
+    @ViewChild('availableBlocksContainer', { read: ElementRef }) availableBlocksContainer: ElementRef;
+
+    // options: {key:any, value:string}[] = [];
+    // sections: {key:any, value:string}[] = [];
+    // blocks: {key:any, value:string}[] = [];
+    // pageTypes: {key:any, value:string}[] = [];
+    // flexArray = [0.25, 0.5, 0.75, 1, 2];
+    // addons$: Observable<any[]> = null;
+    // supportedPages = ['homepage'];
+    // twoDArray = [];
+    // selectedBlock = { section: null, block: null, flex: null};
+    // tabs = ['General', 'Design'];
+    isFullWidth: boolean = true;
     availableBlocks = [];
-    tabs = ['General', 'Design'];
+    sectionsDropList = [];
     sizesGroupButtons;
+    addonUUID: string;
 
     constructor(
+        private pageBuilderService: PageBuilderService,
         private http: PepHttpService,
         private route: ActivatedRoute
     ) { }
@@ -35,15 +42,14 @@ export class PageBuilderEditorComponent implements OnInit {
         // this.addons$ = this.http.postPapiApiCall(
         //     `/addons/api/${addonUUID}/api/init_page`,
         //     {RelationName: `PageBlock` })
-        subject.subscribe(res => {
-            res.forEach((item, i) => this.dropList.push('section-'+(i+1)));
-            //     }
-            //  } else {
-            // }
+        this.addonUUID = this.route.snapshot.params.addon_uuid || config.AddonUUID;
+        this.pageBuilderService.sectionsSubject$.subscribe(res => {
+            this.sectionsDropList = res.map(section => section.id);
         })
 
-        propsSubject.subscribe( res => {
-            this.initPageEditor(res)
+        this.pageBuilderService.initPageEditor(this.addonUUID);
+        this.pageBuilderService.availableBlocksLoadedSubject$.subscribe(availableBlocks => {
+            this.availableBlocks = availableBlocks;
         });
 
         this.sizesGroupButtons = [
@@ -54,46 +60,50 @@ export class PageBuilderEditorComponent implements OnInit {
         ];
     }
 
-    setScreenSpacing(){
+    setScreenSpacing() {
 
     }
 
     sectionSelected(index) {
-        this.selectedBlock.section = index;
-        this.selectedBlock.block = null;
-        this.blocks = [];
-        this.twoDArray[index].forEach((block, i) => {
-            this.blocks.push({key: i, value: block.title})
-        })
-        propsSubject.next(this.selectedBlock);
+        // this.selectedBlock.section = index;
+        // this.selectedBlock.block = null;
+        // this.blocks = [];
+        // this.twoDArray[index].forEach((block, i) => {
+        //     this.blocks.push({key: i, value: block.title})
+        // })
+        // propsSubject.next(this.selectedBlock);
+
+        // this.pageBuilderService.SelectSection
     }
 
     blockSelected(index) {
-        this.selectedBlock.block = index;
-        this.selectedBlock.flex = null;
-        propsSubject.next(this.selectedBlock);
+        // this.selectedBlock.block = index;
+        // this.selectedBlock.flex = null;
+        // propsSubject.next(this.selectedBlock);
+
+        // this.pageBuilderService.SelectBlock
     }
 
-    changeBlockSize(size) {
-        this.selectedBlock.flex = size;
-        propsSubject.next(this.selectedBlock);
+    changeScreenSize(screenWidth: string) {
+        this.pageBuilderService.setScreenMaxWidth(screenWidth);
+    }
+    // changeBlockSize(size) {
+    //     this.selectedBlock.flex = size;
+    //     propsSubject.next(this.selectedBlock);
+    // }
+
+    // currentIndex: any;
+    // currentField: any;
+    dragStart(event: CdkDragStart) {
+        // this.currentIndex = this.availableBlocks.indexOf(event.source.data); // Get index of dragged type
+        // this.currentField = this.availableBlocksContainer.nativeElement.children[this.currentIndex]; // Store HTML field
     }
 
-    initPageEditor(blocks) {
-        if (blocks.length) {
-            this.twoDArray = blocks;
-            // flatten 2d Array
-            // this.addons = [].concat.apply([], sections);
-            this.availableBlocks =  blocks;
-
-            // blocks.forEach((section, index) => {
-            //     this.sections.push({value: 'Section '+index, key: index});
-            // })
-        }
-
-        this.flexArray.forEach(item => this.options.push({key: item, value: item.toString()}))
-        this.supportedPages.forEach(item => this.pageTypes.push({key: item.toString(), value: item.toString()}));
-        // debug locally
-        // return this.http.postHttpCall('http://localhost:4500/api/init_page', {RelationName: `PageBlock` });
+    moved(event: CdkDragMove) {
+        // // Check if stored HTML field is as same as current field
+        // if (this.availableBlocksContainer.nativeElement.children[this.currentIndex] !== this.currentField) {
+        //     // Replace current field, basically replaces placeholder with old HTML content
+        //     this.availableBlocksContainer.nativeElement.replaceChild(this.currentField, this.availableBlocksContainer.nativeElement.children[this.currentIndex]);
+        // }
     }
 }

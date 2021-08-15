@@ -1,86 +1,44 @@
-<mat-tab-group #tabGroup class="editor-tabs" dynamicHeight animationDuration="0ms">
-    <!-- <mat-tab  *ngFor="let tab of tabs; let i = index; " id="tab"  label="{{ tab | translate}}">
-    </mat-tab> -->
+<mat-tab-group  #tabGroup class="editor-tabs" animationDuration="0ms">
     <mat-tab label="General">
-        <pep-textbox value="" label="Page Name"></pep-textbox>
-        <pep-textarea value="" label="Description" [rowSpan]="2"></pep-textarea>
-        <br/>
+        <div class="general-container ">
+            <pep-textbox value="" label="Page Name"></pep-textbox>
+            <pep-textarea value="" label="Description" [rowSpan]="2"></pep-textarea>
+            <label class="body-xl bold ellipsis">Blocks</label>
+            <div #availableBlocksContainer id="availableBlocks" class="available-blocks"
+                cdkDropList
+                [cdkDropListData]="availableBlocks"
+                [cdkDropListConnectedTo]="sectionsDropList">
 
-        <h4>Blocks</h4>
-
-        <div id="availableBlocks"
-            cdkDropList
-            [cdkDropListData]="availableBlocks"
-            cdkDropListOrientation="vertical"
-            [cdkDropListConnectedTo]="dropList">
-
-            <addon-toolbar  *ngFor="let block of availableBlocks;" [title]="block.title" [showActionBtn]="false" cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block" cdkDragBoundary=".page-builder-container"></addon-toolbar>
-                <!-- <pep-button *ngFor="let block of availableBlocks;" [value]="block.title" cdkDrag [cdkDragDisabled]="false" [cdkDragData]="block" cdkDragBoundary=".page-builder-container"
-                    iconPosition="start" iconName="system_move" classNames="pep-spacing-element available-blocks" ></pep-button> -->
-
+                <toolbar-actions *ngFor="let block of availableBlocks;" class="available-block"
+                    [title]="block.title" [showActions]="false" [isDraggable]="true"
+                    cdkDrag
+                    [cdkDragData]="block"
+                    (cdkDragStarted)="dragStart($event)"
+                    (cdkDragMoved)="moved($event)"
+                    >
+                    <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
+                    <!-- <addon-proxy *cdkDragPreview [options]="block" [hostObject]="block">
+                    </addon-proxy> -->
+                </toolbar-actions>
+            </div>
         </div>
-        <page-builder-section-editor></page-builder-section-editor>
-      <!-- <br>
-      <h4>Blocks Layout</h4>
-      <pep-select
-                  #pepSelect
-                  [emptyOption]="false"
-                  [options]="sections"
-                  [label]="'Choose Section'"
-                  (valueChange)="sectionSelected($event);"
-      ></pep-select>
-      <pep-select
-                  #pepSelect
-                  [emptyOption]="false"
-                  [options]="blocks"
-                  [label]="'Choose Block'"
-                  (valueChange)="blockSelected($event);"
-      ></pep-select>
-      <pep-select
-                  #pepSelect
-                  [emptyOption]="false"
-                  [options]="options"
-                  [label]="'Flex Size'"
-                  (valueChange)="changeBlockSize($event);"
-      ></pep-select> -->
     </mat-tab>
     <mat-tab label="Design">
-        <pep-checkbox
-            value="true"
-            label="Full Width"
-            type="checkbox"
-            [mandatory]="false"
-            [disabled]="false"
-            xAlignment="left"
-            showTitle="false"
-            renderTitle="false"
-      ></pep-checkbox>
-      <pep-textbox
-        value=""
-        label="Max Width"
-        type="int"
-        [disabled]="true"
-        xAlignment="left"
-        [showTitle]="true"
-        [renderTitle]="true"
-        [renderError]="true"
-        [renderSymbol]="true"
-      ></pep-textbox> <!-- (valueChange)="valueChange($event)" -->
-      <label class="body-xl bold ellipsis">Spacing</label>
-      <label class="body-sm ellipsis">Slides - Left & Right</label>
-      <pep-group-buttons [buttons]="sizesGroupButtons" class="heder-content" buttonsClass="md regular" viewType="toggle" >
-    </pep-group-buttons>
-      <label class="body-sm ellipsis">Slides - Top & Button</label>
-      <pep-group-buttons [buttons]="sizesGroupButtons" class="heder-content" buttonsClass="md regular" viewType="toggle" >
-    </pep-group-buttons>
-    <label class="body-xl bold ellipsis">Gaps</label>
-    <label class="body-sm ellipsis">Gap size between sections</label>
-    <pep-group-buttons [buttons]="sizesGroupButtons" class="heder-content" buttonsClass="md regular" viewType="toggle" >
-  </pep-group-buttons>
-  <label class="body-xl bold ellipsis">Rounded Corners</label>
-  <label class="body-sm ellipsis">Global border radius</label>
-  <pep-group-buttons [buttons]="sizesGroupButtons" class="heder-content" buttonsClass="ms regular" viewType="toggle" >
-</pep-group-buttons>
+        <div class="tab-container">
+            <pep-checkbox value="isFullWidth" label="Full Width" [renderTitle]="false" (valueChange)="isFullWidth = $event"></pep-checkbox>
+            <pep-textbox label="Max Width" type="int" [disabled]="isFullWidth" (valueChange)="changeScreenSize($event)"></pep-textbox>
+            <label class="body-xl bold ellipsis">Spacing</label>
+            <label class="body-sm ellipsis">Slides - Left & Right</label>
+            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="'SM'" class="heder-content" buttonsClass="md regular" viewType="toggle" ></pep-group-buttons>
+            <label class="body-sm ellipsis">Slides - Top & Button</label>
+            <pep-group-buttons [buttons]="sizesGroupButtons" class="heder-content" buttonsClass="md regular" viewType="toggle" ></pep-group-buttons>
+            <label class="body-xl bold ellipsis">Gaps</label>
+            <label class="body-sm ellipsis">Gap size between sections</label>
+            <pep-group-buttons [buttons]="sizesGroupButtons" class="heder-content" buttonsClass="md regular" viewType="toggle" ></pep-group-buttons>
+            <label class="body-xl bold ellipsis">Rounded Corners</label>
+            <label class="body-sm ellipsis">Global border radius</label>
+            <pep-group-buttons [buttons]="sizesGroupButtons" class="heder-content" buttonsClass="ms regular" viewType="toggle" ></pep-group-buttons>
+        </div>
     </mat-tab>
 </mat-tab-group>
 

@@ -5,7 +5,6 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angu
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 import { SlideshowService, PepperiTableComponent } from './index';
 import { Observable } from 'rxjs';
-import { InstalledAddon } from '@pepperi-addons/papi-sdk';
 import { PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 
 
