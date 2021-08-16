@@ -119,16 +119,13 @@ export class PageBuilderService {
             // Check which editor we have now
             const currentEditor = this.editorsBreadCrumb[this.editorsBreadCrumb.length - 1];
 
-            if (currentEditor.type === 'page-builder') {
-                this.editorsBreadCrumb.push(editor);
-                this.changeCurrentEditor();
-            } else { // if (currentEditor.type === 'section' && currentEditor.title !== editor.title) {
-                // Need to talk with tomer about the logic here
-                // also , need to handle the delete section when the editor is open
+            if (currentEditor.type !== 'page-builder') {
+                // Always pop the last and insert the current.
                 this.editorsBreadCrumb.pop();
-                this.editorsBreadCrumb.push(editor);
-                this.changeCurrentEditor();
             }
+
+            this.editorsBreadCrumb.push(editor);
+            this.changeCurrentEditor();
         }
     }
 

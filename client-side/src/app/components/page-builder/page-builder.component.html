@@ -1,16 +1,13 @@
 
-<!-- <div class="page-builder-container"> -->
-    
-    <div #sectionsCont cdkDropListGroup class="sections-container" cdkDropList (cdkDropListDropped)="onSectionDropped($event)" >
-        <page-builder-section class="draggable-section" *ngFor="let section of pageBuilderService.sectionsSubject$ | async as sections; let i=index;" 
-            [id]="section.id" [name]="section.name || section.id" [splitData]="section.splitData" [blocks]="section.blocks" 
-            [screenSize]="screenSize"
-            cdkDrag>
-            <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
-        </page-builder-section>
-    </div>
-    <pep-button class="add-section-button" value="Add Section " styleType="regular" iconName="number_plus" iconPosition="end"
-        (buttonClick)="addSection($event)"></pep-button>
-<!-- </div> -->
+<div #sectionsCont cdkDropListGroup class="sections-container" cdkDropList (cdkDropListDropped)="onSectionDropped($event)" >
+    <page-builder-section class="draggable-section" *ngFor="let section of pageBuilderService.sectionsSubject$ | async as sections; let i=index;" 
+        [id]="section.id" [name]="section.name || section.id" [splitData]="section.splitData" [blocks]="section.blocks" 
+        [screenSize]="screenSize"
+        cdkDrag>
+        <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
+    </page-builder-section>
+</div>
+<pep-button class="add-section-button" value="Add Section " styleType="regular" iconName="number_plus" iconPosition="end"
+    (buttonClick)="addSection($event)"></pep-button>
 
 <pep-size-detector></pep-size-detector> 

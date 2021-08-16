@@ -1,5 +1,5 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from "@angular/core";
+import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { Editor, PageBuilderService, Section } from '../../services/page-builder.service';
 import { PepCustomizationService, PepLayoutService, PepLoaderService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 import { PepButton } from '@pepperi-addons/ngx-lib/button';
@@ -13,7 +13,7 @@ type ScreenSizeType = 'desktop' | 'tablet' | 'mobile';
     styleUrls: ['./page-manager.component.scss']
 })
 export class PageManagerComponent implements OnInit {
-    @ViewChild('pageBuilderWrapper') pageBuilderWrapper: ElementRef;
+    @ViewChild('pageBuilderWrapper', { static: true }) pageBuilderWrapper: ElementRef;
     
     showEditor = false;
     currentEditor: Editor;
@@ -45,8 +45,6 @@ export class PageManagerComponent implements OnInit {
 
             this.setScreenWidth(this.selectedScreenKey);
         });
-
-        this.viewportWidth = window.innerWidth;
     }
 
     private setScreenWidth(screenWidth: ScreenSizeType) {
@@ -60,6 +58,12 @@ export class PageManagerComponent implements OnInit {
 
         this.selectedScreenKey = screenWidth;
         this.pageBuilderService.setScreenWidth(widthToSet);
+    }
+
+    private updateViewportWidth() {
+        if (this.pageBuilderWrapper?.nativeElement) {
+            this.viewportWidth = this.pageBuilderWrapper.nativeElement.clientWidth;
+        }
     }
 
     ngOnInit() {
@@ -86,8 +90,14 @@ export class PageManagerComponent implements OnInit {
         this.pageBuilderService.onScreenWidthChange$.subscribe((width: string) => {
             if (this.pageBuilderWrapper?.nativeElement) {
                 this.renderer.setStyle(this.pageBuilderWrapper.nativeElement, 'width', width);
+                this.updateViewportWidth();
             }
         });
+    }
+
+    @HostListener('window:resize', ['$event'])
+    onResize(event): void {
+        this.updateViewportWidth();
     }
 
     togglePreviewMode() {
