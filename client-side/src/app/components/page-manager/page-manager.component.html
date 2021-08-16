@@ -2,14 +2,14 @@
     <div pep-side-area *ngIf="showEditor" style="padding-inline-start: 1rem;">
         <pep-side-bar #sideBar [ignoreResize]="true">
             <div header-content class="side-bar-title">
-                <pep-button *ngIf="currentEditor?.type !== 'page-builder'" class="back-button" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="navigateBackFromEditor();"></pep-button> 
+                <pep-button *ngIf="currentEditor?.type !== 'page-builder'" class="back-button" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="navigateBackFromEditor();"></pep-button>
                 <div class=" title-xl ellipsis" title="{{ currentEditor?.title }}">
                     <span>{{ currentEditor?.title }}</span>
                 </div>
             </div>
             <page-builder-editor *ngIf="currentEditor?.type === 'page-builder'"></page-builder-editor>
-            <page-builder-section-editor *ngIf="currentEditor?.type === 'section'"></page-builder-section-editor>
-            <addon-proxy *ngIf="currentEditor?.type === 'block'" [options]="currentEditor?.remoteModuleOptions" 
+            <page-builder-section-editor *ngIf="currentEditor?.type === 'section'" [sectionName]="currentEditor?.title"></page-builder-section-editor>
+            <addon-proxy *ngIf="currentEditor?.type === 'block'" [options]="currentEditor?.remoteModuleOptions"
                 [hostObject]="currentEditor?.hostObject" (hostEvents)="onBlockEditorChange($event);"></addon-proxy>
         </pep-side-bar>
     </div>
@@ -31,13 +31,14 @@
                 </pep-button> -->
             </div>
         </div>
-        <div #pageBuilderWrapper class="page-builder-wrapper">
+        <div #pageBuilderWrapper class="page-builder-wrapper" [ngClass]="{'editable-state': currentEditor?.type === 'section'}">
             <page-builder [editMode]="showEditor" [screenSize]="screenSize"></page-builder>
+            <div class="backdrop"></div>
         </div>
     </ng-container>
 </pep-page-layout>
 
 <!--
-    If the addon is not inside webapp container we gonna need this line. 
-    <pep-size-detector></pep-size-detector> 
+    If the addon is not inside webapp container we gonna need this line.
+    <pep-size-detector></pep-size-detector>
 -->

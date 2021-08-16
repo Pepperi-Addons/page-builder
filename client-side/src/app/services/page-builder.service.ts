@@ -108,7 +108,7 @@ export class PageBuilderService {
             this.http.postHttpCall('http://localhost:4500/api/init_page_editor', { PageType: ''}) // {RelationName: `PageBlock` }
             // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page_editor`, {})
                 .subscribe(res => {
-                
+
                 this.availableBlocksSubject.next(res['availableBlocks']);
             });
         }
@@ -133,8 +133,16 @@ export class PageBuilderService {
         // Keep the page builder editor.
         if (this.editorsBreadCrumb.length > 1) {
             // Maybe we want to compare the last editor for validation ?
+            this.clearActiveSection();
             const lastEditor = this.editorsBreadCrumb.pop();
             this.changeCurrentEditor();
+        }
+    }
+
+    clearActiveSection() {
+        var lastActiveSection = document.getElementsByClassName("active-section");
+        if(lastActiveSection.length){
+            lastActiveSection[0].classList.remove("active-section");
         }
     }
 

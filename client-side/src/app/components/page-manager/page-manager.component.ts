@@ -14,10 +14,10 @@ type ScreenSizeType = 'desktop' | 'tablet' | 'mobile';
 })
 export class PageManagerComponent implements OnInit {
     @ViewChild('pageBuilderWrapper', { static: true }) pageBuilderWrapper: ElementRef;
-    
+
     showEditor = false;
     currentEditor: Editor;
-    
+
     screenOptions: Array<PepButton>;
     selectedScreenKey: ScreenSizeType;
     viewportWidth: number;
@@ -39,8 +39,8 @@ export class PageManagerComponent implements OnInit {
 
         this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
             this.screenSize = size;
-            this.selectedScreenKey = 
-                size < PepScreenSizeType.MD ? 'desktop' : 
+            this.selectedScreenKey =
+                size < PepScreenSizeType.MD ? 'desktop' :
                 (size === PepScreenSizeType.MD || size === PepScreenSizeType.SM ? 'tablet' : 'mobile');
 
             this.setScreenWidth(this.selectedScreenKey);
@@ -69,7 +69,7 @@ export class PageManagerComponent implements OnInit {
     ngOnInit() {
         // TODO: Get the value (showEditor) from server.
         this.showEditor = this.route?.snapshot?.queryParams?.edit === "true" ?? false;
-        
+
         // TODO: Translate the value.
         this.screenOptions = [
             { key: 'desktop', value: 'Desktop', callback: () => this.setScreenWidth('desktop'), iconName: pepIconSystemBin.name, iconPosition: 'end' },

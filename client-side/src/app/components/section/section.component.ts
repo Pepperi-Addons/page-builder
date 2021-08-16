@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, Renderer2, SimpleChanges, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDragExit, CdkDropList, copyArrayItem, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { PageBuilderService, Section } from 'src/app/services/page-builder.service';
+import { Editor, PageBuilderService, Section } from 'src/app/services/page-builder.service';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 
@@ -50,6 +50,7 @@ export class SectionComponent implements OnInit, OnChanges {
 
     sectionsDropList;
     PepScreenSizeType = PepScreenSizeType;
+    canDrag = false;
 
     constructor(
         private renderer: Renderer2,
@@ -98,17 +99,21 @@ export class SectionComponent implements OnInit, OnChanges {
         this.pageBuilderService.sectionsSubject$.subscribe(res => {
             this.sectionsDropList = res.map(section => section.id);
         })
+
+        if (this.editable) {
+            this.pageBuilderService.onEditorChange$.subscribe((editor: Editor) => {
+                this.canDrag = editor.type === 'page-builder';
+            });
+        }
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         // throw new Error('Method not implemented.');
     }
 
+
     onEditSectionClick() {
-        var lastActiveSection = document.getElementsByClassName("active-section");
-        if(lastActiveSection.length){
-            lastActiveSection[0].classList.remove("active-section");
-        }
+        this.pageBuilderService.clearActiveSection();
 
         this.renderer.addClass(this.sectionContainerRef.nativeElement, 'active-section');
         this.pageBuilderService.navigateToEditor({

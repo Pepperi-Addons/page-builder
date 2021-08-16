@@ -1,8 +1,8 @@
 <div #sectionContainer class="section-container">
-    <toolbar-actions class="section-toolbar" [title]="name" [isDraggable]="true" (edit)="onEditSectionClick();" (remove)="onRemoveSectionClick()"></toolbar-actions>
+    <toolbar-actions *ngIf="editable && canDrag" class="section-toolbar" [title]="name" [isDraggable]="true" (edit)="onEditSectionClick();" (remove)="onRemoveSectionClick()"></toolbar-actions>
     <div [ngClass]="{'editable': editable}"
         #blocksWrapper class="blocks-wrapper"
-        id="{{id}}" 
+        id="{{id}}"
         cdkDropList
         [cdkDropListOrientation]="screenSize <= PepScreenSizeType.LG ? 'horizontal' : 'vertical'"
         [cdkDropListData]="blocks"
@@ -13,7 +13,7 @@
         </div>
         <div cdkDrag [cdkDragData]="block" *ngFor="let block of blocks; let i=index;">
             <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
-            <toolbar-actions
+            <toolbar-actions *ngIf="editable && canDrag"
                 class="block-toolbar" [title]="block.title" [isDraggable]="true" (edit)="editBlock(block);" (remove)="removeBlock(block.id)">
             </toolbar-actions>
             <!-- <div *ngIf="editable" [ngClass]="{'editable': editable}" class="block-edit">
@@ -25,7 +25,7 @@
                 [iconName]="'system_edit'" (buttonClick)="editBlock(block);">
                 </pep-button>
             </div> -->
-            <div class="addon-proxy-cont">
+            <div [ngClass]="{'block-editable-state': editable }">
                 <addon-proxy *ngIf="block" [options]="block" [hostObject]="block" (hostEvents)="onBlockChange($event);">
                 </addon-proxy>
             </div>
