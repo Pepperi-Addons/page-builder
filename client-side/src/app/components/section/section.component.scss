@@ -18,7 +18,7 @@
     border: 1px solid #999999;
     border-radius: 0.25rem;
     min-height: 250px;
-    
+
     .cdk-drag-placeholder {
         opacity: 0;
     }
@@ -63,6 +63,11 @@
             border: 2px dashed #000;
             border-top: 0;
         }
+    }
+
+    &.active-section {
+        border: 2px dashed #000;
+
     }
 }
 

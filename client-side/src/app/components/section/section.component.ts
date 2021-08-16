@@ -16,7 +16,7 @@ export class SectionComponent implements OnInit, OnChanges {
     @Input() id: string;
     @Input() name: string;
     @Input() editable = false;
-    
+
     private _screenSize: PepScreenSizeType;
     @Input()
     set screenSize(value: PepScreenSizeType) {
@@ -26,7 +26,7 @@ export class SectionComponent implements OnInit, OnChanges {
     get screenSize(): PepScreenSizeType {
         return this._screenSize;
     }
- 
+
     private _splitData: string = '';
     @Input()
     set splitData(value: string) {
@@ -44,13 +44,13 @@ export class SectionComponent implements OnInit, OnChanges {
     }
     get blocks(): Array<any> {
         return this._blocks;
-    } 
+    }
 
     @Output() remove: EventEmitter<string> = new EventEmitter();
 
     sectionsDropList;
     PepScreenSizeType = PepScreenSizeType;
-   
+
     constructor(
         private renderer: Renderer2,
         private translate: TranslateService,
@@ -105,7 +105,12 @@ export class SectionComponent implements OnInit, OnChanges {
     }
 
     onEditSectionClick() {
-        this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'border', '3px solid Red');
+        var lastActiveSection = document.getElementsByClassName("active-section");
+        if(lastActiveSection.length){
+            lastActiveSection[0].classList.remove("active-section");
+        }
+
+        this.renderer.addClass(this.sectionContainerRef.nativeElement, 'active-section');
         this.pageBuilderService.navigateToEditor({
             title: this.name, //this.translate.instant('Section'),
             type : 'section',
@@ -127,7 +132,7 @@ export class SectionComponent implements OnInit, OnChanges {
 
     editBlock(block: any) {
         const blockEditor = this.getBlockEditor(block);
-        
+
         this.pageBuilderService.navigateToEditor({
             title: blockEditor.title,
             type : 'block',
