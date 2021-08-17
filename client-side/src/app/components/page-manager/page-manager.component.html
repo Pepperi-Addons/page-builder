@@ -15,7 +15,7 @@
     </div>
     <ng-container pep-main-area>
         <div class="header-container">
-            <div class="header-title header-content">{{('ViewportWidth' | translate)}} : <b>{{viewportWidth}}</b></div>
+            <div class="header-title header-content pep-spacing-element">{{('ViewportWidth' | translate)}} : <b>{{viewportWidth}}</b></div>
             <div class="header-group-btn">
                 <pep-group-buttons [buttons]="screenOptions" [selectedButtonKey]="selectedScreenKey" class="header-content" sizeType="sm" viewType="toggle" >
                 </pep-group-buttons>
@@ -31,7 +31,7 @@
                 </pep-button> -->
             </div>
         </div>
-        <div #pageBuilderWrapper class="page-builder-wrapper" [ngClass]="{'editable-state': currentEditor?.type === 'section'}">
+        <div #pageBuilderWrapper class="page-builder-wrapper" [ngClass]="{'editable-state': currentEditor?.type === 'section' || currentEditor?.type === 'block'}">
             <page-builder [editMode]="showEditor" [screenSize]="screenSize"></page-builder>
             <div class="backdrop"></div>
         </div>
