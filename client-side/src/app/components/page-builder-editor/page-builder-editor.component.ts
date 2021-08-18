@@ -3,7 +3,7 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
 import { ActivatedRoute } from '@angular/router';
 import { PepHttpService } from '@pepperi-addons/ngx-lib';
 import { Observable, ReplaySubject } from 'rxjs';
-import { PageBuilderService } from '../../services/page-builder.service';
+import { AvailableBlock, PageBuilderService } from '../../services/page-builder.service';
 // import { subject } from '../page-builder/page-builder.component';
 import { config } from '../addon.config';
 
@@ -15,10 +15,13 @@ import { config } from '../addon.config';
 export class PageBuilderEditorComponent implements OnInit {
     @ViewChild('availableBlocksContainer', { read: ElementRef }) availableBlocksContainer: ElementRef;
     
+    @Input() pageName: string = '';
+    @Input() pageDescription: string = '';
+
     isFullWidth: boolean = true;
     maxWidth = '0';
 
-    availableBlocks = [];
+    availableBlocks: AvailableBlock[] = [];
     sectionsDropList = [];
     sizesGroupButtons;
     addonUUID: string;
@@ -36,7 +39,7 @@ export class PageBuilderEditorComponent implements OnInit {
         //     {RelationName: `PageBlock` })
         this.addonUUID = this.route.snapshot.params.addon_uuid || config.AddonUUID;
         this.pageBuilderService.sectionsSubject$.subscribe(res => {
-            this.sectionsDropList = res.map(section => section.id);
+            this.sectionsDropList = res.map(section => section.Key);
         })
 
         this.pageBuilderService.initPageEditor(this.addonUUID);

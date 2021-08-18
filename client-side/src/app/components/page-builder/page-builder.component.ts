@@ -2,7 +2,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, Renderer2, TemplateRef, ViewChild, ViewChildren, ViewContainerRef } from "@angular/core";
 import { Observable } from "rxjs";
 import { CdkDragDrop, CdkDropList  } from '@angular/cdk/drag-drop';
-import { PageBuilderService, Section } from '../../services/page-builder.service';
+import { PageBuilderService } from '../../services/page-builder.service';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 

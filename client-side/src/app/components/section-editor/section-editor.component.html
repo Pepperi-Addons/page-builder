@@ -4,5 +4,5 @@
     <pep-checkbox [(value)]="subSections" label="Sub Section" [renderTitle]="false"></pep-checkbox>
 
     <pep-select label="Sections" [value]="partsNumber" [options]="partsNumberOptions" (valueChange)="onPartsNumberChange($event)" [emptyOption]="false" [disabled]="!subSections"></pep-select>
-    <pep-select label="Split" [value]="splitData" [options]="splitDataOptions" (valueChange)="onSplitDataChange($event)" [emptyOption]="false" [disabled]="!subSections"></pep-select>
+    <pep-select label="Split" [value]="split" [options]="splitOptions" (valueChange)="onSplitChange($event)" [emptyOption]="false" [disabled]="!subSections"></pep-select>
 </div>

@@ -7,10 +7,14 @@
                     <span>{{ currentEditor?.title }}</span>
                 </div>
             </div>
-            <page-builder-editor *ngIf="currentEditor?.type === 'page-builder'"></page-builder-editor>
-            <page-builder-section-editor *ngIf="currentEditor?.type === 'section'" [sectionName]="currentEditor?.title"></page-builder-section-editor>
-            <addon-proxy *ngIf="currentEditor?.type === 'block'" [options]="currentEditor?.remoteModuleOptions"
-                [hostObject]="currentEditor?.hostObject" (hostEvents)="onBlockEditorChange($event);"></addon-proxy>
+            <page-builder-editor *ngIf="currentEditor?.type === 'page-builder'"
+                [pageName]="currentEditor?.hostObject?.pageName" [pageDescription]="currentEditor?.hostObject?.pageDescription"></page-builder-editor>
+        
+            <page-builder-section-editor *ngIf="currentEditor?.type === 'section'" 
+                [sectionName]="currentEditor?.hostObject?.sectionName" [split]="currentEditor?.hostObject?.split" ></page-builder-section-editor>
+        
+            <pep-remote-loader *ngIf="currentEditor?.type === 'block'" [options]="currentEditor?.remoteModuleOptions" 
+                [hostObject]="currentEditor?.hostObject" (hostEvents)="onBlockEditorChange($event);"></pep-remote-loader>
         </pep-side-bar>
     </div>
     <ng-container pep-main-area>
@@ -37,8 +41,3 @@
         </div>
     </ng-container>
 </pep-page-layout>
-
-<!--
-    If the addon is not inside webapp container we gonna need this line.
-    <pep-size-detector></pep-size-detector>
--->
