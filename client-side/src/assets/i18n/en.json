@@ -30,8 +30,10 @@
     "Mobile": "Mobile",
 
     "Pages_Main_Header": "Page Builder",
-    "Pages_Add_New": "Add New Page",
+    "Pages_a_Page": "Add a Page",
     "Pages_Main_Explanation": "Create new pages with our drag & drop builder that gives you total control of each detail of your page. You can use one of our templates or branch out of it. You can start from scretch and compose a layout using our components.",
-    "Pages_Secondary_Header": "Pages"
+    "Pages_Secondary_Header": "Pages",
+    "Pages_No_Pages_Header": "You haven't used the Page Builder yet",
+    "Pages_No_Pages_Msg": "Add a custom page design by clicking the ‘Add Page’ button, or import an existing template through the adjacent Menu button"
 
 }

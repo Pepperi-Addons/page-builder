@@ -16,15 +16,17 @@
             <div header-end-content>
                 <pep-menu class="pep-spacing-element" [items]="menuItems" [sizeType]="'sm'" (menuItemClick)="onSecondaryMenuItemClicked($event)">
                 </pep-menu>
-                <pep-button [value]="'Pages_Add_New' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
+                <pep-button [value]="'Pages_a_Page' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
                 </pep-button>
             </div>
         </pep-top-bar>
         <div>
             <div class="PagesNotFoundMsg">
-                <h2>You haven't used the Page Builder yet</h2>
-                <span>Add a custom page design by clicking the ‘Add Page’ button, or import an existing template through the adjacent Menu button</span>
+                <h2>{{ "Pages_No_Pages_Header" | translate}}</h2>
+                <span>{{ "Pages_No_Pages_Msg" | translate}}</span>
             </div>
+            <generic-list [inline]="'true'"></generic-list>
+
         </div>
     </div>
 </div>

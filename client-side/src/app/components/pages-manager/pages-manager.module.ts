@@ -1,3 +1,4 @@
+import { GenericListModule } from './../generic-list/generic-list.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PepIconModule, pepIconNumberPlus, PepIconRegistry,
@@ -56,6 +57,8 @@ const routes: Routes = [
         PepSelectModule,
         PepTextboxModule,
         PepMenuModule,
+        GenericListModule,
+
         OverlayModule,
         PepButtonModule,
         PepCheckboxModule,
