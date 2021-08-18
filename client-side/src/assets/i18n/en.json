@@ -27,5 +27,11 @@
     "Main_Dedign_Editor_Border_Radius": "Global border radius",
     "Desktop": "Desktop",
     "Tablet": "Tablet",
-    "Mobile": "Mobile"
+    "Mobile": "Mobile",
+
+    "Pages_Main_Header": "Page Builder",
+    "Pages_Add_New": "Add New Page",
+    "Pages_Main_Explanation": "Create new pages with our drag & drop builder that gives you total control of each detail of your page. You can use one of our templates or branch out of it. You can start from scretch and compose a layout using our components.",
+    "Pages_Secondary_Header": "Pages"
+
 }

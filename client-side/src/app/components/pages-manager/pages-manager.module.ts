@@ -20,6 +20,8 @@ import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
+
 const pepIcons = [
     pepIconSystemClose,
     pepIconNumberPlus,
@@ -53,6 +55,7 @@ const routes: Routes = [
         PepPageLayoutModule,
         PepSelectModule,
         PepTextboxModule,
+        PepMenuModule,
         OverlayModule,
         PepButtonModule,
         PepCheckboxModule,

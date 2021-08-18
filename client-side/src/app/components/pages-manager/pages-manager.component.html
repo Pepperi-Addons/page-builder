@@ -1,6 +1,32 @@
 
-<div class="pages-manager">
-    Pages works!
+<pep-top-bar [inline]="false" [title]="('Pages_Main_Header' | translate)">
+    <div header-start-content>
+    </div>
+    <div header-end-content>
+        <pep-menu class="pep-spacing-element" [items]="menuItems" (menuItemClick)="onMainMenuItemClicked($event)">
+        </pep-menu>
+    </div>
+</pep-top-bar>
+<div class="main-content">
+    <div class="content">
+        <span class="body-md pageExplanation">{{ 'Pages_Main_Explanation' | translate }}</span>
+        <pep-top-bar [inline]="true" [title]="('Pages_Secondary_Header' | translate)">
+            <div header-start-content>
+            </div>
+            <div header-end-content>
+                <pep-menu class="pep-spacing-element" [items]="menuItems" [sizeType]="'sm'" (menuItemClick)="onSecondaryMenuItemClicked($event)">
+                </pep-menu>
+                <pep-button [value]="'Pages_Add_New' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
+                </pep-button>
+            </div>
+        </pep-top-bar>
+        <div>
+            <div class="PagesNotFoundMsg">
+                <h2>You haven't used the Page Builder yet</h2>
+                <span>Add a custom page design by clicking the ‘Add Page’ button, or import an existing template through the adjacent Menu button</span>
+            </div>
+        </div>
+    </div>
 </div>
 
 
