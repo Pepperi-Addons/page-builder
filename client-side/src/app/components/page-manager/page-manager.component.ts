@@ -4,6 +4,7 @@ import { Editor, PageBuilderService, Section } from '../../services/page-builder
 import { PepCustomizationService, PepLayoutService, PepLoaderService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 import { PepButton } from '@pepperi-addons/ngx-lib/button';
 import { pepIconSystemBin } from '@pepperi-addons/ngx-lib/icon';
+import { TranslateService } from '@ngx-translate/core';
 
 type ScreenSizeType = 'desktop' | 'tablet' | 'mobile';
 
@@ -27,6 +28,7 @@ export class PageManagerComponent implements OnInit {
     constructor(
         public customizationService: PepCustomizationService,
         public loaderService: PepLoaderService,
+        private translate: TranslateService,
         private renderer: Renderer2,
         private route: ActivatedRoute,
         private router: Router,
@@ -72,9 +74,9 @@ export class PageManagerComponent implements OnInit {
 
         // TODO: Translate the value.
         this.screenOptions = [
-            { key: 'desktop', value: 'Desktop', callback: () => this.setScreenWidth('desktop'), iconName: pepIconSystemBin.name, iconPosition: 'end' },
-            { key: 'tablet', value: 'Tablet', callback: () => this.setScreenWidth('tablet'), iconName: pepIconSystemBin.name, iconPosition: 'end' },
-            { key: 'mobile', value: 'Mobile', callback: () => this.setScreenWidth('mobile'), iconName: pepIconSystemBin.name, iconPosition: 'end' }
+            { key: 'desktop', value: this.translate.instant('Desktop'), callback: () => this.setScreenWidth('desktop'), iconName: pepIconSystemBin.name, iconPosition: 'end' },
+            { key: 'tablet', value: this.translate.instant('Tablet'), callback: () => this.setScreenWidth('tablet'), iconName: pepIconSystemBin.name, iconPosition: 'end' },
+            { key: 'mobile', value: this.translate.instant('Mobile'), callback: () => this.setScreenWidth('mobile'), iconName: pepIconSystemBin.name, iconPosition: 'end' }
         ];
 
         this.pageBuilderService.onScreenSizeChange$.subscribe((size: PepScreenSizeType) => {

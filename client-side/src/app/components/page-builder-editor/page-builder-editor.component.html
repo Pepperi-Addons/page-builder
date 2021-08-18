@@ -1,9 +1,9 @@
 <mat-tab-group  #tabGroup class="editor-tabs" animationDuration="0ms">
-    <mat-tab label="General">
+    <mat-tab label="{{'General' | translate}}">
         <div class="general-container ">
-            <pep-textbox value="" label="Page Name"></pep-textbox>
-            <pep-textarea value="" label="Description" [rowSpan]="2"></pep-textarea>
-            <label class="body-xl bold ellipsis">Blocks</label>
+            <pep-textbox value="" label="{{'Main_General_Editor_PageName' | translate}}"></pep-textbox>
+            <pep-textarea value="" label="{{'Main_General_Editor_Description' | translate}}" [rowSpan]="2"></pep-textarea>
+            <label class="body-xl bold ellipsis">{{'Main_General_Editor_Blocks' | translate}}</label>
             <div #availableBlocksContainer id="availableBlocks" class="available-blocks"
                 cdkDropList
                 [cdkDropListData]="availableBlocks"
@@ -21,20 +21,20 @@
             </div>
         </div>
     </mat-tab>
-    <mat-tab label="Design">
+    <mat-tab label="{{'Design' | translate}}">
         <div class="tab-container">
-            <pep-checkbox value="isFullWidth" label="Full Width" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
-            <pep-textbox label="Max Width" type="int" [disabled]="isFullWidth" [value]="maxWidth" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
-            <label class="body-xl bold ellipsis">Spacing</label>
-            <label class="body-sm ellipsis">Slides - Left & Right</label>
+            <pep-checkbox value="isFullWidth" label="{{'Main_Dedign_Editor_FullWidth' | translate}}" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
+            <pep-textbox label="{{'Main_Dedign_Editor_MaxWidth' | translate}}" type="int" [disabled]="isFullWidth" [value]="maxWidth" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
+            <label class="body-xl bold ellipsis">{{'Main_Dedign_Editor_Spacing' | translate}}</label><br>
+            <label class="body-sm ellipsis">{{'Main_Dedign_Editor_Slides_L_and_R' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="'None'" class="heder-content" buttonsClass="md regular" viewType="toggle" ></pep-group-buttons>
-            <label class="body-sm ellipsis">Slides - Top & Button</label>
+            <label class="body-sm ellipsis">{{'Main_Dedign_Editor_Slides_T_and_B' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="'None'" class="heder-content" buttonsClass="md regular" viewType="toggle" ></pep-group-buttons>
-            <label class="body-xl bold ellipsis">Gaps</label>
-            <label class="body-sm ellipsis">Gap size between sections</label>
+            <label class="body-xl bold ellipsis">{{'Main_Dedign_Editor_Gaps' | translate}}</label><br>
+            <label class="body-sm ellipsis">{{'Main_Dedign_Editor_Gap_between_sections' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="'None'" class="heder-content" buttonsClass="md regular" viewType="toggle" ></pep-group-buttons>
-            <label class="body-xl bold ellipsis">Rounded Corners</label>
-            <label class="body-sm ellipsis">Global border radius</label>
+            <label class="body-xl bold ellipsis">{{'Main_Dedign_Editor_Rounded_Corners' | translate}}</label><br>
+            <label class="body-sm ellipsis">{{'Main_Dedign_Editor_Border_Radius' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="'None'" class="heder-content" buttonsClass="ms regular" viewType="toggle" ></pep-group-buttons>
         </div>
     </mat-tab>

@@ -8,7 +8,7 @@
         [cdkDropListData]="blocks"
         [cdkDropListConnectedTo]="sectionsDropList"
         (cdkDropListDropped)="onBlockDropped($event)">
-        <div class="background">
+        <div class="section-background">
             <div class="back-template" *ngFor="let number of [0,1,2,3,4,5,6,7,8,9,10,11]"></div>
         </div>
         <div cdkDrag [cdkDragData]="block" *ngFor="let block of blocks; let i=index;">
@@ -16,15 +16,6 @@
             <toolbar-actions *ngIf="editable && canDrag"
                 class="block-toolbar" [title]="block.title" [isDraggable]="true" (edit)="editBlock(block);" (remove)="removeBlock(block.id)">
             </toolbar-actions>
-            <!-- <div *ngIf="editable" [ngClass]="{'editable': editable}" class="block-edit">
-                <pep-button [classNames]="'caution remove-block '"
-                        sizeType="sm"
-                    [iconName]="'system_bin'" (buttonClick)="removeBlock(block.id);">
-                </pep-button>
-                <pep-button  [classNames]="'pep-spacing-element '" [sizeType]="'sm'"
-                [iconName]="'system_edit'" (buttonClick)="editBlock(block);">
-                </pep-button>
-            </div> -->
             <div [ngClass]="{'block-editable-state': editable }">
                 <addon-proxy *ngIf="block" [options]="block" [hostObject]="block" (hostEvents)="onBlockChange($event);">
                 </addon-proxy>
