@@ -1,9 +1,10 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { IPepFieldValueChangeEvent, IPepOption, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
+import { PageSection, SplitType } from '@pepperi-addons/papi-sdk';
 
-export interface IAllSplitDataOption {
+export interface IAllSplitOption {
     key: string;
-    value: Array<IPepOption>;
+    value: Array<{ key: SplitType; value: string }>;
 }
 
 @Component({
@@ -12,14 +13,23 @@ export interface IAllSplitDataOption {
     styleUrls: ['./section-editor.component.scss']
 })
 export class SectionEditorComponent implements OnInit {
+    // private _hostObject: PageSection;
+    // @Input()
+    // set hostObject(value: PageSection) {
+    //     this._hostObject = value;
+    // }
+    // get hostObject(): PageSection {
+    //     return this._hostObject;
+    // }
+
     @Input() sectionName: string = '';
-
-    @Input() subSections: boolean = false;
-
-    private _splitData: string = '';
-    @Input()
-    set splitData(value: string) {
-        this._splitData = value;
+    
+    private _split: string = '';
+    @Input() 
+    set split(value: string) {
+        this._split = value;
+        
+        this.subSections = this._split.length > 0;
 
         // Check how many parts we have.
         const arr = value.split(' ');
@@ -28,70 +38,71 @@ export class SectionEditorComponent implements OnInit {
         } else {
             this.partsNumber = "2";
         }
-
-        this.loadSplitDataOptions();
+        
+        this.loadSplitOptions();
     }
-    get splitData(): string {
-        return this._splitData;
+    get split(): string {
+        return this._split;
     }
-
+    
+    subSections: boolean = false;
     partsNumber: string = "2";
     partsNumberOptions = Array<IPepOption>();
-    splitDataOptions = Array<IPepOption>();
-    allSplitDataOptions = Array<IAllSplitDataOption>();
+    splitOptions = Array<IPepOption>();
+    allSplitOptions = Array<IAllSplitOption>();
 
     constructor(private utilitiesService: PepUtilitiesService) { }
 
     ngOnInit(): void {
 
         this.partsNumberOptions = [
-            { "key": "2", "value": "2 Parts" },
-            { "key": "3", "value": "3 Parts" },
-            { "key": "4", "value": "4 Parts" }
+            { 'key': '2', 'value': '2 Parts' }, 
+            { 'key': '3', 'value': '3 Parts' },
+            { 'key': '4', 'value': '4 Parts' }
         ];
-
-        this.allSplitDataOptions = [
-            { "key": "2", "value": [
-                { "key": "1fr 3fr", "value": "1/4-3/4" },
-                { "key": "1fr 2fr", "value": "1/3-2/3" },
-                { "key": "1fr 1fr", "value": "1/2-1/2" },
-                { "key": "2fr 1fr", "value": "2/3-1/3" },
-                { "key": "3fr 1fr", "value": "3/4-1/4" },
+        
+        this.allSplitOptions = [
+            { 'key': '2', 'value': [
+                { 'key': '1/4 3/4', 'value': '1/4-3/4' },
+                { 'key': '1/3 2/3', 'value': '1/3-2/3' },
+                { 'key': '1/2 1/2', 'value': '1/2-1/2' },
+                { 'key': '2/3 1/3', 'value': '2/3-1/3' },
+                { 'key': '3/4 1/4', 'value': '3/4-1/4' },
+            ]}, 
+            { 'key': '3', 'value': [
+                { 'key': '1/3 1/3 1/3', 'value': '1/3-1/3-1/3' },
+                { 'key': '1/2 1/4 1/4', 'value': '1/2-1/4-1/4' },
+                { 'key': '1/4 1/2 1/4', 'value': '1/4-1/2-1/4' },
+                { 'key': '1/4 1/4 1/2', 'value': '1/4-1/4-1/2' },
             ]},
-            { "key": "3", "value": [
-                { "key": "1fr 1fr 1fr", "value": "1/3-1/3-1/3" },
-                { "key": "2fr 1fr 1fr", "value": "1/2-1/4-1/4" },
-                { "key": "1fr 2fr 1fr", "value": "1/4-1/2-1/4" },
-                { "key": "1fr 1fr 2fr", "value": "1/4-1/4-1/2" },
-            ]},
-            { "key": "4", "value": [
-                { "key": "1fr 1fr 1fr 1fr", "value": "1/4-1/4-1/4-1/4" },
+            { 'key': '4', 'value': [
+                { 'key': '1/4 1/4 1/4 1/4', 'value': '1/4-1/4-1/4-1/4' },
             ]}
         ];
-
-        this.loadSplitDataOptions();
+        
+        this.loadSplitOptions();
     }
 
-    private loadSplitDataOptions() {
-        const splitDataOprions = this.allSplitDataOptions.find((option) => option.key === this.partsNumber);
-        if (splitDataOprions) {
-            this.splitDataOptions = splitDataOprions.value;
+    private loadSplitOptions() {
+        const splitOprions = this.allSplitOptions.find((option) => option.key === this.partsNumber);
+        if (splitOprions) {
+            this.splitOptions = splitOprions.value;
         } else {
-            this.splitDataOptions = this.allSplitDataOptions[0].value;
+            this.splitOptions = this.allSplitOptions[0].value;
         }
 
-        if (this.splitData === '') {
-            this.splitData = this.splitDataOptions[0].key;
+        if (this.split === '') {
+            this.split = this.splitOptions[0].key;
         }
     }
 
     onPartsNumberChange(key: string) {
         this.partsNumber = key;
-        this.loadSplitDataOptions();
-        this._splitData = this.splitDataOptions[0].key;
+        this.loadSplitOptions();
+        this._split = this.splitOptions[0].key;
     }
 
-    onSplitDataChange(key: string) {
-        this._splitData = key;
+    onSplitChange(key: string) {
+        this._split = key;
     }
 }

@@ -1,22 +1,22 @@
 <mat-tab-group  #tabGroup class="editor-tabs" animationDuration="0ms">
     <mat-tab label="{{'General' | translate}}">
         <div class="general-container ">
-            <pep-textbox value="" label="{{'Main_General_Editor_PageName' | translate}}"></pep-textbox>
-            <pep-textarea value="" label="{{'Main_General_Editor_Description' | translate}}" [rowSpan]="2"></pep-textarea>
+            <pep-textbox [value]="pageName" label="{{'Main_General_Editor_PageName' | translate}}"></pep-textbox>
+            <pep-textarea [value]="pageDescription" label="{{'Main_General_Editor_Description' | translate}}" [rowSpan]="2"></pep-textarea>
             <label class="body-xl bold ellipsis">{{'Main_General_Editor_Blocks' | translate}}</label>
             <div #availableBlocksContainer id="availableBlocks" class="available-blocks"
                 cdkDropList
                 [cdkDropListData]="availableBlocks"
                 [cdkDropListConnectedTo]="sectionsDropList">
 
-                <toolbar-actions *ngFor="let block of availableBlocks;" class="available-block"
-                    [title]="block.title" [showActions]="false" [isDraggable]="true"
+                <toolbar-actions *ngFor="let availableBlock of availableBlocks;" class="available-block"
+                    [title]="availableBlock.relation?.Description" [showActions]="false" [isDraggable]="true"
                     cdkDrag
-                    [cdkDragData]="block"
+                    [cdkDragData]="availableBlock"
                     >
                     <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
-                    <!-- <addon-proxy *cdkDragPreview [options]="block" [hostObject]="block">
-                    </addon-proxy> -->
+                    <!-- <pep-remote-loader *cdkDragPreview [options]="block" [hostObject]="block">
+                    </pep-remote-loader> -->
                 </toolbar-actions>
             </div>
         </div>

@@ -1,25 +1,29 @@
 <div #sectionContainer class="section-container">
-    <toolbar-actions *ngIf="editable && canDrag" class="section-toolbar" [title]="name" [isDraggable]="true" (edit)="onEditSectionClick();" (remove)="onRemoveSectionClick()"></toolbar-actions>
     <div [ngClass]="{'editable': editable}"
         #blocksWrapper class="blocks-wrapper"
         id="{{id}}"
         cdkDropList
         [cdkDropListOrientation]="screenSize <= PepScreenSizeType.LG ? 'horizontal' : 'vertical'"
-        [cdkDropListData]="blocks"
+        [cdkDropListData]="columns"
         [cdkDropListConnectedTo]="sectionsDropList"
         (cdkDropListDropped)="onBlockDropped($event)">
         <div class="section-background">
             <div class="back-template" *ngFor="let number of [0,1,2,3,4,5,6,7,8,9,10,11]"></div>
         </div>
-        <div cdkDrag [cdkDragData]="block" *ngFor="let block of blocks; let i=index;">
-            <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
-            <toolbar-actions *ngIf="editable && canDrag"
-                class="block-toolbar" [title]="block.title" [isDraggable]="true" (edit)="editBlock(block);" (remove)="removeBlock(block.id)">
-            </toolbar-actions>
-            <div [ngClass]="{'block-editable-state': editable }">
-                <addon-proxy *ngIf="block" [options]="block" [hostObject]="block" (hostEvents)="onBlockChange($event);">
-                </addon-proxy>
+        <div class="section-column" *ngFor="let column of columns; let i=index;">
+            <div class="section-column-block" *ngIf="column.Block" >
+                <div cdkDrag [cdkDragData]="column.Block" *ngFor="let block of blocksSubject$ | async as blocks; let i=index;">
+                    <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
+                    <toolbar-actions *ngIf="editable && canDrag"
+                        class="block-toolbar" [title]="'block.title'" [isDraggable]="true" (edit)="editBlock(block);" (remove)="removeBlock(block.Key)">
+                    </toolbar-actions>
+                    <div class="remote-loader-container" [ngClass]="{'block-editable-state': editable }">
+                        <pep-remote-loader *ngIf="block" [options]="block.Relation?.Options" [hostObject]="block.Configuration" (hostEvents)="onBlockChange($event);">
+                        </pep-remote-loader>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <toolbar-actions *ngIf="editable && canDrag" class="section-toolbar" [title]="name" [isDraggable]="true" (edit)="onEditSectionClick();" (remove)="onRemoveSectionClick()"></toolbar-actions>
 </div>

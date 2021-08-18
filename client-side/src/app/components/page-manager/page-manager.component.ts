@@ -1,6 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from "@angular/core";
-import { Editor, PageBuilderService, Section } from '../../services/page-builder.service';
+import { Editor, PageBuilderService } from '../../services/page-builder.service';
 import { PepCustomizationService, PepLayoutService, PepLoaderService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 import { PepButton } from '@pepperi-addons/ngx-lib/button';
 import { pepIconSystemBin } from '@pepperi-addons/ngx-lib/icon';
@@ -125,9 +125,9 @@ export class PageManagerComponent implements OnInit {
         this.pageBuilderService.publish();
     }
 
-    clearPage() {
-        this.pageBuilderService.clearSections();
-    }
+    // clearPage() {
+    //     this.pageBuilderService.clearSections();
+    // }
 
     navigateBackFromEditor() {
         this.pageBuilderService.navigateBackFromEditor();
