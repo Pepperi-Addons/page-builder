@@ -1,3 +1,4 @@
+import { GenericListModule } from './../generic-list/generic-list.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PepIconModule, pepIconNumberPlus, PepIconRegistry,
@@ -19,6 +20,8 @@ import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { RouterModule, Routes } from '@angular/router';
+
+import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
 
 const pepIcons = [
     pepIconSystemClose,
@@ -53,6 +56,9 @@ const routes: Routes = [
         PepPageLayoutModule,
         PepSelectModule,
         PepTextboxModule,
+        PepMenuModule,
+        GenericListModule,
+
         OverlayModule,
         PepButtonModule,
         PepCheckboxModule,
