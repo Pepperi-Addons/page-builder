@@ -3,9 +3,9 @@ import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { PepGuid, PepHttpService, PepScreenSizeType, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { PepRemoteLoaderOptions } from "@pepperi-addons/ngx-remote-loader";
-import { InstalledAddon, Page, PageBlock, PageRelation, PageSection, PageSectionColumn } from "@pepperi-addons/papi-sdk";
+import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType } from "@pepperi-addons/papi-sdk";
 import { Observable, BehaviorSubject } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 
 export type EditorType = 'page-builder' | 'section' | 'block';
 
@@ -13,20 +13,36 @@ export interface Editor {
     id: string,
     title: string,
     type: EditorType,
-    // editorData: any,
     remoteModuleOptions?: PepRemoteLoaderOptions,
     hostObject?: any
 }
 
-// export interface Section {
-//     id: string,
-//     name: string,
-//     split: string;
-//     blocks: Array<any>,
-// }
+export interface PageEditor {
+    id: string,
+    pageName: string,
+    pageDescription: string,
+    maxWidth: number,
+    columnsHorizntalGap?: PageSizeType,
+    columnsVerticalGap?: PageSizeType,
+    sectionsGap: PageSizeType,
+    roundedCorners?: PageSizeType,
+}
+
+export interface SectionEditor {
+    id: string,
+    sectionName: string,
+    split: SplitType,
+    height: number,
+}
+
+export interface BlockEditor {
+    id: string,
+    configuration?: any,
+}
+
 export interface AvailableBlock {
     options: PepRemoteLoaderOptions,
-    relation: PageRelation
+    relation: NgComponentRelation
 }
 
 @Injectable({
@@ -41,12 +57,6 @@ export class PageBuilderService {
         return this.screenSizeSubject.asObservable().pipe(distinctUntilChanged());
     }
 
-    // TODO:
-    private screenMaxWidthSubject: BehaviorSubject<string> = new BehaviorSubject<string>('unset');
-    get onScreenMaxWidthChange$(): Observable<string> {
-        return this.screenMaxWidthSubject.asObservable().pipe(distinctUntilChanged());
-    }
-
     // This subject is for demostrate the container size (Usage only in edit mode).
     private screenWidthSubject: BehaviorSubject<string> = new BehaviorSubject<string>('100%');
     get onScreenWidthChange$(): Observable<string> {
@@ -54,31 +64,48 @@ export class PageBuilderService {
     }
 
     // This subject is for load the current editor (Usage only in edit mode).
-    private editorChangeSubject: BehaviorSubject<Editor>;
+    private editorSubject: BehaviorSubject<Editor> = new BehaviorSubject<Editor>(null);
     get onEditorChange$(): Observable<Editor> {
-        return this.editorChangeSubject.asObservable().pipe(distinctUntilChanged());
+        return this.editorSubject.asObservable().pipe(distinctUntilChanged());
     }
 
     // This subject is for load available blocks on the main editor (Usage only in edit mode).
     private availableBlocksSubject: BehaviorSubject<AvailableBlock[]> = new BehaviorSubject<AvailableBlock[]>([]);
     get availableBlocksLoadedSubject$(): Observable<AvailableBlock[]> {
-        return this.availableBlocksSubject.asObservable();
+        return this.availableBlocksSubject.asObservable().pipe(distinctUntilChanged());
     }
 
     // This is the sections subject (a pare from the page object)
     private sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
-    get sectionsSubject$(): Observable<PageSection[]> {
-        return this.sectionsSubject.asObservable();
+    get onSectionsChange$(): Observable<PageSection[]> {
+        return this.sectionsSubject.asObservable().pipe(distinctUntilChanged());
     }
     
-    private blocksChangeSubject: BehaviorSubject<PageBlock[]> = new BehaviorSubject<PageBlock[]>([]);
-    get blocksChangeSubject$(): Observable<PageBlock[]> {
-        return this.blocksChangeSubject.asObservable();
+    private blocksSubject: BehaviorSubject<PageBlock[]> = new BehaviorSubject<PageBlock[]>([]);
+    get onBlocksChange$(): Observable<PageBlock[]> {
+        return this.blocksSubject.asObservable().pipe(distinctUntilChanged());
     }
 
-    private pageChangeSubject: BehaviorSubject<Page> = new BehaviorSubject<Page>(null);
-    get pageChangeSubject$(): Observable<Page> {
-        return this.pageChangeSubject.asObservable();
+
+
+    private _pageBlocksMap = new Map<string, PageBlock>();
+    get pageBlockMap(): ReadonlyMap<string, PageBlock> {
+        return this._pageBlocksMap;
+    }
+    
+    private _pageBlockProgress$ = new BehaviorSubject<ReadonlyMap<string, PageBlock>>(this.pageBlockMap);
+    get pageBlockProgress$(): Observable<ReadonlyMap<string, PageBlock>> {
+        return this._pageBlockProgress$.asObservable();
+    }
+
+
+
+    private pageSubject: BehaviorSubject<Page> = new BehaviorSubject<Page>(null);
+    get pageDataChange$(): Observable<Page> {
+        return this.pageSubject.asObservable().pipe(filter(page => !!page));
+    }
+    get pageLoad$(): Observable<Page> {
+        return this.pageSubject.asObservable().pipe(filter(page => !!page), distinctUntilKeyChanged("Key"));
     }
 
     constructor(
@@ -86,47 +113,65 @@ export class PageBuilderService {
         private translate: TranslateService,
         private http: PepHttpService,
     ) {
-        this.pageChangeSubject$.subscribe((page: Page) => {
+        this.pageLoad$.subscribe((page: Page) => {
             this.loadDefaultEditor(page);
-            this.buildSections(page);
+            this.loadSections(page);
+            this.loadBlocks(page);
         });
+
+        // this.pageDataChange$.subscribe((page: Page) => {
+        //     this.updatePageDependencies(page);
+        // });
     }
+
+    // private updatePageDependencies(page: Page) {
+    // }
 
     private loadDefaultEditor(page: Page) {
         this.editorsBreadCrumb = new Array<Editor>();
+        const pageEditor: PageEditor = {
+            id: page?.Key,
+            pageName: page?.Name,
+            pageDescription: page?.Description,
+            maxWidth: page?.Layout.MaxWidth,
+            // blocksHorizntalGap: page?.Layout.
+            // blocksVerticalGap: page?.Layout.
+            sectionsGap: page?.Layout.SectionsGap,
+            // roundedCorners: page?.Layout.
+        };
+
         this.editorsBreadCrumb.push({
-            type : 'page-builder',
             id: 'main',
+            type : 'page-builder',
             title: page?.Name,
-            hostObject: {
-                pageName: page?.Name,
-                pageDescription: page?.Description
-            }
+            hostObject: pageEditor
         });
 
-        this.editorChangeSubject = new BehaviorSubject<Editor>(this.editorsBreadCrumb[0]);
+        this.editorSubject.next(this.editorsBreadCrumb[0]);
     }
 
-    private buildSections(page: Page) {
-        // const savedSections: Section[] = JSON.parse(sessionStorage.getItem('sections')) ?? [];
-        // this.sectionsSubject.next(savedSections);
-        if (page && page.Layout) {
-            this.sectionsSubject.next(page.Layout.Sections);
-        } else {
-            this.sectionsSubject.next([]);
+    private loadSections(page: Page) {
+        this.sectionsSubject.next(page?.Layout.Sections ?? []);
+    }
+
+    private loadBlocks(page: Page) {
+        if (page) {
+            this.blocksSubject.next(page.Blocks);
+
+            // TODO:
+            // page.Blocks.forEach(pageBlock => {
+            //     this.pageBlockMap[pageBlock.Key] = pageBlock;
+            // });
         }
     }
 
     private changeCurrentEditor() {
         if (this.editorsBreadCrumb.length > 0) {
-            this.editorChangeSubject.next(this.editorsBreadCrumb[this.editorsBreadCrumb.length - 1]);
+            this.editorSubject.next(this.editorsBreadCrumb[this.editorsBreadCrumb.length - 1]);
         }
     }
 
     private createNewSection(): PageSection {
-        const sectionsLength = this.sectionsSubject.value.length;
-        //`${this.translate.instant('Section')} ${sectionsLength}`
-
         const section: PageSection = {
             Key: PepGuid.newGuid(),
             Columns: [{}], // Add empty section column
@@ -151,7 +196,7 @@ export class PageBuilderService {
 
     private getBlockEditor(blockId: string): Editor {
         // Get the current block.
-        let block: PageBlock = this.pageChangeSubject.value.Blocks.find(block => blockId);
+        let block: PageBlock = this.pageSubject?.value?.Blocks.find(block => blockId);
         
         if (block) {
             // Change the RemoteLoaderOptions of the block for loading the block editor.
@@ -160,8 +205,8 @@ export class PageBuilderService {
             editorRelationOptions.componentName = block.Relation.EditorComponentName;
 
             return {
-                type: 'block',
                 id: blockId,
+                type: 'block',
                 title: block.Relation.Description,
                 remoteModuleOptions: editorRelationOptions,
                 hostObject: block.Configuration
@@ -173,53 +218,52 @@ export class PageBuilderService {
 
     private getSectionEditor(sectionId: string): Editor {
         // Get the current block.
-        let section: PageSection = this.pageChangeSubject.value.Layout.Sections.find(section => sectionId);
+        const sectionIndex = this.pageSubject?.value?.Layout.Sections.findIndex(section => sectionId);
         
-        if (section) {
+        if (sectionIndex >= 0) {
+            let section: PageSection = this.pageSubject?.value?.Layout.Sections[sectionIndex];
+            const sectionEditor: SectionEditor = {
+                id: section.Key,
+                sectionName: section.Name || '',
+                split: section.Split || undefined,
+                height: section.Height || 0,
+            }
+
             return {
-                type: 'section',
                 id: sectionId,
-                title: section.Name,
-                hostObject: {
-                    sectionName: section.Name,
-                    split: section.Split,
-                    height: section.Height,
-                }
+                type: 'section',
+                title: section.Name || `${this.translate.instant('Section')} ${sectionIndex + 1}`,
+                hostObject: sectionEditor
             }
         } else {
             return null;
         }
     }
 
-    private getRemoteEntryByType(pbRelation: PageRelation, entryAddon, remoteName = 'remoteEntry') {
-        switch (pbRelation.Type){
+    private getRemoteEntryByType(relation: NgComponentRelation, entryAddon, remoteName = 'remoteEntry') {
+        switch (relation.Type){
             case "NgComponent":
-                // // HACK FOR LOCALHOST PLEASE REMOVE
-                if (pbRelation?.ComponentName == 'SlideshowComponent'){
+                // TODO: Hack for localhost please comment.
+                if (relation?.ComponentName == 'SlideshowComponent'){
                     const res = 'http://localhost:4401/slideshow.js';
                     return res;
-                }
-                // if (field?.ComponentName == 'SubAddon2Component'){
-                //     const res = 'http://localhost:4402/sub_addon_2.js';
-                //     return res;
-                // }
-                // if (field?.ComponentName == 'SubAddon3Component'){
-                //     const res = 'http://localhost:4403/sub_addon_3.js';
-                //     return res;
-                // }
-                // if (field?.ComponentName == 'SubAddon4Component'){
-                //     const res = 'http://localhost:4404/sub_addon_4.js';
-                //     return res;
-                // }
-                // if (field?.ComponentName == 'SubAddon5Component'){
-                //     const res = 'http://localhost:4405/sub_addon_5.js';
-                //     return res;
-                // }
-                else
-                // // END OF HACK 
+                } else if (relation?.ComponentName == 'SubAddon2Component'){
+                    const res = 'http://localhost:4402/sub_addon_2.js';
+                    return res;
+                } else if (relation?.ComponentName == 'SubAddon3Component'){
+                    const res = 'http://localhost:4403/sub_addon_3.js';
+                    return res;
+                } else if (relation?.ComponentName == 'SubAddon4Component'){
+                    const res = 'http://localhost:4404/sub_addon_4.js';
+                    return res;
+                } else if (relation?.ComponentName == 'SubAddon5Component'){
+                    const res = 'http://localhost:4405/sub_addon_5.js';
+                    return res;
+                } else
+                // END OF HACK 
                     return entryAddon?.PublicBaseURL +  remoteName + '.js';
             default:
-                return pbRelation?.AddonRelativeURL;
+                return relation?.AddonRelativeURL;
         }
     }
 
@@ -227,25 +271,31 @@ export class PageBuilderService {
 
     }
 
-    initPageBuilder(): void {
-        // TODO: Get the sections and the blocks data from the server.
-        let pageName = '1';
-        this.http.getHttpCall(`http://localhost:4500/api/pages?pageName=${pageName}`)
-        // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/pages?pageName=${pageName}`)
-            .subscribe(res => {
-            this.pageChangeSubject.next(res['page']);
-        });
+    initPageBuilder(pageKey: string): void {
+        // TODO: Load the saved page from the session for now.
+        const savedPage: Page = JSON.parse(sessionStorage.getItem('page')) ?? null;
+
+        if (savedPage) {
+            this.pageSubject.next(savedPage);
+        } else {
+            // TODO: Get the sections and the blocks data from the server.
+            this.http.getHttpCall(`http://localhost:4500/api/pages?pageKey=${pageKey}`)
+            // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/pages?pageKey=${pageKey}`)
+                .subscribe(res => {
+                this.pageSubject.next(res['page']);
+            });
+        }
     }
 
-    initPageEditor(addonUUID: string): void {
+    initPageEditor(addonUUID: string, pageType: string): void {
         // debug locally
         if (!this.availableBlocksSubject.value || this.availableBlocksSubject.value.length === 0) {
-            this.http.postHttpCall('http://localhost:4500/api/init_page_editor', { PageType: ''})
-            // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page_editor`, {})
-                .subscribe((res: { relation: PageRelation, addon: InstalledAddon }[]) => {
+            this.http.postHttpCall('http://localhost:4500/api/init_page_editor', { PageType: pageType})
+            // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page_editor`, { PageType: pageType})
+                .subscribe((res: { relation: NgComponentRelation, addon: InstalledAddon }[]) => {
                     const availableBlocks: AvailableBlock[] = [];
                     res.forEach(data => {
-                        const relation: PageRelation = data?.relation;
+                        const relation: NgComponentRelation = data?.relation;
                         const addon: InstalledAddon = data?.addon;
                         
                         if (relation && addon) {
@@ -310,7 +360,12 @@ export class PageBuilderService {
     }
 
     clearSections() {
-        this.sectionsSubject.next([]);
+        this.pageSubject.value.Layout.Sections = [];
+        this.sectionsSubject.next(this.pageSubject.value.Layout.Sections);
+        // this.pageSubject.next(this.pageSubject.value);
+        
+
+        // TODO: clear all blocks?
     }
 
     addSection(section: PageSection = null) {
@@ -319,12 +374,10 @@ export class PageBuilderService {
             section = this.createNewSection();
         }
         
-        // Add it to the sections subject.
-        const sections = [...this.sectionsSubject.value, section];
-        this.sectionsSubject.next(sections);
-        
-        // Add new Column in page layout that represent the new section.
-        this.pageChangeSubject.value.Layout.Sections = sections;
+        // Add the new section to page layout.
+        this.pageSubject.value.Layout.Sections.push(section);
+        this.sectionsSubject.next(this.pageSubject.value.Layout.Sections);
+        // this.pageSubject.next(this.pageSubject.value);
     }
 
     removeSection(sectionId: string) {
@@ -342,15 +395,41 @@ export class PageBuilderService {
         }
     }
 
+    updatePageFromEditor(pageData: PageEditor) {
+        const currentPage = this.pageSubject.value;
+
+        if (currentPage) {
+            currentPage.Name = pageData.pageName;
+            currentPage.Description = pageData.pageDescription;
+            currentPage.Layout.MaxWidth = pageData.maxWidth;
+            // currentPage.Layout.ColumnsHorizntalGap = pageData.columnsHorizntalGap;
+            // currentPage.Layout.ColumnsVerticalGap = pageData.columnsVerticalGap;
+            currentPage.Layout.SectionsGap = pageData.sectionsGap;
+            // currentPage.Layout.RoundedCorners = pageData.roundedCorners;
+
+            this.pageSubject.next(currentPage);
+        }
+    }
+
+    updateSectionFromEditor(sectionData: SectionEditor) {
+        const currentSection = this.sectionsSubject.value.find(section => section.Key === sectionData.id);
+
+        if (currentSection) {
+            currentSection.Name = sectionData.sectionName;
+            currentSection.Split = sectionData.split;
+            currentSection.Height = sectionData.height;
+        }
+    }
+
     onSectionDropped(event: CdkDragDrop<any[]>) {
         moveItemInArray(this.sectionsSubject.value, event.previousIndex, event.currentIndex);
     }
 
     removeBlock(blockId: string) {
-        const blockIndex = this.blocksChangeSubject.value.findIndex(block => block.Key === blockId);
+        const blockIndex = this.blocksSubject.value.findIndex(block => block.Key === blockId);
 
         if (blockIndex >= 0) {
-            this.blocksChangeSubject.value.splice(blockIndex, 1);
+            this.blocksSubject.value.splice(blockIndex, 1);
         }
     }
 
@@ -369,29 +448,25 @@ export class PageBuilderService {
 
             // Set the block key in the section block
             const sectionIndex = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
-            this.sectionsSubject.value[sectionIndex].Columns[event.currentIndex].Block = { 
-                BlockKey: block.Key
-            };
-            
-            // Add the block to the page blocks
-            this.pageChangeSubject.value.Blocks.push(block);
-            this.blocksChangeSubject.next(this.pageChangeSubject.value.Blocks);
 
-            // copyArrayItem(event.previousContainer.data, this.sectionsSubject.value[sectionIndex].Columns, event.previousIndex, event.currentIndex);
+            // If there is a blank column.
+            const currentColumn = this.sectionsSubject.value[sectionIndex].Columns[event.currentIndex];
+            if (currentColumn && !currentColumn.Block) {
+                this.sectionsSubject.value[sectionIndex].Columns[event.currentIndex].Block = { 
+                    BlockKey: block.Key
+                };
+                
+                // Add the block to the page blocks
+                this.pageSubject.value.Blocks.push(block);
+                this.blocksSubject.next(this.pageSubject.value.Blocks);
+                // this.pageSubject.next(this.pageSubject.value);
+                
+                // copyArrayItem(event.previousContainer.data, this.sectionsSubject.value[sectionIndex].Columns, event.previousIndex, event.currentIndex);
+            }
         } else {
             // TODO: Move the Block Key in the section columns array.
             const sectionIndex = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
             transferArrayItem(event.previousContainer.data, this.sectionsSubject.value[sectionIndex].Columns, event.previousIndex, event.currentIndex);
-        }
-    }
-
-    setScreenMaxWidth(value: string) {
-        let maxWidth = this.utilitiesService.coerceNumberProperty(value, 0);
-
-        if (maxWidth === 0) {
-            this.screenMaxWidthSubject.next('unset');
-        } else {
-            this.screenMaxWidthSubject.next(`${maxWidth}px`);
         }
     }
 
@@ -418,8 +493,8 @@ export class PageBuilderService {
         }
     }
 
-    public publish() {
+    publishPage() {
         // TODO: Implement this.
-        sessionStorage.setItem('sections', JSON.stringify(this.sectionsSubject.value));
+        sessionStorage.setItem('page', JSON.stringify(this.pageSubject.value));
     }
 }

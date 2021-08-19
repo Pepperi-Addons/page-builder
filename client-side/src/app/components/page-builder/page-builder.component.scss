@@ -1,30 +1,22 @@
-// $page-buildr-gap: .1rem;
-// $section-edit-height: 2.5rem;
+.sections-container {
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
 
-// .page-builder-container {
-//     display: flex;
-//     flex-direction: column;
-
-    .sections-container {
-    //     width: 100%;
-    //     margin: 0 auto;
-    //     position: relative;
-
-        .draggable-section {
-            display: block;
-        }
+    .draggable-section {
+        display: block;
     }
+}
 
-    .add-section-button {
-        margin-top: 1rem;
-        display: flex;
-        justify-content: center;
+.add-section-button {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
 
-        ::ng-deep .button-title-with-icon{
-            max-width: unset;
-        }
+    ::ng-deep .button-title-with-icon{
+        max-width: unset;
     }
-// }
+}
 
 
 

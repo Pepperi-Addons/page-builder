@@ -1,10 +1,15 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IPepFieldValueChangeEvent, IPepOption, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
 import { PageSection, SplitType } from '@pepperi-addons/papi-sdk';
+import { SectionEditor } from 'src/app/services/page-builder.service';
 
+export interface ISplitOption {
+    key: SplitType; 
+    value: string;
+}
 export interface IAllSplitOption {
     key: string;
-    value: Array<{ key: SplitType; value: string }>;
+    value: Array<ISplitOption>;
 }
 
 @Component({
@@ -13,26 +18,31 @@ export interface IAllSplitOption {
     styleUrls: ['./section-editor.component.scss']
 })
 export class SectionEditorComponent implements OnInit {
-    // private _hostObject: PageSection;
-    // @Input()
-    // set hostObject(value: PageSection) {
-    //     this._hostObject = value;
-    // }
-    // get hostObject(): PageSection {
-    //     return this._hostObject;
-    // }
+    private _hostObject: SectionEditor;
+    @Input()
+    set hostObject(value: SectionEditor) {
+        this._hostObject = value;
 
-    @Input() sectionName: string = '';
+        this.sectionName = value.sectionName;
+        this.split = value.split;
+        this.height = value.height;
+    }
+    get hostObject(): SectionEditor {
+        return this._hostObject;
+    }
+
+    // @Input()
+    sectionName: string = '';
     
-    private _split: string = '';
-    @Input() 
-    set split(value: string) {
+    private _split: SplitType | undefined;
+    // @Input() 
+    set split(value: SplitType | undefined) {
         this._split = value;
         
-        this.subSections = this._split.length > 0;
+        this.subSections = this._split?.length > 0;
 
         // Check how many parts we have.
-        const arr = value.split(' ');
+        const arr = value?.split(' ');
         if (arr && arr.length > 1 && arr.length <= 4) {
             this.partsNumber = arr.length.toString();
         } else {
@@ -41,20 +51,26 @@ export class SectionEditorComponent implements OnInit {
         
         this.loadSplitOptions();
     }
-    get split(): string {
+    get split(): SplitType {
         return this._split;
     }
+    
+    // @Input() 
+    height: number = 0;
+
+    @Output() hostObjectChange: EventEmitter<SectionEditor> = new EventEmitter<SectionEditor>();
     
     subSections: boolean = false;
     partsNumber: string = "2";
     partsNumberOptions = Array<IPepOption>();
-    splitOptions = Array<IPepOption>();
+    splitOptions = Array<ISplitOption>();
     allSplitOptions = Array<IAllSplitOption>();
 
-    constructor(private utilitiesService: PepUtilitiesService) { }
+    constructor(private utilitiesService: PepUtilitiesService) {
+        this.initData();
+    }
 
-    ngOnInit(): void {
-
+    private initData() {
         this.partsNumberOptions = [
             { 'key': '2', 'value': '2 Parts' }, 
             { 'key': '3', 'value': '3 Parts' },
@@ -79,30 +95,52 @@ export class SectionEditorComponent implements OnInit {
                 { 'key': '1/4 1/4 1/4 1/4', 'value': '1/4-1/4-1/4-1/4' },
             ]}
         ];
-        
-        this.loadSplitOptions();
     }
 
     private loadSplitOptions() {
-        const splitOprions = this.allSplitOptions.find((option) => option.key === this.partsNumber);
-        if (splitOprions) {
-            this.splitOptions = splitOprions.value;
+        const splitOptions = this.allSplitOptions.find((option) => option.key === this.partsNumber);
+        if (splitOptions) {
+            this.splitOptions = splitOptions.value;
         } else {
             this.splitOptions = this.allSplitOptions[0].value;
         }
 
-        if (this.split === '') {
-            this.split = this.splitOptions[0].key;
+        if (!this._split) {
+            this._split = this.splitOptions[0].key;
         }
+    }
+
+    private updateHostObject() {
+        this._hostObject.sectionName = this.sectionName;
+        this._hostObject.split = this.subSections ? this.split : undefined;
+        this._hostObject.height = this.height;
+
+        this.hostObjectChange.emit(this.hostObject);
+    }
+
+    ngOnInit(): void {
+        this.loadSplitOptions();
+    }
+
+    onSectionNameChange(value: string) {
+        this.sectionName = value;
+        this.updateHostObject();
+    }
+
+    onSubSectionsChange(value: boolean) {
+        this.subSections = value;
+        this.updateHostObject();
     }
 
     onPartsNumberChange(key: string) {
         this.partsNumber = key;
         this.loadSplitOptions();
         this._split = this.splitOptions[0].key;
+        this.updateHostObject();
     }
 
-    onSplitChange(key: string) {
+    onSplitChange(key: SplitType) {
         this._split = key;
+        this.updateHostObject();
     }
 }

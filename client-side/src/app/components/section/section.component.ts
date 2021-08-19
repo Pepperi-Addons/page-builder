@@ -48,15 +48,13 @@ export class SectionComponent implements OnInit, OnChanges {
         return this._columns;
     }
 
-    @Output() remove: EventEmitter<string> = new EventEmitter();
-
     sectionsDropList;
     PepScreenSizeType = PepScreenSizeType;
     canDrag = false;
 
-    private blocksSubject: BehaviorSubject<PageBlock[]> = new BehaviorSubject<PageBlock[]>([]);
-    get blocksSubject$(): Observable<PageBlock[]> {
-        return this.blocksSubject.asObservable();
+    private _blocksSubject: BehaviorSubject<PageBlock[]> = new BehaviorSubject<PageBlock[]>([]);
+    get blocks$(): Observable<PageBlock[]> {
+        return this._blocksSubject.asObservable();
     }
 
     constructor(
@@ -64,12 +62,7 @@ export class SectionComponent implements OnInit, OnChanges {
         private translate: TranslateService,
         private layoutService: PepLayoutService,
         private pageBuilderService: PageBuilderService
-    ) {
-        this.pageBuilderService.blocksChangeSubject$.subscribe((blocks) => {
-            const blockKeys = this.columns.map(column => column.Block?.BlockKey);
-            this.blocksSubject.next(blocks.filter(block => blockKeys.includes(block.Key)))
-        });
-    }
+    ) { }
 
     private getCssSplitString() {
         switch (this.split) {
@@ -126,7 +119,7 @@ export class SectionComponent implements OnInit, OnChanges {
         this.refreshSplit();
 
         // Get the sections id's into sectionsDropList for the drag & drop.
-        this.pageBuilderService.sectionsSubject$.subscribe(res => {
+        this.pageBuilderService.onSectionsChange$.subscribe(res => {
             this.sectionsDropList = res.map(section => section.Key);
         })
 
@@ -135,6 +128,12 @@ export class SectionComponent implements OnInit, OnChanges {
                 this.canDrag = editor.type === 'page-builder';
             });
         }
+
+        this.pageBuilderService.onBlocksChange$.subscribe((blocks) => {
+            const blockKeys = this.columns.map(column => column.Block?.BlockKey);
+            // debugger;
+            this._blocksSubject.next(blocks.filter(block => blockKeys.includes(block.Key)))
+        });
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -153,12 +152,12 @@ export class SectionComponent implements OnInit, OnChanges {
         this.pageBuilderService.removeSection(this.id);
     }
 
-    removeBlock(blockId: string) {
-        this.pageBuilderService.removeBlock(blockId);
+    onEditBlockClick(block: any) {
+        this.pageBuilderService.navigateToEditor('block', block.Key);
     }
 
-    editBlock(block: any) {
-        this.pageBuilderService.navigateToEditor('block', block.Key);
+    onRemoveBlockClick(blockId: string) {
+        this.pageBuilderService.removeBlock(blockId);
     }
 
     onBlockChange(event) {

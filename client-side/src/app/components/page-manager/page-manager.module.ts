@@ -16,7 +16,7 @@ import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
 import { PepNgxLibModule, PepAddonService, PepCustomizationService, PepFileService, PepHttpService } from '@pepperi-addons/ngx-lib';
 import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
 import { PepIconModule, pepIconNumberPlus, PepIconRegistry, pepIconSystemBolt, pepIconSystemClose,
-    pepIconSystemEdit, pepIconSystemMove, pepIconSystemBin, pepIconViewCardMd } from '@pepperi-addons/ngx-lib/icon';
+    pepIconSystemEdit, pepIconSystemMove, pepIconSystemBin, pepIconViewCardMd, pepIconSystemView, pepIconDeviceMobile, pepIconDeviceTablet, pepIconDeviceDesktop } from '@pepperi-addons/ngx-lib/icon';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
@@ -40,7 +40,11 @@ const pepIcons = [
     pepIconSystemEdit,
     pepIconSystemMove,
     pepIconSystemBin,
-    pepIconViewCardMd
+    pepIconViewCardMd,
+    pepIconDeviceDesktop,
+    pepIconDeviceTablet,
+    pepIconDeviceMobile,
+    pepIconSystemView
 ];
 
 const routes: Routes = [

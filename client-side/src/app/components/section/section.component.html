@@ -1,4 +1,5 @@
 <div #sectionContainer class="section-container">
+    <toolbar-actions *ngIf="editable && canDrag" class="section-toolbar" [title]="name" [isDraggable]="true" (edit)="onEditSectionClick();" (remove)="onRemoveSectionClick()"></toolbar-actions>
     <div [ngClass]="{'editable': editable}"
         #blocksWrapper class="blocks-wrapper"
         id="{{id}}"
@@ -12,10 +13,10 @@
         </div>
         <div class="section-column" *ngFor="let column of columns; let i=index;">
             <div class="section-column-block" *ngIf="column.Block" >
-                <div cdkDrag [cdkDragData]="column.Block" *ngFor="let block of blocksSubject$ | async as blocks; let i=index;">
+                <div cdkDrag [cdkDragData]="column.Block" *ngFor="let block of blocks$ | async; let i=index;">
                     <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
                     <toolbar-actions *ngIf="editable && canDrag"
-                        class="block-toolbar" [title]="'block.title'" [isDraggable]="true" (edit)="editBlock(block);" (remove)="removeBlock(block.Key)">
+                        class="block-toolbar" [title]="'block.title'" [isDraggable]="true" (edit)="onEditBlockClick(block);" (remove)="onRemoveBlockClick(block.Key)">
                     </toolbar-actions>
                     <div class="remote-loader-container" [ngClass]="{'block-editable-state': editable }">
                         <pep-remote-loader *ngIf="block" [options]="block.Relation?.Options" [hostObject]="block.Configuration" (hostEvents)="onBlockChange($event);">
@@ -25,5 +26,4 @@
             </div>
         </div>
     </div>
-    <toolbar-actions *ngIf="editable && canDrag" class="section-toolbar" [title]="name" [isDraggable]="true" (edit)="onEditSectionClick();" (remove)="onRemoveSectionClick()"></toolbar-actions>
 </div>

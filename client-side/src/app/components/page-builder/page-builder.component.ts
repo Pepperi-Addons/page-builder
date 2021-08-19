@@ -1,10 +1,11 @@
-import { ActivatedRoute, Router } from '@angular/router';
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, Renderer2, TemplateRef, ViewChild, ViewChildren, ViewContainerRef } from "@angular/core";
-import { Observable } from "rxjs";
-import { CdkDragDrop, CdkDropList  } from '@angular/cdk/drag-drop';
+import { ActivatedRoute } from '@angular/router';
+import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from "@angular/core";
+import { BehaviorSubject, Observable } from "rxjs";
+import { CdkDragDrop  } from '@angular/cdk/drag-drop';
 import { PageBuilderService } from '../../services/page-builder.service';
 import { TranslateService } from '@ngx-translate/core';
-import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
+import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
+import { Page, PageSection } from '@pepperi-addons/papi-sdk';
 
 @Component({
     selector: 'page-builder',
@@ -12,20 +13,21 @@ import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
     styleUrls: ['./page-builder.component.scss']
 })
 export class PageBuilderComponent implements OnInit {
-    // @Input() hostObject: any;
-    // @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
+    @ViewChild('sectionsCont', { static: true }) sectionsContainer: ElementRef;
 
     @Input() editMode: boolean = false;
     @Input() screenSize: PepScreenSizeType;
-
-    @ViewChild('sectionsCont') sectionsCont: ElementRef;
     
+    private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
+    get sections$(): Observable<PageSection[]> {
+        return this._sectionsSubject.asObservable();
+    }
 
     constructor(
         private route: ActivatedRoute,
-        private router: Router,
         private renderer: Renderer2,
         private translate: TranslateService,
+        private utilitiesService: PepUtilitiesService,
         private layoutService: PepLayoutService,
         public pageBuilderService: PageBuilderService
     ) {
@@ -36,7 +38,20 @@ export class PageBuilderComponent implements OnInit {
             this.screenSize = size;
         });
 
-        this.pageBuilderService.initPageBuilder();
+        this.pageBuilderService.onSectionsChange$.subscribe(res => {
+            this._sectionsSubject.next(res);
+        });
+
+        this.pageBuilderService.pageDataChange$.subscribe((page: Page) => {
+            if (page && this.sectionsContainer?.nativeElement) {
+                let maxWidth = this.utilitiesService.coerceNumberProperty(page.Layout.MaxWidth, 0);
+                const maxWidthToSet = maxWidth === 0 ? 'unset' : `${maxWidth}px`;
+                this.renderer.setStyle(this.sectionsContainer.nativeElement, 'max-width', maxWidthToSet);
+            }
+        });
+
+        const pageKey = this.route?.snapshot?.params['page_key'] || '';
+        this.pageBuilderService.initPageBuilder(pageKey);
     }
 
     addSection(e) {

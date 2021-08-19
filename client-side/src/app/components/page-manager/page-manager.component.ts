@@ -1,10 +1,11 @@
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from "@angular/core";
-import { Editor, PageBuilderService } from '../../services/page-builder.service';
-import { PepCustomizationService, PepLayoutService, PepLoaderService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
+import { Editor, PageBuilderService, PageEditor, SectionEditor } from '../../services/page-builder.service';
+import { PepCustomizationService, PepLayoutService, PepLoaderService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
 import { PepButton } from '@pepperi-addons/ngx-lib/button';
-import { pepIconSystemBin } from '@pepperi-addons/ngx-lib/icon';
+import { pepIconDeviceDesktop, pepIconDeviceMobile, pepIconDeviceTablet, pepIconSystemBin } from '@pepperi-addons/ngx-lib/icon';
 import { TranslateService } from '@ngx-translate/core';
+import { Page } from '@pepperi-addons/papi-sdk';
 
 type ScreenSizeType = 'desktop' | 'tablet' | 'mobile';
 
@@ -31,7 +32,7 @@ export class PageManagerComponent implements OnInit {
         private translate: TranslateService,
         private renderer: Renderer2,
         private route: ActivatedRoute,
-        private router: Router,
+        private utilitiesService: PepUtilitiesService,
         private layoutService: PepLayoutService,
         private pageBuilderService: PageBuilderService
     ) {
@@ -74,18 +75,20 @@ export class PageManagerComponent implements OnInit {
 
         // TODO: Translate the value.
         this.screenOptions = [
-            { key: 'desktop', value: this.translate.instant('Desktop'), callback: () => this.setScreenWidth('desktop'), iconName: pepIconSystemBin.name, iconPosition: 'end' },
-            { key: 'tablet', value: this.translate.instant('Tablet'), callback: () => this.setScreenWidth('tablet'), iconName: pepIconSystemBin.name, iconPosition: 'end' },
-            { key: 'mobile', value: this.translate.instant('Mobile'), callback: () => this.setScreenWidth('mobile'), iconName: pepIconSystemBin.name, iconPosition: 'end' }
+            { key: 'desktop', value: this.translate.instant('Desktop'), callback: () => this.setScreenWidth('desktop'), iconName: pepIconDeviceDesktop.name, iconPosition: 'end' },
+            { key: 'tablet', value: this.translate.instant('Tablet'), callback: () => this.setScreenWidth('tablet'), iconName: pepIconDeviceTablet.name, iconPosition: 'end' },
+            { key: 'mobile', value: this.translate.instant('Mobile'), callback: () => this.setScreenWidth('mobile'), iconName: pepIconDeviceMobile.name, iconPosition: 'end' }
         ];
 
         this.pageBuilderService.onScreenSizeChange$.subscribe((size: PepScreenSizeType) => {
             this.screenSize = size;
         });
 
-        this.pageBuilderService.onScreenMaxWidthChange$.subscribe((maxWidth: string) => {
-            if (this.pageBuilderWrapper?.nativeElement) {
-                this.renderer.setStyle(this.pageBuilderWrapper.nativeElement, 'max-width', maxWidth);
+        this.pageBuilderService.pageDataChange$.subscribe((page: Page) => {
+            if (page && this.pageBuilderWrapper?.nativeElement) {
+                let maxWidth = this.utilitiesService.coerceNumberProperty(page.Layout.MaxWidth, 0);
+                const maxWidthToSet = maxWidth === 0 ? 'unset' : `${maxWidth}px`;
+                this.renderer.setStyle(this.pageBuilderWrapper.nativeElement, 'max-width', maxWidthToSet);
             }
         });
 
@@ -106,7 +109,15 @@ export class PageManagerComponent implements OnInit {
         this.showEditor = !this.showEditor;
     }
 
-    onBlockEditorChange(event: any) {
+    onPageEditorObjectChange(pageEditor: PageEditor) {
+        this.pageBuilderService.updatePageFromEditor(pageEditor);
+    }
+
+    onSectionEditorObjectChange(sectionEditor: SectionEditor) {
+        this.pageBuilderService.updateSectionFromEditor(sectionEditor);
+    }
+
+    onBlockEditorObjectChange(event: any) {
 
     }
 
@@ -122,7 +133,7 @@ export class PageManagerComponent implements OnInit {
         // });
         // sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
 
-        this.pageBuilderService.publish();
+        this.pageBuilderService.publishPage();
     }
 
     // clearPage() {

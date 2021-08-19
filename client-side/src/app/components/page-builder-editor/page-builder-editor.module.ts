@@ -6,8 +6,8 @@ pepIconSystemMove, pepIconSystemBin, pepIconViewCardLg, pepIconViewCardMd } from
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
-import { PepNgxLibModule  } from '@pepperi-addons/ngx-lib';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { PepAddonService, PepFileService, PepHttpService, PepNgxLibModule  } from '@pepperi-addons/ngx-lib';
 import { PageBuilderEditorComponent} from  './page-builder-editor.component';
 import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
 import { OverlayModule} from '@angular/cdk/overlay';
@@ -18,6 +18,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { SectionEditorModule } from '../section-editor/section-editor.module';
 import { ToolbarModule } from '../toolbar/toolbar.module'
+import { TranslateModule, TranslateLoader, TranslateStore } from '@ngx-translate/core';
 
 const pepIcons = [
     pepIconSystemClose,
@@ -49,11 +50,22 @@ const pepIcons = [
         PepIconModule,
         PepTextareaModule,
         SectionEditorModule,
-        ToolbarModule
+        ToolbarModule,
+        TranslateModule.forChild({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: PepAddonService.createDefaultMultiTranslateLoader,
+                deps: [HttpClient, PepFileService, PepAddonService]
+            }, isolate: false
+        }),
     ],
     exports:[PageBuilderEditorComponent],
     providers: [
-
+        HttpClient,
+        TranslateStore,
+        PepHttpService,
+        PepAddonService,
+        PepFileService,
     ]
 })
 export class PageBuilderEditorModule {

@@ -19,7 +19,7 @@ const routes: Routes = [
             //     loadChildren: () => import('./components/pages-manager/pages-manager.module').then(m => m.PagesManagerModule)
             // },
             {
-                path: 'page_builder/:page_id',
+                path: 'page_builder/:page_key',
                 // component: PageBuilderComponent
                 // TODO: solve routing
                 loadChildren: () => import('./components/page-manager/page-manager.module').then(m => m.PageManagerModule)

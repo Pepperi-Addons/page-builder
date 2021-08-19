@@ -8,13 +8,13 @@
                 </div>
             </div>
             <page-builder-editor *ngIf="currentEditor?.type === 'page-builder'"
-                [pageName]="currentEditor?.hostObject?.pageName" [pageDescription]="currentEditor?.hostObject?.pageDescription"></page-builder-editor>
+                [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onPageEditorObjectChange($event)"></page-builder-editor>
         
             <page-builder-section-editor *ngIf="currentEditor?.type === 'section'" 
-                [sectionName]="currentEditor?.hostObject?.sectionName" [split]="currentEditor?.hostObject?.split" ></page-builder-section-editor>
+                [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onSectionEditorObjectChange($event)"></page-builder-section-editor>
         
             <pep-remote-loader *ngIf="currentEditor?.type === 'block'" [options]="currentEditor?.remoteModuleOptions" 
-                [hostObject]="currentEditor?.hostObject" (hostEvents)="onBlockEditorChange($event);"></pep-remote-loader>
+                [hostObject]="currentEditor?.hostObject" (hostEvents)="onBlockEditorObjectChange($event);"></pep-remote-loader>
         </pep-side-bar>
     </div>
     <ng-container pep-main-area>
