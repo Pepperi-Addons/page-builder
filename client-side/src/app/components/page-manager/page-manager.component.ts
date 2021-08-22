@@ -19,6 +19,7 @@ export class PageManagerComponent implements OnInit {
 
     showEditor = false;
     currentEditor: Editor;
+    sectionsColumnsDropList = [];
 
     screenOptions: Array<PepButton>;
     selectedScreenKey: ScreenSizeType;
@@ -98,6 +99,16 @@ export class PageManagerComponent implements OnInit {
                 this.updateViewportWidth();
             }
         });
+
+       // Get the sections id's into sectionsColumnsDropList for the drag & drop.
+       this.pageBuilderService.onSectionsChange$.subscribe(res => {
+            // Concat all results into one array.
+            this.sectionsColumnsDropList = [].concat(...res.map(section => {
+                return section.Columns.map((column, index) => 
+                    this.pageBuilderService.getSectionColumnKey(section.Key, index.toString())
+                )
+            }));
+        });
     }
 
     @HostListener('window:resize', ['$event'])
@@ -137,7 +148,7 @@ export class PageManagerComponent implements OnInit {
     }
 
     // clearPage() {
-    //     this.pageBuilderService.clearSections();
+    //     this.pageBuilderService.onClearSections();
     // }
 
     navigateBackFromEditor() {

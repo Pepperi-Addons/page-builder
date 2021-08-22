@@ -1,4 +1,4 @@
-<pep-page-layout cdkDropListGroup [addPadding]="false" [showShadow]="showEditor">
+<pep-page-layout [addPadding]="false" [showShadow]="showEditor">
     <div pep-side-area *ngIf="showEditor" style="padding-inline-start: 1rem;">
         <pep-side-bar #sideBar [ignoreResize]="true">
             <div header-content class="side-bar-title">
@@ -7,7 +7,7 @@
                     <span>{{ currentEditor?.title }}</span>
                 </div>
             </div>
-            <page-builder-editor *ngIf="currentEditor?.type === 'page-builder'"
+            <page-builder-editor *ngIf="currentEditor?.type === 'page-builder'" [sectionsColumnsDropList]="sectionsColumnsDropList"
                 [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onPageEditorObjectChange($event)"></page-builder-editor>
         
             <page-builder-section-editor *ngIf="currentEditor?.type === 'section'" 
@@ -36,7 +36,7 @@
             </div>
         </div>
         <div #pageBuilderWrapper class="page-builder-wrapper" [ngClass]="{'editable-state': currentEditor?.type === 'section' || currentEditor?.type === 'block'}">
-            <page-builder [editMode]="showEditor" [screenSize]="screenSize"></page-builder>
+            <page-builder [editMode]="showEditor" [screenSize]="screenSize" [sectionsColumnsDropList]="sectionsColumnsDropList"></page-builder>
             <div class="backdrop"></div>
         </div>
     </ng-container>

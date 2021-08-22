@@ -24,6 +24,8 @@ export interface ISpacingOption {
 export class PageBuilderEditorComponent implements OnInit {
     @ViewChild('availableBlocksContainer', { read: ElementRef }) availableBlocksContainer: ElementRef;
         
+    @Input() sectionsColumnsDropList = [];
+
     private _hostObject: PageEditor;
     @Input()
     set hostObject(value: PageEditor) {
@@ -60,7 +62,6 @@ export class PageBuilderEditorComponent implements OnInit {
 
     availableBlocks: AvailableBlock[] = [];
     sizesGroupButtons = Array<ISpacingOption>();
-    sectionsDropList = [];
     
     constructor(
         private pageBuilderService: PageBuilderService,
@@ -96,10 +97,6 @@ export class PageBuilderEditorComponent implements OnInit {
 
         this.pageBuilderService.availableBlocksLoadedSubject$.subscribe(availableBlocks => {
             this.availableBlocks = availableBlocks;
-        });
-        
-        this.pageBuilderService.onSectionsChange$.subscribe(res => {
-            this.sectionsDropList = res.map(section => section.Key);
         });
     }
 

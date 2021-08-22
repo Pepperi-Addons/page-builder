@@ -17,6 +17,7 @@ export class PageBuilderComponent implements OnInit {
 
     @Input() editMode: boolean = false;
     @Input() screenSize: PepScreenSizeType;
+    @Input() sectionsColumnsDropList = [];
     
     private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
     get sections$(): Observable<PageSection[]> {
@@ -55,7 +56,7 @@ export class PageBuilderComponent implements OnInit {
     }
 
     addSection(e) {
-        this.pageBuilderService.addSection();
+        this.pageBuilderService.onAddSection();
     }
 
     onSectionDropped(event: CdkDragDrop<any[]>) {

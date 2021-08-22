@@ -7,7 +7,7 @@
             <div #availableBlocksContainer id="availableBlocks" class="available-blocks"
                 cdkDropList
                 [cdkDropListData]="availableBlocks"
-                [cdkDropListConnectedTo]="sectionsDropList">
+                [cdkDropListConnectedTo]="sectionsColumnsDropList">
 
                 <toolbar-actions *ngFor="let availableBlock of availableBlocks;" class="available-block"
                     [title]="availableBlock.relation?.Description" [showActions]="false" [isDraggable]="true"
