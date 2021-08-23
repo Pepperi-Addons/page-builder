@@ -4,6 +4,15 @@
     margin: 1rem 0 1.25rem 0;
 }
 
+.main-top-heaer{
+    .back-button {
+        margin-inline-end: 0.5rem;
+    }
+    .main-header{
+        line-height: 2.5rem !important;
+    }
+}
+
 .main-content{
     max-width: 52rem;
 
@@ -17,4 +26,71 @@
         background-color: #eee;
         padding: 0 4rem;
     }
+}
+.mat-expansion-panel{
+    max-width: 34rem;
+    box-shadow: none !important;
+
+    .mat-expansion-panel-header{
+        height: 3rem;
+        padding: 0;
+        border-radius: 0;
+        margin-bottom: 1rem;
+        border-bottom: hsla(0, 0%, 10%, 0.24);
+        border-bottom: 1px solid hsla(var(--pep-color-system-primary-h, 0), var(--pep-color-system-primary-s, 0%), var(--pep-color-system-primary-l, 10%), 0.24);
+
+    .rotateUp{
+        transform: rotate(180deg);
+        animation-duration: 3000ms;
+    }
+    .rotateDown{
+        transform: rotate(0deg);
+        animation-duration: 2s;
+    }
+
+    @keyframes rotateUp{
+        from{  transform: rotate(0deg) }
+        to{  transform: rotate(180deg) }
+
+    }
+    @keyframes rotateDown{
+        from{  transform: rotate(180deg) }
+        to{  transform: rotate(0deg) }
+
+    }
+
+    }
+     ::ng-deep .mat-expansion-panel-body{
+                padding: 0 !important;
+                display: flex;
+                gap: 1rem;
+
+                .page-cube{
+                    height: 8rem;
+                    width:7.75rem;
+                    margin-bottom: 1rem;
+
+                    .page-cube-inner{
+                        display: flex;
+                        justify-content: center;
+                        flex-direction: column;
+                        height: 4.5rem;
+                        margin-bottom: .5rem;;
+                        border: 1px solid rgb(153, 153, 153);
+                        box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04),
+                        0px 2px 4px 0px rgba(0, 0, 0, 0.04),
+                        0px 4px 8px 0px rgba(0, 0, 0, 0.04);
+                        border-radius: .25rem;
+
+                        .logo{
+                            color: rgb(0, 0, 0);
+                            font-size: 18px;
+                            font-family: Permanent Marker;
+                            font-weight: normal;
+                            text-align: center;
+                            letter-spacing: 0.15px;
+                        }
+                    }
+                }
+            }
 }

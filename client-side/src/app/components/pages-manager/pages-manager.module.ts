@@ -1,4 +1,5 @@
 import { GenericListModule } from './../generic-list/generic-list.module';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PepIconModule, pepIconNumberPlus, PepIconRegistry,
@@ -53,6 +54,7 @@ const routes: Routes = [
         //// When not using module as sub-addon please remark this for not loading twice resources
         MatCardModule,
         MatButtonModule,
+        MatExpansionModule,
         PepPageLayoutModule,
         PepSelectModule,
         PepTextboxModule,
