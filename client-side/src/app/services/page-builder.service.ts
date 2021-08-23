@@ -261,6 +261,25 @@ export class PageBuilderService {
         }
     }
 
+    private getSectionColumnById(sectionColumnId: string): PageSectionColumn {
+        let currentColumn = null;
+
+        // Get the section and column array by the pattern of the section column key.
+        const sectionColumnPatternSeparator = this.getSectionColumnKey();
+        const sectionColumnArr = sectionColumnId.split(sectionColumnPatternSeparator);
+
+        if (sectionColumnArr.length === 2) {
+            // Get the section id to get the section index.
+            const sectionId = sectionColumnArr[0];
+            const sectionIndex = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
+            // Get the column index.
+            const columnIndex = sectionColumnArr[1];
+            currentColumn = this.sectionsSubject.value[sectionIndex].Columns[columnIndex];
+        } 
+        
+        return currentColumn;
+    }
+
     private getRemoteEntryByType(relation: NgComponentRelation, entryAddon, remoteName = 'remoteEntry') {
         switch (relation.Type){
             case "NgComponent":
@@ -444,13 +463,7 @@ export class PageBuilderService {
     onRemoveSection(sectionId: string) {
         const index = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
         if (index > -1) {
-            // First remove all blocks.
-            // this.sectionsSubject.value[index].Columns.forEach(column => {
-            //     if (column.Block) {
-            //         this.onRemoveBlock(column.Block.BlockKey);
-            //     }
-            // });
-
+            // Remove all blocks from blocks map.
             const blockIds = this.sectionsSubject.value[index].Columns.map(column => column?.Block?.BlockKey);
             this.removeBlocks(blockIds)
 
@@ -463,32 +476,23 @@ export class PageBuilderService {
         moveItemInArray(this.sectionsSubject.value, event.previousIndex, event.currentIndex);
     }
 
-    onRemoveBlock(blockId: string) {
-        this.removeBlocks([blockId]);
+    onRemoveBlock(sectionId: string, blockId: string) {
+        const index = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
+        if (index > -1) {
+            const columnIndex = this.sectionsSubject.value[index].Columns.findIndex(column => column.Block?.BlockKey === blockId);
+            if (columnIndex > -1) {
+                // Remove the block from blocks map.
+                this.removeBlocks([blockId]);
+
+                // Remove the block from section column.
+                delete this.sectionsSubject.value[index].Columns[columnIndex].Block;
+            }
+        }
         // const blockIndex = this.blocksSubject.value.findIndex(block => block.Key === blockId);
 
         // if (blockIndex >= 0) {
         //     this.blocksSubject.value.splice(blockIndex, 1);
         // }
-    }
-
-    private getSectionColumnById(sectionColumnId: string): PageSectionColumn {
-        let currentColumn = null;
-
-        // Get the section and column array by the pattern of the section column key.
-        const sectionColumnPatternSeparator = this.getSectionColumnKey();
-        const sectionColumnArr = sectionColumnId.split(sectionColumnPatternSeparator);
-
-        if (sectionColumnArr.length === 2) {
-            // Get the section id to get the section index.
-            const sectionId = sectionColumnArr[0];
-            const sectionIndex = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
-            // Get the column index.
-            const columnIndex = sectionColumnArr[1];
-            currentColumn = this.sectionsSubject.value[sectionIndex].Columns[columnIndex];
-        } 
-        
-        return currentColumn;
     }
 
     onBlockDropped(event: CdkDragDrop<any[]>, sectionId: string) {
@@ -531,6 +535,27 @@ export class PageBuilderService {
                 // transferArrayItem(event.previousContainer.data, this.sectionsSubject.value[sectionIndex].Columns[columnIndex], event.previousIndex, event.currentIndex);
             }
         }
+    }
+
+    changeCursorOnDragStart() {
+        document.body.classList.add('inheritCursors');
+        document.body.style.cursor = 'grabbing';
+    }
+
+    changeCursorOnDragEnd() {
+        document.body.classList.remove('inheritCursors');
+        document.body.style.cursor = 'unset';
+    }
+
+    doesColumnContainBlock(sectionId: string, columnIndex: number): boolean {
+        let res = false;
+        const section = this.sectionsSubject.value.find(section => section.Key === sectionId);
+
+        if (section && columnIndex >= 0 && section.Columns.length > columnIndex) {
+            res = !!section.Columns[columnIndex].Block;
+        }
+
+        return res;
     }
 
     setScreenWidth(value: string) {

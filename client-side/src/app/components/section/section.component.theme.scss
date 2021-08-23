@@ -1,0 +1,6 @@
+@mixin section-component-theme($pepperi-theme) {
+    .section-container {
+        background: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
+        @include pep-border(border, $pepperi-theme);
+    }
+}

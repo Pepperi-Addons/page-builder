@@ -1,31 +1,32 @@
-<div #sectionContainer class="section-container" [ngClass]="{ 'active-section': selected }">
-    <toolbar-actions *ngIf="editable && canDrag" class="section-toolbar" [title]="name" [isDraggable]="true" (edit)="onEditSectionClick();" (remove)="onRemoveSectionClick()"></toolbar-actions>
-    <!-- -->
-    <div [ngClass]="{'editable': editable}"
-        #blocksWrapper class="blocks-wrapper"
-        id="{{id}}">
+<div #sectionContainer class="section-container" [ngClass]="{ 'editable-state': editable, 'active-section': selected }" 
+    cdkDrag [cdkDragDisabled]="!editable" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" >
+    <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
+        class="section-toolbar" [title]="name" [isDraggable]="true"
+        (edit)="onEditSectionClick();" (remove)="onRemoveSectionClick()"></toolbar-actions>
+    <div #columnsWrapper class="columns-wrapper">
         <div class="section-background">
             <div class="back-template" *ngFor="let number of [0,1,2,3,4,5,6,7,8,9,10,11]"></div>
         </div>
         <div [id]="sectionColumnKeyPrefix + i" 
             *ngFor="let column of columns; let i=index;"
-            class="section-column"
-            [ngClass]="{ 'active-block': selectedBlockId === column.Block?.BlockKey }"
+            class="section-column {{screenSize <= PepScreenSizeType.LG ? 'horizontal' : 'vertical'}}"
+            [ngClass]="{ 'active-column': selectedBlockId === column.Block?.BlockKey }"
             cdkDropList
             [cdkDropListData]="column"
             [cdkDropListOrientation]="screenSize <= PepScreenSizeType.LG ? 'horizontal' : 'vertical'" 
             [cdkDropListConnectedTo]="sectionsColumnsDropList"
             (cdkDropListDropped)="onBlockDropped($event)"
-            [cdkDropListEnterPredicate]="canDropPredicate(column)"
+            [cdkDropListEnterPredicate]="canDropPredicate(i)"
         >
             <div *ngIf="column.Block && blocksMap.get(column.Block.BlockKey)" 
                 class="section-column-block"
-                cdkDrag [cdkDragData]="column.Block">
+                cdkDrag [cdkDragData]="column.Block" [cdkDragDisabled]="!editable" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" >
                 <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
-                <toolbar-actions *ngIf="editable && canDrag"
-                    class="block-toolbar" [title]="'block.title'" [isDraggable]="true" (edit)="onEditBlockClick(column.Block.BlockKey);" (remove)="onRemoveBlockClick(column.Block.BlockKey)">
+                <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
+                    class="block-toolbar" [title]="'block.title'" [isDraggable]="true"
+                    (edit)="onEditBlockClick(column.Block.BlockKey);" (remove)="onRemoveBlockClick(column.Block.BlockKey)">
                 </toolbar-actions>
-                <div class="remote-loader-container" [ngClass]="{'block-editable-state': editable }">
+                <div [ngClass]="{'block-editable-state': editable }">
                     <pep-remote-loader 
                         [options]="blocksMap.get(column.Block.BlockKey).Relation?.Options"
                         [hostObject]="blocksMap.get(column.Block.BlockKey).Configuration"

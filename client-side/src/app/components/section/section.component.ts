@@ -1,10 +1,11 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, Renderer2, SimpleChanges, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
-import { CdkDrag, CdkDragDrop, CdkDragExit, CdkDropList, copyArrayItem, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragExit, CdkDragStart, CdkDropList, copyArrayItem, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { BlockProgress, Editor, PageBuilderService } from 'src/app/services/page-builder.service';
 import { PageBlock, PageSection, PageSectionColumn, SplitType } from '@pepperi-addons/papi-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { reduce } from 'rxjs/operators';
 
 @Component({
     selector: 'page-builder-section',
@@ -16,7 +17,7 @@ export class SectionComponent implements OnInit, OnChanges {
     private readonly ACTIVE_BLOCK_CLASS_NAME = 'active-block';
 
     @ViewChild('sectionContainer') sectionContainerRef: ElementRef;
-    @ViewChildren('blocksWrapper') blocksElementRef: QueryList<ElementRef>;
+    @ViewChildren('columnsWrapper') columnsElementRef: QueryList<ElementRef>;
 
     @Input() id: string;
     @Input() name: string;
@@ -103,7 +104,7 @@ export class SectionComponent implements OnInit, OnChanges {
         setTimeout(() => {
             if (this.sectionContainerRef) {
                 if (this.screenSize <= PepScreenSizeType.LG) {
-                    this.blocksElementRef.toArray().map((section, sectionIndex) => {
+                    this.columnsElementRef.toArray().map((section, sectionIndex) => {
                         this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'column');
                         this.renderer.setStyle(section.nativeElement, 'grid-template-rows', 'unset');
                         this.renderer.setStyle(section.nativeElement, 'grid-template-columns', this.getCssSplitString());
@@ -112,7 +113,7 @@ export class SectionComponent implements OnInit, OnChanges {
                     // this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-auto-flow', 'column');
                     // this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-template-columns', this.getCssSplitString());
                 } else {
-                    this.blocksElementRef.toArray().map((section, sectionIndex) => {
+                    this.columnsElementRef.toArray().map((section, sectionIndex) => {
                         this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'row');
                         this.renderer.setStyle(section.nativeElement, 'grid-template-columns', 'unset');
                         this.renderer.setStyle(section.nativeElement, 'grid-template-rows', this.getCssSplitString());
@@ -182,7 +183,7 @@ export class SectionComponent implements OnInit, OnChanges {
     }
 
     onRemoveBlockClick(blockId: string) {
-        this.pageBuilderService.onRemoveBlock(blockId);
+        this.pageBuilderService.onRemoveBlock(this.id, blockId);
     }
 
     onBlockChange(event, blockId: string) {
@@ -197,9 +198,18 @@ export class SectionComponent implements OnInit, OnChanges {
         this.pageBuilderService.onBlockDropped(event, this.id);
     }
 
-    canDropPredicate(column: PageSectionColumn) {
-        return function(drag: CdkDrag, drop: CdkDropList) {      
-            return column.Block ? false : true;
+    canDropPredicate(columnIndex: number) {
+        return (drag: CdkDrag, drop: CdkDropList) => {
+            const res = !this.pageBuilderService.doesColumnContainBlock(this.id, columnIndex);
+            return res;
         };
+    }
+
+    onDragStart(event: CdkDragStart) {
+        this.pageBuilderService.changeCursorOnDragStart();
+    }
+
+    onDragEnd(event: CdkDragEnd) {
+        this.pageBuilderService.changeCursorOnDragEnd();
     }
 }

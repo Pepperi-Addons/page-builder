@@ -1,0 +1,11 @@
+//**************************************************************************
+// This file contains all mixins.
+//**************************************************************************
+@mixin block-editor-toolbar() {
+    position: absolute;
+    top: calc(50%);
+    left: 50%;
+    max-width: 240px;
+    min-width: 200px;
+    transform: translate(-50%, -50%);
+}

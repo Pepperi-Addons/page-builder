@@ -1,4 +1,4 @@
-import { CdkDragMove, CdkDragStart } from '@angular/cdk/drag-drop';
+import { CdkDragEnd, CdkDragMove, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PepHttpService } from '@pepperi-addons/ngx-lib';
@@ -138,5 +138,13 @@ export class PageBuilderEditorComponent implements OnInit {
     setRoundedCorners(event: IPepButtonClickEvent) {
         this.roundedCorners = event.source.key as UiPageSizeType;
         this.updateHostObject();
+    }
+
+    onDragStart(event: CdkDragStart) {
+        this.pageBuilderService.changeCursorOnDragStart();
+    }
+
+    onDragEnd(event: CdkDragEnd) {
+        this.pageBuilderService.changeCursorOnDragEnd();
     }
 }

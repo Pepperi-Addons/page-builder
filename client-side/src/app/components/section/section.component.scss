@@ -1,108 +1,115 @@
-$z-Index-min: 0;
+@import 'ngx-lib/src/core/style/abstracts/variables';
+@import 'ngx-lib/src/core/style/abstracts/mixins';
+@import '../../../mixins.scss';
 
-.remote-loader-container {
-    pointer-events: none;
-    opacity: 0.5;
-}
+$z-index-min: 0;
+$z-index-toolbar: $z-index-min + 2;
 
-@mixin block-editor-toolbar() {
-    position: relative;
-    top: calc(50%);
-    left: 50%;
-    max-width: 240px;
-    transform: translate(-50%, 50%);
-    z-index: $z-Index-min + 2;
-    margin-top: -2.5rem;
+@mixin block-toolbar() {
+    @include block-editor-toolbar();
+    z-index: $z-index-toolbar;
 }
 
 .section-container {
     position: relative;
     display: grid;
-    border: 1px solid #999999;
-    border-radius: 0.25rem;
+    // border: 1px solid #999999;
+    // background-color: #fff;
+    border-radius: $border-radius-md;
     min-height: 250px;
-    background-color: #fff;
     
-    &.active-section {
-        border: 2px dashed #000;
-        z-index: $z-Index-min + 11;
+    
+    .columns-wrapper {
+        display: grid;
+        grid-auto-flow: column;
     }
+    
+    // This css is only for edit mode.
+    &.editable-state {
+    
+        &.active-section {
+            z-index: $z-index-min + 11;
+        }
 
-    .section-toolbar {
-        position: absolute;
-        top: -1px;
-        left: -1px;
-        width: calc(100% + 2px);
-    }
+        .section-toolbar {
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            width: calc(100% + 2px);
+            z-index: $z-index-toolbar;
+        }
 
-    .section-background {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        z-index: $z-Index-min;
-
-        .back-template {
-            width: 8.3333%;
+        .section-background {
+            position: absolute;
+            width: 100%;
             height: 100%;
-            background-color: #BEC3E5;
-            opacity: 0.1;
-            border-right: 2px dashed #000;
-            float: left;
+            z-index: $z-index-min;
 
-            &:last-of-type {
-                border-right: 0 none;
+            .back-template {
+                width: 8.3333%;
+                height: 100%;
+                background-color: #BEC3E5;
+                opacity: 0.1;
+                border-right: 2px dashed #000;
+                float: left;
+
+                &:last-of-type {
+                    border-right: 0 none;
+                }
+            }
+        }
+
+        .columns-wrapper {
+            .section-column {
+                z-index: $z-index-min + 1;
+                border: 2px dashed #000;
+                position: relative;
+
+                // Remove the border for no dupplicate.
+                &:not(&:last-of-type) {
+                    &.horizontal {
+                        border-right: unset;
+                    }
+
+                    &.vertical {
+                        border-bottom: unset;
+                    }
+                }
+
+                &.active-column {
+                    z-index: $z-index-min + 12;
+                    position: relative;
+                    background: white;
+
+                    .block-editable-state {
+                        opacity: 1;
+                    }
+                }
+
+                .section-column-block {
+                    .block-editable-state {
+                        pointer-events: none;
+                        opacity: 0.5;
+                    }
+                    
+                    .block-toolbar {
+                        @include block-toolbar();
+                    }
+                }
             }
         }
     }
-
-    .blocks-wrapper {
-        min-height: 250px;
-        display: grid;
-        grid-auto-flow: column;
-
-        &.active {
-            border: 2px dashed #000;
-            border-top: 0;
-        }
-    }
-
-    .section-column {
-        z-index: $z-Index-min + 1;
-        border: 3px solid red;
-    }
-
-    .block-toolbar {
-        @include block-editor-toolbar();
-    }
-
-    .active-block {
-        border: 2px dashed #000;
-        z-index: $z-Index-min + 12;
-        position: relative;
-
-        .block-editable-state {
-            opacity: 1;
-        }
-   }
 }
 
 .cdk-drag-preview {
-    box-sizing: border-box;
-    border-radius: 4px;
-    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-      0 8px 10px 1px rgba(0, 0, 0, 0.14),
-      0 3px 14px 2px rgba(0, 0, 0, 0.12);
+    pointer-events: none;
+    opacity: 0.5;
 
     .block-toolbar {
-        @include block-editor-toolbar();
+        @include block-toolbar();
     }
 }
 
 // .cdk-drag-placeholder {
-//     opacity: 0;
-//     // background-color: red;
+//     opacity: 0.5;
 // }
-
-.cdk-drag-animating {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}

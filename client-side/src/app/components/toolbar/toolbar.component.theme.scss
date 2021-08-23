@@ -1,0 +1,5 @@
+@mixin toolbar-component-theme($pepperi-theme) {
+    .toolbar-actions-container {
+        @include state-regular-default($pepperi-theme, true);
+    }
+}

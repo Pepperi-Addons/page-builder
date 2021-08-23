@@ -1,12 +1,6 @@
-// @import '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
 label {
     font-weight: 400;
 }
-
-.cdk-drag-placeholder {
-    opacity: 0.5;
-}
-
 
 .editor-tabs {
     height: 100%;
@@ -48,4 +42,6 @@ label {
     }
 }
 
-
+.cdk-drag-placeholder {
+    opacity: 0.5;
+}

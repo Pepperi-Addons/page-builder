@@ -2,8 +2,7 @@
 <div #sectionsCont cdkDropListGroup class="sections-container" cdkDropList (cdkDropListDropped)="onSectionDropped($event)" >
     <page-builder-section class="draggable-section" *ngFor="let section of sections$ | async; let i=index;" [sectionsColumnsDropList]="sectionsColumnsDropList"
         [id]="section.Key" [name]="section.Name || ('Section' | translate) + ' ' + (i+1)" [split]="section.Split" [columns]="section.Columns" 
-        [screenSize]="screenSize" [editable]="editMode"
-        cdkDrag>
+        [screenSize]="screenSize" [editable]="editMode">
         <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
     </page-builder-section>
 </div>
