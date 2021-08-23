@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, Renderer2, SimpleChanges, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDragExit, CdkDropList, copyArrayItem, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { Editor, PageBuilderService } from 'src/app/services/page-builder.service';
+import { BlockProgress, Editor, PageBuilderService } from 'src/app/services/page-builder.service';
 import { PageBlock, PageSection, PageSectionColumn, SplitType } from '@pepperi-addons/papi-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
@@ -12,6 +12,9 @@ import { BehaviorSubject, Observable } from 'rxjs';
     styleUrls: ['./section.component.scss']
 })
 export class SectionComponent implements OnInit, OnChanges {
+    private readonly ACTIVE_SECTION_CLASS_NAME = 'active-section';
+    private readonly ACTIVE_BLOCK_CLASS_NAME = 'active-block';
+
     @ViewChild('sectionContainer') sectionContainerRef: ElementRef;
     @ViewChildren('blocksWrapper') blocksElementRef: QueryList<ElementRef>;
 
@@ -48,28 +51,26 @@ export class SectionComponent implements OnInit, OnChanges {
         return this._columns;
     }
 
-    @Output() remove: EventEmitter<string> = new EventEmitter();
-
-    sectionsDropList;
-    PepScreenSizeType = PepScreenSizeType;
-    canDrag = false;
-
-    private blocksSubject: BehaviorSubject<PageBlock[]> = new BehaviorSubject<PageBlock[]>([]);
-    get blocksSubject$(): Observable<PageBlock[]> {
-        return this.blocksSubject.asObservable();
+    private _blocksMap = new Map<string, PageBlock>();
+    get blocksMap(): ReadonlyMap<string, PageBlock> {
+        return this._blocksMap;
     }
 
+    @Input() sectionsColumnsDropList = [];
+    
+    PepScreenSizeType = PepScreenSizeType;
+    sectionColumnKeyPrefix = '';
+    
+    canDrag = false;
+    selected = false;
+    selectedBlockId = '';
+    
     constructor(
         private renderer: Renderer2,
         private translate: TranslateService,
         private layoutService: PepLayoutService,
         private pageBuilderService: PageBuilderService
-    ) {
-        this.pageBuilderService.blocksChangeSubject$.subscribe((blocks) => {
-            const blockKeys = this.columns.map(column => column.Block?.BlockKey);
-            this.blocksSubject.next(blocks.filter(block => blockKeys.includes(block.Key)))
-        });
-    }
+    ) { }
 
     private getCssSplitString() {
         switch (this.split) {
@@ -104,19 +105,21 @@ export class SectionComponent implements OnInit, OnChanges {
                 if (this.screenSize <= PepScreenSizeType.LG) {
                     this.blocksElementRef.toArray().map((section, sectionIndex) => {
                         this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'column');
+                        this.renderer.setStyle(section.nativeElement, 'grid-template-rows', 'unset');
                         this.renderer.setStyle(section.nativeElement, 'grid-template-columns', this.getCssSplitString());
                     });
 
-                    this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-auto-flow', 'column');
-                    this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-template-columns', this.getCssSplitString());
+                    // this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-auto-flow', 'column');
+                    // this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-template-columns', this.getCssSplitString());
                 } else {
                     this.blocksElementRef.toArray().map((section, sectionIndex) => {
                         this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'row');
+                        this.renderer.setStyle(section.nativeElement, 'grid-template-columns', 'unset');
                         this.renderer.setStyle(section.nativeElement, 'grid-template-rows', this.getCssSplitString());
                     });
 
-                    this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-auto-flow', 'row');
-                    this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-template-rows', this.getCssSplitString());
+                    // this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-auto-flow', 'row');
+                    // this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-template-rows', this.getCssSplitString());
                 }
             }
         }, 0);
@@ -125,43 +128,64 @@ export class SectionComponent implements OnInit, OnChanges {
     ngOnInit(): void {
         this.refreshSplit();
 
-        // Get the sections id's into sectionsDropList for the drag & drop.
-        this.pageBuilderService.sectionsSubject$.subscribe(res => {
-            this.sectionsDropList = res.map(section => section.Key);
-        })
-
         if (this.editable) {
             this.pageBuilderService.onEditorChange$.subscribe((editor: Editor) => {
                 this.canDrag = editor.type === 'page-builder';
+                
+                this.selected = editor.type === 'section' && editor.id === this.id;
+                this.selectedBlockId = editor.type === 'block' ? editor.id : '';
             });
         }
+
+        this.sectionColumnKeyPrefix = this.pageBuilderService.getSectionColumnKey(this.id);
+
+        this.pageBuilderService.pageBlockProgress$.subscribe((blocksProgress: ReadonlyMap<string, BlockProgress>) => {
+            // Clear the blocks map.
+            this._blocksMap.clear();
+
+            // // Get only the block keys that exist in columns.
+            // const blockKeys = this.columns.filter(column => !!column.Block).map(column => column.Block?.BlockKey);
+
+            // // For each block id -> if exist in blocksProgress insert the block into my blocksMap 
+            // blockKeys.forEach(blockKey => {
+            //     const blockProgress = blocksProgress.get(blockKey);
+            //     if (blockProgress) {
+            //         this._blocksMap.set(blockKey, blockProgress.block);
+            //     }
+            // });
+
+            blocksProgress.forEach(block => {
+                this._blocksMap.set(block.block.Key, block.block);
+            });
+        });
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         // throw new Error('Method not implemented.');
     }
 
+    getBlock(blockKey: string) {
+        const block = this._blocksMap.get(blockKey);
+        return block;
+    }
 
     onEditSectionClick() {
-        this.pageBuilderService.clearActiveSection();
-
-        this.renderer.addClass(this.sectionContainerRef.nativeElement, 'active-section');
         this.pageBuilderService.navigateToEditor('section', this.id);
     }
 
     onRemoveSectionClick() {
-        this.pageBuilderService.removeSection(this.id);
+        this.pageBuilderService.onRemoveSection(this.id);
     }
 
-    removeBlock(blockId: string) {
-        this.pageBuilderService.removeBlock(blockId);
+    onEditBlockClick(blockId: string) {
+        this.pageBuilderService.navigateToEditor('block', blockId);
     }
 
-    editBlock(block: any) {
-        this.pageBuilderService.navigateToEditor('block', block.Key);
+    onRemoveBlockClick(blockId: string) {
+        this.pageBuilderService.onRemoveBlock(blockId);
     }
 
-    onBlockChange(event) {
+    onBlockChange(event, blockId: string) {
         switch(event.action){
             case 'update-addons':
                 // propsSubject.next(e);
@@ -173,17 +197,9 @@ export class SectionComponent implements OnInit, OnChanges {
         this.pageBuilderService.onBlockDropped(event, this.id);
     }
 
-    // addField(blockType: string, index: number) {
-    //     this.blocks.splice(index, 0, blockType)
-    // }
-
-    /** Predicate function that only allows even numbers to be dropped into a list. */
-    // evenPredicate(item: CdkDrag<any>) {
-    //     return item.data % 2 === 0;
-    // }
-
-    // /** Predicate function that doesn't allow items to be dropped into a list. */
-    // noReturnPredicate() {
-    //     return false;
-    // }
+    canDropPredicate(column: PageSectionColumn) {
+        return function(drag: CdkDrag, drop: CdkDropList) {      
+            return column.Block ? false : true;
+        };
+    }
 }

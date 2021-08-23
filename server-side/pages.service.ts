@@ -1,13 +1,7 @@
-import { PapiClient, InstalledAddon, PageRelation } from '@pepperi-addons/papi-sdk'
+import { PapiClient, InstalledAddon, NgComponentRelation } from '@pepperi-addons/papi-sdk'
 import { Client } from '@pepperi-addons/debug-server';
 import { v4 as uuid } from 'uuid';
 import { TempBlankPageData } from './pages.model';
-
-const toSnakeCase = str => 
-    str &&
-    str.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
-    .map(x => x.toLowerCase())
-    .join('_');
 
 const TABLE_NAME = 'Pages';
 
@@ -27,23 +21,13 @@ export class PagesService {
         });
     }
 
-    // upsertRelation(relations): Promise<any> {
-    //     const promises: Array<Promise<any>> = [];
-    //     relations.forEach(relation => {
-    //         promises.push(this.papiClient.post('/addons/data/relations', relation));
-    //     })
-
-    //     return Promise.all(promises)
-                
-    // }
-
     private getRelations(relationName: string): Promise<any> {
         return this.papiClient.get(`/addons/data/relations?where=RelationName=${relationName}`);
     }
 
     async getPageEditorData(body) {
         // Get the PageBlock relations 
-        const pageBlockRelations: PageRelation[] = await this.getRelations('PageBlock');
+        const pageBlockRelations: NgComponentRelation[] = await this.getRelations('PageBlock');
 
         // Distinct the addons uuid's and filter by pageType
         const pageType = body['PageType'] || '';
@@ -57,13 +41,13 @@ export class PagesService {
         const addons: InstalledAddon[] = await Promise.all(addonsPromises).then(res => res);
 
         const availableBlocks: any[] = [];
-        pageBlockRelations.forEach((pbRelation: PageRelation) => {
-            const installedAddon: InstalledAddon | undefined = addons.find((ia: InstalledAddon) => ia?.Addon?.UUID === pbRelation?.AddonUUID);
+        pageBlockRelations.forEach((relation: NgComponentRelation) => {
+            const installedAddon: InstalledAddon | undefined = addons.find((ia: InstalledAddon) => ia?.Addon?.UUID === relation?.AddonUUID);
             if (installedAddon) {
-                // const availableAddon = this.createAvailableAddon(pbRelation, entryAddon);
+                // const availableAddon = this.createAvailableAddon(relation, entryAddon);
                 // availableBlocks.push(availableAddon);
                 availableBlocks.push({
-                    relation: pbRelation,
+                    relation: relation,
                     addon: installedAddon
                 });
             }
@@ -72,65 +56,7 @@ export class PagesService {
         return availableBlocks;
     }
     
-    // private getRemoteEntryByType(pbRelation: PageRelation, entryAddon, remoteName = 'remoteEntry') {
-    //     switch (pbRelation.Type){
-    //         case "NgComponent":
-    //             // // HACK FOR LOCALHOST PLEASE REMOVE
-    //             if (pbRelation?.ComponentName == 'SlideshowComponent'){
-    //                 const res = 'http://localhost:4401/slideshow.js';
-    //                 return res;
-    //             }
-    //             // if (field?.ComponentName == 'SubAddon2Component'){
-    //             //     const res = 'http://localhost:4402/sub_addon_2.js';
-    //             //     return res;
-    //             // }
-    //             // if (field?.ComponentName == 'SubAddon3Component'){
-    //             //     const res = 'http://localhost:4403/sub_addon_3.js';
-    //             //     return res;
-    //             // }
-    //             // if (field?.ComponentName == 'SubAddon4Component'){
-    //             //     const res = 'http://localhost:4404/sub_addon_4.js';
-    //             //     return res;
-    //             // }
-    //             // if (field?.ComponentName == 'SubAddon5Component'){
-    //             //     const res = 'http://localhost:4405/sub_addon_5.js';
-    //             //     return res;
-    //             // }
-    //             else
-    //             // // END OF HACK 
-    //                 return entryAddon?.PublicBaseURL +  remoteName + '.js';
-    //         default:
-    //             return pbRelation?.AddonRelativeURL;
-    //     }
-    // }
-
-    // private createAvailableAddon(pbRelation: PageRelation, entryAddon: InstalledAddon) {
-    //     const remoteName = pbRelation?.AddonRelativeURL ? 
-    //         pbRelation.AddonRelativeURL : toSnakeCase(pbRelation.ModuleName?.toString().replace('Module',''));
-
-    //     const rmOptions: RemoteModuleOptions = {  
-    //         uuid: pbRelation?.AddonUUID,
-    //         // title: `${pbRelation?.Description}`,
-    //         remoteEntry: this.getRemoteEntryByType(pbRelation, entryAddon, remoteName),
-    //         remoteName: remoteName,
-    //         exposedModule: './' + pbRelation?.ModuleName,
-    //         componentName: '' + pbRelation?.ComponentName,
-    //         // editorModuleName: "./" + pbRelation?.EditorModuleName,
-    //         // editorComponentName: pbRelation?.EditorComponentName,
-    //         // key: `${pbRelation.Name}_${pbRelation.AddonUUID}_${pbRelation.RelationName}`,
-    //         // visibleEndpoint: pbRelation?.VisibilityRelativeURL,
-    //         // addon: entryAddon,
-    //         // layout: { section: 0, block: 0},
-    //     }
-    
-    //     return {
-    //         options: rmOptions,
-    //         relation: pbRelation
-    //     };
-    // }
-
     // TODO: Check that the table is not exist.
-
     async createPagesTableSchemes() {
         await this.papiClient.addons.data.schemes.post({
             Name: TABLE_NAME,

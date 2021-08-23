@@ -1,8 +1,12 @@
 <div class="section-editor-container">
-    <pep-textbox [(value)]="sectionName" label="Section Name (kebab-case)"></pep-textbox>
+    <pep-textbox [value]="sectionName" [label]="'Section_Name_Title' | translate" (valueChange)="onSectionNameChange($event)"></pep-textbox>
 
-    <pep-checkbox [(value)]="subSections" label="Sub Section" [renderTitle]="false"></pep-checkbox>
+    <pep-checkbox [value]="subSections" [label]="'Sub_Section_Title' | translate" [renderTitle]="false" (valueChange)="onSubSectionsChange($event)"></pep-checkbox>
 
-    <pep-select label="Sections" [value]="partsNumber" [options]="partsNumberOptions" (valueChange)="onPartsNumberChange($event)" [emptyOption]="false" [disabled]="!subSections"></pep-select>
-    <pep-select label="Split" [value]="split" [options]="splitOptions" (valueChange)="onSplitChange($event)" [emptyOption]="false" [disabled]="!subSections"></pep-select>
+    <div class="split-area">
+        <pep-select [label]="'Sections_Title' | translate" [value]="partsNumber" [options]="partsNumberOptions" 
+            (valueChange)="onPartsNumberChange($event)" [emptyOption]="false" [disabled]="!subSections"></pep-select>
+        <pep-select [label]="'Split_Title' | translate" [value]="split" [options]="splitOptions"
+            (valueChange)="onSplitChange($event)" [emptyOption]="false" [disabled]="!subSections"></pep-select>
+    </div>
 </div>

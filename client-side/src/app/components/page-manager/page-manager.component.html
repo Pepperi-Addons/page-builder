@@ -1,4 +1,4 @@
-<pep-page-layout cdkDropListGroup [addPadding]="false" [showShadow]="showEditor">
+<pep-page-layout [addPadding]="false" [showShadow]="showEditor">
     <div pep-side-area *ngIf="showEditor" style="padding-inline-start: 1rem;">
         <pep-side-bar #sideBar [ignoreResize]="true">
             <div header-content class="side-bar-title">
@@ -7,14 +7,14 @@
                     <span>{{ currentEditor?.title }}</span>
                 </div>
             </div>
-            <page-builder-editor *ngIf="currentEditor?.type === 'page-builder'"
-                [pageName]="currentEditor?.hostObject?.pageName" [pageDescription]="currentEditor?.hostObject?.pageDescription"></page-builder-editor>
+            <page-builder-editor *ngIf="currentEditor?.type === 'page-builder'" [sectionsColumnsDropList]="sectionsColumnsDropList"
+                [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onPageEditorObjectChange($event)"></page-builder-editor>
         
             <page-builder-section-editor *ngIf="currentEditor?.type === 'section'" 
-                [sectionName]="currentEditor?.hostObject?.sectionName" [split]="currentEditor?.hostObject?.split" ></page-builder-section-editor>
+                [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onSectionEditorObjectChange($event)"></page-builder-section-editor>
         
             <pep-remote-loader *ngIf="currentEditor?.type === 'block'" [options]="currentEditor?.remoteModuleOptions" 
-                [hostObject]="currentEditor?.hostObject" (hostEvents)="onBlockEditorChange($event);"></pep-remote-loader>
+                [hostObject]="currentEditor?.hostObject" (hostEvents)="onBlockEditorObjectChange($event);"></pep-remote-loader>
         </pep-side-bar>
     </div>
     <ng-container pep-main-area>
@@ -36,7 +36,7 @@
             </div>
         </div>
         <div #pageBuilderWrapper class="page-builder-wrapper" [ngClass]="{'editable-state': currentEditor?.type === 'section' || currentEditor?.type === 'block'}">
-            <page-builder [editMode]="showEditor" [screenSize]="screenSize"></page-builder>
+            <page-builder [editMode]="showEditor" [screenSize]="screenSize" [sectionsColumnsDropList]="sectionsColumnsDropList"></page-builder>
             <div class="backdrop"></div>
         </div>
     </ng-container>

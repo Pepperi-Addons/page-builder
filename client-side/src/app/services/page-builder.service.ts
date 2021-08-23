@@ -3,9 +3,9 @@ import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { PepGuid, PepHttpService, PepScreenSizeType, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { PepRemoteLoaderOptions } from "@pepperi-addons/ngx-remote-loader";
-import { InstalledAddon, Page, PageBlock, PageRelation, PageSection, PageSectionColumn } from "@pepperi-addons/papi-sdk";
+import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn } from "@pepperi-addons/papi-sdk";
 import { Observable, BehaviorSubject } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 
 export type EditorType = 'page-builder' | 'section' | 'block';
 
@@ -13,20 +13,41 @@ export interface Editor {
     id: string,
     title: string,
     type: EditorType,
-    // editorData: any,
     remoteModuleOptions?: PepRemoteLoaderOptions,
     hostObject?: any
 }
 
-// export interface Section {
-//     id: string,
-//     name: string,
-//     split: string;
-//     blocks: Array<any>,
-// }
+export interface PageEditor {
+    id: string,
+    pageName: string,
+    pageDescription: string,
+    maxWidth: number,
+    columnsHorizntalGap?: PageSizeType,
+    columnsVerticalGap?: PageSizeType,
+    sectionsGap: PageSizeType,
+    roundedCorners?: PageSizeType,
+}
+
+export interface SectionEditor {
+    id: string,
+    sectionName: string,
+    split: SplitType,
+    height: number,
+}
+
+export interface BlockEditor {
+    id: string,
+    configuration?: any,
+}
+
 export interface AvailableBlock {
     options: PepRemoteLoaderOptions,
-    relation: PageRelation
+    relation: NgComponentRelation
+}
+
+export interface BlockProgress {
+    block: PageBlock;
+    load: boolean;
 }
 
 @Injectable({
@@ -41,12 +62,6 @@ export class PageBuilderService {
         return this.screenSizeSubject.asObservable().pipe(distinctUntilChanged());
     }
 
-    // TODO:
-    private screenMaxWidthSubject: BehaviorSubject<string> = new BehaviorSubject<string>('unset');
-    get onScreenMaxWidthChange$(): Observable<string> {
-        return this.screenMaxWidthSubject.asObservable().pipe(distinctUntilChanged());
-    }
-
     // This subject is for demostrate the container size (Usage only in edit mode).
     private screenWidthSubject: BehaviorSubject<string> = new BehaviorSubject<string>('100%');
     get onScreenWidthChange$(): Observable<string> {
@@ -54,31 +69,42 @@ export class PageBuilderService {
     }
 
     // This subject is for load the current editor (Usage only in edit mode).
-    private editorChangeSubject: BehaviorSubject<Editor>;
+    private editorSubject: BehaviorSubject<Editor> = new BehaviorSubject<Editor>(null);
     get onEditorChange$(): Observable<Editor> {
-        return this.editorChangeSubject.asObservable().pipe(distinctUntilChanged());
+        return this.editorSubject.asObservable().pipe(distinctUntilChanged());
     }
 
     // This subject is for load available blocks on the main editor (Usage only in edit mode).
     private availableBlocksSubject: BehaviorSubject<AvailableBlock[]> = new BehaviorSubject<AvailableBlock[]>([]);
     get availableBlocksLoadedSubject$(): Observable<AvailableBlock[]> {
-        return this.availableBlocksSubject.asObservable();
+        return this.availableBlocksSubject.asObservable().pipe(distinctUntilChanged());
     }
 
     // This is the sections subject (a pare from the page object)
     private sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
-    get sectionsSubject$(): Observable<PageSection[]> {
+    get onSectionsChange$(): Observable<PageSection[]> {
         return this.sectionsSubject.asObservable();
     }
     
-    private blocksChangeSubject: BehaviorSubject<PageBlock[]> = new BehaviorSubject<PageBlock[]>([]);
-    get blocksChangeSubject$(): Observable<PageBlock[]> {
-        return this.blocksChangeSubject.asObservable();
+
+    private _pageBlockProgressMap = new Map<string, BlockProgress>();
+    get pageBlockProgressMap(): ReadonlyMap<string, BlockProgress> {
+        return this._pageBlockProgressMap;
+    }
+    
+    private _pageBlockProgress$ = new BehaviorSubject<ReadonlyMap<string, BlockProgress>>(this.pageBlockProgressMap);
+    get pageBlockProgress$(): Observable<ReadonlyMap<string, BlockProgress>> {
+        return this._pageBlockProgress$.asObservable();
     }
 
-    private pageChangeSubject: BehaviorSubject<Page> = new BehaviorSubject<Page>(null);
-    get pageChangeSubject$(): Observable<Page> {
-        return this.pageChangeSubject.asObservable();
+
+
+    private pageSubject: BehaviorSubject<Page> = new BehaviorSubject<Page>(null);
+    get pageDataChange$(): Observable<Page> {
+        return this.pageSubject.asObservable().pipe(filter(page => !!page));
+    }
+    get pageLoad$(): Observable<Page> {
+        return this.pageSubject.asObservable().pipe(filter(page => !!page), distinctUntilKeyChanged("Key"));
     }
 
     constructor(
@@ -86,47 +112,87 @@ export class PageBuilderService {
         private translate: TranslateService,
         private http: PepHttpService,
     ) {
-        this.pageChangeSubject$.subscribe((page: Page) => {
+        this.pageLoad$.subscribe((page: Page) => {
             this.loadDefaultEditor(page);
-            this.buildSections(page);
+            this.loadSections(page);
+            this.loadBlocks(page);
         });
+
+        // this.pageDataChange$.subscribe((page: Page) => {
+        //     this.updatePageDependencies(page);
+        // });
     }
+
+    // private updatePageDependencies(page: Page) {
+    // }
 
     private loadDefaultEditor(page: Page) {
         this.editorsBreadCrumb = new Array<Editor>();
+        const pageEditor: PageEditor = {
+            id: page?.Key,
+            pageName: page?.Name,
+            pageDescription: page?.Description,
+            maxWidth: page?.Layout.MaxWidth,
+            // blocksHorizntalGap: page?.Layout.
+            // blocksVerticalGap: page?.Layout.
+            sectionsGap: page?.Layout.SectionsGap,
+            // roundedCorners: page?.Layout.
+        };
+
         this.editorsBreadCrumb.push({
-            type : 'page-builder',
             id: 'main',
+            type : 'page-builder',
             title: page?.Name,
-            hostObject: {
-                pageName: page?.Name,
-                pageDescription: page?.Description
-            }
+            hostObject: pageEditor
         });
 
-        this.editorChangeSubject = new BehaviorSubject<Editor>(this.editorsBreadCrumb[0]);
+        this.editorSubject.next(this.editorsBreadCrumb[0]);
     }
 
-    private buildSections(page: Page) {
-        // const savedSections: Section[] = JSON.parse(sessionStorage.getItem('sections')) ?? [];
-        // this.sectionsSubject.next(savedSections);
-        if (page && page.Layout) {
-            this.sectionsSubject.next(page.Layout.Sections);
-        } else {
-            this.sectionsSubject.next([]);
+    private loadSections(page: Page) {
+        this.sectionsSubject.next(page?.Layout.Sections ?? []);
+    }
+
+    private addBlocks(blocks: PageBlock[]) {
+        blocks.forEach(block => {
+            const initialProgress: BlockProgress = {
+                block: block,
+                load: false
+            };
+          
+            this._pageBlockProgressMap.set(block.Key, initialProgress);
+        });
+        
+        this._pageBlockProgress$.next(this.pageBlockProgressMap);
+    }
+    
+    private removeBlocks(blockIds: string[]) {
+        blockIds.forEach(blockId => {
+            this._pageBlockProgressMap.delete(blockId);
+        });
+        
+        this._pageBlockProgress$.next(this.pageBlockProgressMap);
+    }
+
+    private updateBlockLoaded(blockKey: string, isLoad: boolean) {
+        this._pageBlockProgressMap.get(blockKey).load = isLoad;
+        this._pageBlockProgress$.next(this.pageBlockProgressMap);
+    }
+    
+    private loadBlocks(page: Page) {
+        // TODO: Write some logic to load the blocks by priority.
+        if (page) {
+            this.addBlocks(page.Blocks);
         }
     }
 
     private changeCurrentEditor() {
         if (this.editorsBreadCrumb.length > 0) {
-            this.editorChangeSubject.next(this.editorsBreadCrumb[this.editorsBreadCrumb.length - 1]);
+            this.editorSubject.next(this.editorsBreadCrumb[this.editorsBreadCrumb.length - 1]);
         }
     }
 
     private createNewSection(): PageSection {
-        const sectionsLength = this.sectionsSubject.value.length;
-        //`${this.translate.instant('Section')} ${sectionsLength}`
-
         const section: PageSection = {
             Key: PepGuid.newGuid(),
             Columns: [{}], // Add empty section column
@@ -151,7 +217,7 @@ export class PageBuilderService {
 
     private getBlockEditor(blockId: string): Editor {
         // Get the current block.
-        let block: PageBlock = this.pageChangeSubject.value.Blocks.find(block => blockId);
+        let block: PageBlock = this.pageSubject?.value?.Blocks.find(block => blockId);
         
         if (block) {
             // Change the RemoteLoaderOptions of the block for loading the block editor.
@@ -160,8 +226,8 @@ export class PageBuilderService {
             editorRelationOptions.componentName = block.Relation.EditorComponentName;
 
             return {
-                type: 'block',
                 id: blockId,
+                type: 'block',
                 title: block.Relation.Description,
                 remoteModuleOptions: editorRelationOptions,
                 hostObject: block.Configuration
@@ -173,53 +239,52 @@ export class PageBuilderService {
 
     private getSectionEditor(sectionId: string): Editor {
         // Get the current block.
-        let section: PageSection = this.pageChangeSubject.value.Layout.Sections.find(section => sectionId);
+        const sectionIndex = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
         
-        if (section) {
+        if (sectionIndex >= 0) {
+            let section: PageSection = this.sectionsSubject.value[sectionIndex];
+            const sectionEditor: SectionEditor = {
+                id: section.Key,
+                sectionName: section.Name || '',
+                split: section.Split || undefined,
+                height: section.Height || 0,
+            }
+
             return {
-                type: 'section',
                 id: sectionId,
-                title: section.Name,
-                hostObject: {
-                    sectionName: section.Name,
-                    split: section.Split,
-                    height: section.Height,
-                }
+                type: 'section',
+                title: section.Name || `${this.translate.instant('Section')} ${sectionIndex + 1}`,
+                hostObject: sectionEditor
             }
         } else {
             return null;
         }
     }
 
-    private getRemoteEntryByType(pbRelation: PageRelation, entryAddon, remoteName = 'remoteEntry') {
-        switch (pbRelation.Type){
+    private getRemoteEntryByType(relation: NgComponentRelation, entryAddon, remoteName = 'remoteEntry') {
+        switch (relation.Type){
             case "NgComponent":
-                // // HACK FOR LOCALHOST PLEASE REMOVE
-                if (pbRelation?.ComponentName == 'SlideshowComponent'){
+                // TODO: Hack for localhost please comment.
+                if (relation?.ComponentName == 'SlideshowComponent'){
                     const res = 'http://localhost:4401/slideshow.js';
                     return res;
-                }
-                // if (field?.ComponentName == 'SubAddon2Component'){
-                //     const res = 'http://localhost:4402/sub_addon_2.js';
-                //     return res;
-                // }
-                // if (field?.ComponentName == 'SubAddon3Component'){
-                //     const res = 'http://localhost:4403/sub_addon_3.js';
-                //     return res;
-                // }
-                // if (field?.ComponentName == 'SubAddon4Component'){
-                //     const res = 'http://localhost:4404/sub_addon_4.js';
-                //     return res;
-                // }
-                // if (field?.ComponentName == 'SubAddon5Component'){
-                //     const res = 'http://localhost:4405/sub_addon_5.js';
-                //     return res;
-                // }
-                else
-                // // END OF HACK 
+                } else if (relation?.ComponentName == 'SubAddon2Component'){
+                    const res = 'http://localhost:4402/sub_addon_2.js';
+                    return res;
+                } else if (relation?.ComponentName == 'SubAddon3Component'){
+                    const res = 'http://localhost:4403/sub_addon_3.js';
+                    return res;
+                } else if (relation?.ComponentName == 'SubAddon4Component'){
+                    const res = 'http://localhost:4404/sub_addon_4.js';
+                    return res;
+                } else if (relation?.ComponentName == 'SubAddon5Component'){
+                    const res = 'http://localhost:4405/sub_addon_5.js';
+                    return res;
+                } else
+                // END OF HACK 
                     return entryAddon?.PublicBaseURL +  remoteName + '.js';
             default:
-                return pbRelation?.AddonRelativeURL;
+                return relation?.AddonRelativeURL;
         }
     }
 
@@ -227,25 +292,35 @@ export class PageBuilderService {
 
     }
 
-    initPageBuilder(): void {
-        // TODO: Get the sections and the blocks data from the server.
-        let pageName = '1';
-        this.http.getHttpCall(`http://localhost:4500/api/pages?pageName=${pageName}`)
-        // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/pages?pageName=${pageName}`)
-            .subscribe(res => {
-            this.pageChangeSubject.next(res['page']);
-        });
+    getSectionColumnKey(sectionKey: string = '', index: string = '') {
+        return `${sectionKey}_column_${index}`;
     }
 
-    initPageEditor(addonUUID: string): void {
+    initPageBuilder(pageKey: string): void {
+        // TODO: Load the saved page from the session for now.
+        const savedPage: Page = JSON.parse(sessionStorage.getItem('page')) ?? null;
+
+        if (savedPage) {
+            this.pageSubject.next(savedPage);
+        } else {
+            // TODO: Get the sections and the blocks data from the server.
+            this.http.getHttpCall(`http://localhost:4500/api/pages?pageKey=${pageKey}`)
+            // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/pages?pageKey=${pageKey}`)
+                .subscribe(res => {
+                this.pageSubject.next(res['page']);
+            });
+        }
+    }
+
+    initPageEditor(addonUUID: string, pageType: string): void {
         // debug locally
         if (!this.availableBlocksSubject.value || this.availableBlocksSubject.value.length === 0) {
-            this.http.postHttpCall('http://localhost:4500/api/init_page_editor', { PageType: ''})
-            // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page_editor`, {})
-                .subscribe((res: { relation: PageRelation, addon: InstalledAddon }[]) => {
+            this.http.postHttpCall('http://localhost:4500/api/init_page_editor', { PageType: pageType})
+            // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page_editor`, { PageType: pageType})
+                .subscribe((res: { relation: NgComponentRelation, addon: InstalledAddon }[]) => {
                     const availableBlocks: AvailableBlock[] = [];
                     res.forEach(data => {
-                        const relation: PageRelation = data?.relation;
+                        const relation: NgComponentRelation = data?.relation;
                         const addon: InstalledAddon = data?.addon;
                         
                         if (relation && addon) {
@@ -296,46 +371,88 @@ export class PageBuilderService {
         // Keep the page builder editor.
         if (this.editorsBreadCrumb.length > 1) {
             // Maybe we want to compare the last editor for validation ?
-            this.clearActiveSection();
             const lastEditor = this.editorsBreadCrumb.pop();
             this.changeCurrentEditor();
         }
     }
 
-    clearActiveSection() {
-        var lastActiveSection = document.getElementsByClassName("active-section");
-        if(lastActiveSection.length){
-            lastActiveSection[0].classList.remove("active-section");
+    updatePageFromEditor(pageData: PageEditor) {
+        const currentPage = this.pageSubject.value;
+
+        if (currentPage) {
+            currentPage.Name = pageData.pageName;
+            currentPage.Description = pageData.pageDescription;
+            currentPage.Layout.MaxWidth = pageData.maxWidth;
+            // currentPage.Layout.ColumnsHorizntalGap = pageData.columnsHorizntalGap;
+            // currentPage.Layout.ColumnsVerticalGap = pageData.columnsVerticalGap;
+            currentPage.Layout.SectionsGap = pageData.sectionsGap;
+            // currentPage.Layout.RoundedCorners = pageData.roundedCorners;
+
+            this.pageSubject.next(currentPage);
         }
     }
 
-    clearSections() {
-        this.sectionsSubject.next([]);
+    updateSectionFromEditor(sectionData: SectionEditor) {
+        const currentSection = this.sectionsSubject.value.find(section => section.Key === sectionData.id);
+
+        if (currentSection) {
+            currentSection.Name = sectionData.sectionName;
+            currentSection.Split = sectionData.split;
+            currentSection.Height = sectionData.height;
+
+            const splitArr = currentSection.Split.split(' ');
+            if (splitArr && splitArr.length > 0) {
+
+                // TODO: Check this.
+                // If we need to add columns
+                if (splitArr.length > currentSection.Columns.length) {
+                    while (splitArr.length > currentSection.Columns.length) {
+                        currentSection.Columns.push({});
+                    }
+                } else if (splitArr.length < currentSection.Columns.length) {
+                    while (splitArr.length < currentSection.Columns.length) {
+                        currentSection.Columns.pop();
+                    }
+                }
+            }
+        }
+
+        this.sectionsSubject.next(this.sectionsSubject.value);
     }
 
-    addSection(section: PageSection = null) {
+    onClearSections() {
+        this.pageSubject.value.Layout.Sections = [];
+        this.sectionsSubject.next(this.pageSubject.value.Layout.Sections);
+        // this.pageSubject.next(this.pageSubject.value);
+        
+
+        // TODO: clear all blocks?
+    }
+
+    onAddSection(section: PageSection = null) {
         // Create new section
         if (!section) {
             section = this.createNewSection();
         }
         
-        // Add it to the sections subject.
-        const sections = [...this.sectionsSubject.value, section];
-        this.sectionsSubject.next(sections);
-        
-        // Add new Column in page layout that represent the new section.
-        this.pageChangeSubject.value.Layout.Sections = sections;
+        // Add the new section to page layout.
+        this.pageSubject.value.Layout.Sections.push(section);
+        this.sectionsSubject.next(this.pageSubject.value.Layout.Sections);
+        // this.pageSubject.next(this.pageSubject.value);
     }
 
-    removeSection(sectionId: string) {
+    onRemoveSection(sectionId: string) {
         const index = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
         if (index > -1) {
             // First remove all blocks.
-            this.sectionsSubject.value[index].Columns.forEach(column => {
-                if (column.Block) {
-                    this.removeBlock(column.Block.BlockKey);
-                }
-            });
+            // this.sectionsSubject.value[index].Columns.forEach(column => {
+            //     if (column.Block) {
+            //         this.onRemoveBlock(column.Block.BlockKey);
+            //     }
+            // });
+
+            const blockIds = this.sectionsSubject.value[index].Columns.map(column => column?.Block?.BlockKey);
+            this.removeBlocks(blockIds)
 
             // Remove section.
             this.sectionsSubject.value.splice(index, 1);
@@ -346,18 +463,36 @@ export class PageBuilderService {
         moveItemInArray(this.sectionsSubject.value, event.previousIndex, event.currentIndex);
     }
 
-    removeBlock(blockId: string) {
-        const blockIndex = this.blocksChangeSubject.value.findIndex(block => block.Key === blockId);
+    onRemoveBlock(blockId: string) {
+        this.removeBlocks([blockId]);
+        // const blockIndex = this.blocksSubject.value.findIndex(block => block.Key === blockId);
 
-        if (blockIndex >= 0) {
-            this.blocksChangeSubject.value.splice(blockIndex, 1);
-        }
+        // if (blockIndex >= 0) {
+        //     this.blocksSubject.value.splice(blockIndex, 1);
+        // }
+    }
+
+    private getSectionColumnById(sectionColumnId: string): PageSectionColumn {
+        let currentColumn = null;
+
+        // Get the section and column array by the pattern of the section column key.
+        const sectionColumnPatternSeparator = this.getSectionColumnKey();
+        const sectionColumnArr = sectionColumnId.split(sectionColumnPatternSeparator);
+
+        if (sectionColumnArr.length === 2) {
+            // Get the section id to get the section index.
+            const sectionId = sectionColumnArr[0];
+            const sectionIndex = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
+            // Get the column index.
+            const columnIndex = sectionColumnArr[1];
+            currentColumn = this.sectionsSubject.value[sectionIndex].Columns[columnIndex];
+        } 
+        
+        return currentColumn;
     }
 
     onBlockDropped(event: CdkDragDrop<any[]>, sectionId: string) {
-        if (event.previousContainer === event.container) {
-            moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-        } else if (event.previousContainer.id == 'availableBlocks') {
+        if (event.previousContainer.id == 'availableBlocks') {
             // Create new block from the relation (previousContainer.data is AvailableBlock object).
             const relation = event.previousContainer.data[event.previousIndex].relation;
             relation["Options"] = event.previousContainer.data[event.previousIndex].options;
@@ -367,31 +502,34 @@ export class PageBuilderService {
                 Relation: relation
             }
 
-            // Set the block key in the section block
-            const sectionIndex = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
-            this.sectionsSubject.value[sectionIndex].Columns[event.currentIndex].Block = { 
-                BlockKey: block.Key
-            };
+            // Get the column.
+            const currentColumn = this.getSectionColumnById(event.container.id);
             
-            // Add the block to the page blocks
-            this.pageChangeSubject.value.Blocks.push(block);
-            this.blocksChangeSubject.next(this.pageChangeSubject.value.Blocks);
-
-            // copyArrayItem(event.previousContainer.data, this.sectionsSubject.value[sectionIndex].Columns, event.previousIndex, event.currentIndex);
+            // Set the block key in the section block only if there is a blank column.
+            if (currentColumn && !currentColumn.Block) {
+                currentColumn.Block = { 
+                    BlockKey: block.Key
+                };
+                
+                // Add the block to the page blocks
+                this.pageSubject.value.Blocks.push(block);
+                this.addBlocks([block]);
+                
+                // copyArrayItem(event.previousContainer.data, this.sectionsSubject.value[sectionIndex].Columns, event.previousIndex, event.currentIndex);
+            }
         } else {
-            // TODO: Move the Block Key in the section columns array.
-            const sectionIndex = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
-            transferArrayItem(event.previousContainer.data, this.sectionsSubject.value[sectionIndex].Columns, event.previousIndex, event.currentIndex);
-        }
-    }
+            // If the block moved between columns the same section or between different sections but not in the same column.
+            if (event.container.id !== event.previousContainer.id) {
+                // Get the column.
+                const currentColumn = this.getSectionColumnById(event.container.id);
+                // Get the previous column.
+                const previuosColumn = this.getSectionColumnById(event.previousContainer.id);
 
-    setScreenMaxWidth(value: string) {
-        let maxWidth = this.utilitiesService.coerceNumberProperty(value, 0);
-
-        if (maxWidth === 0) {
-            this.screenMaxWidthSubject.next('unset');
-        } else {
-            this.screenMaxWidthSubject.next(`${maxWidth}px`);
+                currentColumn.Block = previuosColumn.Block;
+                delete previuosColumn.Block;
+                
+                // transferArrayItem(event.previousContainer.data, this.sectionsSubject.value[sectionIndex].Columns[columnIndex], event.previousIndex, event.currentIndex);
+            }
         }
     }
 
@@ -418,8 +556,8 @@ export class PageBuilderService {
         }
     }
 
-    public publish() {
+    publishPage() {
         // TODO: Implement this.
-        sessionStorage.setItem('sections', JSON.stringify(this.sectionsSubject.value));
+        sessionStorage.setItem('page', JSON.stringify(this.pageSubject.value));
     }
 }

@@ -1,3 +1,5 @@
+$z-Index-min: 0;
+
 .remote-loader-container {
     pointer-events: none;
     opacity: 0.5;
@@ -9,7 +11,7 @@
     left: 50%;
     max-width: 240px;
     transform: translate(-50%, 50%);
-    z-index: 2;
+    z-index: $z-Index-min + 2;
     margin-top: -2.5rem;
 }
 
@@ -20,9 +22,10 @@
     border-radius: 0.25rem;
     min-height: 250px;
     background-color: #fff;
-
-    .cdk-drag-placeholder {
-        opacity: 0;
+    
+    &.active-section {
+        border: 2px dashed #000;
+        z-index: $z-Index-min + 11;
     }
 
     .section-toolbar {
@@ -32,15 +35,11 @@
         width: calc(100% + 2px);
     }
 
-    .block-toolbar {
-        @include block-editor-toolbar();
-    }
-
     .section-background {
         position: absolute;
         width: 100%;
         height: 100%;
-        z-index: 0;
+        z-index: $z-Index-min;
 
         .back-template {
             width: 8.3333%;
@@ -67,17 +66,21 @@
         }
     }
 
-    &.active-section {
-        border: 2px dashed #000;
-        z-index: 11;
+    .section-column {
+        z-index: $z-Index-min + 1;
+        border: 3px solid red;
     }
 
-    .active-block{
+    .block-toolbar {
+        @include block-editor-toolbar();
+    }
+
+    .active-block {
         border: 2px dashed #000;
-        z-index: 11;
+        z-index: $z-Index-min + 12;
         position: relative;
 
-        .block-editable-state{
+        .block-editable-state {
             opacity: 1;
         }
    }
