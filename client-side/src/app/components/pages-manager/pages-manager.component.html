@@ -1,23 +1,35 @@
+<pep-page-layout [addPadding]="false">
+    <ng-container pep-top-area>
+        <pep-top-bar class="main-top-heaer"  [title]="!isAddNewPage ?  ('Pages_Main_Header' | translate) : ''">
+            <div header-start-content>
+                <div *ngIf="isAddNewPage" header-end-content>
+                    <pep-button  class="back-button pull-left flip" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="navigateBackToMainPage();"></pep-button>
+                    <div class="main-header pep-spacing-element title title-lg pull-left flip"><span  title="Select a Page">{{'Pages_AddNew_Header' | translate}}</span></div>
+                </div>
+            </div>
+            <div header-end-content>
+                <pep-menu class="pep-spacing-element " [items]="mainMenuItems" (menuItemClick)="onMainMenuItemClicked($event)">
+                </pep-menu>
+            </div>
+        </pep-top-bar>
 
-<pep-top-bar class="main-top-heaer"  [inline]="false" [title]="!isAddNewPage ?  ('Pages_Main_Header' | translate) : ''">
-    <div header-start-content>
-        <div *ngIf="isAddNewPage" header-end-content>
-            <pep-button  class="back-button pull-left flip" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="navigateBackToMainPage();"></pep-button>
-            <div class="main-header pep-spacing-element title title-lg pull-left flip"><span  title="Select a Page">{{'Pages_AddNew_Header' | translate}}</span></div>
-        </div>
+    </ng-container>
+
+    <ng-container pep-main-area>
+        <div style="height:100%;overflow:auto;">
+        <ng-container *ngIf="!isAddNewPage; then mainBlock; else addNewBlock"></ng-container>
     </div>
-    <div header-end-content>
-        <pep-menu class="pep-spacing-element " [items]="mainMenuItems" (menuItemClick)="onMainMenuItemClicked($event)">
-        </pep-menu>
-    </div>
-</pep-top-bar>
+ </ng-container>
+</pep-page-layout>
+
+<!--
 <div class="main-content">
     <div class="content">
-        <ng-container *ngIf="!isAddNewPage; then mainBlock; else addNewBlock"></ng-container>
+
 
 
     </div>
-</div>
+</div> -->
 
 <ng-template #mainBlock>
     <span class="body-md pageExplanation">{{ 'Pages_Main_Explanation' | translate }}</span>
@@ -36,70 +48,27 @@
             <h2>{{ "Pages_No_Pages_Header" | translate}}</h2>
             <span>{{ "Pages_No_Pages_Msg" | translate}}</span>
         </div>
-        <generic-list [inline]="'true'"></generic-list>
+        <!-- <generic-list [inline]="'true'"></generic-list> -->
     </div>
 </ng-template>
 
 <ng-template #addNewBlock>
     <span class="body-md pageExplanation">{{ 'Pages_AddNew_Explanation' | translate }}</span>
-    <mat-accordion [multi]="'true'">
-
-        <mat-expansion-panel *ngFor="let page of pageTypes" [expanded]="page.isExpanded" (click)="togglePanel(page)">
+    <mat-accordion class="pep-accordion" [multi]="'true'">
+        <mat-expansion-panel *ngFor="let group of pageGroups" [expanded]="group.isExpanded">
           <mat-expansion-panel-header>
             <mat-panel-title class="title title-md">
-                <mat-icon [ngClass]="{ 'rotateUp': page.isExpanded , 'rotateDown': !page.isExpanded }">
-                    <pep-icon name="arrow_down"></pep-icon>
-                </mat-icon>
-                {{page.title | translate}}
+                {{group.title | translate}}
             </mat-panel-title>
-
           </mat-expansion-panel-header>
-            <div class="page-cube pull-left flip" *ngFor="let tmpPage of  page.pages">
-                <div class="page-cube-inner">
+            <div class="page-cube pull-left flip" *ngFor="let tmpPage of  group.pages">
+                <div class="page-cube-inner" (click)="navigateToPage(tmpPage)">
                     <div class="logo">{{tmpPage.name | translate}}</div>
+                    <div class="activeTemplate">{{'Pages_UseThis' | translate}}</div>
                 </div>
                 <div class="body-xs">{{tmpPage.description | translate}}</div>
             </div>
         </mat-expansion-panel>
-        <!-- <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title class="title title-md">
-                  {{'Pages_AddNew_Dashboard' | translate}}
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-              <div class="page-cube pull-left flip" *ngFor="let tmpPage of  tempPages">
-                  <div class="page-cube-inner">
-                      <div class="logo">{{tmpPage.name | translate}}</div>
-                  </div>
-                  <div class="body-xs">{{tmpPage.description | translate}}</div>
-              </div>
-          </mat-expansion-panel>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title class="title title-md">
-                  {{'Pages_AddNew_Item' | translate}}
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-              <div class="page-cube pull-left flip" *ngFor="let tmpPage of  tempPages">
-                  <div class="page-cube-inner">
-                      <div class="logo">{{tmpPage.name | translate}}</div>
-                  </div>
-                  <div class="body-xs">{{tmpPage.description | translate}}</div>
-              </div>
-          </mat-expansion-panel>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title class="title title-md">
-                  {{'Pages_AddNew_Generic' | translate}}
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-              <div class="page-cube pull-left flip" *ngFor="let tmpPage of  tempPages">
-                  <div class="page-cube-inner">
-                      <div class="logo">{{tmpPage.name | translate}}</div>
-                  </div>
-                  <div class="body-xs">{{tmpPage.description | translate}}</div>
-              </div>
-          </mat-expansion-panel> -->
       </mat-accordion>
 </ng-template>
 
