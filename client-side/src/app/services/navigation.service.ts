@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { Location } from '@angular/common'
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router'
+import { config } from '../components/addon.config';
 
 @Injectable({ providedIn: 'root' })
 export class NavigationService {
@@ -23,12 +24,15 @@ export class NavigationService {
         if (this.history.length > 0) {
             this.location.back();
         } else {
-            this.router.navigateByUrl('/');
+            this.router.navigate([`./settings/${config.AddonUUID}`], {
+                relativeTo: this.route,
+                queryParamsHandling: 'merge'
+            });
         }
     }
-    navigateToPage(id: number){
+    navigateToPage(pageKey: string){
         //let addonUUID = this.route.snapshot.params.addon_uuid;
-        this.router.navigate(['./page_builder/50062e0c-9967-4ed4-9102-f2bc50602d41?dev=true&edit=true'], {
+        this.router.navigate([`./page_builder/${pageKey}`], {
             relativeTo: this.route,
             queryParamsHandling: 'merge'
         });

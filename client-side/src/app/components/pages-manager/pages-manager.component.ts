@@ -70,7 +70,8 @@ export class PagesManagerComponent implements OnInit {
     };
 
     navigateToPage(template: TempPage  ){
-       this.navigationService.navigateToPage(template.id)
+        // Get page by template.
+        this.navigationService.navigateToPage('1');
     }
 
     navigateBackToMainPage(){
