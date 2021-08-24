@@ -2,7 +2,7 @@
     <div pep-side-area *ngIf="showEditor" style="padding-inline-start: 1rem;">
         <pep-side-bar #sideBar [ignoreResize]="true">
             <div header-content class="side-bar-title">
-                <pep-button *ngIf="currentEditor?.type !== 'page-builder'" class="back-button" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="navigateBackFromEditor();"></pep-button>
+                <pep-button class="back-button" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="navigateBackFromEditor();"></pep-button>
                 <div class=" title-xl ellipsis" title="{{ currentEditor?.title }}">
                     <span>{{ currentEditor?.title }}</span>
                 </div>

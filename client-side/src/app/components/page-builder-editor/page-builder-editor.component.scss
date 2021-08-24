@@ -1,5 +1,7 @@
+@import 'ngx-lib/src/core/style/abstracts/variables';
+
 label {
-    font-weight: 400;
+    font-weight: $font-weight-normal;
 }
 
 .editor-tabs {
@@ -8,6 +10,7 @@ label {
     ::ng-deep .mat-tab-header-pagination{
         display: none;
     }
+
     ::ng-deep .mat-tab-labels {
         display: grid;
         grid-template-columns: 1fr 1fr;

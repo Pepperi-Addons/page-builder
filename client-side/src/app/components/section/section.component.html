@@ -23,7 +23,7 @@
                 cdkDrag [cdkDragData]="column.Block" [cdkDragDisabled]="!editable" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" >
                 <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
                 <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
-                    class="block-toolbar" [title]="'block.title'" [isDraggable]="true"
+                    class="block-toolbar" [title]="blocksMap.get(column.Block.BlockKey).Relation?.Description" [isDraggable]="true"
                     (edit)="onEditBlockClick(column.Block.BlockKey);" (remove)="onRemoveBlockClick(column.Block.BlockKey)">
                 </toolbar-actions>
                 <div [ngClass]="{'block-editable-state': editable }">

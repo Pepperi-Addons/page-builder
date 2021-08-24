@@ -1,11 +1,13 @@
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from "@angular/core";
-import { Editor, PageBuilderService, PageEditor, SectionEditor } from '../../services/page-builder.service';
+import { Location } from '@angular/common';
 import { PepCustomizationService, PepLayoutService, PepLoaderService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
 import { PepButton } from '@pepperi-addons/ngx-lib/button';
 import { pepIconDeviceDesktop, pepIconDeviceMobile, pepIconDeviceTablet, pepIconSystemBin } from '@pepperi-addons/ngx-lib/icon';
 import { TranslateService } from '@ngx-translate/core';
 import { Page } from '@pepperi-addons/papi-sdk';
+import { Editor, PageBuilderService, PageEditor, SectionEditor } from '../../services/page-builder.service';
+import { NavigationService } from '../../services/navigation.service';
 
 type ScreenSizeType = 'desktop' | 'tablet' | 'mobile';
 
@@ -28,14 +30,15 @@ export class PageManagerComponent implements OnInit {
     // PepScreenSizeType = PepScreenSizeType;
 
     constructor(
-        public customizationService: PepCustomizationService,
-        public loaderService: PepLoaderService,
-        private translate: TranslateService,
         private renderer: Renderer2,
         private route: ActivatedRoute,
+        private translate: TranslateService,
+        // private customizationService: PepCustomizationService,
+        // private loaderService: PepLoaderService,
         private utilitiesService: PepUtilitiesService,
         private layoutService: PepLayoutService,
-        private pageBuilderService: PageBuilderService
+        private pageBuilderService: PageBuilderService,
+        private navigationService: NavigationService,
     ) {
         this.pageBuilderService.onEditorChange$.subscribe((editor) => {
             this.currentEditor = editor;
@@ -148,10 +151,14 @@ export class PageManagerComponent implements OnInit {
     }
 
     // clearPage() {
-    //     this.pageBuilderService.onClearSections();
+    //     this.pageBuilderService.onClearPageSections();
     // }
 
     navigateBackFromEditor() {
-        this.pageBuilderService.navigateBackFromEditor();
+        if (this.currentEditor?.type === 'page-builder') {
+            this.navigationService.back();
+        } else {
+            this.pageBuilderService.navigateBackFromEditor();
+        }
     }
 }
