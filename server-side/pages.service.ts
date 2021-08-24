@@ -1,9 +1,10 @@
-import { PapiClient, InstalledAddon, NgComponentRelation } from '@pepperi-addons/papi-sdk'
+import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonData, AddonDataScheme } from '@pepperi-addons/papi-sdk'
 import { Client } from '@pepperi-addons/debug-server';
 import { v4 as uuid } from 'uuid';
 import { TempBlankPageData } from './pages.model';
 
 const TABLE_NAME = 'Pages';
+const TABLE_DRAFT_NAME = 'PagesDrafts';
 
 export class PagesService {
     papiClient: PapiClient;
@@ -25,6 +26,10 @@ export class PagesService {
         return this.papiClient.get(`/addons/data/relations?where=RelationName=${relationName}`);
     }
 
+    private getInstalledAddon(uuid: string): Promise<InstalledAddon> {
+        return this.papiClient.addons.installedAddons.addonUUID(uuid).get();
+    }
+
     async getPageEditorData(body) {
         // Get the PageBlock relations 
         const pageBlockRelations: NgComponentRelation[] = await this.getRelations('PageBlock');
@@ -44,8 +49,6 @@ export class PagesService {
         pageBlockRelations.forEach((relation: NgComponentRelation) => {
             const installedAddon: InstalledAddon | undefined = addons.find((ia: InstalledAddon) => ia?.Addon?.UUID === relation?.AddonUUID);
             if (installedAddon) {
-                // const availableAddon = this.createAvailableAddon(relation, entryAddon);
-                // availableBlocks.push(availableAddon);
                 availableBlocks.push({
                     relation: relation,
                     addon: installedAddon
@@ -57,47 +60,83 @@ export class PagesService {
     }
     
     // TODO: Check that the table is not exist.
-    async createPagesTableSchemes() {
-        await this.papiClient.addons.data.schemes.post({
+    async createPagesTablesSchemes(): Promise<AddonDataScheme[]> {
+        const promises: AddonDataScheme[] = [];
+        
+        // Create pages table
+        const createPagesTable = await this.papiClient.addons.data.schemes.post({
             Name: TABLE_NAME,
             Type: 'cpi_meta_data',
-            Fields: {
-                Name: {
-                    Type: 'String'
-                },
-                Description: {
-                    Type: 'String'
-                },
-                Type: {
-                    Type: 'String'
-                }
-            }
         });
+
+        // Create pages draft table
+        const createPagesDraftTable = await this.papiClient.addons.data.schemes.post({
+            Name: TABLE_DRAFT_NAME,
+            Type: 'meta_data',
+            // Fields: {
+            //     Name: {
+            //         Type: 'String'
+            //     },
+            //     Description: {
+            //         Type: 'String'
+            //     },
+            //     Type: {
+            //         Type: 'String'
+            //     }
+            // }
+        });
+
+        promises.push(createPagesTable);
+        promises.push(createPagesDraftTable);
+        return Promise.all(promises);
     }
 
-    dropPagesTable() {
+    dropPagesTables(): Promise<any> {
+        const promises: any[] = [];
+        
         // TODO: Check that this is working.
-        return this.papiClient.post(`/addons/data/schemes/${TABLE_NAME}/purge`);
         // return this.papiClient.addons.data.schemes.tableName('table').purge();
+        promises.push(this.papiClient.post(`/addons/data/schemes/${TABLE_NAME}/purge`));
+        promises.push(this.papiClient.post(`/addons/data/schemes/${TABLE_DRAFT_NAME}/purge`));
+
+        return Promise.all(promises);
     }
 
-    getInstalledAddon(uuid: string): Promise<InstalledAddon> {
-        return this.papiClient.addons.installedAddons.addonUUID(uuid).get();
-    }
-
-    getPage(options) {
+    getPage(options): Promise<Page> {
         // TODO: Change to pages endpoint after added in NGINX.
         // return this.papiClient.pages.find
         // return this.papiClient.addons.data.uuid(this.addonUUID).table(TABLE_NAME).find(options);
 
-        return { page: TempBlankPageData };
+        const promise = new Promise<Page>((resolve, reject): void => {
+            resolve(TempBlankPageData);
+        });
+
+        return promise;
     }
 
-    upsertPage(body) {
-        if (body.Key) {
-            body.Key = uuid();
+    upsertPage(page: Page): Promise<AddonData> {
+        if (page.Key) {
+            page.Key = uuid();
         }
 
-        return this.papiClient.addons.data.uuid(this.addonUUID).table(TABLE_NAME).upsert(body);
+        return this.papiClient.addons.data.uuid(this.addonUUID).table(TABLE_DRAFT_NAME).upsert(page);
+    }
+
+    publishPage(page: Page): Promise<AddonData> {
+        const promises: AddonData[] = [];
+        if (page.Key) {
+            // Delete the draft and upsert the page into Pages table.
+            // TODO: Why delete get id as number?
+            // promises.push(this.papiClient.addons.data.uuid(this.addonUUID).table(TABLE_DRAFT_NAME).delete(page.Key));
+            promises.push(this.papiClient.addons.data.uuid(this.addonUUID).table(TABLE_NAME).upsert(page));
+
+            // const options = {};
+            // const a = this.papiClient.addons.data.uuid(this.addonUUID).table(TABLE_NAME).find(options);
+            // a.then(value => {
+            //     value[0].
+            // })
+        }
+
+        return Promise.all(promises);
     }
 }

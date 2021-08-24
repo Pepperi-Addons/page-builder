@@ -12,16 +12,19 @@ export class EmptyRouteComponent {}
 
 const routes: Routes = [
     {
-        path: ``,
+        path: `settings/:addonUUID`,
         children: [
-            // {
-            //     path: 'pages',
-            //     loadChildren: () => import('./components/pages-manager/pages-manager.module').then(m => m.PagesManagerModule)
-            // },
             {
+                path: '',
+                loadChildren: () => import('./components/pages-manager/pages-manager.module').then(m => m.PagesManagerModule)
+            },
+        ]
+    },
+    {
+        path: `addons/:addonUUID`,
+        children: [
+           {
                 path: 'page_builder/:page_key',
-                // component: PageBuilderComponent
-                // TODO: solve routing
                 loadChildren: () => import('./components/page-manager/page-manager.module').then(m => m.PageManagerModule)
             }
         ]

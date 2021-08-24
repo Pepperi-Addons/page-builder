@@ -7,7 +7,7 @@ import { PageSizeType } from '@pepperi-addons/papi-sdk';
 import { Observable, ReplaySubject } from 'rxjs';
 import { AvailableBlock, PageBuilderService, PageEditor } from '../../services/page-builder.service';
 // import { subject } from '../page-builder/page-builder.component';
-import { config } from '../addon.config';
+// import { config } from '../addon.config';
 
 type UiPageSizeType = PageSizeType | 'NONE';
 
@@ -90,7 +90,7 @@ export class PageBuilderEditorComponent implements OnInit {
     ngOnInit(): void {
         // this.pageBuilderService.pageLoad$.subscribe(page => {
         //     if (page) {
-                const addonUUID = this.route.snapshot.params.addon_uuid || config.AddonUUID;
+                const addonUUID = this.route.snapshot.params.addon_uuid; // || config.AddonUUID;
                 this.pageBuilderService.initPageEditor(addonUUID, '');
         //     }
         // });
