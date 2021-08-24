@@ -80,13 +80,14 @@
                         border-radius: .25rem;
                         position: relative;
                         overflow: hidden;
+                        cursor: pointer;
 
                         &:hover{
                             .activeTemplate {
                                 bottom: 0 !important;
-                                -webkit-transition: all 0.4s;
-                                -moz-transition: all 0.4s;
-                                transition: all 0.4s;
+                                -webkit-transition: all 0.25s;
+                                -moz-transition: all 0.25s;
+                                transition: all 0.25s;
                             }
                         }
 
@@ -115,7 +116,10 @@
                             justify-content: center;
                             flex-direction: column;
                             text-align: center;
-                            cursor: pointer;
+
+                            -webkit-transition: all 0.25s;
+                            -moz-transition: all 0.25s;
+                            transition: all 0.25s;
                         }
                     }
 
