@@ -13,11 +13,8 @@ $z-index-toolbar: $z-index-min + 2;
 .section-container {
     position: relative;
     display: grid;
-    // border: 1px solid #999999;
-    // background-color: #fff;
     border-radius: $border-radius-md;
     min-height: 250px;
-    
     
     .columns-wrapper {
         display: grid;

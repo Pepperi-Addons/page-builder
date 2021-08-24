@@ -7,46 +7,44 @@
         margin-inline-end: 0.5rem;
     }
 }
-// pep-main-area{
-    // display: grid;
-    .header-container {
-        display: flex;
-        position: relative;
-        z-index: 3;
-        height: 3rem;
-        align-items: center;
-        justify-content: space-between;
-        background: rgb(255, 255, 255);
-        box-shadow: 0px 2px 4px 0px rgb(0 0 0 / 4%), 0px 4px 8px 0px rgb(0 0 0 / 4%), 0px 8px 16px 0px rgb(0 0 0 / 4%);
-        padding: 0 .5rem;
 
-        .header-content {
-            flex: 1 1 0px;
-        }
+.header-container {
+    display: flex;
+    position: relative;
+    z-index: 3;
+    height: 3rem;
+    align-items: center;
+    justify-content: space-between;
+    background: rgb(255, 255, 255);
+    box-shadow: 0px 2px 4px 0px rgb(0 0 0 / 4%), 0px 4px 8px 0px rgb(0 0 0 / 4%), 0px 8px 16px 0px rgb(0 0 0 / 4%);
+    padding: 0 .5rem;
 
-        .header-title {
-            color: rgba(26, 26, 26, 0.7);
-            font-size: 12px;
-            font-family: Inter-Regular;
-            letter-spacing: 0.11px;
+    .header-content {
+        flex: 1 1 0px;
+    }
 
-            b {
-                color: #000;
-            }
-        }
+    .header-title {
+        color: rgba(26, 26, 26, 0.7);
+        font-size: 12px;
+        font-family: Inter-Regular;
+        letter-spacing: 0.11px;
 
-        .header-group-btn {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
-
-        .header-end {
-            display: flex;
-            justify-content: flex-end;
+        b {
+            color: #000;
         }
     }
-// }
+
+    .header-group-btn {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+    .header-end {
+        display: flex;
+        justify-content: flex-end;
+    }
+}
 
 .page-builder-wrapper {
     width: 100%;
@@ -62,13 +60,13 @@
         top: 0;
         z-index: 10;
         display: none;
-      }
+    }
 
-      &.editable-state{
+    &.editable-state{
         .backdrop {
-           display: block;
-       }
-     }
+            display: block;
+        }
+    }
 }
 
 

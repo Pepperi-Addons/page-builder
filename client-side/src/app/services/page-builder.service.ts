@@ -163,22 +163,30 @@ export class PageBuilderService {
             this._pageBlockProgressMap.set(block.Key, initialProgress);
         });
         
-        this._pageBlockProgress$.next(this.pageBlockProgressMap);
+        this.notifyBlockProgressMapChange();
     }
     
+    private removeAllBlocks() {
+        this._pageBlockProgressMap.clear();
+        this.notifyBlockProgressMapChange();
+    }
+
     private removeBlocks(blockIds: string[]) {
         blockIds.forEach(blockId => {
             this._pageBlockProgressMap.delete(blockId);
         });
-        
-        this._pageBlockProgress$.next(this.pageBlockProgressMap);
+        this.notifyBlockProgressMapChange();
     }
 
     private updateBlockLoaded(blockKey: string, isLoad: boolean) {
         this._pageBlockProgressMap.get(blockKey).load = isLoad;
-        this._pageBlockProgress$.next(this.pageBlockProgressMap);
+        this.notifyBlockProgressMapChange();
     }
     
+    private notifyBlockProgressMapChange() {
+        this._pageBlockProgress$.next(this.pageBlockProgressMap);
+    }
+
     private loadBlocks(page: Page) {
         // TODO: Write some logic to load the blocks by priority.
         if (page) {
@@ -307,8 +315,14 @@ export class PageBuilderService {
         }
     }
 
-    private getRemoteLoaderOptions() {
-
+    private getRemoteLoaderOptions(relation: NgComponentRelation, addon: InstalledAddon) {
+        return {
+            addonId: relation?.AddonUUID,
+            remoteEntry: this.getRemoteEntryByType(relation, addon, relation.AddonRelativeURL),
+            remoteName: relation.AddonRelativeURL,
+            exposedModule: './' + relation?.ModuleName,
+            componentName: relation?.ComponentName,
+        }
     }
 
     getSectionColumnKey(sectionKey: string = '', index: string = '') {
@@ -345,13 +359,7 @@ export class PageBuilderService {
                         if (relation && addon) {
                             availableBlocks.push({
                                 relation: relation,
-                                options: {
-                                    addonId: relation?.AddonUUID,
-                                    remoteEntry: this.getRemoteEntryByType(relation, addon, relation.AddonRelativeURL),
-                                    remoteName: relation.AddonRelativeURL,
-                                    exposedModule: './' + relation?.ModuleName,
-                                    componentName: relation?.ComponentName,
-                                }
+                                options: this.getRemoteLoaderOptions(relation, addon)
                             });
                         }
                     });
@@ -419,34 +427,36 @@ export class PageBuilderService {
             currentSection.Split = sectionData.split;
             currentSection.Height = sectionData.height;
 
-            const splitArr = currentSection.Split.split(' ');
-            if (splitArr && splitArr.length > 0) {
-
-                // TODO: Check this.
-                // If we need to add columns
-                if (splitArr.length > currentSection.Columns.length) {
-                    while (splitArr.length > currentSection.Columns.length) {
-                        currentSection.Columns.push({});
-                    }
-                } else if (splitArr.length < currentSection.Columns.length) {
-                    while (splitArr.length < currentSection.Columns.length) {
-                        currentSection.Columns.pop();
+            // Get the new columns number from currentSection.Split, if its undefined put a default 1.
+            const newColumnsLength = currentSection.Split?.split(' ').length || 1;
+            if (newColumnsLength > currentSection.Columns.length) {
+                while (newColumnsLength > currentSection.Columns.length) {
+                    currentSection.Columns.push({});
+                }
+            } else if (newColumnsLength < currentSection.Columns.length) {
+                while (newColumnsLength < currentSection.Columns.length) {
+                    const colunm = currentSection.Columns.pop();
+                    // If there is block in this column delete it.
+                    if (colunm.Block) {
+                        this.removeBlocks([colunm.Block.BlockKey]);
                     }
                 }
             }
         }
 
+        // Update section details.
         this.sectionsSubject.next(this.sectionsSubject.value);
     }
 
-    onClearSections() {
-        this.pageSubject.value.Layout.Sections = [];
-        this.sectionsSubject.next(this.pageSubject.value.Layout.Sections);
-        // this.pageSubject.next(this.pageSubject.value);
-        
+    // onClearPageSections() {
+    //     // Remove all blocks.
+    //     this.pageSubject.value.Blocks = [];
+    //     this.removeAllBlocks();
 
-        // TODO: clear all blocks?
-    }
+    //     // Remove all sections.
+    //     this.pageSubject.value.Layout.Sections = [];
+    //     this.sectionsSubject.next(this.pageSubject.value.Layout.Sections);
+    // }
 
     onAddSection(section: PageSection = null) {
         // Create new section
