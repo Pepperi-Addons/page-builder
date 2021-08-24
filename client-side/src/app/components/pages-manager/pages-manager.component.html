@@ -42,23 +42,25 @@
 
 <ng-template #addNewBlock>
     <span class="body-md pageExplanation">{{ 'Pages_AddNew_Explanation' | translate }}</span>
-    <mat-accordion [multi]="'true'">
+    <mat-accordion class="pep-accordion" [multi]="'true'">
 
-        <mat-expansion-panel *ngFor="let page of pageTypes" [expanded]="page.isExpanded" (click)="togglePanel(page)">
+        <mat-expansion-panel *ngFor="let page of pageTypes" [expanded]="page.isExpanded">
           <mat-expansion-panel-header>
             <mat-panel-title class="title title-md">
-                <mat-icon [ngClass]="{ 'rotateUp': page.isExpanded , 'rotateDown': !page.isExpanded }">
+                <!-- <mat-icon [ngClass]="{ 'rotateUp': page.isExpanded , 'rotateDown': !page.isExpanded }">
                     <pep-icon name="arrow_down"></pep-icon>
-                </mat-icon>
+                </mat-icon> -->
                 {{page.title | translate}}
             </mat-panel-title>
 
           </mat-expansion-panel-header>
             <div class="page-cube pull-left flip" *ngFor="let tmpPage of  page.pages">
                 <div class="page-cube-inner">
-                    <div class="logo">{{tmpPage.name | translate}}</div>
+                    <div class="logo a">{{tmpPage.name | translate}}</div>
+                    <div class="activeTemplate">{{'UseMe' | translate}}</div>
                 </div>
                 <div class="body-xs">{{tmpPage.description | translate}}</div>
+
             </div>
         </mat-expansion-panel>
         <!-- <mat-expansion-panel>
