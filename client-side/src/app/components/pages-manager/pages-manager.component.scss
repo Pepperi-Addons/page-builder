@@ -29,39 +29,39 @@
 }
 .mat-expansion-panel{
     max-width: 34rem;
-    box-shadow: none !important;
+    // box-shadow: none !important;
 
-    .mat-expansion-panel-header{
-        height: 3rem;
-        padding: 0;
-        border-radius: 0;
-        margin-bottom: 1rem;
-        border-bottom: hsla(0, 0%, 10%, 0.24);
-        border-bottom: 1px solid hsla(var(--pep-color-system-primary-h, 0), var(--pep-color-system-primary-s, 0%), var(--pep-color-system-primary-l, 10%), 0.24);
+    // .mat-expansion-panel-header{
+    //     height: 3rem;
+    //     padding: 0;
+    //     border-radius: 0;
+    //     margin-bottom: 1rem;
+    //     border-bottom: hsla(0, 0%, 10%, 0.24);
+    //     border-bottom: 1px solid hsla(var(--pep-color-system-primary-h, 0), var(--pep-color-system-primary-s, 0%), var(--pep-color-system-primary-l, 10%), 0.24);
 
-    .rotateUp{
-        transform: rotate(180deg);
-        animation-duration: 3000ms;
-    }
-    .rotateDown{
-        transform: rotate(0deg);
-        animation-duration: 2s;
-    }
+    // .rotateUp{
+    //     transform: rotate(180deg);
+    //     animation-duration: 3000ms;
+    // }
+    // .rotateDown{
+    //     transform: rotate(0deg);
+    //     animation-duration: 2s;
+    // }
 
-    @keyframes rotateUp{
-        from{  transform: rotate(0deg) }
-        to{  transform: rotate(180deg) }
+    // @keyframes rotateUp{
+    //     from{  transform: rotate(0deg) }
+    //     to{  transform: rotate(180deg) }
 
-    }
-    @keyframes rotateDown{
-        from{  transform: rotate(180deg) }
-        to{  transform: rotate(0deg) }
+    // }
+    // @keyframes rotateDown{
+    //     from{  transform: rotate(180deg) }
+    //     to{  transform: rotate(0deg) }
 
-    }
+    // }
 
-    }
+    // }
      ::ng-deep .mat-expansion-panel-body{
-                padding: 0 !important;
+                padding-top: 1rem;
                 display: flex;
                 gap: 1rem;
 
@@ -79,6 +79,16 @@
                         0px 4px 8px 0px rgba(0, 0, 0, 0.04);
                         border-radius: .25rem;
                         position: relative;
+                        overflow: hidden;
+
+                        &:hover{
+                            .activeTemplate {
+                                bottom: 0 !important;
+                                -webkit-transition: all 0.4s;
+                                -moz-transition: all 0.4s;
+                                transition: all 0.4s;
+                            }
+                        }
 
                         .logo{
                             color: rgb(0, 0, 0);
@@ -100,12 +110,12 @@
                             height: 2rem;
                             position: absolute;
                             bottom: -2rem;
-                            background-color: #000;
-                            opacity: 0.8;
+                            background-color: rgb(51, 51, 51);
                             display: flex;
                             justify-content: center;
                             flex-direction: column;
                             text-align: center;
+                            cursor: pointer;
                         }
                     }
 

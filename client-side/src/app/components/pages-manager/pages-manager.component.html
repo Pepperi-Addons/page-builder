@@ -43,65 +43,20 @@
 <ng-template #addNewBlock>
     <span class="body-md pageExplanation">{{ 'Pages_AddNew_Explanation' | translate }}</span>
     <mat-accordion class="pep-accordion" [multi]="'true'">
-
-        <mat-expansion-panel *ngFor="let page of pageTypes" [expanded]="page.isExpanded">
+        <mat-expansion-panel *ngFor="let group of pageGroups" [expanded]="group.isExpanded">
           <mat-expansion-panel-header>
             <mat-panel-title class="title title-md">
-                <!-- <mat-icon [ngClass]="{ 'rotateUp': page.isExpanded , 'rotateDown': !page.isExpanded }">
-                    <pep-icon name="arrow_down"></pep-icon>
-                </mat-icon> -->
-                {{page.title | translate}}
+                {{group.title | translate}}
             </mat-panel-title>
-
           </mat-expansion-panel-header>
-            <div class="page-cube pull-left flip" *ngFor="let tmpPage of  page.pages">
-                <div class="page-cube-inner">
-                    <div class="logo a">{{tmpPage.name | translate}}</div>
-                    <div class="activeTemplate">{{'UseMe' | translate}}</div>
+            <div class="page-cube pull-left flip" *ngFor="let tmpPage of  group.pages">
+                <div class="page-cube-inner" (click)="navigateToPage(tmpPage)">
+                    <div class="logo">{{tmpPage.name | translate}}</div>
+                    <div class="activeTemplate">{{'Pages_UseThis' | translate}}</div>
                 </div>
                 <div class="body-xs">{{tmpPage.description | translate}}</div>
-
             </div>
         </mat-expansion-panel>
-        <!-- <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title class="title title-md">
-                  {{'Pages_AddNew_Dashboard' | translate}}
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-              <div class="page-cube pull-left flip" *ngFor="let tmpPage of  tempPages">
-                  <div class="page-cube-inner">
-                      <div class="logo">{{tmpPage.name | translate}}</div>
-                  </div>
-                  <div class="body-xs">{{tmpPage.description | translate}}</div>
-              </div>
-          </mat-expansion-panel>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title class="title title-md">
-                  {{'Pages_AddNew_Item' | translate}}
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-              <div class="page-cube pull-left flip" *ngFor="let tmpPage of  tempPages">
-                  <div class="page-cube-inner">
-                      <div class="logo">{{tmpPage.name | translate}}</div>
-                  </div>
-                  <div class="body-xs">{{tmpPage.description | translate}}</div>
-              </div>
-          </mat-expansion-panel>
-          <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title class="title title-md">
-                  {{'Pages_AddNew_Generic' | translate}}
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-              <div class="page-cube pull-left flip" *ngFor="let tmpPage of  tempPages">
-                  <div class="page-cube-inner">
-                      <div class="logo">{{tmpPage.name | translate}}</div>
-                  </div>
-                  <div class="body-xs">{{tmpPage.description | translate}}</div>
-              </div>
-          </mat-expansion-panel> -->
       </mat-accordion>
 </ng-template>
 
