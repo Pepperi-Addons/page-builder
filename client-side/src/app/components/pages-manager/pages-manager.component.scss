@@ -13,7 +13,8 @@
     }
 }
 
-.main-content{
+
+::ng-deep .pep-main-area{
     max-width: 52rem;
 
     .PagesNotFoundMsg{
