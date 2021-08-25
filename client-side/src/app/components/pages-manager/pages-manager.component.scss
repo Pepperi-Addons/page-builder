@@ -1,7 +1,37 @@
+$z-index-min: 0;
+
 .pageExplanation{
-    max-width: 34rem;
-    display: block;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     margin: 1rem 0 1.25rem 0;
+
+    span{
+        max-width: 34rem;
+        display: block;
+    }
+    div{
+        p{
+            line-height: 1.25rem !important;
+            height: 1.25rem;
+            margin: 0;
+
+            label{
+                font-size: 14px;
+                letter-spacing: 0.12px;
+                margin: 0;
+                font-weight:normal;
+
+                &.color-link{
+                    cursor: pointer;
+
+                    &:hover{
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
 }
 
 .main-top-heaer{
@@ -13,85 +43,117 @@
     }
 }
 
-.main-content{
+.add-on-width{
     max-width: 52rem;
 
     .PagesNotFoundMsg{
         height: 20rem;
+        padding: 0 4rem;
         width: inherit;
         display: flex;
         flex-direction: column;
         justify-content: center;
         text-align: center;
         background-color: #eee;
-        padding: 0 4rem;
+        position: relative;
+
+        .leaf-background{
+            height: inherit;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            overflow: hidden;
+            z-index: $z-index-min;
+
+            div{
+                width: 43%;
+                height: inherit;
+                background-size: cover;
+
+                &:first-of-type{
+                    transform: rotate(-15deg);
+                }
+                &:last-of-type{
+                    transform: rotate(60deg);
+                }
+            }
+        }
+
+        h2,
+        span{
+            z-index: $z-index-min + 1;
+        }
     }
-}
-.mat-expansion-panel{
-    max-width: 34rem;
 
-    ::ng-deep .mat-expansion-panel-body{
-                padding-top: 1rem;
-                display: flex;
-                gap: 1rem;
+    .mat-expansion-panel{
+        max-width: 34rem;
 
-                .page-cube{
-                    height: 8rem;
-                    width:7.75rem;
-                    margin-bottom: 1rem;
+        ::ng-deep .mat-expansion-panel-body{
+                    padding-top: 1rem;
+                    display: flex;
+                    gap: 1rem;
 
-                    .page-cube-inner{
-                        height: 4.5rem;
-                        margin-bottom: .5rem;;
-                        border: 1px solid rgb(153, 153, 153);
-                        box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04),
-                        0px 2px 4px 0px rgba(0, 0, 0, 0.04),
-                        0px 4px 8px 0px rgba(0, 0, 0, 0.04);
-                        border-radius: .25rem;
-                        position: relative;
-                        overflow: hidden;
-                        cursor: pointer;
+                    .page-cube{
+                        height: 8rem;
+                        width:7.75rem;
+                        margin-bottom: 1rem;
 
-                        &:hover{
+                        .page-cube-inner{
+                            height: 4.5rem;
+                            margin-bottom: .5rem;;
+                            border: 1px solid rgb(153, 153, 153);
+                            box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04),
+                            0px 2px 4px 0px rgba(0, 0, 0, 0.04),
+                            0px 4px 8px 0px rgba(0, 0, 0, 0.04);
+                            border-radius: .25rem;
+                            position: relative;
+                            overflow: hidden;
+                            cursor: pointer;
+
+                            &:hover{
+                                .activeTemplate {
+                                    bottom: 0 !important;
+                                }
+                            }
+
+                            .logo{
+                                color: rgb(0, 0, 0);
+                                font-size: 18px;
+                                font-family: Permanent Marker;
+                                font-weight: normal;
+                                text-align: center;
+                                letter-spacing: 0.15px;
+                                position: absolute;
+                                background-color: #fff;
+                                top: 50%;
+                                left: 50%;
+                                transform: translate(-50%, -50%);
+                            }
+
                             .activeTemplate {
-                                bottom: 0 !important;
+                                color: #fff;
+                                width: 100%;
+                                height: 2rem;
+                                position: absolute;
+                                bottom: -2rem;
+                                background-color: rgb(51, 51, 51);
+                                display: flex;
+                                justify-content: center;
+                                flex-direction: column;
+                                text-align: center;
+
+                                -webkit-transition: all 0.25s;
+                                -moz-transition: all 0.25s;
+                                transition: all 0.25s;
                             }
                         }
 
-                        .logo{
-                            color: rgb(0, 0, 0);
-                            font-size: 18px;
-                            font-family: Permanent Marker;
-                            font-weight: normal;
-                            text-align: center;
-                            letter-spacing: 0.15px;
-                            position: absolute;
-                            background-color: #fff;
-                            top: 50%;
-                            left: 50%;
-                            transform: translate(-50%, -50%);
-                        }
 
-                        .activeTemplate {
-                            color: #fff;
-                            width: 100%;
-                            height: 2rem;
-                            position: absolute;
-                            bottom: -2rem;
-                            background-color: rgb(51, 51, 51);
-                            display: flex;
-                            justify-content: center;
-                            flex-direction: column;
-                            text-align: center;
 
-                            -webkit-transition: all 0.25s;
-                            -moz-transition: all 0.25s;
-                            transition: all 0.25s;
-                        }
                     }
-
-
-
                 }
-            }
+    }
 }

@@ -57,6 +57,17 @@
     "Pages_AddNew_Dashboard": "Dashboard",
     "Pages_AddNew_Item": "Item",
     "Pages_AddNew_Generic": "Generic",
-    "Pages_UseThis": "Use This"
+    "Pages_UseThis": "Use This",
+    "Pages_Links_Header": "How to's",
+    "Pages_Links_Using": "Using the page builder",
+    "Pages_Links_Importing": "Importing a page",
+    "Pages_Links_Save": "Save page as draft",
+    "Pages_Links_Publish": "Publish page for use in configurations",
+    "Pages_Links_Export": "Export page"
+
+
+
+
+
 
 }

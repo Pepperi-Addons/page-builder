@@ -4,6 +4,7 @@ import { Component, OnInit, Renderer2 } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
+import { PepAddonService } from '@pepperi-addons/ngx-lib';
 import { Observable } from "rxjs";
 
 export enum Page_Type { "Homepage" = 1, "Dashbaord" = 2, "Item" = 3, "Generic" = 4, "None" = 5 };
@@ -38,18 +39,26 @@ export class PagesManagerComponent implements OnInit {
                                   {id: 3, name: 'Pages_AddNew_Simplistic' , description: 'Pages_AddNew_Simplistic_Desc', type: Page_Type.Homepage},
                                   {id: 4, name: 'Pages_AddNew_Branded' , description: 'Pages_AddNew_Branded_Desc', type: Page_Type.Homepage}];
 
-    pageGroups: Array<pageGroup> = [{ title: "Pages_AddNew_HomePage", isExpanded: true, pages: this.tempPages},
-                                  { title: "Pages_AddNew_Dashboard", isExpanded: false, pages: this.tempPages},
-                                  { title: "Pages_AddNew_Item", isExpanded: false, pages: this.tempPages},
-                                  { title: "Pages_AddNew_Generic", isExpanded: false, pages: this.tempPages}];
+     pageGroups: Array<pageGroup> = [{ title: "Pages_AddNew_HomePage", isExpanded: true, pages: this.tempPages}
+    //                               ,{ title: "Pages_AddNew_Dashboard", isExpanded: false, pages: this.tempPages},
+    //                               { title: "Pages_AddNew_Item", isExpanded: false, pages: this.tempPages},
+    //                               { title: "Pages_AddNew_Generic", isExpanded: false, pages: this.tempPages}
+
+];
+
+    public imagesPath = '';
 
     dataSource$: Observable<any[]>
 
     constructor(
+
         private renderer: Renderer2,
         private translate: TranslateService,
         private navigationService: NavigationService,
+        private pepAddonService: PepAddonService
+
     ) {
+        this.imagesPath = this.pepAddonService.getAddonStaticFolder() + 'assets/images/';
 
     }
 
@@ -76,6 +85,17 @@ export class PagesManagerComponent implements OnInit {
 
     navigateBackToMainPage(){
         this.isAddNewPage = false;
+    }
+
+    openLink(link: string) {
+        let url = 'https://www.pepperi.com/';
+        switch (link) {
+            case 'Using': {
+                    url = 'https://support.pepperi.com/hc/en-us/categories/200185656-Getting-Started-with-Pepperi-Do-these-steps-first-';
+                    break;
+            }
+        }
+
     }
 
 
