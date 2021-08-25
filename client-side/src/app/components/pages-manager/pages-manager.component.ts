@@ -46,8 +46,7 @@ export class PagesManagerComponent implements OnInit {
 
 ];
 
-    public leafRoundUrl = '';
-    public leafSkinyUrl = '';
+    public imagesPath = '';
 
     dataSource$: Observable<any[]>
 
@@ -59,9 +58,8 @@ export class PagesManagerComponent implements OnInit {
         private pepAddonService: PepAddonService
 
     ) {
-        let assetsPath = this.pepAddonService.getAddonStaticFolder();// sessionStorage.getItem('AddonAssetsPath');
-        this.leafRoundUrl = assetsPath + 'assets/images/brand-leaf-round.svg';
-        this.leafSkinyUrl = assetsPath + 'assets/images/brand-leaf-skiny.svg';
+        this.imagesPath = this.pepAddonService.getAddonStaticFolder() + 'assets/images/';
+
     }
 
     ngOnInit() {

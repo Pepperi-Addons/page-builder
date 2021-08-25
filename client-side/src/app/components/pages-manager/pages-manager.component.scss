@@ -24,6 +24,10 @@ $z-index-min: 0;
 
                 &.color-link{
                     cursor: pointer;
+
+                    &:hover{
+                        text-decoration: underline;
+                    }
                 }
             }
         }
