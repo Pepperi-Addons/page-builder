@@ -1,3 +1,4 @@
+@import 'ngx-lib/src/core/style/abstracts/variables';
 @import '../../../mixins.scss';
 
 .side-bar-title {
@@ -16,8 +17,9 @@
 
     .header-container {
         display: flex;
-        position: relative;
-        z-index: $z-index-min + 3;
+        position: sticky;
+        top: 0;
+        z-index: $z-index-medium;
         height: 3rem;
         align-items: center;
         justify-content: space-between;
