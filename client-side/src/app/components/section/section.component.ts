@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, Renderer2, SimpleChanges, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragExit, CdkDragStart, CdkDropList, copyArrayItem, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { BlockProgress, Editor, PageBuilderService } from 'src/app/services/page-builder.service';
-import { PageBlock, PageSection, PageSectionColumn, SplitType } from '@pepperi-addons/papi-sdk';
+import { PageBlock, PageSection, PageSectionColumn, PageSizeType, SplitType } from '@pepperi-addons/papi-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -22,7 +22,7 @@ export class SectionComponent implements OnInit, OnChanges {
     @Input() id: string;
     @Input() name: string;
     @Input() editable = false;
-
+    
     private _screenSize: PepScreenSizeType;
     @Input()
     set screenSize(value: PepScreenSizeType) {
@@ -66,6 +66,8 @@ export class SectionComponent implements OnInit, OnChanges {
     selected = false;
     selectedBlockId = '';
     
+    pepScreenSizeToFlipToVertical = PepScreenSizeType.SM;
+
     constructor(
         private renderer: Renderer2,
         private translate: TranslateService,
@@ -103,7 +105,7 @@ export class SectionComponent implements OnInit, OnChanges {
     private refreshSplit() {
         setTimeout(() => {
             if (this.sectionContainerRef) {
-                if (this.screenSize <= PepScreenSizeType.LG) {
+                if (this.screenSize <= this.pepScreenSizeToFlipToVertical) {
                     this.columnsElementRef.toArray().map((section, sectionIndex) => {
                         this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'column');
                         this.renderer.setStyle(section.nativeElement, 'grid-template-rows', 'unset');

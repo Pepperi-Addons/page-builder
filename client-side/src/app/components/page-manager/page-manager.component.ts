@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Page } from '@pepperi-addons/papi-sdk';
 import { Editor, PageBuilderService, PageEditor, SectionEditor } from '../../services/page-builder.service';
 import { NavigationService } from '../../services/navigation.service';
+import { IPepSideBarStateChangeEvent } from '@pepperi-addons/ngx-lib/side-bar';
 
 type ScreenSizeType = 'desktop' | 'tablet' | 'mobile';
 
@@ -19,7 +20,7 @@ type ScreenSizeType = 'desktop' | 'tablet' | 'mobile';
 export class PageManagerComponent implements OnInit {
     @ViewChild('pageBuilderWrapper', { static: true }) pageBuilderWrapper: ElementRef;
 
-    showEditor = false;
+    showEditor = true;
     currentEditor: Editor;
     sectionsColumnsDropList = [];
 
@@ -27,8 +28,7 @@ export class PageManagerComponent implements OnInit {
     selectedScreenKey: ScreenSizeType;
     viewportWidth: number;
     screenSize: PepScreenSizeType;
-    // PepScreenSizeType = PepScreenSizeType;
-
+    
     constructor(
         private renderer: Renderer2,
         private route: ActivatedRoute,
@@ -44,6 +44,7 @@ export class PageManagerComponent implements OnInit {
             this.currentEditor = editor;
         });
 
+        // TODO: Block Screen button if the screen width is not enough.
         this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
             this.screenSize = size;
             this.selectedScreenKey =
@@ -58,7 +59,7 @@ export class PageManagerComponent implements OnInit {
         let widthToSet = '100%';
 
         if (screenWidth === 'tablet') {
-            widthToSet = '800';
+            widthToSet = '720';
         } else if (screenWidth === 'mobile') {
             widthToSet = '360';
         }
@@ -69,15 +70,13 @@ export class PageManagerComponent implements OnInit {
 
     private updateViewportWidth() {
         if (this.pageBuilderWrapper?.nativeElement) {
-            this.viewportWidth = this.pageBuilderWrapper.nativeElement.clientWidth;
+            setTimeout(() => {
+                this.viewportWidth = this.pageBuilderWrapper.nativeElement.clientWidth;
+            });
         }
     }
 
     ngOnInit() {
-        // TODO: Get the value (showEditor) from server.
-        this.showEditor = this.route?.snapshot?.queryParams?.edit === "true" ?? false;
-
-        // TODO: Translate the value.
         this.screenOptions = [
             { key: 'desktop', value: this.translate.instant('Desktop'), callback: () => this.setScreenWidth('desktop'), iconName: pepIconDeviceDesktop.name, iconPosition: 'end' },
             { key: 'tablet', value: this.translate.instant('Tablet'), callback: () => this.setScreenWidth('tablet'), iconName: pepIconDeviceTablet.name, iconPosition: 'end' },
@@ -91,8 +90,9 @@ export class PageManagerComponent implements OnInit {
         this.pageBuilderService.pageDataChange$.subscribe((page: Page) => {
             if (page && this.pageBuilderWrapper?.nativeElement) {
                 let maxWidth = this.utilitiesService.coerceNumberProperty(page.Layout.MaxWidth, 0);
-                const maxWidthToSet = maxWidth === 0 ? 'unset' : `${maxWidth}px`;
+                const maxWidthToSet = maxWidth === 0 ? '100%' : `${maxWidth}px`;
                 this.renderer.setStyle(this.pageBuilderWrapper.nativeElement, 'max-width', maxWidthToSet);
+                this.updateViewportWidth();
             }
         });
 
@@ -116,6 +116,10 @@ export class PageManagerComponent implements OnInit {
 
     @HostListener('window:resize', ['$event'])
     onResize(event): void {
+        this.updateViewportWidth();
+    }
+
+    onSidebarStateChange(event: IPepSideBarStateChangeEvent) {
         this.updateViewportWidth();
     }
 

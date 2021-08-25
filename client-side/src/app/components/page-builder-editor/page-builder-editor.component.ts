@@ -37,10 +37,11 @@ export class PageBuilderEditorComponent implements OnInit {
 
         this.isFullWidth = !value.maxWidth || value.maxWidth === 0;
         this.maxWidth = value.maxWidth;
-        this.columnsHorizntalGap = this._hostObject.columnsHorizntalGap|| 'NONE';
-        this.columnsVerticalGap = this._hostObject.columnsVerticalGap|| 'NONE';
-        this.sectionsGap = this._hostObject.sectionsGap|| 'NONE';
-        this.roundedCorners = this._hostObject.roundedCorners|| 'NONE';
+        this.horizontalSpacing = this._hostObject.horizontalSpacing || 'NONE';
+        this.verticalSpacing = this._hostObject.verticalSpacing || 'NONE';
+        this.sectionsGap = this._hostObject.sectionsGap || 'NONE';
+        this.columnsGap = this._hostObject.columnsGap || 'NONE';
+        this.roundedCorners = this._hostObject.roundedCorners || 'NONE';
     }
     get hostObject(): PageEditor {
         return this._hostObject;
@@ -53,9 +54,10 @@ export class PageBuilderEditorComponent implements OnInit {
     // @Input()
     pageDescription: string = '';
 
-    columnsHorizntalGap: UiPageSizeType = 'NONE'
-    columnsVerticalGap: UiPageSizeType = 'NONE'
+    horizontalSpacing: UiPageSizeType = 'NONE'
+    verticalSpacing: UiPageSizeType = 'NONE'
     sectionsGap: UiPageSizeType = 'NONE';
+    columnsGap: UiPageSizeType = 'NONE';
     roundedCorners: UiPageSizeType = 'NONE';
 
     isFullWidth: boolean;
@@ -81,9 +83,10 @@ export class PageBuilderEditorComponent implements OnInit {
         this._hostObject.pageName = this.pageName;
         this._hostObject.pageDescription = this.pageDescription;
         this._hostObject.maxWidth = this.isFullWidth ? 0 : this.maxWidth;
-        this._hostObject.columnsHorizntalGap = this.columnsHorizntalGap === 'NONE' ? undefined : this.columnsHorizntalGap;
-        this._hostObject.columnsVerticalGap = this.columnsVerticalGap === 'NONE' ? undefined : this.columnsVerticalGap;
+        this._hostObject.horizontalSpacing = this.horizontalSpacing === 'NONE' ? undefined : this.horizontalSpacing;
+        this._hostObject.verticalSpacing = this.verticalSpacing === 'NONE' ? undefined : this.verticalSpacing;
         this._hostObject.sectionsGap = this.sectionsGap === 'NONE' ? undefined : this.sectionsGap;
+        this._hostObject.columnsGap = this.columnsGap === 'NONE' ? undefined : this.columnsGap;
         this._hostObject.roundedCorners = this.roundedCorners === 'NONE' ? undefined : this.roundedCorners;
 
         this.hostObjectChange.emit(this.hostObject);
@@ -123,17 +126,22 @@ export class PageBuilderEditorComponent implements OnInit {
     }
     
     setColumnsHorizntalGap(event: IPepButtonClickEvent) {
-        this.columnsHorizntalGap = event.source.key as UiPageSizeType;
+        this.horizontalSpacing = event.source.key as UiPageSizeType;
         this.updateHostObject();
     }
     
     setColumnsVerticalGap(event: IPepButtonClickEvent) {
-        this.columnsVerticalGap = event.source.key as UiPageSizeType;
+        this.verticalSpacing = event.source.key as UiPageSizeType;
         this.updateHostObject();
     }
     
     setSectionGap(event: IPepButtonClickEvent) {
         this.sectionsGap = event.source.key as UiPageSizeType;
+        this.updateHostObject();
+    }
+
+    setColumnsGap(event: IPepButtonClickEvent) {
+        this.columnsGap = event.source.key as UiPageSizeType;
         this.updateHostObject();
     }
 

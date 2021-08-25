@@ -22,9 +22,10 @@ export interface PageEditor {
     pageName: string,
     pageDescription: string,
     maxWidth: number,
-    columnsHorizntalGap?: PageSizeType,
-    columnsVerticalGap?: PageSizeType,
-    sectionsGap: PageSizeType,
+    horizontalSpacing?: PageSizeType,
+    verticalSpacing?: PageSizeType,
+    sectionsGap?: PageSizeType,
+    columnsGap?: PageSizeType,
     roundedCorners?: PageSizeType,
 }
 
@@ -136,6 +137,7 @@ export class PageBuilderService {
             // blocksHorizntalGap: page?.Layout.
             // blocksVerticalGap: page?.Layout.
             sectionsGap: page?.Layout.SectionsGap,
+            // columnsGap: page?.Layout.ColumnsGap,
             // roundedCorners: page?.Layout.
         };
 
@@ -410,9 +412,10 @@ export class PageBuilderService {
             currentPage.Name = pageData.pageName;
             currentPage.Description = pageData.pageDescription;
             currentPage.Layout.MaxWidth = pageData.maxWidth;
-            // currentPage.Layout.ColumnsHorizntalGap = pageData.columnsHorizntalGap;
-            // currentPage.Layout.ColumnsVerticalGap = pageData.columnsVerticalGap;
+            // currentPage.Layout.HorizontalSpacing = pageData.horizontalSpacing;
+            // currentPage.Layout.VerticalSpacing = pageData.verticalSpacing;
             currentPage.Layout.SectionsGap = pageData.sectionsGap;
+            // currentPage.Layout.ColumnsGap = pageData.columnsGap;
             // currentPage.Layout.RoundedCorners = pageData.roundedCorners;
 
             this.pageSubject.next(currentPage);
