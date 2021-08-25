@@ -3,7 +3,7 @@
         <pep-top-bar class="main-top-heaer"  [title]="!isAddNewPage ?  ('Pages_Main_Header' | translate) : ''">
             <div header-start-content>
                 <div *ngIf="isAddNewPage" header-end-content>
-                    <pep-button  class="back-button pull-left flip" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="navigateBackToMainPage();"></pep-button>
+                    <pep-button  class="back-button pull-left flip pep-spacing-element" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="navigateBackToMainPage();"></pep-button>
                     <div class="main-header pep-spacing-element title title-lg pull-left flip"><span  title="Select a Page">{{'Pages_AddNew_Header' | translate}}</span></div>
                 </div>
             </div>
@@ -16,44 +16,49 @@
     </ng-container>
 
     <ng-container pep-main-area>
-        <div style="height:100%;overflow:auto;">
+        <!-- <div style="height:100%;overflow:auto;"> -->
         <ng-container *ngIf="!isAddNewPage; then mainBlock; else addNewBlock"></ng-container>
-    </div>
+    <!-- </div> -->
  </ng-container>
 </pep-page-layout>
 
-<!--
-<div class="main-content">
-    <div class="content">
-
-
-
-    </div>
-</div> -->
 
 <ng-template #mainBlock>
-    <span class="body-md pageExplanation">{{ 'Pages_Main_Explanation' | translate }}</span>
+    <div class="pageExplanation">
+        <span class="body-md">{{ 'Pages_Main_Explanation' | translate }}</span>
+    </div>
     <pep-top-bar [inline]="true" [title]="('Pages_Secondary_Header' | translate)">
-        <div header-start-content>
-        </div>
+        <!-- <div header-start-content>
+        </div> -->
         <div header-end-content>
             <pep-menu class="pep-spacing-element" [items]="secondaryMenuItems" [sizeType]="'sm'" (menuItemClick)="onSecondaryMenuItemClicked($event)">
             </pep-menu>
-            <pep-button [value]="'Pages_a_Page' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
+            <pep-button class="pep-spacing-element" [value]="'Pages_a_Page' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
             </pep-button>
         </div>
     </pep-top-bar>
-    <div>
+
         <div class="PagesNotFoundMsg">
+            <div class="leaf-background"  [ngStyle]="{ 'background-image': 'url(' + imgurl + ')'}"></div>
             <h2>{{ "Pages_No_Pages_Header" | translate}}</h2>
             <span>{{ "Pages_No_Pages_Msg" | translate}}</span>
         </div>
         <!-- <generic-list [inline]="'true'"></generic-list> -->
-    </div>
+
 </ng-template>
 
 <ng-template #addNewBlock>
-    <span class="body-md pageExplanation">{{ 'Pages_AddNew_Explanation' | translate }}</span>
+    <div class="pageExplanation">
+        <span class="body-md">{{ 'Pages_AddNew_Explanation' | translate }}</span>
+        <div>
+            <p><label class="body-xs ellipsis">{{ 'Pages_Links_Header' | translate }}</label></p>
+            <p><label class="color-link body-sm ellipsis" (click)="openLink('Using')">{{ 'Pages_Links_Using' | translate }}</label></p>
+            <p><label class="color-link body-sm ellipsis" (click)="openLink('Importing')">{{ 'Pages_Links_Importing' | translate }}</label></p>
+            <p><label class="color-link body-sm ellipsis" (click)="openLink('Save')">{{ 'Pages_Links_Save' | translate }}</label></p>
+            <p><label class="color-link body-sm ellipsis" (click)="openLink('Publish')">{{ 'Pages_Links_Publish' | translate }}</label></p>
+            <p><label class="color-link body-sm ellipsis" (click)="openLink('Export')">{{ 'Pages_Links_Export' | translate }}</label></p>
+        </div>
+    </div>
     <mat-accordion class="pep-accordion" [multi]="'true'">
         <mat-expansion-panel *ngFor="let group of pageGroups" [expanded]="group.isExpanded">
           <mat-expansion-panel-header>

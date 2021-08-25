@@ -1,7 +1,31 @@
 .pageExplanation{
-    max-width: 34rem;
-    display: block;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     margin: 1rem 0 1.25rem 0;
+
+    span{
+        max-width: 34rem;
+        display: block;
+    }
+    div{
+        p{
+            line-height: 1.25rem !important;
+            height: 1.25rem;
+            margin: 0;
+
+            label{
+                font-size: 14px;
+                letter-spacing: 0.12px;
+                margin: 0;
+                font-weight:normal;
+
+                &.color-link{
+                    cursor: pointer;
+                }
+            }
+        }
+    }
 }
 
 .main-top-heaer{
@@ -25,7 +49,13 @@
         justify-content: center;
         text-align: center;
         background-color: #eee;
-        padding: 0 4rem;
+        position: relative;
+
+        .leaf-background{
+            height: inherit;
+            position: absolute;
+            width: 100%;
+        }
     }
 }
 .mat-expansion-panel{

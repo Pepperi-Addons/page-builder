@@ -38,19 +38,26 @@ export class PagesManagerComponent implements OnInit {
                                   {id: 3, name: 'Pages_AddNew_Simplistic' , description: 'Pages_AddNew_Simplistic_Desc', type: Page_Type.Homepage},
                                   {id: 4, name: 'Pages_AddNew_Branded' , description: 'Pages_AddNew_Branded_Desc', type: Page_Type.Homepage}];
 
-    pageGroups: Array<pageGroup> = [{ title: "Pages_AddNew_HomePage", isExpanded: true, pages: this.tempPages},
-                                  { title: "Pages_AddNew_Dashboard", isExpanded: false, pages: this.tempPages},
-                                  { title: "Pages_AddNew_Item", isExpanded: false, pages: this.tempPages},
-                                  { title: "Pages_AddNew_Generic", isExpanded: false, pages: this.tempPages}];
+     pageGroups: Array<pageGroup> = [{ title: "Pages_AddNew_HomePage", isExpanded: true, pages: this.tempPages}
+    //                               ,{ title: "Pages_AddNew_Dashboard", isExpanded: false, pages: this.tempPages},
+    //                               { title: "Pages_AddNew_Item", isExpanded: false, pages: this.tempPages},
+    //                               { title: "Pages_AddNew_Generic", isExpanded: false, pages: this.tempPages}
+
+];
+
+    public imgurl = '';
 
     dataSource$: Observable<any[]>
 
     constructor(
+
         private renderer: Renderer2,
         private translate: TranslateService,
         private navigationService: NavigationService,
-    ) {
 
+    ) {
+        let assetsPath = sessionStorage.getItem('AddonAssetsPath');
+        this.imgurl = assetsPath + 'assets/images/brand-leaf-round.svg';
     }
 
     ngOnInit() {
@@ -76,6 +83,17 @@ export class PagesManagerComponent implements OnInit {
 
     navigateBackToMainPage(){
         this.isAddNewPage = false;
+    }
+
+    openLink(link: string) {
+        let url = 'https://www.pepperi.com/';
+        switch (link) {
+            case 'Using': {
+                    url = 'https://support.pepperi.com/hc/en-us/categories/200185656-Getting-Started-with-Pepperi-Do-these-steps-first-';
+                    break;
+            }
+        }
+
     }
 
 
