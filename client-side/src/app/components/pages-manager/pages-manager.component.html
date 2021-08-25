@@ -24,30 +24,35 @@
 
 
 <ng-template #mainBlock>
-    <div class="pageExplanation">
-        <span class="body-md">{{ 'Pages_Main_Explanation' | translate }}</span>
-    </div>
-    <pep-top-bar [inline]="true" [title]="('Pages_Secondary_Header' | translate)">
-        <!-- <div header-start-content>
-        </div> -->
-        <div header-end-content>
-            <pep-menu class="pep-spacing-element" [items]="secondaryMenuItems" [sizeType]="'sm'" (menuItemClick)="onSecondaryMenuItemClicked($event)">
-            </pep-menu>
-            <pep-button class="pep-spacing-element" [value]="'Pages_a_Page' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
-            </pep-button>
+    <div class="add-on-width">
+        <div class="pageExplanation">
+            <span class="body-md">{{ 'Pages_Main_Explanation' | translate }}</span>
         </div>
-    </pep-top-bar>
+        <pep-top-bar [inline]="true" [title]="('Pages_Secondary_Header' | translate)">
+            <!-- <div header-start-content>
+            </div> -->
+            <div header-end-content>
+                <pep-menu class="pep-spacing-element" [items]="secondaryMenuItems" [sizeType]="'sm'" (menuItemClick)="onSecondaryMenuItemClicked($event)">
+                </pep-menu>
+                <pep-button class="pep-spacing-element" [value]="'Pages_a_Page' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
+                </pep-button>
+            </div>
+        </pep-top-bar>
 
         <div class="PagesNotFoundMsg">
-            <div class="leaf-background"  [ngStyle]="{ 'background-image': 'url(' + imgurl + ')'}"></div>
-            <h2>{{ "Pages_No_Pages_Header" | translate}}</h2>
-            <span>{{ "Pages_No_Pages_Msg" | translate}}</span>
+                <div class="leaf-background">
+                <div  [ngStyle]="{ 'background-image': 'url(' + leafSkinyUrl + ')'}"></div>
+                <div  [ngStyle]="{ 'background-image': 'url(' + leafRoundUrl + ')'}"></div>
+                </div>
+                <h2>{{ "Pages_No_Pages_Header" | translate}}</h2>
+                <span>{{ "Pages_No_Pages_Msg" | translate}}</span>
         </div>
-        <!-- <generic-list [inline]="'true'"></generic-list> -->
-
+            <!-- <generic-list [inline]="'true'"></generic-list> -->
+    </div>
 </ng-template>
 
 <ng-template #addNewBlock>
+    <div class="add-on-width">
     <div class="pageExplanation">
         <span class="body-md">{{ 'Pages_AddNew_Explanation' | translate }}</span>
         <div>
@@ -75,6 +80,7 @@
             </div>
         </mat-expansion-panel>
       </mat-accordion>
+      </div>
 </ng-template>
 
 

@@ -4,6 +4,7 @@ import { Component, OnInit, Renderer2 } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
+import { PepAddonService } from '@pepperi-addons/ngx-lib';
 import { Observable } from "rxjs";
 
 export enum Page_Type { "Homepage" = 1, "Dashbaord" = 2, "Item" = 3, "Generic" = 4, "None" = 5 };
@@ -45,7 +46,8 @@ export class PagesManagerComponent implements OnInit {
 
 ];
 
-    public imgurl = '';
+    public leafRoundUrl = '';
+    public leafSkinyUrl = '';
 
     dataSource$: Observable<any[]>
 
@@ -54,10 +56,12 @@ export class PagesManagerComponent implements OnInit {
         private renderer: Renderer2,
         private translate: TranslateService,
         private navigationService: NavigationService,
+        private pepAddonService: PepAddonService
 
     ) {
-        let assetsPath = sessionStorage.getItem('AddonAssetsPath');
-        this.imgurl = assetsPath + 'assets/images/brand-leaf-round.svg';
+        let assetsPath = this.pepAddonService.getAddonStaticFolder();// sessionStorage.getItem('AddonAssetsPath');
+        this.leafRoundUrl = assetsPath + 'assets/images/brand-leaf-round.svg';
+        this.leafSkinyUrl = assetsPath + 'assets/images/brand-leaf-skiny.svg';
     }
 
     ngOnInit() {
