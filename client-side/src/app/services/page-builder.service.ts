@@ -339,8 +339,8 @@ export class PageBuilderService {
             // TODO: Get the sections and the blocks data from the server.
             this.http.getHttpCall(`http://localhost:4500/api/pages?pageKey=${pageKey}`)
             // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/pages?pageKey=${pageKey}`)
-                .subscribe(res => {
-                this.pageSubject.next(res['page']);
+                .subscribe((res: Page) => {
+                this.pageSubject.next(res);
             });
         }
     }

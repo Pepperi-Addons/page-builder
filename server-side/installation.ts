@@ -12,13 +12,13 @@ import { PagesService } from './pages.service';
 
 export async function install(client: Client, request: Request): Promise<any> {
     const pageService = new PagesService(client);
-    const res = await pageService.createPagesTableSchemes();
+    const res = await pageService.createPagesTablesSchemes();
     return { success:true, resultObject: {res} };
 }
 
 export async function uninstall(client: Client, request: Request): Promise<any> {
     const pageService = new PagesService(client);
-    const res = await pageService.dropPagesTable();
+    const res = await pageService.dropPagesTables();
     return { success:true, resultObject: {res} }
 }
 

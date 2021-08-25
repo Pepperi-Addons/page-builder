@@ -5,9 +5,10 @@ import { PepHttpService } from '@pepperi-addons/ngx-lib';
 import { IPepButtonClickEvent } from '@pepperi-addons/ngx-lib/button';
 import { PageSizeType } from '@pepperi-addons/papi-sdk';
 import { Observable, ReplaySubject } from 'rxjs';
+import { NavigationService } from 'src/app/services/navigation.service';
 import { AvailableBlock, PageBuilderService, PageEditor } from '../../services/page-builder.service';
 // import { subject } from '../page-builder/page-builder.component';
-import { config } from '../addon.config';
+// import { config } from '../addon.config';
 
 type UiPageSizeType = PageSizeType | 'NONE';
 
@@ -64,6 +65,7 @@ export class PageBuilderEditorComponent implements OnInit {
     sizesGroupButtons = Array<ISpacingOption>();
     
     constructor(
+        private navigationService: NavigationService,
         private pageBuilderService: PageBuilderService,
         private route: ActivatedRoute
     ) { 
@@ -88,12 +90,12 @@ export class PageBuilderEditorComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // this.pageBuilderService.pageLoad$.subscribe(page => {
-        //     if (page) {
-                const addonUUID = this.route.snapshot.params.addon_uuid || config.AddonUUID;
-                this.pageBuilderService.initPageEditor(addonUUID, '');
-        //     }
-        // });
+        this.pageBuilderService.pageLoad$.subscribe(page => {
+            if (page) {
+                // const addonUUID = this.route.snapshot.params['addonUUID']; // || config.AddonUUID;
+                this.pageBuilderService.initPageEditor(this.navigationService.addonUUID, '');
+            }
+        });
 
         this.pageBuilderService.availableBlocksLoadedSubject$.subscribe(availableBlocks => {
             this.availableBlocks = availableBlocks;

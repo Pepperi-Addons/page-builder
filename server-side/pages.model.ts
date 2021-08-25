@@ -1,4 +1,6 @@
-export const TempBlankPageData = {
+import { Page } from "@pepperi-addons/papi-sdk";
+
+export const TempBlankPageData: Page = {
     // Regular ADAL fields
     "Hidden": false,
     "CreationDateTime": "2021-07-22T13:00:11.360Z",
