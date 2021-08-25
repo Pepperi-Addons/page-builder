@@ -6,7 +6,7 @@ import { PagesManagerComponent } from './components/pages-manager/pages-manager.
 // Important for single spa
 @Component({
     selector: 'app-empty-route',
-    template: '<div></div>',
+    template: '<div>Route is not exist.</div>',
 })
 export class EmptyRouteComponent {}
 
@@ -29,10 +29,7 @@ const routes: Routes = [
             }
         ]
     },
-    {
-        path: '**',
-        component: PagesManagerComponent
-    }
+    { path: '**', component: EmptyRouteComponent }
 ];
 
 @NgModule({
