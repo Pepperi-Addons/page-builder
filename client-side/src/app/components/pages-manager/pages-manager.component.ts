@@ -1,11 +1,14 @@
 import { NavigationService } from './../../services/navigation.service';
+import { PageBuilderService } from '../../services/page-builder.service';
 import { GenericListModule } from './../generic-list/generic-list.module';
 import { Component, OnInit, Renderer2 } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
 import { PepAddonService } from '@pepperi-addons/ngx-lib';
-import { Observable } from "rxjs";
+import { from, Observable } from "rxjs";
+
+import { map } from 'rxjs/operators';
 
 export enum Page_Type { "Homepage" = 1, "Dashbaord" = 2, "Item" = 3, "Generic" = 4, "None" = 5 };
 
@@ -55,7 +58,8 @@ export class PagesManagerComponent implements OnInit {
         private renderer: Renderer2,
         private translate: TranslateService,
         private navigationService: NavigationService,
-        private pepAddonService: PepAddonService
+        private pepAddonService: PepAddonService,
+        private pageBuilderService: PageBuilderService,
 
     ) {
         this.imagesPath = this.pepAddonService.getAddonStaticFolder() + 'assets/images/';
@@ -63,7 +67,13 @@ export class PagesManagerComponent implements OnInit {
     }
 
     ngOnInit() {
+        // TODO - NEED TO INITLIZE THE MENUS
         this.mainMenuItems = this.secondaryMenuItems = [];
+
+        // TODO - NEED TO CHANGE TO GET PAGES CALL.
+        /*this.dataSource$*/
+        let pages = this.pageBuilderService.getSectionColumnKey();
+
     }
 
     addNewPage() {
