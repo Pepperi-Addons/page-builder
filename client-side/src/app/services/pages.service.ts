@@ -357,8 +357,8 @@ export class PagesService {
 
     private getBaseUrl(addonUUID: string): string {
         const baseUrl = this.sessionService.getPapiBaseUrl();
-        return `${baseUrl}/addons/api/${addonUUID}/api`;
-        // return `http://localhost:4500/api`;
+        // return `${baseUrl}/addons/api/${addonUUID}/api`;
+        return `http://localhost:4500/api`;
     }
 
     getSectionColumnKey(sectionKey: string = '', index: string = '') {

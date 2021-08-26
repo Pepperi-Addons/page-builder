@@ -1,5 +1,5 @@
 import { NavigationService } from './../../services/navigation.service';
-import { PageBuilderService } from '../../services/page-builder.service';
+import { PagesService } from '../../services/pages.service';
 import { GenericListModule } from './../generic-list/generic-list.module';
 import { Component, OnInit, Renderer2 } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
@@ -59,7 +59,7 @@ export class PagesManagerComponent implements OnInit {
         private translate: TranslateService,
         private navigationService: NavigationService,
         private pepAddonService: PepAddonService,
-        private pageBuilderService: PageBuilderService,
+        private pagesService: PagesService,
 
     ) {
         this.imagesPath = this.pepAddonService.getAddonStaticFolder() + 'assets/images/';
@@ -72,7 +72,7 @@ export class PagesManagerComponent implements OnInit {
 
         // TODO - NEED TO CHANGE TO GET PAGES CALL.
         /*this.dataSource$*/
-        let pages = this.pageBuilderService.getSectionColumnKey();
+        let pages = this.pagesService.getSectionColumnKey();
 
     }
 
