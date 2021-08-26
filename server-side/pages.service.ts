@@ -135,7 +135,7 @@ export class PagesService {
     }
 
     createTemplatePage(query: any): Promise<AddonData> {
-        const templateId = query['TemplateId'] || '';
+        const templateId = query['templateId'] || '';
         // TODO: Get the correct page by template (options.TemplateKey)
         const page: Page = TempBlankPageData;
         
@@ -179,7 +179,7 @@ export class PagesService {
             // If page found get the available blocks by page type and return combined object.
             if (page) {
                 const pageType = page.Type || '';
-                const availableBlocks = this.getAvailableBlocks(pageType);
+                const availableBlocks = await this.getAvailableBlocks(pageType) || [];
                 
                 res = {
                     page, 

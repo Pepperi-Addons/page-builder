@@ -72,7 +72,7 @@ export class PagesManagerComponent implements OnInit {
 
         // TODO - NEED TO CHANGE TO GET PAGES CALL.
         /*this.dataSource$*/
-        this.dataSource$ = this.pagesService.getPages(null);
+        let pages = this.pagesService.getSectionColumnKey();
 
     }
 

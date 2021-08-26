@@ -586,35 +586,31 @@ export class PagesService {
             }
         }
     }
-
-    publishPage() {
-        // TODO: Implement this.
-        sessionStorage.setItem('page', JSON.stringify(this.pageSubject.value));
-    }
-
     
     //**************************************************************************
     // CPI & Server side calls.
     //**************************************************************************
     
-    getPages(addonUUID: string): Observable<Page[]> {
+    getPages(addonUUID: string): Observable<IPageRow[]> {
         // Get the page (sections and the blocks data) from the server.
         const baseUrl = this.getBaseUrl(addonUUID);
         return this.httpService.getHttpCall(`${baseUrl}/pages`);
     }
 
-    createNewPage(templateId: any) {
-
+    createNewPage(addonUUID: string, templateId: any): Observable<Page[]> {
+        const baseUrl = this.getBaseUrl(addonUUID);
+        return this.httpService.getHttpCall(`${baseUrl}/create_page?templateId=${templateId}`);
     }
 
     // TODO: This funtion should be on CPI side.
     initPageBuilder(addonUUID: string, pageKey: string, editMode: boolean): void {
         // TODO: Load the saved page from the session for now.
-        const savedPage: Page = JSON.parse(sessionStorage.getItem('page')) ?? null;
+        // const savedPage: Page = JSON.parse(sessionStorage.getItem('page')) ?? null;
 
-        if (savedPage) {
-            this.pageSubject.next(savedPage);
-        } else {
+        // if (savedPage) {
+        //     this.pageSubject.next(savedPage);
+        // } else 
+        {
             //  If is't not edit mode get the page from the CPI side.
             if (!editMode) {
                 
@@ -646,5 +642,22 @@ export class PagesService {
                 });
             }
         }
+    }
+
+    updatePage(addonUUID: string, page: Page): Observable<Page> {
+        // Get the page (sections and the blocks data) from the server.
+        const baseUrl = this.getBaseUrl(addonUUID);
+        return this.httpService.postHttpCall(`${baseUrl}/pages`, page);
+    }
+
+    publishPage(addonUUID: string): Observable<Page> {
+        const page: Page = this.pageSubject.value;
+
+        // TODO: Implement this.
+        sessionStorage.setItem('page', JSON.stringify(page));
+
+        // Get the page (sections and the blocks data) from the server.
+        const baseUrl = this.getBaseUrl(addonUUID);
+        return this.httpService.postHttpCall(`${baseUrl}/publish_page`, page);
     }
 }

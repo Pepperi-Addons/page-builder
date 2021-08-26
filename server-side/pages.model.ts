@@ -12,9 +12,6 @@ export const TempBlankPageData: Page = {
     //  optional
     "Description": "My temp page",
 
-    // optional - default None Types: (Home, AccountHome, None?)
-    "Type": "Home", 
-
     // A list of the blocks on the page
     // We might want to move the actual data of each block to a seperate internal resource
     "Blocks": [
