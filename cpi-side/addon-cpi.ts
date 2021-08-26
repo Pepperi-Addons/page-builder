@@ -8,22 +8,27 @@ export async function load(configuration: any) {
 export const router = Router();
 
 // Get the page by Key
-router.get("/pages/get", async (req, res) => {
-    let pages;
+router.get("/pages/:key", async (req, res) => {
+    let page = {};
     
     try {
         console.log("CPISide - GET page with query params (page key)");
-        pages = await pepperi.api.adal.getList({ 
+        // pages = await pepperi.api.adal.getList({ 
+        //     addon: '50062e0c-9967-4ed4-9102-f2bc50602d41',
+        //     table: 'Pages'
+        // }).then(obj => obj.objects);
+        
+        page = await pepperi.api.adal.get({ 
             addon: '50062e0c-9967-4ed4-9102-f2bc50602d41',
-            table: 'Pages'
-        }).then(obj => obj.objects);
+            table: 'Pages',
+            key: req.params.key
+        }).then(obj => obj.object);
 
     } catch(exception) {
         // Handle exception.
-        pages = []
     }
 
-    res.json({ result: pages });
+    res.json({ result: page });
 });
 
 // Example get function from Dor

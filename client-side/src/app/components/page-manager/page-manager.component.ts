@@ -1,12 +1,11 @@
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from "@angular/core";
-import { Location } from '@angular/common';
-import { PepCustomizationService, PepLayoutService, PepLoaderService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
+import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
 import { PepButton } from '@pepperi-addons/ngx-lib/button';
-import { pepIconDeviceDesktop, pepIconDeviceMobile, pepIconDeviceTablet, pepIconSystemBin } from '@pepperi-addons/ngx-lib/icon';
+import { pepIconDeviceDesktop, pepIconDeviceMobile, pepIconDeviceTablet } from '@pepperi-addons/ngx-lib/icon';
 import { TranslateService } from '@ngx-translate/core';
 import { Page } from '@pepperi-addons/papi-sdk';
-import { Editor, PageBuilderService, PageEditor, SectionEditor } from '../../services/page-builder.service';
+import { IEditor, PagesService, IPageEditor, ISectionEditor } from '../../services/pages.service';
 import { NavigationService } from '../../services/navigation.service';
 import { IPepSideBarStateChangeEvent } from '@pepperi-addons/ngx-lib/side-bar';
 
@@ -21,7 +20,7 @@ export class PageManagerComponent implements OnInit {
     @ViewChild('pageBuilderWrapper', { static: true }) pageBuilderWrapper: ElementRef;
 
     showEditor = true;
-    currentEditor: Editor;
+    currentEditor: IEditor;
     sectionsColumnsDropList = [];
 
     screenOptions: Array<PepButton>;
@@ -31,13 +30,10 @@ export class PageManagerComponent implements OnInit {
     
     constructor(
         private renderer: Renderer2,
-        private route: ActivatedRoute,
         private translate: TranslateService,
-        // private customizationService: PepCustomizationService,
-        // private loaderService: PepLoaderService,
         private utilitiesService: PepUtilitiesService,
         private layoutService: PepLayoutService,
-        private pageBuilderService: PageBuilderService,
+        private pageBuilderService: PagesService,
         private navigationService: NavigationService,
     ) {
         this.pageBuilderService.onEditorChange$.subscribe((editor) => {
@@ -127,11 +123,11 @@ export class PageManagerComponent implements OnInit {
         this.showEditor = !this.showEditor;
     }
 
-    onPageEditorObjectChange(pageEditor: PageEditor) {
+    onPageEditorObjectChange(pageEditor: IPageEditor) {
         this.pageBuilderService.updatePageFromEditor(pageEditor);
     }
 
-    onSectionEditorObjectChange(sectionEditor: SectionEditor) {
+    onSectionEditorObjectChange(sectionEditor: ISectionEditor) {
         this.pageBuilderService.updateSectionFromEditor(sectionEditor);
     }
 

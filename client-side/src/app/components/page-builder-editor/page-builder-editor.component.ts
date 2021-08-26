@@ -1,14 +1,10 @@
-import { CdkDragEnd, CdkDragMove, CdkDragStart } from '@angular/cdk/drag-drop';
+import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PepHttpService } from '@pepperi-addons/ngx-lib';
 import { IPepButtonClickEvent } from '@pepperi-addons/ngx-lib/button';
 import { PageSizeType } from '@pepperi-addons/papi-sdk';
-import { Observable, ReplaySubject } from 'rxjs';
 import { NavigationService } from 'src/app/services/navigation.service';
-import { AvailableBlock, PageBuilderService, PageEditor } from '../../services/page-builder.service';
-// import { subject } from '../page-builder/page-builder.component';
-// import { config } from '../addon.config';
+import { IAvailableBlock, PagesService, IPageEditor } from '../../services/pages.service';
 
 type UiPageSizeType = PageSizeType | 'NONE';
 
@@ -27,9 +23,9 @@ export class PageBuilderEditorComponent implements OnInit {
         
     @Input() sectionsColumnsDropList = [];
 
-    private _hostObject: PageEditor;
+    private _hostObject: IPageEditor;
     @Input()
-    set hostObject(value: PageEditor) {
+    set hostObject(value: IPageEditor) {
         this._hostObject = value;
 
         this.pageName = value.pageName;
@@ -43,11 +39,11 @@ export class PageBuilderEditorComponent implements OnInit {
         this.columnsGap = this._hostObject.columnsGap || 'NONE';
         this.roundedCorners = this._hostObject.roundedCorners || 'NONE';
     }
-    get hostObject(): PageEditor {
+    get hostObject(): IPageEditor {
         return this._hostObject;
     }
 
-    @Output() hostObjectChange: EventEmitter<PageEditor> = new EventEmitter<PageEditor>();
+    @Output() hostObjectChange: EventEmitter<IPageEditor> = new EventEmitter<IPageEditor>();
     
     // @Input()
     pageName: string = '';
@@ -63,12 +59,12 @@ export class PageBuilderEditorComponent implements OnInit {
     isFullWidth: boolean;
     maxWidth: number;
 
-    availableBlocks: AvailableBlock[] = [];
+    availableBlocks: IAvailableBlock[] = [];
     sizesGroupButtons = Array<ISpacingOption>();
     
     constructor(
         private navigationService: NavigationService,
-        private pageBuilderService: PageBuilderService,
+        private pageBuilderService: PagesService,
         private route: ActivatedRoute
     ) { 
         this.sizesGroupButtons = [
@@ -93,13 +89,6 @@ export class PageBuilderEditorComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.pageBuilderService.pageLoad$.subscribe(page => {
-            if (page) {
-                // const addonUUID = this.route.snapshot.params['addonUUID']; // || config.AddonUUID;
-                this.pageBuilderService.initPageEditor(this.navigationService.addonUUID, '');
-            }
-        });
-
         this.pageBuilderService.availableBlocksLoadedSubject$.subscribe(availableBlocks => {
             this.availableBlocks = availableBlocks;
         });
