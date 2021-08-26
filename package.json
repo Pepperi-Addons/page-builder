@@ -9,8 +9,9 @@
 		"init": "cd ./client-side && npm install && cd .. && cd ./server-side && npm install && cd ..",
 		"client:addon": "cd client-side && ng serve --port 4400 --configuration SingleSpa && cd..",
 		"client:standalone": "cd client-side && ng serve --port 4400 --configuration Standalone && cd..",
-		"publish-addon": "npm run build && publish-addon",
 		"pub-addon": "publish-addon",
+		"publish-addon": "npm run build && publish-addon",
+		"publish-cpi-side-debug": "cd cpi-side && npm run build:debug && cd .. && cpi-node-debug",
 		"cpi-publish-addon": "cd ./cpi-side && npm run build:debug && cd .. && cpi-node-debug"
 	},
 	"keywords": [],

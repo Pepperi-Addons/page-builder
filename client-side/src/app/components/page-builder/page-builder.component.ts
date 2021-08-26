@@ -5,7 +5,7 @@ import { CdkDragDrop  } from '@angular/cdk/drag-drop';
 import { PageBuilderService } from '../../services/page-builder.service';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
-import { Page, PageSection } from '@pepperi-addons/papi-sdk';
+import { Page, PageSection, PageSizeType } from '@pepperi-addons/papi-sdk';
 
 @Component({
     selector: 'page-builder',
@@ -24,6 +24,8 @@ export class PageBuilderComponent implements OnInit {
         return this._sectionsSubject.asObservable();
     }
 
+    sectionsGap: PageSizeType | 'NONE';
+
     constructor(
         private route: ActivatedRoute,
         private renderer: Renderer2,
@@ -34,6 +36,16 @@ export class PageBuilderComponent implements OnInit {
     ) {
     }
 
+    private setPageDataProperties(page: Page) {
+        if (page && this.sectionsContainer?.nativeElement) {
+            let maxWidth = this.utilitiesService.coerceNumberProperty(page.Layout.MaxWidth, 0);
+            const maxWidthToSet = maxWidth === 0 ? 'unset' : `${maxWidth}px`;
+            this.renderer.setStyle(this.sectionsContainer.nativeElement, 'max-width', maxWidthToSet);
+
+            this.sectionsGap = page.Layout.SectionsGap || 'NONE';
+        }
+    }
+    
     ngOnInit() {
         this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
             this.screenSize = size;
@@ -44,11 +56,7 @@ export class PageBuilderComponent implements OnInit {
         });
 
         this.pageBuilderService.pageDataChange$.subscribe((page: Page) => {
-            if (page && this.sectionsContainer?.nativeElement) {
-                let maxWidth = this.utilitiesService.coerceNumberProperty(page.Layout.MaxWidth, 0);
-                const maxWidthToSet = maxWidth === 0 ? 'unset' : `${maxWidth}px`;
-                this.renderer.setStyle(this.sectionsContainer.nativeElement, 'max-width', maxWidthToSet);
-            }
+            this.setPageDataProperties(page);
         });
 
         const pageKey = this.route?.snapshot?.params['page_key'] || '';

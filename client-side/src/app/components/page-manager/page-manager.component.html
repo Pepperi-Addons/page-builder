@@ -1,6 +1,6 @@
 <pep-page-layout [addPadding]="false" [showShadow]="showEditor">
     <div pep-side-area *ngIf="showEditor" style="padding-inline-start: 1rem;">
-        <pep-side-bar #sideBar [ignoreResize]="true">
+        <pep-side-bar #sideBar [ignoreResize]="true" (stateChange)="onSidebarStateChange($event)">
             <div header-content class="side-bar-title">
                 <pep-button class="back-button" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="navigateBackFromEditor();"></pep-button>
                 <div class=" title-xl ellipsis" title="{{ currentEditor?.title }}">
@@ -18,26 +18,31 @@
         </pep-side-bar>
     </div>
     <ng-container pep-main-area>
-        <div class="header-container">
-            <div class="header-title header-content">{{('ViewportWidth' | translate)}} : <b>{{viewportWidth}}</b></div>
-            <div class="header-group-btn">
-                <pep-group-buttons [buttons]="screenOptions" [selectedButtonKey]="selectedScreenKey" class="header-content" sizeType="sm" viewType="toggle" >
-                </pep-group-buttons>
+        <div class="main-area-container">
+            <div class="header-container">
+                <div class="header-content ">
+                    <span class="header-title body-xs">{{('ViewportWidth' | translate)}}:&nbsp;</span>
+                    <span class="body-xs"><b>{{viewportWidth}}</b></span>
+                </div>
+                <div class="header-group-btn">
+                    <pep-group-buttons [buttons]="screenOptions" [selectedButtonKey]="selectedScreenKey" class="header-content" sizeType="sm" viewType="toggle" >
+                    </pep-group-buttons>
+                </div>
+                <div class="header-end header-content">
+                    <pep-button iconName="view_card_md" sizeType="sm" classNames="pep-spacing-element"></pep-button>
+                    <pep-button value="Preview" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="togglePreviewMode()"></pep-button>
+                    <pep-button [value]="'Publish' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="publishPage();">
+                    </pep-button>
+                    <!-- <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
+                    </pep-button>
+                    <pep-button [value]="'Clear Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="clearPage();">
+                    </pep-button> -->
+                </div>
             </div>
-            <div class="header-end header-content">
-                <pep-button iconName="view_card_md" sizeType="sm" classNames="pep-spacing-element"></pep-button>
-                <pep-button value="Preview" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="togglePreviewMode()"></pep-button>
-                <pep-button [value]="'Publish' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="publishPage();">
-                </pep-button>
-                <!-- <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
-                </pep-button>
-                <pep-button [value]="'Clear Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="clearPage();">
-                </pep-button> -->
+            <div #pageBuilderWrapper class="page-builder-wrapper" [ngClass]="{'limit-min-width': selectedScreenKey === 'desktop' }">
+                <page-builder [editMode]="showEditor" [screenSize]="screenSize" [sectionsColumnsDropList]="sectionsColumnsDropList"></page-builder>
+                <div *ngIf="showEditor" class="backdrop" [ngClass]="{'show-backdrop': currentEditor?.type === 'section' || currentEditor?.type === 'block'}"></div>
             </div>
-        </div>
-        <div #pageBuilderWrapper class="page-builder-wrapper" [ngClass]="{'editable-state': currentEditor?.type === 'section' || currentEditor?.type === 'block'}">
-            <page-builder [editMode]="showEditor" [screenSize]="screenSize" [sectionsColumnsDropList]="sectionsColumnsDropList"></page-builder>
-            <div class="backdrop"></div>
         </div>
     </ng-container>
 </pep-page-layout>

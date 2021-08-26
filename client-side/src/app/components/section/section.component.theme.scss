@@ -1,6 +1,58 @@
+@mixin dash-border($property, $border-width) {
+    #{$property}: $border-width dashed #000;
+}
+
 @mixin section-component-theme($pepperi-theme) {
     .section-container {
         background: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
-        @include pep-border(border, $pepperi-theme);
+        // @include pep-border(border, $pepperi-theme);
+
+        // This css is only for edit mode.
+        &.editable-state {
+            &.active-section {
+                @include focus($pepperi-theme);
+            }
+
+            .section-background {
+                .back-template {
+                    background-color: #BEC3E5;
+                    @include dash-border(border-right, 2px);
+                }
+            }
+
+            .columns-wrapper {
+                .section-column {
+                    @include dash-border(border, 2px);
+
+                    &.active-column {
+                        background: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
+                    }
+
+                    &.cdk-drop-list-dragging {
+                        @include focus($pepperi-theme);
+                        @include dash-border(border, 3px); // important is for override the none side for no dupplicate.
+                    }
+
+                    // Remove the border for no dupplicate.
+                    &:not(&:first-of-type) {
+                        &.horizontal {
+                            border-left: unset;
+                            
+                            &.cdk-drop-list-dragging {
+                                @include dash-border(border-left, 2px);
+                            }
+                        }
+
+                        &.vertical {
+                            border-top: unset;
+                            
+                            &.cdk-drop-list-dragging {
+                                @include dash-border(border-top, 2px);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

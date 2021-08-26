@@ -3,17 +3,17 @@
     <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
         class="section-toolbar" [title]="name" [isDraggable]="true"
         (edit)="onEditSectionClick();" (remove)="onRemoveSectionClick()"></toolbar-actions>
+    <div class="section-background">
+        <div class="back-template" *ngFor="let number of [0,1,2,3,4,5,6,7,8,9,10,11]"></div>
+    </div>
     <div #columnsWrapper class="columns-wrapper">
-        <div class="section-background">
-            <div class="back-template" *ngFor="let number of [0,1,2,3,4,5,6,7,8,9,10,11]"></div>
-        </div>
         <div [id]="sectionColumnKeyPrefix + i" 
             *ngFor="let column of columns; let i=index;"
-            class="section-column {{screenSize <= PepScreenSizeType.LG ? 'horizontal' : 'vertical'}}"
-            [ngClass]="{ 'active-column': selectedBlockId === column.Block?.BlockKey }"
+            class="section-column {{screenSize <= pepScreenSizeToFlipToVertical ? 'horizontal' : 'vertical'}}"
+            [ngClass]="{ 'active-column': selectedBlockId === column.Block?.BlockKey, 'remove-empty-column': !editable && !column.Block }"
             cdkDropList
             [cdkDropListData]="column"
-            [cdkDropListOrientation]="screenSize <= PepScreenSizeType.LG ? 'horizontal' : 'vertical'" 
+            [cdkDropListOrientation]="screenSize <= pepScreenSizeToFlipToVertical ? 'horizontal' : 'vertical'" 
             [cdkDropListConnectedTo]="sectionsColumnsDropList"
             (cdkDropListDropped)="onBlockDropped($event)"
             [cdkDropListEnterPredicate]="canDropPredicate(i)"

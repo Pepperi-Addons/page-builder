@@ -1,0 +1,18 @@
+@mixin page-manager-component-theme($pepperi-theme) {
+    .main-area-container {
+        .header-container {
+            background: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
+            box-shadow: get-pep-shadow($pepperi-theme, shadow-sm, regular);
+
+            .header-title {
+                color: get-pep-color($pepperi-theme, color-text, color-dimmed);
+            }
+        }
+
+        .page-builder-wrapper {
+            .backdrop {
+                background-color: #000;
+            }
+        }
+    }
+}

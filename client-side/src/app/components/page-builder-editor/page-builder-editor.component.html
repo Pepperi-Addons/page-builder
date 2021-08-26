@@ -22,23 +22,32 @@
     </mat-tab>
     <mat-tab label="{{'Design' | translate}}">
         <div class="tab-container">
-            <pep-checkbox [value]="isFullWidth" [label]="'Main_Dedign_Editor_FullWidth' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
-            <pep-textbox [label]="'Main_Dedign_Editor_MaxWidth' | translate" type="int" [disabled]="isFullWidth" [value]="maxWidth" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
-            <label class="body-xl bold ellipsis">{{'Main_Dedign_Editor_Spacing' | translate}}</label><br>
-            <label class="body-sm ellipsis">{{'Main_Dedign_Editor_Slides_L_and_R' | translate}}</label>
-            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="columnsHorizntalGap" buttonsClass="md regular" viewType="toggle" 
+            <pep-checkbox [value]="isFullWidth" [label]="'Main_Design_Editor_FullWidth' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
+            <pep-textbox [label]="'Main_Design_Editor_MaxWidth' | translate" type="int" [disabled]="isFullWidth" [value]="maxWidth" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
+            
+            <!-- Spacing -->
+            <label class="body-xl bold ellipsis">{{'Main_Design_Editor_Spacing' | translate}}</label><br>
+            <label class="body-sm ellipsis">{{'Main_Design_Editor_Slides_L_and_R' | translate}}</label>
+            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="horizontalSpacing" buttonsClass="md regular" viewType="toggle" 
                 (buttonClick)="setColumnsHorizntalGap($event)"></pep-group-buttons>
-            <label class="body-sm ellipsis">{{'Main_Dedign_Editor_Slides_T_and_B' | translate}}</label>
-            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="columnsVerticalGap" buttonsClass="md regular" viewType="toggle"
+            <label class="body-sm ellipsis">{{'Main_Design_Editor_Slides_T_and_B' | translate}}</label>
+            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="verticalSpacing" buttonsClass="md regular" viewType="toggle"
                 (buttonClick)="setColumnsVerticalGap($event)"></pep-group-buttons>
-            <label class="body-xl bold ellipsis">{{'Main_Dedign_Editor_Gaps' | translate}}</label><br>
-            <label class="body-sm ellipsis">{{'Main_Dedign_Editor_Gap_between_sections' | translate}}</label>
+            
+            <!-- Gaps -->
+            <label class="body-xl bold ellipsis">{{'Main_Design_Editor_Gaps' | translate}}</label><br>
+            <label class="body-sm ellipsis">{{'Main_Design_Editor_Gap_between_sections' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="sectionsGap" buttonsClass="md regular" viewType="toggle"
                 (buttonClick)="setSectionGap($event)"></pep-group-buttons>
-            <label class="body-xl bold ellipsis">{{'Main_Dedign_Editor_Rounded_Corners' | translate}}</label><br>
-            <label class="body-sm ellipsis">{{'Main_Dedign_Editor_Border_Radius' | translate}}</label>
+            <label class="body-sm ellipsis">{{'Main_Design_Editor_Gap_between_columns' | translate}}</label>
+            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="columnsGap" buttonsClass="md regular" viewType="toggle"
+                (buttonClick)="setColumnsGap($event)"></pep-group-buttons>
+
+            <!-- Rounded Corners -->
+            <!-- <label class="body-xl bold ellipsis">{{'Main_Design_Editor_Rounded_Corners' | translate}}</label><br>
+            <label class="body-sm ellipsis">{{'Main_Design_Editor_Border_Radius' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="roundedCorners" buttonsClass="ms regular" viewType="toggle"
-                (buttonClick)="setRoundedCorners($event)"></pep-group-buttons>
+                (buttonClick)="setRoundedCorners($event)"></pep-group-buttons> -->
         </div>
     </mat-tab>
 </mat-tab-group>

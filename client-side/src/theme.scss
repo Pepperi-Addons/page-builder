@@ -7,12 +7,14 @@
 $pepperi-theme: get-pepperi-theme();
 
 @import './app/app.component.theme.scss';
+@import './app/components/page-manager/page-manager.component.theme.scss';
 @import './app/components/section/section.component.theme.scss';
 @import './app/components/toolbar/toolbar.component.theme.scss';
 
 body {
     @include addon-theme($pepperi-theme);
 
+    @include page-manager-component-theme($pepperi-theme);
     @include section-component-theme($pepperi-theme);
     @include toolbar-component-theme($pepperi-theme);
 }
