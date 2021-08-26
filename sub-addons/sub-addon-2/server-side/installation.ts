@@ -57,25 +57,3 @@ async function runMigration(client){
         return { success: false };
     }
 }
-
-// async function runMigration(client){
-//     try {
-//         await addRelations(client, PageComponentRelations, "PageBlock");
-//         return { success: true };
-//     } catch(e){
-//         return { success: false };
-//     }
-// }
-
-// async function addRelations(client: Client, relations: Relation[], relationName){
-//     const service = new MyService(client);
-//     const promises: Promise<any>[] = [];
-//     relations.forEach(relation =>{ 
-//         relation.RelationName = relationName;
-//         const key = `${relation.Name}_${relation.AddonUUID}_${relation.RelationName}`;
-//         relation.Key = key;
-//         promises.push(service.upsertRelation(relation));
-//     });
-//     const result = await Promise.all(promises);
-//     return result;
-// }
