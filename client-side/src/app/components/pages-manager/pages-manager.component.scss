@@ -68,16 +68,20 @@ $z-index-min: 0;
             overflow: hidden;
             z-index: $z-index-min;
 
-            div{
-                width: 43%;
-                height: inherit;
-                background-size: cover;
+            img{
+                width: 50%;
 
                 &:first-of-type{
-                    transform: rotate(-15deg);
+                    transform: rotate(-40deg);
+                    height: 180% !important;
+                    margin-top: -4rem;
+                    margin-inline-start: -2rem;
                 }
                 &:last-of-type{
-                    transform: rotate(60deg);
+                    transform: rotate(55deg);
+                    height: 130%;
+                    margin-inline-end: -2rem;
+                    margin-top: -4rem;
                 }
             }
         }
@@ -139,7 +143,8 @@ $z-index-min: 0;
                                 height: 2rem;
                                 position: absolute;
                                 bottom: -2rem;
-                                background-color: rgb(51, 51, 51);
+                                background-color: #000;
+                                opacity: 0.8;
                                 display: flex;
                                 justify-content: center;
                                 flex-direction: column;

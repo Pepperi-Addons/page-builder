@@ -41,8 +41,10 @@
 
         <div class="PagesNotFoundMsg">
                 <div class="leaf-background">
-                    <div  [ngStyle]="{ 'background-image': 'url(' + imagesPath + 'brand-leaf-skiny.svg)'}"></div>
-                    <div  [ngStyle]="{ 'background-image': 'url(' + imagesPath + 'brand-leaf-round.svg)'}"></div>
+                    <img [src]="imagesPath + 'brand-leaf-skiny.svg'">
+                    <img [src]="imagesPath + 'brand-leaf-round.svg'">
+                    <!-- <div  [ngStyle]="{ 'background-image': 'url(' + imagesPath + 'brand-leaf-skiny.svg)'}"></div>
+                    <div  [ngStyle]="{ 'background-image': 'url(' + imagesPath + 'brand-leaf-round.svg)'}"></div> -->
                 </div>
                 <h2>{{ "Pages_No_Pages_Header" | translate}}</h2>
                 <span>{{ "Pages_No_Pages_Msg" | translate}}</span>
