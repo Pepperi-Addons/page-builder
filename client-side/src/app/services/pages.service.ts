@@ -1,15 +1,33 @@
 import { CdkDragDrop, copyArrayItem, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
 import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
-import { PepGuid, PepHttpService, PepScreenSizeType, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
+import { PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { PepRemoteLoaderOptions } from "@pepperi-addons/ngx-remote-loader";
 import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn } from "@pepperi-addons/papi-sdk";
 import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 
-export type EditorType = 'page-builder' | 'section' | 'block';
+interface IPageBuilderDataForEditMode {
+    page: Page, 
+    availableBlocks: IAvailableBlockDataForEditMode[]
+}
 
-export interface Editor {
+interface IAvailableBlockDataForEditMode {
+    relation: NgComponentRelation, 
+    addon: InstalledAddon 
+}
+
+export type PageRowStatusType = 'draft' | 'published';
+export interface IPageRow {
+    key: string,
+    name: string,
+    creationDate: string,
+    modificationDate: string,
+    status: PageRowStatusType,
+}
+
+export type EditorType = 'page-builder' | 'section' | 'block';
+export interface IEditor {
     id: string,
     title: string,
     type: EditorType,
@@ -17,7 +35,7 @@ export interface Editor {
     hostObject?: any
 }
 
-export interface PageEditor {
+export interface IPageEditor {
     id: string,
     pageName: string,
     pageDescription: string,
@@ -29,24 +47,24 @@ export interface PageEditor {
     roundedCorners?: PageSizeType,
 }
 
-export interface SectionEditor {
+export interface ISectionEditor {
     id: string,
     sectionName: string,
     split: SplitType,
     height: number,
 }
 
-export interface BlockEditor {
+export interface IBlockEditor {
     id: string,
     configuration?: any,
 }
 
-export interface AvailableBlock {
+export interface IAvailableBlock {
     options: PepRemoteLoaderOptions,
     relation: NgComponentRelation
 }
 
-export interface BlockProgress {
+export interface IBlockProgress {
     block: PageBlock;
     load: boolean;
 }
@@ -54,8 +72,8 @@ export interface BlockProgress {
 @Injectable({
     providedIn: 'root',
 })
-export class PageBuilderService {
-    private editorsBreadCrumb = Array<Editor>();
+export class PagesService {
+    private editorsBreadCrumb = Array<IEditor>();
 
     // This subject is for the screen size change events.
     private screenSizeSubject: BehaviorSubject<PepScreenSizeType> = new BehaviorSubject<PepScreenSizeType>(PepScreenSizeType.XL);
@@ -70,14 +88,14 @@ export class PageBuilderService {
     }
 
     // This subject is for load the current editor (Usage only in edit mode).
-    private editorSubject: BehaviorSubject<Editor> = new BehaviorSubject<Editor>(null);
-    get onEditorChange$(): Observable<Editor> {
+    private editorSubject: BehaviorSubject<IEditor> = new BehaviorSubject<IEditor>(null);
+    get onEditorChange$(): Observable<IEditor> {
         return this.editorSubject.asObservable().pipe(distinctUntilChanged());
     }
 
     // This subject is for load available blocks on the main editor (Usage only in edit mode).
-    private availableBlocksSubject: BehaviorSubject<AvailableBlock[]> = new BehaviorSubject<AvailableBlock[]>([]);
-    get availableBlocksLoadedSubject$(): Observable<AvailableBlock[]> {
+    private availableBlocksSubject: BehaviorSubject<IAvailableBlock[]> = new BehaviorSubject<IAvailableBlock[]>([]);
+    get availableBlocksLoadedSubject$(): Observable<IAvailableBlock[]> {
         return this.availableBlocksSubject.asObservable().pipe(distinctUntilChanged());
     }
 
@@ -87,18 +105,19 @@ export class PageBuilderService {
         return this.sectionsSubject.asObservable();
     }
     
-
-    private _pageBlockProgressMap = new Map<string, BlockProgress>();
-    get pageBlockProgressMap(): ReadonlyMap<string, BlockProgress> {
+    private _pageBlocksMap = new Map<string, PageBlock>();
+    get pageBlocksMap(): ReadonlyMap<string, PageBlock> {
+        return this._pageBlocksMap;
+    }
+    private _pageBlockProgressMap = new Map<string, IBlockProgress>();
+    get pageBlockProgressMap(): ReadonlyMap<string, IBlockProgress> {
         return this._pageBlockProgressMap;
     }
     
-    private _pageBlockProgress$ = new BehaviorSubject<ReadonlyMap<string, BlockProgress>>(this.pageBlockProgressMap);
-    get pageBlockProgress$(): Observable<ReadonlyMap<string, BlockProgress>> {
+    private _pageBlockProgress$ = new BehaviorSubject<ReadonlyMap<string, IBlockProgress>>(this.pageBlockProgressMap);
+    get pageBlockProgress$(): Observable<ReadonlyMap<string, IBlockProgress>> {
         return this._pageBlockProgress$.asObservable();
     }
-
-
 
     private pageSubject: BehaviorSubject<Page> = new BehaviorSubject<Page>(null);
     get pageDataChange$(): Observable<Page> {
@@ -111,8 +130,17 @@ export class PageBuilderService {
     constructor(
         private utilitiesService: PepUtilitiesService,
         private translate: TranslateService,
-        private http: PepHttpService,
+        private sessionService: PepSessionService,
+        private httpService: PepHttpService,
     ) {
+        this._pageBlockProgress$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
+            // Clear the blocks map and set it again.
+            this._pageBlocksMap.clear();
+            blocksProgress.forEach(block => {
+                this._pageBlocksMap.set(block.block.Key, block.block);
+            });
+        });
+
         this.pageLoad$.subscribe((page: Page) => {
             this.loadDefaultEditor(page);
             this.loadSections(page);
@@ -128,8 +156,8 @@ export class PageBuilderService {
     // }
 
     private loadDefaultEditor(page: Page) {
-        this.editorsBreadCrumb = new Array<Editor>();
-        const pageEditor: PageEditor = {
+        this.editorsBreadCrumb = new Array<IEditor>();
+        const pageEditor: IPageEditor = {
             id: page?.Key,
             pageName: page?.Name,
             pageDescription: page?.Description,
@@ -157,7 +185,7 @@ export class PageBuilderService {
 
     private addBlocks(blocks: PageBlock[]) {
         blocks.forEach(block => {
-            const initialProgress: BlockProgress = {
+            const initialProgress: IBlockProgress = {
                 block: block,
                 load: false
             };
@@ -212,9 +240,9 @@ export class PageBuilderService {
         return section;
     }
 
-    private getEditorFromPage(editorType: EditorType, id: string): Editor {
+    private getEditorFromPage(editorType: EditorType, id: string): IEditor {
         // TODO: Build editor object from the page.
-        let editor: Editor = null;
+        let editor: IEditor = null;
 
         if (editorType === 'section') {
             editor = this.getSectionEditor(id);
@@ -225,7 +253,7 @@ export class PageBuilderService {
         return editor;
     }
 
-    private getBlockEditor(blockId: string): Editor {
+    private getBlockEditor(blockId: string): IEditor {
         // Get the current block.
         let block: PageBlock = this.pageSubject?.value?.Blocks.find(block => blockId);
         
@@ -247,13 +275,13 @@ export class PageBuilderService {
         }
     }
 
-    private getSectionEditor(sectionId: string): Editor {
+    private getSectionEditor(sectionId: string): IEditor {
         // Get the current block.
         const sectionIndex = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
         
         if (sectionIndex >= 0) {
             let section: PageSection = this.sectionsSubject.value[sectionIndex];
-            const sectionEditor: SectionEditor = {
+            const sectionEditor: ISectionEditor = {
                 id: section.Key,
                 sectionName: section.Name || '',
                 split: section.Split || undefined,
@@ -327,48 +355,14 @@ export class PageBuilderService {
         }
     }
 
+    private getBaseUrl(addonUUID: string): string {
+        const baseUrl = this.sessionService.getPapiBaseUrl();
+        // return `${baseUrl}/addons/api/${addonUUID}/api`;
+        return `http://localhost:4500/api`;
+    }
+
     getSectionColumnKey(sectionKey: string = '', index: string = '') {
         return `${sectionKey}_column_${index}`;
-    }
-
-    initPageBuilder(pageKey: string): void {
-        // TODO: Load the saved page from the session for now.
-        const savedPage: Page = JSON.parse(sessionStorage.getItem('page')) ?? null;
-
-        if (savedPage) {
-            this.pageSubject.next(savedPage);
-        } else {
-            // TODO: Get the sections and the blocks data from the server.
-            this.http.getHttpCall(`http://localhost:4500/api/pages?pageKey=${pageKey}`)
-            // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/pages?pageKey=${pageKey}`)
-                .subscribe((res: Page) => {
-                this.pageSubject.next(res);
-            });
-        }
-    }
-
-    initPageEditor(addonUUID: string, pageType: string): void {
-        // debug locally
-        if (!this.availableBlocksSubject.value || this.availableBlocksSubject.value.length === 0) {
-            this.http.postHttpCall('http://localhost:4500/api/init_page_editor', { PageType: pageType})
-            // this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/init_page_editor`, { PageType: pageType})
-                .subscribe((res: { relation: NgComponentRelation, addon: InstalledAddon }[]) => {
-                    const availableBlocks: AvailableBlock[] = [];
-                    res.forEach(data => {
-                        const relation: NgComponentRelation = data?.relation;
-                        const addon: InstalledAddon = data?.addon;
-                        
-                        if (relation && addon) {
-                            availableBlocks.push({
-                                relation: relation,
-                                options: this.getRemoteLoaderOptions(relation, addon)
-                            });
-                        }
-                    });
-                        
-                    this.availableBlocksSubject.next(availableBlocks);
-            });
-        }
     }
 
     navigateToEditor(editorType: EditorType, id: string): boolean {
@@ -405,7 +399,7 @@ export class PageBuilderService {
         }
     }
 
-    updatePageFromEditor(pageData: PageEditor) {
+    updatePageFromEditor(pageData: IPageEditor) {
         const currentPage = this.pageSubject.value;
 
         if (currentPage) {
@@ -422,7 +416,7 @@ export class PageBuilderService {
         }
     }
 
-    updateSectionFromEditor(sectionData: SectionEditor) {
+    updateSectionFromEditor(sectionData: ISectionEditor) {
         const currentSection = this.sectionsSubject.value.find(section => section.Key === sectionData.id);
 
         if (currentSection) {
@@ -470,7 +464,6 @@ export class PageBuilderService {
         // Add the new section to page layout.
         this.pageSubject.value.Layout.Sections.push(section);
         this.sectionsSubject.next(this.pageSubject.value.Layout.Sections);
-        // this.pageSubject.next(this.pageSubject.value);
     }
 
     onRemoveSection(sectionId: string) {
@@ -597,5 +590,61 @@ export class PageBuilderService {
     publishPage() {
         // TODO: Implement this.
         sessionStorage.setItem('page', JSON.stringify(this.pageSubject.value));
+    }
+
+    
+    //**************************************************************************
+    // CPI & Server side calls.
+    //**************************************************************************
+    
+    getPages(addonUUID: string): Observable<Page[]> {
+        // Get the page (sections and the blocks data) from the server.
+        const baseUrl = this.getBaseUrl(addonUUID);
+        return this.httpService.getHttpCall(`${baseUrl}/pages`);
+    }
+
+    createNewPage(templateId: any) {
+
+    }
+
+    // TODO: This funtion should be on CPI side.
+    initPageBuilder(addonUUID: string, pageKey: string, editMode: boolean): void {
+        // TODO: Load the saved page from the session for now.
+        const savedPage: Page = JSON.parse(sessionStorage.getItem('page')) ?? null;
+
+        if (savedPage) {
+            this.pageSubject.next(savedPage);
+        } else {
+            //  If is't not edit mode get the page from the CPI side.
+            if (!editMode) {
+                
+            } else { // If is't edit mode get the data of the page and the relations from the Server side.
+                const baseUrl = this.getBaseUrl(addonUUID);
+                // Get the page (sections and the blocks data) from the server.
+                this.httpService.getHttpCall(`${baseUrl}/editor_page_data?key=${pageKey}`)
+                    .subscribe((res: IPageBuilderDataForEditMode) => {
+                        if (res.page && res.availableBlocks) {
+                            // Load the page.
+                            this.pageSubject.next(res.page);
+
+                            // Load the available blocks.
+                            const availableBlocks: IAvailableBlock[] = [];
+                            res.availableBlocks.forEach(data => {
+                                const relation: NgComponentRelation = data?.relation;
+                                const addon: InstalledAddon = data?.addon;
+                                
+                                if (relation && addon) {
+                                    availableBlocks.push({
+                                        relation: relation,
+                                        options: this.getRemoteLoaderOptions(relation, addon)
+                                    });
+                                }
+                            });
+                                
+                            this.availableBlocksSubject.next(availableBlocks);
+                        }
+                });
+            }
+        }
     }
 }

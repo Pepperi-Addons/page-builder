@@ -1,11 +1,9 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, Renderer2, SimpleChanges, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
-import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragExit, CdkDragStart, CdkDropList, copyArrayItem, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { BlockProgress, Editor, PageBuilderService } from 'src/app/services/page-builder.service';
-import { PageBlock, PageSection, PageSectionColumn, PageSizeType, SplitType } from '@pepperi-addons/papi-sdk';
+import { Component, ElementRef, Input, OnChanges, OnInit, QueryList, Renderer2, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
+import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragStart, CdkDropList } from '@angular/cdk/drag-drop';
+import { IEditor, PagesService } from 'src/app/services/pages.service';
+import { PageSectionColumn, SplitType } from '@pepperi-addons/papi-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { reduce } from 'rxjs/operators';
 
 @Component({
     selector: 'page-builder-section',
@@ -13,9 +11,6 @@ import { reduce } from 'rxjs/operators';
     styleUrls: ['./section.component.scss']
 })
 export class SectionComponent implements OnInit, OnChanges {
-    private readonly ACTIVE_SECTION_CLASS_NAME = 'active-section';
-    private readonly ACTIVE_BLOCK_CLASS_NAME = 'active-block';
-
     @ViewChild('sectionContainer') sectionContainerRef: ElementRef;
     @ViewChildren('columnsWrapper') columnsElementRef: QueryList<ElementRef>;
 
@@ -52,11 +47,6 @@ export class SectionComponent implements OnInit, OnChanges {
         return this._columns;
     }
 
-    private _blocksMap = new Map<string, PageBlock>();
-    get blocksMap(): ReadonlyMap<string, PageBlock> {
-        return this._blocksMap;
-    }
-
     @Input() sectionsColumnsDropList = [];
     
     PepScreenSizeType = PepScreenSizeType;
@@ -72,7 +62,7 @@ export class SectionComponent implements OnInit, OnChanges {
         private renderer: Renderer2,
         private translate: TranslateService,
         private layoutService: PepLayoutService,
-        private pageBuilderService: PageBuilderService
+        public pageBuilderService: PagesService
     ) { }
 
     private getCssSplitString() {
@@ -132,7 +122,7 @@ export class SectionComponent implements OnInit, OnChanges {
         this.refreshSplit();
 
         if (this.editable) {
-            this.pageBuilderService.onEditorChange$.subscribe((editor: Editor) => {
+            this.pageBuilderService.onEditorChange$.subscribe((editor: IEditor) => {
                 this.canDrag = editor.type === 'page-builder';
                 
                 this.selected = editor.type === 'section' && editor.id === this.id;
@@ -141,35 +131,10 @@ export class SectionComponent implements OnInit, OnChanges {
         }
 
         this.sectionColumnKeyPrefix = this.pageBuilderService.getSectionColumnKey(this.id);
-
-        this.pageBuilderService.pageBlockProgress$.subscribe((blocksProgress: ReadonlyMap<string, BlockProgress>) => {
-            // Clear the blocks map.
-            this._blocksMap.clear();
-
-            // // Get only the block keys that exist in columns.
-            // const blockKeys = this.columns.filter(column => !!column.Block).map(column => column.Block?.BlockKey);
-
-            // // For each block id -> if exist in blocksProgress insert the block into my blocksMap 
-            // blockKeys.forEach(blockKey => {
-            //     const blockProgress = blocksProgress.get(blockKey);
-            //     if (blockProgress) {
-            //         this._blocksMap.set(blockKey, blockProgress.block);
-            //     }
-            // });
-
-            blocksProgress.forEach(block => {
-                this._blocksMap.set(block.block.Key, block.block);
-            });
-        });
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         // throw new Error('Method not implemented.');
-    }
-
-    getBlock(blockKey: string) {
-        const block = this._blocksMap.get(blockKey);
-        return block;
     }
 
     onEditSectionClick() {

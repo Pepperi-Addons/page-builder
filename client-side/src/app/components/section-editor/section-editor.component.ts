@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { IPepFieldValueChangeEvent, IPepOption, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
-import { PageSection, SplitType } from '@pepperi-addons/papi-sdk';
-import { SectionEditor } from 'src/app/services/page-builder.service';
+import { IPepOption, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
+import { SplitType } from '@pepperi-addons/papi-sdk';
+import { ISectionEditor } from 'src/app/services/pages.service';
 
 export interface ISplitOption {
     key: SplitType; 
@@ -18,16 +18,16 @@ export interface IAllSplitOption {
     styleUrls: ['./section-editor.component.scss']
 })
 export class SectionEditorComponent implements OnInit {
-    private _hostObject: SectionEditor;
+    private _hostObject: ISectionEditor;
     @Input()
-    set hostObject(value: SectionEditor) {
+    set hostObject(value: ISectionEditor) {
         this._hostObject = value;
 
         this.sectionName = value.sectionName;
         this.split = value.split;
         this.height = value.height;
     }
-    get hostObject(): SectionEditor {
+    get hostObject(): ISectionEditor {
         return this._hostObject;
     }
 
@@ -58,7 +58,7 @@ export class SectionEditorComponent implements OnInit {
     // @Input() 
     height: number = 0;
 
-    @Output() hostObjectChange: EventEmitter<SectionEditor> = new EventEmitter<SectionEditor>();
+    @Output() hostObjectChange: EventEmitter<ISectionEditor> = new EventEmitter<ISectionEditor>();
     
     subSections: boolean = false;
     partsNumber: string = "2";

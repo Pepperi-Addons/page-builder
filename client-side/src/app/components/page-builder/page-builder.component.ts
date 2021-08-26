@@ -2,10 +2,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { CdkDragDrop  } from '@angular/cdk/drag-drop';
-import { PageBuilderService } from '../../services/page-builder.service';
+import { PagesService } from '../../services/pages.service';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
 import { Page, PageSection, PageSizeType } from '@pepperi-addons/papi-sdk';
+import { NavigationService } from 'src/app/services/navigation.service';
 
 @Component({
     selector: 'page-builder',
@@ -30,9 +31,10 @@ export class PageBuilderComponent implements OnInit {
         private route: ActivatedRoute,
         private renderer: Renderer2,
         private translate: TranslateService,
+        private navigationService: NavigationService,
         private utilitiesService: PepUtilitiesService,
         private layoutService: PepLayoutService,
-        public pageBuilderService: PageBuilderService
+        public pageBuilderService: PagesService
     ) {
     }
 
@@ -59,8 +61,10 @@ export class PageBuilderComponent implements OnInit {
             this.setPageDataProperties(page);
         });
 
-        const pageKey = this.route?.snapshot?.params['page_key'] || '';
-        this.pageBuilderService.initPageBuilder(pageKey);
+        // TODO: Need to get the addonUUID not from the navigationService.
+        const addonUUID = this.navigationService.addonUUID;
+        const pageKey = this.route?.snapshot?.params['page_key'];
+        this.pageBuilderService.initPageBuilder(addonUUID, pageKey, this.editMode);
     }
 
     addSection(e) {
