@@ -146,8 +146,8 @@ export class PageManagerComponent implements OnInit {
         //     return block;
         // });
         // sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
-
-        this.pageBuilderService.publishPage();
+        const addonUUID = this.navigationService.addonUUID;
+        this.pageBuilderService.publishPage(addonUUID);
     }
 
     // clearPage() {
