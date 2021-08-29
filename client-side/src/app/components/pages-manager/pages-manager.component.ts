@@ -11,6 +11,7 @@ import { from, Observable } from "rxjs";
 import { map } from 'rxjs/operators';
 import { GenericListDataSource } from '../generic-list/generic-list.component';
 import { GridDataViewField } from '@pepperi-addons/papi-sdk';
+import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 
 export enum Page_Type { "Homepage" = 1, "Dashbaord" = 2, "Item" = 3, "Generic" = 4, "None" = 5 };
 
@@ -60,6 +61,7 @@ export class PagesManagerComponent implements OnInit {
         private navigationService: NavigationService,
         private pepAddonService: PepAddonService,
         private pagesService: PagesService,
+        public dialog: PepDialogService,
 
     ) {
         this.imagesPath = this.pepAddonService.getAddonStaticFolder() + 'assets/images/';
@@ -124,13 +126,13 @@ export class PagesManagerComponent implements OnInit {
         getActions: async (objs) => {
             return objs.length ? [
                 {
-                    title: this.translate.instant("Edit"),
+                    title: this.translate.instant("Pages_Edit"),
                     handler: async (objs) => {
                         this.navigationService.navigateToPage([objs[0].Key].toString());
                     }
                 },
                 {
-                    title: this.translate.instant("Delete"),
+                    title: this.translate.instant("Pages_Delete"),
                     handler: async (objs) => {
                         this.deletePage([objs[0].Key].toString());
                     }
@@ -173,7 +175,11 @@ export class PagesManagerComponent implements OnInit {
     }
 
     deletePage(pageId: string){
-        debugger;
+        const content = this.translate.instant('Pages_Delete_Page_Msg');
+        const title = this.translate.instant('Pages_Delete_PageDialog_Title');
+        const dataMsg = new PepDialogData({title, actionsType: "cancel-delete", content});
+        this.dialog.openDefaultDialog(dataMsg);
+
     }
     navigateBackToMainPage(){
         this.isAddNewPage = false;
