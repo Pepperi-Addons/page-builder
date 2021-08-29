@@ -178,7 +178,12 @@ export class PagesManagerComponent implements OnInit {
         const content = this.translate.instant('PAGES_MANAGER.DELETE_PAGE_MSG');
         const title = this.translate.instant('PAGES_MANAGER.DELETE_PAGE_DIALOG_TITLE');
         const dataMsg = new PepDialogData({title, actionsType: "cancel-delete", content});
-        this.dialog.openDefaultDialog(dataMsg);
+        
+        this.dialog.openDefaultDialog(dataMsg).afterClosed().subscribe((isDeletePressed) => {
+            if (isDeletePressed) {
+                debugger;
+            }
+        });
 
     }
     navigateBackToMainPage(){
