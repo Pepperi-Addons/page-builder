@@ -95,8 +95,8 @@ export class PagesService {
         
         // TODO: Check that this is working.
         // return this.papiClient.addons.data.schemes.tableName('table').purge();
-        promises.push(this.papiClient.post(`/addons/data/schemes/${PAGES_TABLE_NAME}/purge`));
-        promises.push(this.papiClient.post(`/addons/data/schemes/${DRAFT_PAGES_TABLE_NAME}/purge`));
+        // promises.push(this.papiClient.post(`/addons/data/schemes/${PAGES_TABLE_NAME}/purge`));
+        // promises.push(this.papiClient.post(`/addons/data/schemes/${DRAFT_PAGES_TABLE_NAME}/purge`));
 
         return Promise.all(promises);
     }
@@ -126,7 +126,7 @@ export class PagesService {
     }
 
     upsertPage(page: Page): Promise<AddonData> {
-        if (page.Key) {
+        if (!page.Key) {
             page.Key = uuid();
         }
 

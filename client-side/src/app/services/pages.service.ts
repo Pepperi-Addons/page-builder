@@ -621,7 +621,10 @@ export class PagesService {
                     .subscribe((res: IPageBuilderDataForEditMode) => {
                         if (res.page && res.availableBlocks) {
                             // Load the page.
-                            this.pageSubject.next(res.page);
+                            // TODO: remove this
+                            const savedPage: Page = null;//JSON.parse(sessionStorage.getItem('page')) ?? null;
+
+                            this.pageSubject.next(savedPage || res.page);
 
                             // Load the available blocks.
                             const availableBlocks: IAvailableBlock[] = [];
@@ -658,6 +661,6 @@ export class PagesService {
 
         // Get the page (sections and the blocks data) from the server.
         const baseUrl = this.getBaseUrl(addonUUID);
-        return this.httpService.postHttpCall(`${baseUrl}/publish_page`, page);
+        return this.httpService.postHttpCall(`${baseUrl}/publish_page`, {page});
     }
 }
