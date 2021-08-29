@@ -111,11 +111,12 @@ export class PagesService {
             let allPages = [...new Set(pages.concat(draftPages).map((page: Page) => {
                 // Return projection object.
                 return {
-                    key: page.Key,
-                    name: page.Name,
-                    creationDate: page.CreationDateTime,
-                    modificationDate: page.ModificationDateTime,
-                    status: '',
+                    Key: page.Key,
+                    Name: page.Name,
+                    Description: page.Description,
+                    CreationDate: page.CreationDateTime,
+                    ModificationDate: page.ModificationDateTime,
+                    Status: draftPages.some(draft => draft.Key === page.Key) ? 'draft' : 'published',
                 }
             }))];
 

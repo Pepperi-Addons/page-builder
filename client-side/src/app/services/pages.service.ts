@@ -7,6 +7,16 @@ import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, Page
 import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 
+export type PageRowStatusType = 'draft' | 'published';
+export interface IPageRowModel {
+    Key: string,
+    Name: string,
+    Description: string,
+    CreationDate: string,
+    ModificationDate: string,
+    Status: PageRowStatusType,
+}
+
 interface IPageBuilderDataForEditMode {
     page: Page, 
     availableBlocks: IAvailableBlockDataForEditMode[]
@@ -15,15 +25,6 @@ interface IPageBuilderDataForEditMode {
 interface IAvailableBlockDataForEditMode {
     relation: NgComponentRelation, 
     addon: InstalledAddon 
-}
-
-export type PageRowStatusType = 'draft' | 'published';
-export interface IPageRow {
-    key: string,
-    name: string,
-    creationDate: string,
-    modificationDate: string,
-    status: PageRowStatusType,
 }
 
 export type EditorType = 'page-builder' | 'section' | 'block';
@@ -591,10 +592,10 @@ export class PagesService {
     // CPI & Server side calls.
     //**************************************************************************
     
-    getPages(addonUUID: string): Observable<IPageRow[]> {
+    getPages(addonUUID: string, options: any): Observable<IPageRowModel[]> {
         // Get the page (sections and the blocks data) from the server.
         const baseUrl = this.getBaseUrl(addonUUID);
-        return this.httpService.getHttpCall(`${baseUrl}/pages`);
+        return this.httpService.getHttpCall(`${baseUrl}/pages?${options}`);
     }
 
     createNewPage(addonUUID: string, templateId: any): Observable<Page[]> {

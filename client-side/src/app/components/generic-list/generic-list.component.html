@@ -1,5 +1,5 @@
 <div class="addon-page-container">
-    <!-- <div [ngClass]="{ 'inline-top-bar-container' : inline }">
+    <div [ngClass]="{ 'inline-top-bar-container' : inline }">
         <pep-top-bar [title]="title" [inline]="inline">
             <div header-start-content>
                 <ng-content select="[left-buttons]"></ng-content>
@@ -10,10 +10,10 @@
             <pep-list-actions [sizeType]="inline ? 'sm' : 'md'" [actions]="menuActions" (actionClick)="onMenuItemClicked($event)"></pep-list-actions>
             <pep-list-total [totalRows]="customList ? customList.totalRows : -1"></pep-list-total>
 
-            <pep-search [sizeType]="inline ? 'sm' : 'md'" *ngIf="showSearch" (search)="onSearchChanged($event)">
-            </pep-search>
+            <!-- <pep-search [sizeType]="inline ? 'sm' : 'md'" *ngIf="showSearch" (search)="onSearchChanged($event)">
+            </pep-search> -->
         </pep-top-bar>
-    </div> -->
+    </div>
 
     <ng-container *ngIf="inline; then inlineBlock; else regularBlock"></ng-container>
 
@@ -29,7 +29,7 @@
     </ng-template>
     <ng-template #listTemplate>
         <div class="list-wrapper" #listContainer id="listContainer">
-            <pep-list [supportSorting]="false" [supportResizing]="true"
+            <pep-list [supportSorting]="false" [viewType]="'table'"
                 [selectionTypeForActions]="allowMultipleSelection ? 'multi' : (allowSelection ? 'single' : 'none')" [noDataFoundMsg]="'No data' | translate" [parentScroll]="listContainer"
                 (fieldClick)="onCustomizeFieldClick($event)"
                 (selectedItemsChange)="selectedRowsChanged($event)">

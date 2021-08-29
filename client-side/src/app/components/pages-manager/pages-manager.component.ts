@@ -1,5 +1,5 @@
 import { NavigationService } from './../../services/navigation.service';
-import { PagesService } from '../../services/pages.service';
+import { IPageRowModel, PagesService } from '../../services/pages.service';
 import { GenericListModule } from './../generic-list/generic-list.module';
 import { Component, OnInit, Renderer2 } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
@@ -9,6 +9,8 @@ import { PepAddonService } from '@pepperi-addons/ngx-lib';
 import { from, Observable } from "rxjs";
 
 import { map } from 'rxjs/operators';
+import { GenericListDataSource } from '../generic-list/generic-list.component';
+import { GridDataViewField } from '@pepperi-addons/papi-sdk';
 
 export enum Page_Type { "Homepage" = 1, "Dashbaord" = 2, "Item" = 3, "Generic" = 4, "None" = 5 };
 
@@ -51,8 +53,6 @@ export class PagesManagerComponent implements OnInit {
 
     public imagesPath = '';
 
-    dataSource$: Observable<any[]>
-
     constructor(
 
         private renderer: Renderer2,
@@ -66,6 +66,85 @@ export class PagesManagerComponent implements OnInit {
 
     }
 
+    private getRegularReadOnlyColumn(columnId: string): GridDataViewField {
+        return {
+            FieldID: columnId,
+            Type: 'TextBox',
+            Title: this.translate.instant(columnId),
+            Mandatory: false,
+            ReadOnly: true
+        }
+    }
+
+    pagesDataSource: GenericListDataSource = {
+        getList: (options) => {
+            let res : IPageRowModel[]= [];
+            return this.pagesService.getPages(this.navigationService.addonUUID, options).toPromise().then((pages) => {
+                // pages.map(page  => {
+                //     return {
+                //         key: page.key,
+                //         name: page.name,           
+                //         description: page.description,
+                //         creationDate: page.creationDate,
+                //         modificationDate: page.modificationDate,
+                //         status: page.status
+                //     }
+                // });
+                
+                for (let page of pages) {
+                    res.push({
+                        Key: page.Key,
+                        Name: page.Name,           
+                        Description: page.Description,
+                        CreationDate: page.CreationDate,
+                        ModificationDate: page.ModificationDate,
+                        Status: page.Status,
+                    })
+                }
+                return res;
+            })
+        },
+
+        getDataView: async () => {
+            return {
+                Context: {
+                    Name: '',
+                    Profile: { InternalID: 0 },
+                    ScreenSize: 'Landscape'
+                },
+                Type: 'Grid',
+                Title: '',
+                Fields: [
+                    this.getRegularReadOnlyColumn('Name'),
+                    this.getRegularReadOnlyColumn('Description'),
+                    this.getRegularReadOnlyColumn('CreationDate'),
+                    this.getRegularReadOnlyColumn('ModificationDate'),
+                    this.getRegularReadOnlyColumn('Status')
+                ],
+                Columns: [
+                    { Width: 20 },
+                    { Width: 20 },
+                    { Width: 20 },
+                    { Width: 20 },
+                    { Width: 20 }
+                ],
+                FrozenColumnsCount: 0,
+                MinimumColumnWidth: 0
+            }
+        },
+
+        getActions: async (objs) => {
+            return objs.length ? [
+                {
+                    title: this.translate.instant("Edit"),
+                    handler: async (objs) => {
+                        this.navigationService.navigateToPage([objs[0].Key].toString());
+                    }
+                }
+            ] : []
+        }
+    }
+
     ngOnInit() {
         // TODO - NEED TO INITLIZE THE MENUS
         this.mainMenuItems = this.secondaryMenuItems = [];
@@ -73,9 +152,9 @@ export class PagesManagerComponent implements OnInit {
         // TODO - NEED TO CHANGE TO GET PAGES CALL.
         /*this.dataSource$*/
         //let pages = this.pagesService.getPages(this.navigationService.addonUUID);
-       this.pagesService.getPages(this.navigationService.addonUUID).subscribe(returnedData => {
-            console.log(returnedData);
-        });
+    //    this.pagesService.getPages(this.navigationService.addonUUID).subscribe(returnedData => {
+    //         console.log(returnedData);
+    //     });
 
     }
 

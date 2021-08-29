@@ -9,6 +9,7 @@ import { PepListModule } from '@pepperi-addons/ngx-lib/list';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { PepNgxLibModule, PepAddonService, PepCustomizationService, PepFileService, PepHttpService } from '@pepperi-addons/ngx-lib';
 import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
 
 @NgModule({
     declarations: [GenericListComponent],
@@ -19,6 +20,7 @@ import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } fr
         ToolbarModule,
         PepAddonLoaderModule,
         PepListModule,
+        PepTopBarModule,
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
