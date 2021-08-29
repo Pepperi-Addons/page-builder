@@ -78,31 +78,18 @@ export class PagesManagerComponent implements OnInit {
 
     pagesDataSource: GenericListDataSource = {
         getList: (options) => {
-            let res : IPageRowModel[]= [];
-            return this.pagesService.getPages(this.navigationService.addonUUID, options).toPromise().then((pages) => {
-                // pages.map(page  => {
-                //     return {
-                //         key: page.key,
-                //         name: page.name,           
-                //         description: page.description,
-                //         creationDate: page.creationDate,
-                //         modificationDate: page.modificationDate,
-                //         status: page.status
-                //     }
-                // });
-                
-                for (let page of pages) {
-                    res.push({
-                        Key: page.Key,
-                        Name: page.Name,           
-                        Description: page.Description,
-                        CreationDate: page.CreationDate,
-                        ModificationDate: page.ModificationDate,
-                        Status: page.Status,
-                    })
-                }
-                return res;
-            })
+            const res: Promise<IPageRowModel[]> = this.pagesService.getPages(this.navigationService.addonUUID, options).toPromise().then((pages) => {
+                return pages.map(page => ({
+                    Key: page.Key,
+                    Name: page.Name,           
+                    Description: page.Description,
+                    CreationDate: page.CreationDate,
+                    ModificationDate: page.ModificationDate,
+                    Status: page.Status
+                }));
+            });
+
+            return res;
         },
 
         getDataView: async () => {
