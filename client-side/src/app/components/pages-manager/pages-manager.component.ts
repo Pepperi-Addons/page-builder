@@ -128,6 +128,12 @@ export class PagesManagerComponent implements OnInit {
                     handler: async (objs) => {
                         this.navigationService.navigateToPage([objs[0].Key].toString());
                     }
+                },
+                {
+                    title: this.translate.instant("Delete"),
+                    handler: async (objs) => {
+                        this.deletePage([objs[0].Key].toString());
+                    }
                 }
             ] : []
         }
@@ -166,6 +172,9 @@ export class PagesManagerComponent implements OnInit {
         //this.navigationService.navigateToPage('1');
     }
 
+    deletePage(pageId: string){
+        debugger;
+    }
     navigateBackToMainPage(){
         this.isAddNewPage = false;
     }
