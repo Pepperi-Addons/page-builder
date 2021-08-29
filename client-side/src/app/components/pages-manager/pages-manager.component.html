@@ -1,10 +1,10 @@
 <pep-page-layout [addPadding]="false">
     <ng-container pep-top-area>
-        <pep-top-bar class="main-top-heaer"  [title]="!isAddNewPage ?  ('Pages_Main_Header' | translate) : ''">
+        <pep-top-bar class="main-top-heaer"  [title]="!isAddNewPage ?  ('PAGES_MANAGER.MAIN_HEADER' | translate) : ''">
             <div header-start-content>
                 <div *ngIf="isAddNewPage" header-end-content>
                     <pep-button  class="back-button pull-left flip pep-spacing-element" iconName="arrow_left_alt" (buttonClick)="navigateBackToMainPage();"></pep-button>
-                    <div class="main-header pep-spacing-element title title-lg pull-left flip"><span  title="Select a Page">{{'Pages_AddNew_Header' | translate}}</span></div>
+                    <div class="main-header pep-spacing-element title title-lg pull-left flip"><span  title="Select a Page">{{'PAGES_MANAGER.ADDNEW_HEADER' | translate}}</span></div>
                 </div>
             </div>
             <div header-end-content>
@@ -26,13 +26,13 @@
 <ng-template #mainBlock>
     <div class="add-on-width">
         <div class="pageExplanation">
-            <span class="body-md">{{ 'Pages_Main_Explanation' | translate }}</span>
+            <span class="body-md">{{ 'PAGES_MANAGER.MAIN_EXPLANATION' | translate }}</span>
         </div>
-        <!-- <pep-top-bar [inline]="true" [title]="('Pages_Secondary_Header' | translate)">
+        <!-- <pep-top-bar [inline]="true" [title]="('PAGES_MANAGER.SECONDARY_HEADER' | translate)">
             <div header-end-content>
                 <pep-menu class="pep-spacing-element" [items]="secondaryMenuItems" [sizeType]="'sm'" (menuItemClick)="onSecondaryMenuItemClicked($event)">
                 </pep-menu>
-                <pep-button class="pep-spacing-element" [value]="'Pages_a_Page' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
+                <pep-button class="pep-spacing-element" [value]="'PAGES_MANAGER.A_PAGE' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
                 </pep-button>
             </div>
         </pep-top-bar> -->
@@ -42,14 +42,14 @@
                     <img [src]="imagesPath + 'brand-leaf-skiny.svg'">
                     <img [src]="imagesPath + 'brand-leaf-round.svg'">
                 </div>
-                <h2>{{ "Pages_No_Pages_Header" | translate}}</h2>
-                <span>{{ "Pages_No_Pages_Msg" | translate}}</span>
+                <h2>{{ "PAGES_MANAGER.PAGES_HEADER" | translate}}</h2>
+                <span>{{ "PAGES_MANAGER.NO_PAGES_MSG" | translate}}</span>
         </div>
-        <generic-list [dataSource]="pagesDataSource" [inline]="false" [showSearch]="true" [title]="'Pages_Secondary_Header' | translate">
+        <generic-list [dataSource]="pagesDataSource" [inline]="false" [showSearch]="true" [title]="'PAGES_MANAGER.SECONDARY_HEADER' | translate">
             <ng-container right-buttons>
                     <pep-menu class="pep-spacing-element" [items]="secondaryMenuItems" [sizeType]="'sm'" (menuItemClick)="onSecondaryMenuItemClicked($event)">
                     </pep-menu>
-                    <pep-button class="pep-spacing-element" [value]="'Pages_a_Page' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
+                    <pep-button class="pep-spacing-element" [value]="'PAGES_MANAGER.A_PAGE' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
                     </pep-button>
             </ng-container>
         </generic-list>
@@ -59,14 +59,14 @@
 <ng-template #addNewBlock>
     <div class="add-on-width">
     <div class="pageExplanation">
-        <span class="body-md">{{ 'Pages_AddNew_Explanation' | translate }}</span>
+        <span class="body-md">{{ 'PAGES_MANAGER.ADDNEW_EXPLANATION' | translate }}</span>
         <div>
-            <p><label class="body-xs ellipsis">{{ 'Pages_Links_Header' | translate }}</label></p>
-            <p><label class="color-link body-sm ellipsis" (click)="openLink('Using')">{{ 'Pages_Links_Using' | translate }}</label></p>
-            <p><label class="color-link body-sm ellipsis" (click)="openLink('Importing')">{{ 'Pages_Links_Importing' | translate }}</label></p>
-            <p><label class="color-link body-sm ellipsis" (click)="openLink('Save')">{{ 'Pages_Links_Save' | translate }}</label></p>
-            <p><label class="color-link body-sm ellipsis" (click)="openLink('Publish')">{{ 'Pages_Links_Publish' | translate }}</label></p>
-            <p><label class="color-link body-sm ellipsis" (click)="openLink('Export')">{{ 'Pages_Links_Export' | translate }}</label></p>
+            <p><label class="body-xs ellipsis">{{ 'PAGES_MANAGER.LINKS_HEADER' | translate }}</label></p>
+            <p><label class="color-link body-sm ellipsis" (click)="openLink('Using')">{{ 'PAGES_MANAGER.LINKS_USING' | translate }}</label></p>
+            <p><label class="color-link body-sm ellipsis" (click)="openLink('Importing')">{{ 'PAGES_MANAGER.LINKS_IMPORTING' | translate }}</label></p>
+            <p><label class="color-link body-sm ellipsis" (click)="openLink('Save')">{{ 'PAGES_MANAGER.LINKS_SAVE' | translate }}</label></p>
+            <p><label class="color-link body-sm ellipsis" (click)="openLink('Publish')">{{ 'PAGES_MANAGER.LINKS_PUBLISH' | translate }}</label></p>
+            <p><label class="color-link body-sm ellipsis" (click)="openLink('Export')">{{ 'PAGES_MANAGER.LINKS_EXPORT' | translate }}</label></p>
         </div>
     </div>
     <mat-accordion class="pep-accordion" [multi]="'true'">
@@ -79,7 +79,7 @@
             <div class="page-cube pull-left flip" *ngFor="let tmpPage of  group.pages">
                 <div class="page-cube-inner" (click)="createTemplatePage(tmpPage)">
                     <div class="logo">{{tmpPage.name | translate}}</div>
-                    <div class="activeTemplate">{{'Pages_UseThis' | translate}}</div>
+                    <div class="activeTemplate">{{'PAGES_MANAGER.USE_THIS' | translate}}</div>
                 </div>
                 <div class="body-xs">{{tmpPage.description | translate}}</div>
             </div>

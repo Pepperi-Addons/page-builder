@@ -40,15 +40,15 @@ export class PagesManagerComponent implements OnInit {
     secondaryMenuItems: Array<PepMenuItem> = null;
     isAddNewPage = false;
 
-    tempPages: Array<TempPage> = [{id: 1, name: "Pages_AddNew_Blank" , description: 'Pages_AddNew_Blank_Desc', type: Page_Type.Homepage},
-                                  {id: 2, name: 'Pages_AddNew_Gridy' , description: 'Pages_AddNew_Gridy_Desc', type: Page_Type.Homepage},
-                                  {id: 3, name: 'Pages_AddNew_Simplistic' , description: 'Pages_AddNew_Simplistic_Desc', type: Page_Type.Homepage},
-                                  {id: 4, name: 'Pages_AddNew_Branded' , description: 'Pages_AddNew_Branded_Desc', type: Page_Type.Homepage}];
+    tempPages: Array<TempPage> = [{id: 1, name: "PAGES_MANAGER.ADDNEW_BLANK" , description: 'PAGES_MANAGER.ADDNEW_BLANK_DESC', type: Page_Type.Homepage},
+                                  {id: 2, name: 'PAGES_MANAGER.ADDNEW_GRIDY' , description: 'PAGES_MANAGER.ADDNEW_GRIDY_DESC', type: Page_Type.Homepage},
+                                  {id: 3, name: 'PAGES_MANAGER.ADDNEW_SIMPLISTIC' , description: 'PAGES_MANAGER.ADDNEW_SIMPLISTIC_DESC', type: Page_Type.Homepage},
+                                  {id: 4, name: 'PAGES_MANAGER.ADDNEW_BRANDED' , description: 'PAGES_MANAGER.ADDNEW_BRANDED_DESC', type: Page_Type.Homepage}];
 
-     pageGroups: Array<pageGroup> = [{ title: "Pages_AddNew_HomePage", isExpanded: true, pages: this.tempPages}
-    //                               ,{ title: "Pages_AddNew_Dashboard", isExpanded: false, pages: this.tempPages},
-    //                               { title: "Pages_AddNew_Item", isExpanded: false, pages: this.tempPages},
-    //                               { title: "Pages_AddNew_Generic", isExpanded: false, pages: this.tempPages}
+     pageGroups: Array<pageGroup> = [{ title: "PAGES_MANAGER.ADDNEW_HOMEPAGE", isExpanded: true, pages: this.tempPages}
+    //                               ,{ title: "PAGES_MANAGER.ADDNEW_DASHBOARD", isExpanded: false, pages: this.tempPages},
+    //                               { title: "PAGES_MANAGER.ADDNEW_ITEM", isExpanded: false, pages: this.tempPages},
+    //                               { title: "PAGES_MANAGER.ADDNEW_GENERIC", isExpanded: false, pages: this.tempPages}
 
 ];
 
@@ -126,13 +126,13 @@ export class PagesManagerComponent implements OnInit {
         getActions: async (objs) => {
             return objs.length ? [
                 {
-                    title: this.translate.instant("Pages_Edit"),
+                    title: this.translate.instant("ACTIONS.EDIT"),
                     handler: async (objs) => {
                         this.navigationService.navigateToPage([objs[0].Key].toString());
                     }
                 },
                 {
-                    title: this.translate.instant("Pages_Delete"),
+                    title: this.translate.instant("ACTIONS.DELETE"),
                     handler: async (objs) => {
                         this.deletePage([objs[0].Key].toString());
                     }
@@ -175,8 +175,8 @@ export class PagesManagerComponent implements OnInit {
     }
 
     deletePage(pageId: string){
-        const content = this.translate.instant('Pages_Delete_Page_Msg');
-        const title = this.translate.instant('Pages_Delete_PageDialog_Title');
+        const content = this.translate.instant('PAGES_MANAGER.DELETE_PAGE_MSG');
+        const title = this.translate.instant('PAGES_MANAGER.DELETE_PAGE_DIALOG_TITLE');
         const dataMsg = new PepDialogData({title, actionsType: "cancel-delete", content});
         this.dialog.openDefaultDialog(dataMsg);
 
