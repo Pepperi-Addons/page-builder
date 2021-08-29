@@ -1,24 +1,16 @@
+@import '../../../mixins.scss';
+
+:host {
+    display: block;
+}
+
 .sections-container {
     width: 100%;
     margin: 0 auto;
     position: relative;
     display: grid;
 
-    &.gap-NONE { 
-        gap: 0; /* none*/
-    }
-
-    &.gap-SM {
-        gap: 0.5rem;
-    }
-
-    &.gap-MD {
-        gap: 1rem;
-    }
-
-    &.gap-LG {
-        gap: 2rem;
-    }
+    @include gap-sizes();
     
     .draggable-section {
         display: block;

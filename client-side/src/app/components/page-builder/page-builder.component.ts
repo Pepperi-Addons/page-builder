@@ -1,5 +1,5 @@
 import { ActivatedRoute } from '@angular/router';
-import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from "@angular/core";
+import { Component, ElementRef, HostBinding, Input, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { CdkDragDrop  } from '@angular/cdk/drag-drop';
 import { PagesService } from '../../services/pages.service';
@@ -20,12 +20,21 @@ export class PageBuilderComponent implements OnInit {
     @Input() screenSize: PepScreenSizeType;
     @Input() sectionsColumnsDropList = [];
     
+    @HostBinding('style.padding-inline')
+    paddingInline = '0';
+
+    @HostBinding('style.padding-top')
+    paddingTop = '0';
+    @HostBinding('style.padding-bottom')
+    paddingBottom = '0';
+    
     private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
     get sections$(): Observable<PageSection[]> {
         return this._sectionsSubject.asObservable();
     }
 
     sectionsGap: PageSizeType | 'NONE';
+    columnsGap: PageSizeType | 'NONE';
 
     constructor(
         private route: ActivatedRoute,
@@ -45,6 +54,10 @@ export class PageBuilderComponent implements OnInit {
             this.renderer.setStyle(this.sectionsContainer.nativeElement, 'max-width', maxWidthToSet);
 
             this.sectionsGap = page.Layout.SectionsGap || 'NONE';
+            this.columnsGap = page.Layout.CoulmnsGap || 'NONE';
+            debugger;
+            this.paddingInline = '1rem'; // page.Layout.HorizontalSpacing
+            this.paddingBottom = this.paddingTop = '1rem'; // page.Layout.VerticalSpacing
         }
     }
     

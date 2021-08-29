@@ -6,11 +6,11 @@
     <div class="section-background">
         <div class="back-template" *ngFor="let number of [0,1,2,3,4,5,6,7,8,9,10,11]"></div>
     </div>
-    <div #columnsWrapper class="columns-wrapper">
+    <div #columnsWrapper class="columns-wrapper gap-{{ columnsGap }}">
         <div [id]="sectionColumnKeyPrefix + i" 
             *ngFor="let column of columns; let i=index;"
             class="section-column {{screenSize <= pepScreenSizeToFlipToVertical ? 'horizontal' : 'vertical'}}"
-            [ngClass]="{ 'active-column': selectedBlockId === column.Block?.BlockKey, 'remove-empty-column': !editable && !column.Block }"
+            [ngClass]="{ 'active-column': selectedBlockId === column.Block?.BlockKey, 'remove-vertical-empty-column': screenSize > pepScreenSizeToFlipToVertical && !editable && !column.Block }"
             cdkDropList
             [cdkDropListData]="column"
             [cdkDropListOrientation]="screenSize <= pepScreenSizeToFlipToVertical ? 'horizontal' : 'vertical'" 
@@ -20,7 +20,7 @@
         >
             <div *ngIf="column.Block && pageBuilderService.pageBlocksMap.get(column.Block.BlockKey)" 
                 class="section-column-block"
-                cdkDrag [cdkDragData]="column.Block" [cdkDragDisabled]="!editable" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" >
+                cdkDrag [cdkDragData]="column.Block" [cdkDragDisabled]="!editable || !canDrag" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" >
                 <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
                 <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
                     class="block-toolbar" [title]="pageBuilderService.pageBlocksMap.get(column.Block.BlockKey).Relation?.Description" [isDraggable]="true"

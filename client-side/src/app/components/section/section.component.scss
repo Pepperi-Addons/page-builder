@@ -18,15 +18,15 @@ $z-index-toolbar: $z-index-min + 2;
     .columns-wrapper {
         display: grid;
         grid-auto-flow: column;
+
+        @include gap-sizes();
         
         .section-column {
             overflow: hidden;
 
             // In vertical (small screens) we remove the section column if it's empty.
-            &.vertical {
-                &.remove-empty-column {
-                    display: none;
-                }
+            &.remove-vertical-empty-column {
+                display: none;
             }
         }
     }

@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnChanges, OnInit, QueryList, Renderer2, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragStart, CdkDropList } from '@angular/cdk/drag-drop';
 import { IEditor, PagesService } from 'src/app/services/pages.service';
-import { PageSectionColumn, SplitType } from '@pepperi-addons/papi-sdk';
+import { PageSectionColumn, PageSizeType, SplitType } from '@pepperi-addons/papi-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 
@@ -14,6 +14,7 @@ export class SectionComponent implements OnInit, OnChanges {
     @ViewChild('sectionContainer') sectionContainerRef: ElementRef;
     @ViewChildren('columnsWrapper') columnsElementRef: QueryList<ElementRef>;
 
+    @Input() sectionsColumnsDropList = [];
     @Input() id: string;
     @Input() name: string;
     @Input() editable = false;
@@ -47,8 +48,8 @@ export class SectionComponent implements OnInit, OnChanges {
         return this._columns;
     }
 
-    @Input() sectionsColumnsDropList = [];
-    
+    @Input() columnsGap: PageSizeType | 'NONE';
+
     PepScreenSizeType = PepScreenSizeType;
     sectionColumnKeyPrefix = '';
     
