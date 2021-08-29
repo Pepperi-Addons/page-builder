@@ -72,7 +72,10 @@ export class PagesManagerComponent implements OnInit {
 
         // TODO - NEED TO CHANGE TO GET PAGES CALL.
         /*this.dataSource$*/
-        let pages = this.pagesService.getSectionColumnKey();
+        //let pages = this.pagesService.getPages(this.navigationService.addonUUID);
+       this.pagesService.getPages(this.navigationService.addonUUID).subscribe(returnedData => {
+            console.log(returnedData);
+        });
 
     }
 
@@ -88,9 +91,13 @@ export class PagesManagerComponent implements OnInit {
 
     };
 
-    navigateToPage(template: TempPage  ){
-        // Get page by template.
-        this.navigationService.navigateToPage('1');
+    createTemplatePage(template: TempPage  ){
+        this.pagesService.createNewPage(this.navigationService.addonUUID, template.id).subscribe(returnedData => {
+            console.log(returnedData);
+            debugger;
+        });
+
+        //this.navigationService.navigateToPage('1');
     }
 
     navigateBackToMainPage(){
