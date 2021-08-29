@@ -90,14 +90,18 @@ $z-index-toolbar: $z-index-min + 2;
 }
 
 .cdk-drag-preview {
-    pointer-events: none;
-    opacity: 0.5;
+    .block-editable-state {
+        opacity: 0;
+    }
 
     .block-toolbar {
         @include block-toolbar();
     }
 }
 
-// .cdk-drag-placeholder {
-//     opacity: 0.5;
-// }
+.cdk-drag-placeholder {
+    // opacity: 0.5;
+    .block-toolbar {
+        opacity: 0;
+    }
+}

@@ -24,7 +24,7 @@ const routes: Routes = [
         path: `addons/:addonUUID`,
         children: [
            {
-                path: 'page_builder/:page_key',
+                path: 'pages/:page_key',
                 loadChildren: () => import('./components/page-manager/page-manager.module').then(m => m.PageManagerModule)
             }
         ]

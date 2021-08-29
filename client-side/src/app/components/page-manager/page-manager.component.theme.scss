@@ -1,5 +1,7 @@
 @mixin page-manager-component-theme($pepperi-theme) {
     .main-area-container {
+        background: get-pep-color($pepperi-theme, color-system-primary, color-tran-10);
+
         .header-container {
             background: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
             box-shadow: get-pep-shadow($pepperi-theme, shadow-sm, regular);
@@ -10,8 +12,11 @@
         }
 
         .page-builder-wrapper {
+            background: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
+            box-shadow: get-pep-shadow($pepperi-theme, shadow-md, regular);
+
             .backdrop {
-                background-color: #000;
+                background: get-pep-color($pepperi-theme, color-system-primary, color-tran-70);
             }
         }
     }

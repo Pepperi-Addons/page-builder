@@ -36,14 +36,14 @@ export class NavigationService {
             // this.location.back(); // not working.
             this.router.navigateByUrl(this.history.pop());
         } else {
-            this.router.navigate([`./settings/${this.addonUUID}`], {
+            this.router.navigate([`./settings/${this.addonUUID}/pages`], {
                 relativeTo: this.route,
                 queryParamsHandling: 'merge'
             });
         }
     }
     navigateToPage(pageKey: string){
-        this.router.navigate([`./addons/${this.addonUUID}/page_builder/${pageKey}`], {
+        this.router.navigate([`./addons/${this.addonUUID}/pages/${pageKey}`], {
             relativeTo: this.route,
             queryParamsHandling: 'merge'
         });
