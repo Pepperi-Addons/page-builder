@@ -47,7 +47,7 @@
                 <h2>{{ "Pages_No_Pages_Header" | translate}}</h2>
                 <span>{{ "Pages_No_Pages_Msg" | translate}}</span>
         </div>
-        <generic-list [inline]="false" [showSearch]="true" [title]="'Avner'"></generic-list>
+        <!-- <generic-list [dataSource]='dataSource$' [inline]="false" [showSearch]="true" [title]="'Avner'"></generic-list> -->
     </div>
 </ng-template>
 
@@ -72,7 +72,7 @@
             </mat-panel-title>
           </mat-expansion-panel-header>
             <div class="page-cube pull-left flip" *ngFor="let tmpPage of  group.pages">
-                <div class="page-cube-inner" (click)="navigateToPage(tmpPage)">
+                <div class="page-cube-inner" (click)="createTemplatePage(tmpPage)">
                     <div class="logo">{{tmpPage.name | translate}}</div>
                     <div class="activeTemplate">{{'Pages_UseThis' | translate}}</div>
                 </div>
