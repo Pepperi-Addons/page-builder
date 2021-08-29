@@ -52,7 +52,7 @@ export class PagesManagerComponent implements OnInit {
 ];
 
     public imagesPath = '';
-
+    public hasPages = true;
     constructor(
 
         private renderer: Renderer2,
@@ -79,9 +79,10 @@ export class PagesManagerComponent implements OnInit {
     pagesDataSource: GenericListDataSource = {
         getList: (options) => {
             const res: Promise<IPageRowModel[]> = this.pagesService.getPages(this.navigationService.addonUUID, options).toPromise().then((pages) => {
+                this.hasPages = !pages || pages.length < 1 ? false : true;
                 return pages.map(page => ({
                     Key: page.Key,
-                    Name: page.Name,           
+                    Name: page.Name,
                     Description: page.Description,
                     CreationDate: page.CreationDate,
                     ModificationDate: page.ModificationDate,
@@ -160,7 +161,6 @@ export class PagesManagerComponent implements OnInit {
     createTemplatePage(template: TempPage  ){
         this.pagesService.createNewPage(this.navigationService.addonUUID, template.id).subscribe(returnedData => {
             console.log(returnedData);
-            debugger;
         });
 
         //this.navigationService.navigateToPage('1');
