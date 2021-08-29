@@ -28,18 +28,16 @@
         <div class="pageExplanation">
             <span class="body-md">{{ 'Pages_Main_Explanation' | translate }}</span>
         </div>
-        <pep-top-bar [inline]="true" [title]="('Pages_Secondary_Header' | translate)">
-            <!-- <div header-start-content>
-            </div> -->
+        <!-- <pep-top-bar [inline]="true" [title]="('Pages_Secondary_Header' | translate)">
             <div header-end-content>
                 <pep-menu class="pep-spacing-element" [items]="secondaryMenuItems" [sizeType]="'sm'" (menuItemClick)="onSecondaryMenuItemClicked($event)">
                 </pep-menu>
                 <pep-button class="pep-spacing-element" [value]="'Pages_a_Page' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
                 </pep-button>
             </div>
-        </pep-top-bar>
+        </pep-top-bar> -->
 
-        <div class="PagesNotFoundMsg">
+        <div *ngIf="!hasPages" class="PagesNotFoundMsg">
                 <div class="leaf-background">
                     <img [src]="imagesPath + 'brand-leaf-skiny.svg'">
                     <img [src]="imagesPath + 'brand-leaf-round.svg'">
@@ -47,7 +45,14 @@
                 <h2>{{ "Pages_No_Pages_Header" | translate}}</h2>
                 <span>{{ "Pages_No_Pages_Msg" | translate}}</span>
         </div>
-        <generic-list [dataSource]="pagesDataSource" [inline]="false" [showSearch]="true" [title]="'Avner'"></generic-list>
+        <generic-list [dataSource]="pagesDataSource" [inline]="false" [showSearch]="true" [title]="'Pages_Secondary_Header' | translate">
+            <ng-container right-buttons>
+                    <pep-menu class="pep-spacing-element" [items]="secondaryMenuItems" [sizeType]="'sm'" (menuItemClick)="onSecondaryMenuItemClicked($event)">
+                    </pep-menu>
+                    <pep-button class="pep-spacing-element" [value]="'Pages_a_Page' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
+                    </pep-button>
+            </ng-container>
+        </generic-list>
     </div>
 </ng-template>
 
@@ -82,5 +87,8 @@
       </mat-accordion>
       </div>
 </ng-template>
+
+
+
 
 
