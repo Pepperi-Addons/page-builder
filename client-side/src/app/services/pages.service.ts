@@ -6,6 +6,7 @@ import { PepRemoteLoaderOptions } from "@pepperi-addons/ngx-remote-loader";
 import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn } from "@pepperi-addons/papi-sdk";
 import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
+import { NavigationService } from "./navigation.service";
 
 export type PageRowStatusType = 'draft' | 'published';
 export interface IPageRowModel {
@@ -133,6 +134,7 @@ export class PagesService {
         private translate: TranslateService,
         private sessionService: PepSessionService,
         private httpService: PepHttpService,
+        private navigationService: NavigationService
     ) {
         this._pageBlockProgress$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
             // Clear the blocks map and set it again.
@@ -292,7 +294,7 @@ export class PagesService {
             return {
                 id: sectionId,
                 type: 'section',
-                title: section.Name || `${this.translate.instant('Section')} ${sectionIndex + 1}`,
+                title: section.Name || `${this.translate.instant('PAGE_MANAGER.SECTION')} ${sectionIndex + 1}`,
                 hostObject: sectionEditor
             }
         } else {
@@ -322,25 +324,15 @@ export class PagesService {
     private getRemoteEntryByType(relation: NgComponentRelation, entryAddon, remoteName = 'remoteEntry') {
         switch (relation.Type){
             case "NgComponent":
-                // TODO: Hack for localhost please comment.
-                if (relation?.ComponentName == 'SlideshowComponent'){
-                    const res = 'http://localhost:4401/slideshow.js';
-                    return res;
-                } else if (relation?.ComponentName == 'SubAddon2Component'){
-                    const res = 'http://localhost:4402/sub_addon_2.js';
-                    return res;
-                } else if (relation?.ComponentName == 'SubAddon3Component'){
-                    const res = 'http://localhost:4403/sub_addon_3.js';
-                    return res;
-                } else if (relation?.ComponentName == 'SubAddon4Component'){
-                    const res = 'http://localhost:4404/sub_addon_4.js';
-                    return res;
-                } else if (relation?.ComponentName == 'SubAddon5Component'){
-                    const res = 'http://localhost:4405/sub_addon_5.js';
-                    return res;
-                } else
-                // END OF HACK 
-                    return entryAddon?.PublicBaseURL +  remoteName + '.js';
+                // For devBlocks gets the remote entry from the query params.
+                const devBlocks = this.navigationService.devBlocks;
+                if(devBlocks.size > 1) {
+                    if (devBlocks.has(relation?.ComponentName)) {
+                        return devBlocks.get(relation?.ComponentName);
+                    }
+                } else {
+                    return entryAddon?.PublicBaseURL + remoteName + '.js';
+                }
             default:
                 return relation?.AddonRelativeURL;
         }
@@ -357,9 +349,13 @@ export class PagesService {
     }
 
     private getBaseUrl(addonUUID: string): string {
-        const baseUrl = this.sessionService.getPapiBaseUrl();
-        // return `${baseUrl}/addons/api/${addonUUID}/api`;
-        return `http://localhost:4500/api`;
+        // For devServer run server on localhost.
+        if(this.navigationService.devServer) {
+            return `http://localhost:4500/api`;
+        } else {
+            const baseUrl = this.sessionService.getPapiBaseUrl();
+            return `${baseUrl}/addons/api/${addonUUID}/api`;
+        }
     }
 
     getSectionColumnKey(sectionKey: string = '', index: string = '') {
@@ -593,7 +589,7 @@ export class PagesService {
     //**************************************************************************
     
     getPages(addonUUID: string, options: any): Observable<IPageRowModel[]> {
-        // Get the page (sections and the blocks data) from the server.
+        // Get the pages from the server.
         const baseUrl = this.getBaseUrl(addonUUID);
         return this.httpService.getHttpCall(`${baseUrl}/pages?${options}`);
     }
@@ -603,65 +599,59 @@ export class PagesService {
         return this.httpService.getHttpCall(`${baseUrl}/create_page?templateId=${templateId}`);
     }
 
-    // TODO: This funtion should be on CPI side.
     initPageBuilder(addonUUID: string, pageKey: string, editMode: boolean): void {
-        // TODO: Load the saved page from the session for now.
-        // const savedPage: Page = JSON.parse(sessionStorage.getItem('page')) ?? null;
+        //  If is't not edit mode get the page from the CPI side.
+        if (!editMode) {
+            // TODO: Get from CPI side.
+            
+        } else { // If is't edit mode get the data of the page and the relations from the Server side.
+            const baseUrl = this.getBaseUrl(addonUUID);
+            // Get the page (sections and the blocks data) from the server.
+            this.httpService.getHttpCall(`${baseUrl}/editor_page_data?key=${pageKey}`)
+                .subscribe((res: IPageBuilderDataForEditMode) => {
+                    if (res.page && res.availableBlocks) {
+                        // Load the page.
+                        // TODO: remove this
+                        const savedPage: Page = null;//JSON.parse(sessionStorage.getItem('page')) ?? null;
 
-        // if (savedPage) {
-        //     this.pageSubject.next(savedPage);
-        // } else 
-        {
-            //  If is't not edit mode get the page from the CPI side.
-            if (!editMode) {
-                
-            } else { // If is't edit mode get the data of the page and the relations from the Server side.
-                const baseUrl = this.getBaseUrl(addonUUID);
-                // Get the page (sections and the blocks data) from the server.
-                this.httpService.getHttpCall(`${baseUrl}/editor_page_data?key=${pageKey}`)
-                    .subscribe((res: IPageBuilderDataForEditMode) => {
-                        if (res.page && res.availableBlocks) {
-                            // Load the page.
-                            // TODO: remove this
-                            const savedPage: Page = null;//JSON.parse(sessionStorage.getItem('page')) ?? null;
+                        this.pageSubject.next(savedPage || res.page);
 
-                            this.pageSubject.next(savedPage || res.page);
-
-                            // Load the available blocks.
-                            const availableBlocks: IAvailableBlock[] = [];
-                            res.availableBlocks.forEach(data => {
-                                const relation: NgComponentRelation = data?.relation;
-                                const addon: InstalledAddon = data?.addon;
-                                
-                                if (relation && addon) {
-                                    availableBlocks.push({
-                                        relation: relation,
-                                        options: this.getRemoteLoaderOptions(relation, addon)
-                                    });
-                                }
-                            });
-                                
-                            this.availableBlocksSubject.next(availableBlocks);
-                        }
-                });
-            }
+                        // Load the available blocks.
+                        const availableBlocks: IAvailableBlock[] = [];
+                        res.availableBlocks.forEach(data => {
+                            const relation: NgComponentRelation = data?.relation;
+                            const addon: InstalledAddon = data?.addon;
+                            
+                            if (relation && addon) {
+                                availableBlocks.push({
+                                    relation: relation,
+                                    options: this.getRemoteLoaderOptions(relation, addon)
+                                });
+                            }
+                        });
+                            
+                        this.availableBlocksSubject.next(availableBlocks);
+                    }
+            });
         }
     }
 
-    updatePage(addonUUID: string, page: Page): Observable<Page> {
-        // Get the page (sections and the blocks data) from the server.
+    // Save the current page in drafts.
+    updatePage(addonUUID: string): Observable<Page> {
+        const page: Page = this.pageSubject.value;
+        const body = JSON.stringify(page);
         const baseUrl = this.getBaseUrl(addonUUID);
-        return this.httpService.postHttpCall(`${baseUrl}/pages`, page);
+        return this.httpService.postHttpCall(`${baseUrl}/pages`, body);
     }
 
+    // Publish the current page.
     publishPage(addonUUID: string): Observable<Page> {
         const page: Page = this.pageSubject.value;
 
-        // TODO: Implement this.
-        sessionStorage.setItem('page', JSON.stringify(page));
-
-        // Get the page (sections and the blocks data) from the server.
+        // // TODO: Implement this.
+        // sessionStorage.setItem('page', JSON.stringify(page));
+        const body = JSON.stringify(page);
         const baseUrl = this.getBaseUrl(addonUUID);
-        return this.httpService.postHttpCall(`${baseUrl}/publish_page`, {page});
+        return this.httpService.postHttpCall(`${baseUrl}/publish_page`, body);
     }
 }

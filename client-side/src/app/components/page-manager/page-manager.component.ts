@@ -72,11 +72,14 @@ export class PageManagerComponent implements OnInit {
         }
     }
 
-    ngOnInit() {
+    async ngOnInit() {
+        // Get the first translation for load all translations.
+        const desktopTitle = await this.translate.get('PAGE_MANAGER.DESKTOP').toPromise();
+
         this.screenOptions = [
-            { key: 'desktop', value: this.translate.instant('Desktop'), callback: () => this.setScreenWidth('desktop'), iconName: pepIconDeviceDesktop.name, iconPosition: 'end' },
-            { key: 'tablet', value: this.translate.instant('Tablet'), callback: () => this.setScreenWidth('tablet'), iconName: pepIconDeviceTablet.name, iconPosition: 'end' },
-            { key: 'mobile', value: this.translate.instant('Mobile'), callback: () => this.setScreenWidth('mobile'), iconName: pepIconDeviceMobile.name, iconPosition: 'end' }
+            { key: 'desktop', value: desktopTitle, callback: () => this.setScreenWidth('desktop'), iconName: pepIconDeviceDesktop.name, iconPosition: 'end' },
+            { key: 'tablet', value: this.translate.instant('PAGE_MANAGER.TABLET'), callback: () => this.setScreenWidth('tablet'), iconName: pepIconDeviceTablet.name, iconPosition: 'end' },
+            { key: 'mobile', value: this.translate.instant('PAGE_MANAGER.MOBILE'), callback: () => this.setScreenWidth('mobile'), iconName: pepIconDeviceMobile.name, iconPosition: 'end' }
         ];
 
         this.pageBuilderService.onScreenSizeChange$.subscribe((size: PepScreenSizeType) => {
@@ -135,30 +138,27 @@ export class PageManagerComponent implements OnInit {
 
     }
 
-    publishPage() {
-        // const body = JSON.stringify({RelationName: `PageBlock`, Layout: this.pageLayout });
-        // const ans =  await this.http.postHttpCall('http://localhost:4500/api/publish', body).toPromise();
-        // console.log(ans)
-        // return this.http.postPapiApiCall(`/addons/api/${addonUUID}/api/publish`, {RelationName: `PageBlock` });
-        // const blocks = JSON.parse(sessionStorage.getItem('blocks'));
-        // blocks.map(block => {
-        //     block.layout = this.pageLayout.find(layoutBlock => layoutBlock.Key === block.key)?.layout;
-        //     return block;
-        // });
-        // sessionStorage.setItem('blocks',JSON.stringify(this.pageLayout));
-        const addonUUID = this.navigationService.addonUUID;
-        this.pageBuilderService.publishPage(addonUUID);
+    onNavigateBackFromEditor() {
+        if (this.currentEditor?.type === 'page-builder') {
+            this.navigationService.back();
+        } else {
+            this.pageBuilderService.navigateBackFromEditor();
+        }
     }
 
     // clearPage() {
     //     this.pageBuilderService.onClearPageSections();
     // }
 
-    navigateBackFromEditor() {
-        if (this.currentEditor?.type === 'page-builder') {
-            this.navigationService.back();
-        } else {
-            this.pageBuilderService.navigateBackFromEditor();
-        }
+    save() {
+        this.pageBuilderService.updatePage(this.navigationService.addonUUID).subscribe(res => {
+            // TODO: Show message.
+        });
+    }
+
+    publishPage() {
+        this.pageBuilderService.publishPage(this.navigationService.addonUUID).subscribe(res => {
+            // TODO: Show message.
+        });
     }
 }

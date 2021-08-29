@@ -1,39 +1,43 @@
 {
-
-    "Ok": "Ok",
-    "Select_Label": "Select Label",
-    "Title_Addon": "Page Builder POC",
-    "Title_Sub_Addon": "Hello Block",
-    "Open_Dialog": "Open Dialog",
-    "Dialog_Body": "Dialog from sub addon",
-    "Dialog_Title": "Dialog",
-    "PageBuilder_Editor": "Page Editor",
-    "ViewportWidth": "View port width",
-    "Section": "Section",
-    "Sections": "Sections",
-    "Section_Name_Title": "Section Name (kebab-case)",
-    "Sub_Section_Title": "Sub Section",
-    "Sections_Title": "Sections",
-    "Split_Title": "Split",
-    "AddSection": "Add Section",
-    "Main": "Main",
-    "Design": "Design",
-    "Main_General_Editor_Blocks": "Blocks",
-    "Main_General_Editor_PageName": "Page Name",
-    "Main_General_Editor_Description": "Description",
-    "Main_Design_Editor_FullWidth": "Full Width",
-    "Main_Design_Editor_MaxWidth": "Max Width",
-    "Main_Design_Editor_Spacing": "Spacing",
-    "Main_Design_Editor_Slides_L_and_R": "Slides - Left & Right",
-    "Main_Design_Editor_Slides_T_and_B": "Slides - Top & Button",
-    "Main_Design_Editor_Gaps": "Gaps",
-    "Main_Design_Editor_Gap_between_sections": "Gap size between sections",
-    "Main_Design_Editor_Gap_between_columns": "Gap size between columns",
-    "Main_Design_Editor_Rounded_Corners": "Rounded Corners",
-    "Main_Design_Editor_Border_Radius": "Global border radius",
-    "Desktop": "Desktop",
-    "Tablet": "Tablet",
-    "Mobile": "Mobile",
+    "PAGE_MANAGER": {
+        "VIEWPORT_WIDTH": "View port width",
+        "DESKTOP": "Desktop",
+        "TABLET": "Tablet",
+        "MOBILE": "Mobile",
+        "SECTION": "Section",
+        "SECTION_NAME_TITLE": "Section Name (kebab-case)",
+        "SUB_SECTION_TITLE": "Sub Section",
+        "SECTIONS_TITLE": "Sections",
+        "SPLIT_TITLE": "Split",
+        "ADD_SECTION": "Add Section",
+        "GENERAL": "General",
+        "DESIGN": "Design",
+        "PAGE_NAME_TITLE": "Page Name",
+        "PAGE_DESCRIPTION_TITLE": "Description",
+        "BLOCKS_TITLE": "Blocks",
+        "FULL_WIDTH_TITLE": "Full Width",
+        "MAX_WIDTH_TITLE": "Max Width",
+        "SPACING_TITLE": "Spacing",
+        "SPACING_HORIZONTAL_TITLE": "Slides - Left & Right",
+        "SPACING_VERTICAL_TITLE": "Slides - Top & Button",
+        "GAPS_TITLE": "Gaps",
+        "SECTIONS_GAP_TITLE": "Gap size between sections",
+        "COLUMNS_GAP_TITLE": "Gap size between columns",
+        "ROUNDED_CORNERS_TITLE": "Rounded Corners",
+        "BORDER_RADIUS_TITLE": "Global border radius"
+    },
+    "GROUP_SIZE": {
+        "NONE": "None",
+        "SM": "SM",
+        "MD": "MD",
+        "LG": "LG"
+    },
+    "Actions": {
+        "Ok": "Ok",
+        "Save": "Save",
+        "Preview": "Preview",
+        "Publish": "Publish"
+    },
 
     "Pages_Main_Header": "Page Builder",
     "Pages_a_Page": "Add a Page",
@@ -64,10 +68,5 @@
     "Pages_Links_Save": "Save page as draft",
     "Pages_Links_Publish": "Publish page for use in configurations",
     "Pages_Links_Export": "Export page"
-
-
-
-
-
 
 }

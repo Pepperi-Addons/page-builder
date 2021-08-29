@@ -1,9 +1,8 @@
 import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { IPepButtonClickEvent } from '@pepperi-addons/ngx-lib/button';
 import { PageSizeType } from '@pepperi-addons/papi-sdk';
-import { NavigationService } from 'src/app/services/navigation.service';
 import { IAvailableBlock, PagesService, IPageEditor } from '../../services/pages.service';
 
 type UiPageSizeType = PageSizeType | 'NONE';
@@ -63,15 +62,14 @@ export class PageBuilderEditorComponent implements OnInit {
     sizesGroupButtons = Array<ISpacingOption>();
     
     constructor(
-        private navigationService: NavigationService,
+        private translate: TranslateService,
         private pageBuilderService: PagesService,
-        private route: ActivatedRoute
     ) { 
         this.sizesGroupButtons = [
-            { key: 'NONE', value: 'None' },
-            { key: 'SM', value: 'SM' },
-            { key: 'MD', value: 'MD' },
-            { key: 'LG', value: 'LG' }
+            { key: 'NONE', value: this.translate.instant('GROUP_SIZE.NONE') },
+            { key: 'SM', value: this.translate.instant('GROUP_SIZE.SM') },
+            { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') },
+            { key: 'LG', value: this.translate.instant('GROUP_SIZE.LG') }
         ];
     }
 

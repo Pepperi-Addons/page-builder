@@ -1,12 +1,12 @@
 
 <div #sectionsCont cdkDropListGroup class="sections-container gap-{{ sectionsGap }}" cdkDropList (cdkDropListDropped)="onSectionDropped($event)" >
     <page-builder-section class="draggable-section" *ngFor="let section of sections$ | async; let i=index;" [sectionsColumnsDropList]="sectionsColumnsDropList"
-        [id]="section.Key" [name]="section.Name || ('Section' | translate) + ' ' + (i+1)" [split]="section.Split" [columns]="section.Columns" 
+        [id]="section.Key" [name]="section.Name || ('PAGE_MANAGER.SECTION' | translate) + ' ' + (i+1)" [split]="section.Split" [columns]="section.Columns" 
         [screenSize]="screenSize" [editable]="editMode">
         <!-- <div *cdkDragPlaceholder class="field-placeholder"></div> -->
     </page-builder-section>
 </div>
-<pep-button *ngIf="editMode" class="add-section-button" value="{{'AddSection' | translate}}" styleType="regular" iconName="number_plus" iconPosition="end"
+<pep-button *ngIf="editMode" class="add-section-button" value="{{'PAGE_MANAGER.ADD_SECTION' | translate}}" styleType="regular" iconName="number_plus" iconPosition="end"
     (buttonClick)="addSection($event)"></pep-button>
 
 <pep-size-detector></pep-size-detector>

@@ -1,5 +1,4 @@
 import { propsSubject } from '@pepperi-addons/ngx-remote-loader';
-import { hostObject } from './../../../../../../client-side/src/app/components/page-builder/page-builder.model';
 import { TranslateService } from '@ngx-translate/core';
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 

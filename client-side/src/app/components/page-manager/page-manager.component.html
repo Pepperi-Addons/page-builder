@@ -2,7 +2,7 @@
     <div pep-side-area *ngIf="showEditor" style="padding-inline-start: 1rem;">
         <pep-side-bar #sideBar [ignoreResize]="true" (stateChange)="onSidebarStateChange($event)">
             <div header-content class="side-bar-title">
-                <pep-button class="back-button" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="navigateBackFromEditor();"></pep-button>
+                <pep-button class="back-button" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="onNavigateBackFromEditor();"></pep-button>
                 <div class=" title-xl ellipsis" title="{{ currentEditor?.title }}">
                     <span>{{ currentEditor?.title }}</span>
                 </div>
@@ -21,7 +21,7 @@
         <div class="main-area-container">
             <div class="header-container">
                 <div class="header-content ">
-                    <span class="header-title body-xs">{{('ViewportWidth' | translate)}}:&nbsp;</span>
+                    <span class="header-title body-xs">{{('PAGE_MANAGER.VIEWPORT_WIDTH' | translate)}}:&nbsp;</span>
                     <span class="body-xs"><b>{{viewportWidth}}</b></span>
                 </div>
                 <div class="header-group-btn">
@@ -29,9 +29,10 @@
                     </pep-group-buttons>
                 </div>
                 <div class="header-end header-content">
-                    <pep-button iconName="view_card_md" sizeType="sm" classNames="pep-spacing-element"></pep-button>
-                    <pep-button value="Preview" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="togglePreviewMode()"></pep-button>
-                    <pep-button [value]="'Publish' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="publishPage();">
+                    <!-- <pep-button iconName="view_card_md" sizeType="sm" classNames="pep-spacing-element"></pep-button> -->
+                    <pep-button [value]="'Actions.Preview' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="togglePreviewMode()"></pep-button>
+                    <pep-button [value]="'Actions.Save' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="save()"></pep-button>
+                    <pep-button [value]="'Actions.Publish' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="publishPage();">
                     </pep-button>
                     <!-- <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
                     </pep-button>

@@ -13,21 +13,37 @@ export class NavigationService {
         return this._addonUUID;
     }
 
+    private _devServer = false;
+    get devServer(): boolean {
+        return this._devServer;
+    }
+
+    private _devBlocks: Map<string, string>; // Map<Component name, Host name>
+    get devBlocks(): Map<string, string> {
+        return this._devBlocks;
+    }
+
     constructor(
         private router: Router,
         private route: ActivatedRoute,
         private location: Location
     ) {
-        // this.router.events.subscribe((event) => {
-        //     if (event instanceof NavigationEnd) {
-        //         this.history.push(event.urlAfterRedirects);
-        //     }
-        // });
-        this._addonUUID = this.route.snapshot.firstChild.params['addonUUID']; // || config.AddonUUID; 
-
         this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((event: NavigationEnd) => {
             this.history.push(event.urlAfterRedirects);
         });
+
+        this.loadDevBlocks();
+        this._devServer = this.route.snapshot.queryParams['devServer'] === 'true';
+        this._addonUUID = this.route.snapshot.firstChild.params['addonUUID']; // || config.AddonUUID; 
+    }
+
+    private loadDevBlocks() {
+        try {
+            const devBlocksAsJSON = JSON.parse(this.route.snapshot.queryParams['devBlocks']);
+            this._devBlocks = new Map(devBlocksAsJSON);
+        } catch(err) {
+            this._devBlocks = new Map<string, string>();
+        }
     }
 
     back(): void {
@@ -42,6 +58,7 @@ export class NavigationService {
             });
         }
     }
+
     navigateToPage(pageKey: string){
         this.router.navigate([`./addons/${this.addonUUID}/pages/${pageKey}`], {
             relativeTo: this.route,

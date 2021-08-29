@@ -1,8 +1,8 @@
-import { PagesService } from './pages.service'
+import { PagesApiService } from './pages-api.service'
 import { Client, Request } from '@pepperi-addons/debug-server'
 
 export async function pages(client: Client, request: Request): Promise<any> {
-    const service = new PagesService(client);
+    const service = new PagesApiService(client);
     let res;
 
     if (request.method === 'POST') {
@@ -17,22 +17,22 @@ export async function pages(client: Client, request: Request): Promise<any> {
 }
 
 export async function create_page(client: Client, request: Request): Promise<any> {
-    const service = new PagesService(client);
+    const service = new PagesApiService(client);
     return service.createTemplatePage(request.query);
 }
 
 export async function delete_page(client: Client, request: Request): Promise<any> {
-    const service = new PagesService(client);
+    const service = new PagesApiService(client);
     return service.deletePage(request.query);
 }
 
 export async function editor_page_data(client: Client, request: Request): Promise<any> {
-    const service = new PagesService(client);
+    const service = new PagesApiService(client);
     return service.getPageEditorData(request.query);
 };
 
 export async function publish_page(client: Client, request: Request): Promise<any> {
-    const service = new PagesService(client);
+    const service = new PagesApiService(client);
     return service.publishPage(request.body);
 };
 

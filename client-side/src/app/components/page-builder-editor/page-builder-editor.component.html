@@ -1,9 +1,9 @@
 <mat-tab-group  #tabGroup class="editor-tabs" animationDuration="0ms">
-    <mat-tab label="{{'General' | translate}}">
+    <mat-tab label="{{'PAGE_MANAGER.GENERAL' | translate}}">
         <div class="general-container ">
-            <pep-textbox [value]="pageName" [label]="'Main_General_Editor_PageName' | translate" (valueChange)="onPageNameChange($event)"></pep-textbox>
-            <pep-textarea [value]="pageDescription" [label]="'Main_General_Editor_Description' | translate" rowSpan="2" (valueChange)="onPageDescriptionChange($event)"></pep-textarea>
-            <label class="body-xl bold ellipsis">{{'Main_General_Editor_Blocks' | translate}}</label>
+            <pep-textbox [value]="pageName" [label]="'PAGE_MANAGER.PAGE_NAME_TITLE' | translate" (valueChange)="onPageNameChange($event)"></pep-textbox>
+            <pep-textarea [value]="pageDescription" [label]="'PAGE_MANAGER.PAGE_DESCRIPTION_TITLE' | translate" rowSpan="2" (valueChange)="onPageDescriptionChange($event)"></pep-textarea>
+            <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.BLOCKS_TITLE' | translate}}</label>
             <div #availableBlocksContainer id="availableBlocks" class="available-blocks"
                 cdkDropList
                 [cdkDropListData]="availableBlocks"
@@ -20,32 +20,32 @@
             </div>
         </div>
     </mat-tab>
-    <mat-tab label="{{'Design' | translate}}">
+    <mat-tab label="{{'PAGE_MANAGER.DESIGN' | translate}}">
         <div class="tab-container">
-            <pep-checkbox [value]="isFullWidth" [label]="'Main_Design_Editor_FullWidth' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
-            <pep-textbox [label]="'Main_Design_Editor_MaxWidth' | translate" type="int" [disabled]="isFullWidth" [value]="maxWidth" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
+            <pep-checkbox [value]="isFullWidth" [label]="'PAGE_MANAGER.FULL_WIDTH_TITLE' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
+            <pep-textbox [label]="'PAGE_MANAGER.MAX_WIDTH_TITLE' | translate" type="int" [disabled]="isFullWidth" [value]="maxWidth" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
             
             <!-- Spacing -->
-            <label class="body-xl bold ellipsis">{{'Main_Design_Editor_Spacing' | translate}}</label><br>
-            <label class="body-sm ellipsis">{{'Main_Design_Editor_Slides_L_and_R' | translate}}</label>
+            <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.SPACING_TITLE' | translate}}</label><br>
+            <label class="body-sm ellipsis">{{'PAGE_MANAGER.SPACING_HORIZONTAL_TITLE' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="horizontalSpacing" buttonsClass="md regular" viewType="toggle" 
                 (buttonClick)="setColumnsHorizntalGap($event)"></pep-group-buttons>
-            <label class="body-sm ellipsis">{{'Main_Design_Editor_Slides_T_and_B' | translate}}</label>
+            <label class="body-sm ellipsis">{{'PAGE_MANAGER.SPACING_VERTICAL_TITLE' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="verticalSpacing" buttonsClass="md regular" viewType="toggle"
                 (buttonClick)="setColumnsVerticalGap($event)"></pep-group-buttons>
             
             <!-- Gaps -->
-            <label class="body-xl bold ellipsis">{{'Main_Design_Editor_Gaps' | translate}}</label><br>
-            <label class="body-sm ellipsis">{{'Main_Design_Editor_Gap_between_sections' | translate}}</label>
+            <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.GAPS_TITLE' | translate}}</label><br>
+            <label class="body-sm ellipsis">{{'PAGE_MANAGER.SECTIONS_GAP_TITLE' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="sectionsGap" buttonsClass="md regular" viewType="toggle"
                 (buttonClick)="setSectionGap($event)"></pep-group-buttons>
-            <label class="body-sm ellipsis">{{'Main_Design_Editor_Gap_between_columns' | translate}}</label>
+            <label class="body-sm ellipsis">{{'PAGE_MANAGER.COLUMNS_GAP_TITLE' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="columnsGap" buttonsClass="md regular" viewType="toggle"
                 (buttonClick)="setColumnsGap($event)"></pep-group-buttons>
 
             <!-- Rounded Corners -->
-            <!-- <label class="body-xl bold ellipsis">{{'Main_Design_Editor_Rounded_Corners' | translate}}</label><br>
-            <label class="body-sm ellipsis">{{'Main_Design_Editor_Border_Radius' | translate}}</label>
+            <!-- <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.ROUNDED_CORNERS_TITLE' | translate}}</label><br>
+            <label class="body-sm ellipsis">{{'PAGE_MANAGER.BORDER_RADIUS_TITLE' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="roundedCorners" buttonsClass="ms regular" viewType="toggle"
                 (buttonClick)="setRoundedCorners($event)"></pep-group-buttons> -->
         </div>

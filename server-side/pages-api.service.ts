@@ -6,7 +6,7 @@ import { TempBlankPageData } from './pages.model';
 const PAGES_TABLE_NAME = 'Pages';
 const DRAFT_PAGES_TABLE_NAME = 'PagesDrafts';
 
-export class PagesService {
+export class PagesApiService {
     papiClient: PapiClient;
     addonUUID: string;
 
