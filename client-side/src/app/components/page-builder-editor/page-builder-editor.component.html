@@ -3,6 +3,11 @@
         <div class="general-container ">
             <pep-textbox [value]="pageName" [label]="'PAGE_MANAGER.PAGE_NAME_TITLE' | translate" (valueChange)="onPageNameChange($event)"></pep-textbox>
             <pep-textarea [value]="pageDescription" [label]="'PAGE_MANAGER.PAGE_DESCRIPTION_TITLE' | translate" rowSpan="2" (valueChange)="onPageDescriptionChange($event)"></pep-textarea>
+            
+            <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.SECTIONS_TITLE' | translate}}</label>
+            <pep-button class="add-section-button" value="{{'PAGE_MANAGER.ADD_SECTION' | translate}}" styleType="regular" iconName="number_plus" iconPosition="end"
+                (buttonClick)="onAddSectionClick($event)"></pep-button>
+
             <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.BLOCKS_TITLE' | translate}}</label>
             <div #availableBlocksContainer id="availableBlocks" class="available-blocks"
                 cdkDropList
@@ -28,19 +33,19 @@
             <!-- Spacing -->
             <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.SPACING_TITLE' | translate}}</label><br>
             <label class="body-sm ellipsis">{{'PAGE_MANAGER.SPACING_HORIZONTAL_TITLE' | translate}}</label>
-            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="horizontalSpacing" buttonsClass="md regular" viewType="toggle" 
+            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="horizontalSpacing" buttonsClass="md regular" viewType="toggle" stretch="true" 
                 (buttonClick)="setColumnsHorizntalGap($event)"></pep-group-buttons>
             <label class="body-sm ellipsis">{{'PAGE_MANAGER.SPACING_VERTICAL_TITLE' | translate}}</label>
-            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="verticalSpacing" buttonsClass="md regular" viewType="toggle"
+            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="verticalSpacing" buttonsClass="md regular" viewType="toggle" stretch="true" 
                 (buttonClick)="setColumnsVerticalGap($event)"></pep-group-buttons>
             
             <!-- Gaps -->
             <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.GAPS_TITLE' | translate}}</label><br>
             <label class="body-sm ellipsis">{{'PAGE_MANAGER.SECTIONS_GAP_TITLE' | translate}}</label>
-            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="sectionsGap" buttonsClass="md regular" viewType="toggle"
+            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="sectionsGap" buttonsClass="md regular" viewType="toggle" stretch="true" 
                 (buttonClick)="setSectionGap($event)"></pep-group-buttons>
             <label class="body-sm ellipsis">{{'PAGE_MANAGER.COLUMNS_GAP_TITLE' | translate}}</label>
-            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="columnsGap" buttonsClass="md regular" viewType="toggle"
+            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="columnsGap" buttonsClass="md regular" viewType="toggle" stretch="true" 
                 (buttonClick)="setColumnsGap($event)"></pep-group-buttons>
 
             <!-- Rounded Corners -->

@@ -15,6 +15,34 @@ $z-index-toolbar: $z-index-min + 2;
     border-radius: $border-radius-md;
     min-height: 250px;
     
+    // Mobile size
+    @media (max-width: $screen-max-size-xs) {
+        &:not(&.editable-state) {
+            &.hidden-state {
+                display: none;
+            }
+        }
+    }
+
+    // Tablet size
+    @media (max-width: $screen-max-size-sm) {
+        &:not(&.editable-state) {
+            &.hidden-state {
+                display: none;
+            }
+        }
+    }
+
+    // Desktop size
+    @media (min-width: $screen-max-size-sm) {
+        &:not(&.editable-state) {
+            &.hidden-state {
+                display: none;
+            }
+        }
+    }
+
+    // This css is run also without edit mode!!!.
     .columns-wrapper {
         display: grid;
         grid-auto-flow: column;
@@ -31,7 +59,7 @@ $z-index-toolbar: $z-index-min + 2;
         }
     }
     
-    // This css is only for edit mode.
+    // This css is only for edit mode!!!.
     &.editable-state {
         &.active-section {
             z-index: $z-index-min + 11;
@@ -99,8 +127,12 @@ $z-index-toolbar: $z-index-min + 2;
     }
 }
 
+// The placeholder of the sections and the blocks in the section.
 .cdk-drag-placeholder {
-    // opacity: 0.5;
+    &.section-container {
+        opacity: 0.5;
+    }
+
     .block-toolbar {
         opacity: 0;
     }

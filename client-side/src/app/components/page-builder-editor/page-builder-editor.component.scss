@@ -7,6 +7,10 @@ label {
 .editor-tabs {
     height: 100%;
 
+    .add-section-button {
+        margin-bottom: 1rem;
+    }
+
     ::ng-deep .mat-tab-header-pagination{
         display: none;
     }
@@ -25,16 +29,19 @@ label {
     }
 
     ::ng-deep .mat-tab-body-wrapper {
-        overflow: auto;
+        overflow: unset;
         margin: 0;
         display: block;
 
         .mat-tab-body {
             &.mat-tab-body-active {
+                overflow: unset;
+
                 .mat-tab-body-content {
+                    overflow: unset;
                     display: flex;
                     flex-direction: column;
-                    padding-inline: 0.25rem;
+                    padding-inline: 0;
 
                     toolbar-actions{
                         margin-bottom: .5rem;

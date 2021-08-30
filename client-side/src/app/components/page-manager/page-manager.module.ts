@@ -24,6 +24,7 @@ import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { PepSideBarModule } from '@pepperi-addons/ngx-lib/side-bar';
+import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
 
 // import { SectionModule } from '../section/section.module'
 // import { ToolbarModule } from '../toolbar/toolbar.module'
@@ -67,10 +68,10 @@ const routes: Routes = [
         PageBuilderEditorModule,
         SectionEditorModule,
         PepTopBarModule,
-        //// When not using module as sub-addon please remark this for not loading twice resources
         MatCardModule,
         MatButtonModule,
         PepSideBarModule,
+        PepMenuModule,
         PepPageLayoutModule,
         PepSelectModule,
         PepTextboxModule,

@@ -68,6 +68,8 @@
         "EDIT": "Edit",
         "SAVE": "Save",
         "PREVIEW": "Preview",
-        "PUBLISH": "Publish"
+        "PUBLISH": "Publish",
+        "IMPORT": "Import",
+        "EXPORT": "Export"
     }
 }

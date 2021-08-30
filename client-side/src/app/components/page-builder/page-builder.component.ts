@@ -80,10 +80,6 @@ export class PageBuilderComponent implements OnInit {
         this.pageBuilderService.initPageBuilder(addonUUID, pageKey, this.editMode);
     }
 
-    addSection(e) {
-        this.pageBuilderService.onAddSection();
-    }
-
     onSectionDropped(event: CdkDragDrop<any[]>) {
         this.pageBuilderService.onSectionDropped(event);
     }

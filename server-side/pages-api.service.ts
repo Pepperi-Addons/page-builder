@@ -196,6 +196,11 @@ export class PagesApiService {
         return promise;
     }
     
+    restoreToLastPublish(query: any) {
+        const pagekey = query['key'] || '';
+        return this.deletePageDraft(pagekey);
+    }
+
     publishPage(page: Page): Promise<AddonData> {
         const promises: AddonData[] = [];
         if (page && page.Key) {

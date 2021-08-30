@@ -33,13 +33,13 @@ export class NavigationService {
         });
 
         this.loadDevBlocks();
-        this._devServer = this.route.snapshot.queryParams['devServer'] === 'true';
-        this._addonUUID = this.route.snapshot.firstChild.params['addonUUID']; // || config.AddonUUID; 
+        this._devServer = this.route.snapshot.queryParamMap.get('devServer') === 'true';
+        this._addonUUID = this.route.snapshot.firstChild.paramMap.get('addonUUID'); // || config.AddonUUID; 
     }
 
     private loadDevBlocks() {
         try {
-            const devBlocksAsJSON = JSON.parse(this.route.snapshot.queryParams['devBlocks']);
+            const devBlocksAsJSON = JSON.parse(this.route.snapshot.queryParamMap.get('devBlocks'));
             this._devBlocks = new Map(devBlocksAsJSON);
         } catch(err) {
             this._devBlocks = new Map<string, string>();

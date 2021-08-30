@@ -102,6 +102,10 @@ export class PageBuilderEditorComponent implements OnInit {
         this.updateHostObject();
     }
 
+    onAddSectionClick(e) {
+        this.pageBuilderService.addSection();
+    }
+
     isFullWidthChange(isChecked: boolean) {
         this.isFullWidth = isChecked;
         this.updateHostObject();

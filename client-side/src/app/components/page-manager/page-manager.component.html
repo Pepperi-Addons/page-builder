@@ -29,10 +29,10 @@
                     </pep-group-buttons>
                 </div>
                 <div class="header-end header-content">
-                    <!-- <pep-button iconName="view_card_md" sizeType="sm" classNames="pep-spacing-element"></pep-button> -->
+                    <pep-menu sizeType="sm" classNames="pep-spacing-element" [items]="menuItems" (menuItemClick)="onMenuItemClick($event)"></pep-menu>
                     <pep-button [value]="'ACTIONS.PREVIEW' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="togglePreviewMode()"></pep-button>
-                    <pep-button [value]="'ACTIONS.SAVE' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="save()"></pep-button>
-                    <pep-button [value]="'ACTIONS.PUBLISH' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="publishPage();">
+                    <pep-button [value]="'ACTIONS.SAVE' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="onSaveClick()"></pep-button>
+                    <pep-button [value]="'ACTIONS.PUBLISH' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="onPublishClick();">
                     </pep-button>
                     <!-- <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
                     </pep-button>

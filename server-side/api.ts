@@ -31,6 +31,11 @@ export async function editor_page_data(client: Client, request: Request): Promis
     return service.getPageEditorData(request.query);
 };
 
+export async function restore_to_last_publish(client: Client, request: Request): Promise<any> {
+    const service = new PagesApiService(client);
+    return service.restoreToLastPublish(request.query);
+}
+
 export async function publish_page(client: Client, request: Request): Promise<any> {
     const service = new PagesApiService(client);
     return service.publishPage(request.body);

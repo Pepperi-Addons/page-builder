@@ -1,4 +1,4 @@
-<div #sectionContainer class="section-container" [ngClass]="{ 'editable-state': editable, 'active-section': selected }" 
+<div #sectionContainer class="section-container" [ngClass]="{ 'editable-state': editable, 'active-section': selected, 'hidden-state': true }" 
     cdkDrag [cdkDragDisabled]="!editable" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" >
     <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
         class="section-toolbar" [title]="name" [isDraggable]="true"

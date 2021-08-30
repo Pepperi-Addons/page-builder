@@ -452,7 +452,7 @@ export class PagesService {
     //     this.sectionsSubject.next(this.pageSubject.value.Layout.Sections);
     // }
 
-    onAddSection(section: PageSection = null) {
+    addSection(section: PageSection = null) {
         // Create new section
         if (!section) {
             section = this.createNewSection();
@@ -463,7 +463,7 @@ export class PagesService {
         this.sectionsSubject.next(this.pageSubject.value.Layout.Sections);
     }
 
-    onRemoveSection(sectionId: string) {
+    removeSection(sectionId: string) {
         const index = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
         if (index > -1) {
             // Remove all blocks from blocks map.
@@ -588,6 +588,7 @@ export class PagesService {
     // CPI & Server side calls.
     //**************************************************************************
     
+    // Get the pages (distinct with the drafts)
     getPages(addonUUID: string, options: any): Observable<IPageRowModel[]> {
         // Get the pages from the server.
         const baseUrl = this.getBaseUrl(addonUUID);
@@ -597,6 +598,12 @@ export class PagesService {
     createNewPage(addonUUID: string, templateId: any): Observable<Page[]> {
         const baseUrl = this.getBaseUrl(addonUUID);
         return this.httpService.getHttpCall(`${baseUrl}/create_page?templateId=${templateId}`);
+    }
+
+    // Delete the page
+    deletePage(addonUUID: string, pageKey: string): Observable<boolean> {
+        const baseUrl = this.getBaseUrl(addonUUID);
+        return this.httpService.getHttpCall(`${baseUrl}/delete_page?key=${pageKey}`)
     }
 
     initPageBuilder(addonUUID: string, pageKey: string, editMode: boolean): void {
@@ -636,8 +643,14 @@ export class PagesService {
         }
     }
 
+    // Restore the page to tha last publish
+    restoreToLastPublish(addonUUID: string, pageKey: string): Observable<boolean> {
+        const baseUrl = this.getBaseUrl(addonUUID);
+        return this.httpService.getHttpCall(`${baseUrl}/restore_to_last_publish?key=${pageKey}`)
+    }
+
     // Save the current page in drafts.
-    updatePage(addonUUID: string): Observable<Page> {
+    saveCurrentPage(addonUUID: string): Observable<Page> {
         const page: Page = this.pageSubject.value;
         const body = JSON.stringify(page);
         const baseUrl = this.getBaseUrl(addonUUID);
@@ -645,11 +658,8 @@ export class PagesService {
     }
 
     // Publish the current page.
-    publishPage(addonUUID: string): Observable<Page> {
+    publishCurrentPage(addonUUID: string): Observable<Page> {
         const page: Page = this.pageSubject.value;
-
-        // // TODO: Implement this.
-        // sessionStorage.setItem('page', JSON.stringify(page));
         const body = JSON.stringify(page);
         const baseUrl = this.getBaseUrl(addonUUID);
         return this.httpService.postHttpCall(`${baseUrl}/publish_page`, body);

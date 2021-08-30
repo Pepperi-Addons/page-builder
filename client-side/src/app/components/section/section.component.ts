@@ -143,7 +143,7 @@ export class SectionComponent implements OnInit, OnChanges {
     }
 
     onRemoveSectionClick() {
-        this.pageBuilderService.onRemoveSection(this.id);
+        this.pageBuilderService.removeSection(this.id);
     }
 
     onEditBlockClick(blockId: string) {

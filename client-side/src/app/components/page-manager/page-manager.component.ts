@@ -8,6 +8,7 @@ import { Page } from '@pepperi-addons/papi-sdk';
 import { IEditor, PagesService, IPageEditor, ISectionEditor } from '../../services/pages.service';
 import { NavigationService } from '../../services/navigation.service';
 import { IPepSideBarStateChangeEvent } from '@pepperi-addons/ngx-lib/side-bar';
+import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 
 type ScreenSizeType = 'desktop' | 'tablet' | 'mobile';
 
@@ -19,6 +20,9 @@ type ScreenSizeType = 'desktop' | 'tablet' | 'mobile';
 export class PageManagerComponent implements OnInit {
     @ViewChild('pageBuilderWrapper', { static: true }) pageBuilderWrapper: ElementRef;
 
+    readonly importKey = 'import';
+    readonly exportKey = 'export';
+
     showEditor = true;
     currentEditor: IEditor;
     sectionsColumnsDropList = [];
@@ -27,6 +31,7 @@ export class PageManagerComponent implements OnInit {
     selectedScreenKey: ScreenSizeType;
     viewportWidth: number;
     screenSize: PepScreenSizeType;
+    menuItems: Array<PepMenuItem>;
     
     constructor(
         private renderer: Renderer2,
@@ -71,7 +76,7 @@ export class PageManagerComponent implements OnInit {
             });
         }
     }
-
+    
     async ngOnInit() {
         // Get the first translation for load all translations.
         const desktopTitle = await this.translate.get('PAGE_MANAGER.DESKTOP').toPromise();
@@ -80,6 +85,11 @@ export class PageManagerComponent implements OnInit {
             { key: 'desktop', value: desktopTitle, callback: () => this.setScreenWidth('desktop'), iconName: pepIconDeviceDesktop.name, iconPosition: 'end' },
             { key: 'tablet', value: this.translate.instant('PAGE_MANAGER.TABLET'), callback: () => this.setScreenWidth('tablet'), iconName: pepIconDeviceTablet.name, iconPosition: 'end' },
             { key: 'mobile', value: this.translate.instant('PAGE_MANAGER.MOBILE'), callback: () => this.setScreenWidth('mobile'), iconName: pepIconDeviceMobile.name, iconPosition: 'end' }
+        ];
+
+        this.menuItems = [
+            { key: this.importKey, text: this.translate.instant('ACTIONS.IMPORT') },
+            { key: this.exportKey, text: this.translate.instant('ACTIONS.EXPORT') }
         ];
 
         this.pageBuilderService.onScreenSizeChange$.subscribe((size: PepScreenSizeType) => {
@@ -150,14 +160,23 @@ export class PageManagerComponent implements OnInit {
     //     this.pageBuilderService.onClearPageSections();
     // }
 
-    save() {
-        this.pageBuilderService.updatePage(this.navigationService.addonUUID).subscribe(res => {
+    // TODO:
+    onMenuItemClick(action: IPepMenuItemClickEvent) {
+        if (action.source.key === this.importKey) { // Import page
+
+        } else if (action.source.key === this.exportKey) { // Export page
+            
+        }
+    }
+
+    onSaveClick() {
+        this.pageBuilderService.saveCurrentPage(this.navigationService.addonUUID).subscribe(res => {
             // TODO: Show message.
         });
     }
 
-    publishPage() {
-        this.pageBuilderService.publishPage(this.navigationService.addonUUID).subscribe(res => {
+    onPublishClick() {
+        this.pageBuilderService.publishCurrentPage(this.navigationService.addonUUID).subscribe(res => {
             // TODO: Show message.
         });
     }
