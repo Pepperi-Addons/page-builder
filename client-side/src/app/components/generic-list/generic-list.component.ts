@@ -120,12 +120,12 @@ export class GenericListComponent implements OnInit, AfterViewInit {
         if (this.customList.getIsAllSelectedForActions()) {
             uuids = this.dataObjects.map(obj => obj.UID).filter(x => uuids.indexOf(x) === -1);
         }
-        const objects = uuids.map(uuid => this.getObject(uuid))
+        const objects = uuids.filter((uuid: string) => uuid.length > 0 ).map(uuid => this.getObject(uuid));
         return objects;
     }
 
     getObject(uuid: string) {
-        return this.dataObjects.find(obj => obj.UID === uuid);
+        return this.dataObjects.find(obj => obj?.UID === uuid);
     }
 
     onMenuItemClicked(action: IPepMenuItemClickEvent): void {

@@ -72,7 +72,7 @@ export class PagesManagerComponent implements OnInit {
         return {
             FieldID: columnId,
             Type: 'TextBox',
-            Title: this.translate.instant(columnId),
+            Title: this.translate.instant(`PAGES_MANAGER.GRID_HEADER_${columnId.toUpperCase()}`),
             Mandatory: false,
             ReadOnly: true
         }
@@ -105,11 +105,11 @@ export class PagesManagerComponent implements OnInit {
                 Type: 'Grid',
                 Title: '',
                 Fields: [
-                    this.getRegularReadOnlyColumn('PAGES_MANAGER.GRID_HEADER_NAME'),
-                    this.getRegularReadOnlyColumn('PAGES_MANAGER.GRID_HEADER_DESCRIPTION'),
-                    this.getRegularReadOnlyColumn('PAGES_MANAGER.GRID_HEADER_CREATIONDATE'),
-                    this.getRegularReadOnlyColumn('PAGES_MANAGER.GRID_HEADER_MODIFICATIONDATE'),
-                    this.getRegularReadOnlyColumn('PAGES_MANAGER.GRID_HEADER_STATUS')
+                    this.getRegularReadOnlyColumn('Name'),
+                    this.getRegularReadOnlyColumn('Description'),
+                    this.getRegularReadOnlyColumn('CreationDate'),
+                    this.getRegularReadOnlyColumn('ModificationDate'),
+                    this.getRegularReadOnlyColumn('Status')
                 ],
                 Columns: [
                     { Width: 20 },
@@ -125,7 +125,7 @@ export class PagesManagerComponent implements OnInit {
 
         getActions: async (objs) => {
 
-            return objs.length && objs[0] !== undefined ? [
+            return objs.length ? [
                 {
                     title: this.translate.instant("ACTIONS.EDIT"),
                     handler: async (objs) => {
