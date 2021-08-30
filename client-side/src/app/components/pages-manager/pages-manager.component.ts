@@ -105,11 +105,11 @@ export class PagesManagerComponent implements OnInit {
                 Type: 'Grid',
                 Title: '',
                 Fields: [
-                    this.getRegularReadOnlyColumn('Name'),
-                    this.getRegularReadOnlyColumn('Description'),
-                    this.getRegularReadOnlyColumn('CreationDate'),
-                    this.getRegularReadOnlyColumn('ModificationDate'),
-                    this.getRegularReadOnlyColumn('Status')
+                    this.getRegularReadOnlyColumn('PAGES_MANAGER.GRID_HEADER_NAME'),
+                    this.getRegularReadOnlyColumn('PAGES_MANAGER.GRID_HEADER_DESCRIPTION'),
+                    this.getRegularReadOnlyColumn('PAGES_MANAGER.GRID_HEADER_CREATIONDATE'),
+                    this.getRegularReadOnlyColumn('PAGES_MANAGER.GRID_HEADER_MODIFICATIONDATE'),
+                    this.getRegularReadOnlyColumn('PAGES_MANAGER.GRID_HEADER_STATUS')
                 ],
                 Columns: [
                     { Width: 20 },
@@ -124,7 +124,8 @@ export class PagesManagerComponent implements OnInit {
         },
 
         getActions: async (objs) => {
-            return objs.length ? [
+
+            return objs.length && objs[0] !== undefined ? [
                 {
                     title: this.translate.instant("ACTIONS.EDIT"),
                     handler: async (objs) => {
@@ -142,15 +143,6 @@ export class PagesManagerComponent implements OnInit {
     }
 
     ngOnInit() {
-        // TODO - NEED TO INITLIZE THE MENUS
-        this.mainMenuItems = this.secondaryMenuItems = [];
-
-        // TODO - NEED TO CHANGE TO GET PAGES CALL.
-        /*this.dataSource$*/
-        //let pages = this.pagesService.getPages(this.navigationService.addonUUID);
-    //    this.pagesService.getPages(this.navigationService.addonUUID).subscribe(returnedData => {
-    //         console.log(returnedData);
-    //     });
 
     }
 
@@ -168,17 +160,18 @@ export class PagesManagerComponent implements OnInit {
 
     createTemplatePage(template: TempPage  ){
         this.pagesService.createNewPage(this.navigationService.addonUUID, template.id).subscribe(returnedData => {
-            console.log(returnedData);
+            this.navigationService.navigateToPage('1');
+            //console.log(returnedData);
         });
 
-        //this.navigationService.navigateToPage('1');
+
     }
 
     deletePage(pageId: string){
         const content = this.translate.instant('PAGES_MANAGER.DELETE_PAGE_MSG');
         const title = this.translate.instant('PAGES_MANAGER.DELETE_PAGE_DIALOG_TITLE');
         const dataMsg = new PepDialogData({title, actionsType: "cancel-delete", content});
-        
+
         this.dialog.openDefaultDialog(dataMsg).afterClosed().subscribe((isDeletePressed) => {
             if (isDeletePressed) {
                 debugger;

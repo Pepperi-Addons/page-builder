@@ -16,9 +16,7 @@
     </ng-container>
 
     <ng-container pep-main-area>
-        <!-- <div style="height:100%;overflow:auto;"> -->
         <ng-container *ngIf="!isAddNewPage; then mainBlock; else addNewBlock"></ng-container>
-    <!-- </div> -->
  </ng-container>
 </pep-page-layout>
 
@@ -28,14 +26,6 @@
         <div class="pageExplanation">
             <span class="body-md">{{ 'PAGES_MANAGER.MAIN_EXPLANATION' | translate }}</span>
         </div>
-        <!-- <pep-top-bar [inline]="true" [title]="('PAGES_MANAGER.SECONDARY_HEADER' | translate)">
-            <div header-end-content>
-                <pep-menu class="pep-spacing-element" [items]="secondaryMenuItems" [sizeType]="'sm'" (menuItemClick)="onSecondaryMenuItemClicked($event)">
-                </pep-menu>
-                <pep-button class="pep-spacing-element" [value]="'PAGES_MANAGER.A_PAGE' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
-                </pep-button>
-            </div>
-        </pep-top-bar> -->
 
         <div *ngIf="!hasPages" class="PagesNotFoundMsg">
                 <div class="leaf-background">
@@ -45,9 +35,9 @@
                 <h2>{{ "PAGES_MANAGER.PAGES_HEADER" | translate}}</h2>
                 <span>{{ "PAGES_MANAGER.NO_PAGES_MSG" | translate}}</span>
         </div>
-        <generic-list [dataSource]="pagesDataSource" [inline]="false" [showSearch]="true" [title]="'PAGES_MANAGER.SECONDARY_HEADER' | translate">
+        <generic-list [dataSource]="pagesDataSource" [inline]="true" [title]="'PAGES_MANAGER.SECONDARY_HEADER' | translate">
             <ng-container right-buttons>
-                    <pep-menu class="pep-spacing-element" [items]="secondaryMenuItems" [sizeType]="'sm'" (menuItemClick)="onSecondaryMenuItemClicked($event)">
+                    <pep-menu class="pep-spacing-element" [items]="mainMenuItems" [sizeType]="'sm'" (menuItemClick)="onSecondaryMenuItemClicked($event)">
                     </pep-menu>
                     <pep-button class="pep-spacing-element" [value]="'PAGES_MANAGER.A_PAGE' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
                     </pep-button>
