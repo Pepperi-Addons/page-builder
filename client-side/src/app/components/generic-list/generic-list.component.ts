@@ -24,7 +24,7 @@ import {
     PepMenuItem,
     IPepMenuItemClickEvent,
 } from '@pepperi-addons/ngx-lib/menu';
-  
+
 import { DataView, GridDataViewField, DataViewFieldType, DataViewFieldTypes } from '@pepperi-addons/papi-sdk/dist/entities/data-view';
 
 export interface GenericListDataSource {
@@ -116,6 +116,7 @@ export class GenericListComponent implements OnInit, AfterViewInit {
 
     getMenuObjects() {
         let uuids = this.customList.getSelectedItemsData().rows ?? [];
+
         if (this.customList.getIsAllSelectedForActions()) {
             uuids = this.dataObjects.map(obj => obj.UID).filter(x => uuids.indexOf(x) === -1);
         }

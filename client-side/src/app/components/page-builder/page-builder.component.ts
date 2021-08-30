@@ -19,7 +19,7 @@ export class PageBuilderComponent implements OnInit {
     @Input() editMode: boolean = false;
     @Input() screenSize: PepScreenSizeType;
     @Input() sectionsColumnsDropList = [];
-    
+
     @HostBinding('style.padding-inline')
     paddingInline = '0';
 
@@ -27,7 +27,7 @@ export class PageBuilderComponent implements OnInit {
     paddingTop = '0';
     @HostBinding('style.padding-bottom')
     paddingBottom = '0';
-    
+
     private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
     get sections$(): Observable<PageSection[]> {
         return this._sectionsSubject.asObservable();
@@ -55,12 +55,12 @@ export class PageBuilderComponent implements OnInit {
 
             this.sectionsGap = page.Layout.SectionsGap || 'NONE';
             this.columnsGap = page.Layout.CoulmnsGap || 'NONE';
-            debugger;
+
             this.paddingInline = '1rem'; // page.Layout.HorizontalSpacing
             this.paddingBottom = this.paddingTop = '1rem'; // page.Layout.VerticalSpacing
         }
     }
-    
+
     ngOnInit() {
         this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
             this.screenSize = size;

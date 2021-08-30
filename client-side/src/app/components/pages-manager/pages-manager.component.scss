@@ -45,6 +45,9 @@ $z-index-min: 0;
 
 .add-on-width{
     max-width: 52rem;
+    display: flex;
+    height: inherit;
+    flex-direction: column;
 
     .PagesNotFoundMsg{
         height: 20rem;
