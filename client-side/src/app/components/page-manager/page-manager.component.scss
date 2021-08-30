@@ -11,7 +11,7 @@
 }
 
 .main-area-container {
-    height: inherit;
+    min-height: 100%;
     display: grid;
     grid-template-rows: auto 1fr;
 
@@ -48,6 +48,30 @@
 
         &.limit-min-width {
             min-width: 800px;
+        }
+        
+        &.desktop {
+            // ::ng-deep :not(.editable-state) {
+            //     &.hidden-state {
+            //         display: none;
+            //     }
+            // }
+        }
+
+        &.tablet {
+            // ::ng-deep :not(.editable-state) {
+            //     &.hidden-state {
+            //         display: none;
+            //     }
+            // }
+        }
+
+        &.mobile {
+            // ::ng-deep :not(.editable-state) {
+            //     &.hidden-state {
+            //         display: none;
+            //     }
+            // }
         }
         
         .backdrop {

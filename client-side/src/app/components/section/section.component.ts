@@ -17,8 +17,17 @@ export class SectionComponent implements OnInit, OnChanges {
     @Input() sectionsColumnsDropList = [];
     @Input() id: string;
     @Input() name: string;
-    @Input() editable = false;
-    
+
+    private _editable = false;
+    @Input()
+    set editable(value: boolean) {
+        this._editable = value;
+        this.refreshSplit();
+    }
+    get editable(): boolean {
+        return this._editable;
+    }
+
     private _screenSize: PepScreenSizeType;
     @Input()
     set screenSize(value: PepScreenSizeType) {
@@ -43,6 +52,7 @@ export class SectionComponent implements OnInit, OnChanges {
     @Input()
     set columns(value: Array<PageSectionColumn>) {
         this._columns = value || [];
+        this.calculateIfSectionContainsBlocks();
     }
     get columns(): Array<PageSectionColumn> {
         return this._columns;
@@ -57,6 +67,7 @@ export class SectionComponent implements OnInit, OnChanges {
     selected = false;
     selectedBlockId = '';
     
+    containsBlocks = false;
     pepScreenSizeToFlipToVertical = PepScreenSizeType.SM;
 
     constructor(
@@ -65,6 +76,10 @@ export class SectionComponent implements OnInit, OnChanges {
         private layoutService: PepLayoutService,
         public pageBuilderService: PagesService
     ) { }
+
+    private calculateIfSectionContainsBlocks() {
+        this.containsBlocks = this.columns.some(column => column.Block);
+    }
 
     private getCssSplitString() {
         switch (this.split) {
@@ -110,6 +125,15 @@ export class SectionComponent implements OnInit, OnChanges {
                         this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'row');
                         this.renderer.setStyle(section.nativeElement, 'grid-template-columns', 'unset');
                         this.renderer.setStyle(section.nativeElement, 'grid-template-rows', this.getCssSplitString());
+
+                        // If there is some hidden column change to auto (for cut the spacing of the grid-template-rows).
+                        if (!this.editable) {
+                            let containsEmptyColumn = this.columns.some(column => !column.Block);
+                             
+                            if (containsEmptyColumn) {
+                                this.renderer.setStyle(section.nativeElement, 'grid-template-rows', 'auto');
+                            }
+                        }
                     });
 
                     // this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-auto-flow', 'row');

@@ -1,9 +1,9 @@
-<div #sectionContainer class="section-container" [ngClass]="{ 'editable-state': editable, 'active-section': selected, 'hidden-state': true }" 
+<div #sectionContainer *ngIf="editable || containsBlocks" class="section-container" [ngClass]="{ 'editable-state': editable, 'active-section': selected, 'hidden-state': true }" 
     cdkDrag [cdkDragDisabled]="!editable" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" >
     <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
         class="section-toolbar" [title]="name" [isDraggable]="true"
         (edit)="onEditSectionClick();" (remove)="onRemoveSectionClick()"></toolbar-actions>
-    <div class="section-background">
+    <div *ngIf="editable" class="section-background">
         <div class="back-template" *ngFor="let number of [0,1,2,3,4,5,6,7,8,9,10,11]"></div>
     </div>
     <div #columnsWrapper class="columns-wrapper gap-{{ columnsGap }}">

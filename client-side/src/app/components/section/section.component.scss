@@ -15,32 +15,32 @@ $z-index-toolbar: $z-index-min + 2;
     border-radius: $border-radius-md;
     min-height: 250px;
     
-    // Mobile size
-    @media (max-width: $screen-max-size-xs) {
-        &:not(&.editable-state) {
-            &.hidden-state {
-                display: none;
-            }
-        }
-    }
+    // // Mobile size
+    // @media (max-width: $screen-max-size-xs) {
+    //     &:not(&.editable-state) {
+    //         &.hidden-state {
+    //             display: none;
+    //         }
+    //     }
+    // }
 
-    // Tablet size
-    @media (max-width: $screen-max-size-sm) {
-        &:not(&.editable-state) {
-            &.hidden-state {
-                display: none;
-            }
-        }
-    }
+    // // Tablet size
+    // @media (max-width: $screen-max-size-sm) {
+    //     &:not(&.editable-state) {
+    //         &.hidden-state {
+    //             display: none;
+    //         }
+    //     }
+    // }
 
-    // Desktop size
-    @media (min-width: $screen-max-size-sm) {
-        &:not(&.editable-state) {
-            &.hidden-state {
-                display: none;
-            }
-        }
-    }
+    // // Desktop size
+    // @media (min-width: $screen-max-size-sm) {
+    //     &:not(&.editable-state) {
+    //         &.hidden-state {
+    //             display: none;
+    //         }
+    //     }
+    // }
 
     // This css is run also without edit mode!!!.
     .columns-wrapper {

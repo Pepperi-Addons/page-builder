@@ -48,24 +48,24 @@ export class PageManagerComponent implements OnInit {
         // TODO: Block Screen button if the screen width is not enough.
         this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
             this.screenSize = size;
-            this.selectedScreenKey =
+            const screenType =
                 size < PepScreenSizeType.MD ? 'desktop' :
                 (size === PepScreenSizeType.MD || size === PepScreenSizeType.SM ? 'tablet' : 'mobile');
 
-            this.setScreenWidth(this.selectedScreenKey);
+            this.setScreenWidth(screenType);
         });
     }
 
-    private setScreenWidth(screenWidth: ScreenSizeType) {
+    private setScreenWidth(screenType: ScreenSizeType) {
         let widthToSet = '100%';
 
-        if (screenWidth === 'tablet') {
+        if (screenType === 'tablet') {
             widthToSet = '720';
-        } else if (screenWidth === 'mobile') {
+        } else if (screenType === 'mobile') {
             widthToSet = '360';
         }
 
-        this.selectedScreenKey = screenWidth;
+        this.selectedScreenKey = screenType;
         this.pageBuilderService.setScreenWidth(widthToSet);
     }
 
