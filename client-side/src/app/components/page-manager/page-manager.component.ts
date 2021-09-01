@@ -9,6 +9,7 @@ import { IEditor, PagesService, IPageEditor, ISectionEditor } from '../../servic
 import { NavigationService } from '../../services/navigation.service';
 import { IPepSideBarStateChangeEvent } from '@pepperi-addons/ngx-lib/side-bar';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
+import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 
 @Component({
     selector: 'page-manager',
@@ -36,6 +37,7 @@ export class PageManagerComponent implements OnInit {
         private translate: TranslateService,
         private utilitiesService: PepUtilitiesService,
         private layoutService: PepLayoutService,
+        private dialogService: PepDialogService,
         private pageBuilderService: PagesService,
         private navigationService: NavigationService,
     ) {
@@ -144,7 +146,7 @@ export class PageManagerComponent implements OnInit {
     }
 
     onNavigateBackFromEditor() {
-        if (this.currentEditor?.type === 'page-builder') {
+        if (!this.currentEditor || this.currentEditor?.type === 'page-builder') {
             this.navigationService.back();
         } else {
             this.pageBuilderService.navigateBackFromEditor();
@@ -164,15 +166,28 @@ export class PageManagerComponent implements OnInit {
         }
     }
 
+    private showDialogMsg(message: string) {
+        const title = this.translate.instant('MESSAGES.TITLE_NOTICE');
+        const data = new PepDialogData({
+            title,
+            content: message,
+        });
+        this.dialogService.openDefaultDialog(data);
+    }
+
     onSaveClick() {
         this.pageBuilderService.saveCurrentPage(this.navigationService.addonUUID).subscribe(res => {
             // TODO: Show message.
+            debugger;
+            this.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
         });
     }
 
     onPublishClick() {
         this.pageBuilderService.publishCurrentPage(this.navigationService.addonUUID).subscribe(res => {
             // TODO: Show message.
+            debugger;
+            this.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
         });
     }
 }

@@ -21,14 +21,14 @@ export async function create_page(client: Client, request: Request): Promise<any
     return service.createTemplatePage(request.query);
 }
 
-export async function delete_page(client: Client, request: Request): Promise<any> {
+export async function remove_page(client: Client, request: Request): Promise<any> {
     const service = new PagesApiService(client);
-    return service.deletePage(request.query);
+    return service.removePage(request.query);
 }
 
-export async function editor_page_data(client: Client, request: Request): Promise<any> {
+export async function get_page_builder_data(client: Client, request: Request): Promise<any> {
     const service = new PagesApiService(client);
-    return service.getPageEditorData(request.query);
+    return service.getPageBuilderData(request.query);
 };
 
 export async function restore_to_last_publish(client: Client, request: Request): Promise<any> {

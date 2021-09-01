@@ -76,5 +76,9 @@
         "PUBLISH": "Publish",
         "IMPORT": "Import a page",
         "EXPORT": "Export a page"
+    },
+    "MESSAGES": {
+        "TITLE_NOTICE": "Notice",
+        "OPERATION_SUCCESS": "Operation success."
     }
 }

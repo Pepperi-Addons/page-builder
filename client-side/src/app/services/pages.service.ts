@@ -602,15 +602,15 @@ export class PagesService {
         return this.httpService.getHttpCall(`${baseUrl}/pages?${options}`);
     }
 
-    createNewPage(addonUUID: string, templateId: any): Observable<Page[]> {
+    createNewPage(addonUUID: string, templateId: any): Observable<Page> {
         const baseUrl = this.getBaseUrl(addonUUID);
         return this.httpService.getHttpCall(`${baseUrl}/create_page?templateId=${templateId}`);
     }
 
     // Delete the page
-    deletePage(addonUUID: string, pageKey: string): Observable<boolean> {
+    deletePage(addonUUID: string, pageKey: string): Observable<any> {
         const baseUrl = this.getBaseUrl(addonUUID);
-        return this.httpService.getHttpCall(`${baseUrl}/delete_page?key=${pageKey}`)
+        return this.httpService.getHttpCall(`${baseUrl}/remove_page?key=${pageKey}`);
     }
 
     initPageBuilder(addonUUID: string, pageKey: string, editMode: boolean): void {
@@ -621,9 +621,9 @@ export class PagesService {
         } else { // If is't edit mode get the data of the page and the relations from the Server side.
             const baseUrl = this.getBaseUrl(addonUUID);
             // Get the page (sections and the blocks data) from the server.
-            this.httpService.getHttpCall(`${baseUrl}/editor_page_data?key=${pageKey}`)
+            this.httpService.getHttpCall(`${baseUrl}/get_page_builder_data?key=${pageKey}`)
                 .subscribe((res: IPageBuilderDataForEditMode) => {
-                    if (res.page && res.availableBlocks) {
+                    if (res && res.page && res.availableBlocks) {
                         // HACK: TODO: Remove this.
                         ////////////////////////////////////////////////////
                         const sections = res.page.Layout.Sections;

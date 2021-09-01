@@ -1,4 +1,4 @@
-import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonData, AddonDataScheme } from '@pepperi-addons/papi-sdk'
+import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme } from '@pepperi-addons/papi-sdk'
 import { Client } from '@pepperi-addons/debug-server';
 import { v4 as uuid } from 'uuid';
 import { TempBlankPageData } from './pages.model';
@@ -57,6 +57,30 @@ export class PagesApiService {
 
         return availableBlocks;
     }
+    
+    // Get the page by the key.
+    private async getPage(pagekey: string, tableName: string): Promise<Page | null> {
+        try {
+            let page = await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).key(pagekey).get() as Page;
+            return Promise.resolve(page);
+        } catch(err) {
+            return Promise.resolve(null);
+        }
+    }
+
+    // Hide the page (set hidden to true).
+    private async hidePage(pagekey: string, tableName: string): Promise<boolean> {
+        let res: any = null;
+        
+        let page = await this.getPage(pagekey, tableName);
+
+        if (page) {
+            page.Hidden = true;
+            res = await this.upsertPage(page as Page, tableName);
+        }
+    
+        return Promise.resolve(res !== null);
+    }
 
     async createPagesTablesSchemes(): Promise<AddonDataScheme[]> {
         // TODO: Check that the table is not exist.
@@ -107,8 +131,20 @@ export class PagesApiService {
         let pages: Page[] = await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_TABLE_NAME).find(options) as Page[];
         let draftPages: Page[] = await this.papiClient.addons.data.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).find(options) as Page[];
 
+        //  Add the pages into map for distinct them.
+        const distinctPagesMap = new Map<string, Page>();
+        pages.forEach(page => {
+            distinctPagesMap.set(page.Key || '', page); // TODO: Key sould be mandatory.
+        });
+        draftPages.forEach(draftPage => {
+            distinctPagesMap.set(draftPage.Key || '', draftPage); // TODO: Key sould be mandatory.
+        });
+
+        // Convert the map values to array.
+        const distinctPagesArray = Array.from(distinctPagesMap.values());
+        
         const promise = new Promise<any[]>((resolve, reject): void => {
-            let allPages = [...new Set(pages.concat(draftPages).map((page: Page) => {
+            let allPages = distinctPagesArray.map((page: Page) => {
                 // Return projection object.
                 return {
                     Key: page.Key,
@@ -118,7 +154,7 @@ export class PagesApiService {
                     ModificationDate: page.ModificationDateTime,
                     Status: draftPages.some(draft => draft.Key === page.Key) ? 'draft' : 'published',
                 }
-            }))];
+            });
 
             resolve(allPages);
         });
@@ -126,55 +162,51 @@ export class PagesApiService {
         return promise;
     }
 
-    upsertPage(page: Page): Promise<AddonData> {
+    // Upsert page object if key not exist create new one.
+    upsertPage(page: Page, tableName = DRAFT_PAGES_TABLE_NAME): Promise<Page | null> {
+        let res: any;
+
         if (!page.Key) {
             page.Key = uuid();
         }
 
-        // TODO: Validate page object before upsert.
-        return this.papiClient.addons.data.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).upsert(page);
+        try {
+            // TODO: Validate page object before upsert.
+            res = this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page);
+            return Promise.resolve(res);
+        } catch(err) {
+            return Promise.resolve(null);
+        }
     }
 
-    createTemplatePage(query: any): Promise<AddonData> {
+    createTemplatePage(query: any): Promise<Page | null> {
         const templateId = query['templateId'] || '';
         // TODO: Get the correct page by template (options.TemplateKey)
         const page: Page = TempBlankPageData;
-        
+        page.Key = '';
         return this.upsertPage(page);
     }
 
-    private deletePageDraft(pagekey: string): Promise<AddonData> {
-        return this.papiClient.addons.data.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).key(pagekey).hardDelete(true);
-    }
-
-    deletePage(query: any): Promise<AddonData> {
+    async removePage(query: any): Promise<boolean> {
         const pagekey = query['key'] || '';
-        const promises: AddonData[] = [];
+        
+        let draftRes = await this.hidePage(pagekey, DRAFT_PAGES_TABLE_NAME);
+        let res = await this.hidePage(pagekey, PAGES_TABLE_NAME);
 
-        promises.push(this.deletePageDraft(pagekey));
-        promises.push(this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_TABLE_NAME).key(pagekey).hardDelete(true));
-
-        return Promise.all(promises);
+        return Promise.resolve(draftRes || res);
     }
 
-    async getPageEditorData(query: any) {
-        let res;
+    async getPageBuilderData(query: any) {
+        let res: any;
         const pagekey = query['key'] || '';
         
         if (pagekey) {
-            let page: Page | null = null;
+            // Get the page from the drafts.
+            let page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
 
-            try {
-                // Get the page from the drafts.
-                page = await this.papiClient.addons.data.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).key(pagekey).get() as Page;
-                
-                // If there is no page in the drafts
-                if (!page) {
-                    page = await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_TABLE_NAME).key(pagekey).get() as Page;
-                }
-            } catch (err) {
-                // TODO: Temp - sould remove this.
-                page = TempBlankPageData;
+            // If there is no page in the drafts
+            if (!page) {
+                page = await this.getPage(pagekey, PAGES_TABLE_NAME);
             }
 
             // If page found get the available blocks by page type and return combined object.
@@ -196,20 +228,28 @@ export class PagesApiService {
         return promise;
     }
     
-    restoreToLastPublish(query: any) {
-        const pagekey = query['key'] || '';
-        return this.deletePageDraft(pagekey);
+    async restoreToLastPublish(query: any): Promise<boolean> {
+        let res = false;
+        const pagekey = query['key'];
+        if (pagekey) {
+            res = await this.hidePage(pagekey, DRAFT_PAGES_TABLE_NAME);
+        } 
+
+        return Promise.resolve(false);
     }
 
-    publishPage(page: Page): Promise<AddonData> {
-        const promises: AddonData[] = [];
+    async publishPage(page: Page): Promise<boolean> {
+        let res = false;
+
         if (page && page.Key) {
-            // Delete the draft and upsert the page into Pages table.
-            promises.push(this.deletePageDraft(page.Key));
             // Save the current page in pages table
-            promises.push(this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_TABLE_NAME).upsert(page));
+            res = await this.upsertPage(page, PAGES_TABLE_NAME) != null;
+
+            // Delete the draft.
+            this.hidePage(page.Key, DRAFT_PAGES_TABLE_NAME);
+
         }
 
-        return Promise.all(promises);
+        return Promise.resolve(res);
     }
 }

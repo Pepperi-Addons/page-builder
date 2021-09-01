@@ -10,7 +10,7 @@ import { from, Observable } from "rxjs";
 //simcha
 import { map } from 'rxjs/operators';
 import { GenericListDataSource } from '../generic-list/generic-list.component';
-import { GridDataViewField } from '@pepperi-addons/papi-sdk';
+import { GridDataViewField, Page } from '@pepperi-addons/papi-sdk';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
@@ -126,7 +126,7 @@ export class PagesManagerComponent implements OnInit {
         },
 
         getActions: async (objs) => {
-            this.selectedPageID = objs[0].Key;
+            this.selectedPageID = objs.length > 0 ? objs[0].Key : '';
             return objs.length ? [
                 {
                     title: this.translate.instant("ACTIONS.EDIT"),
@@ -142,8 +142,10 @@ export class PagesManagerComponent implements OnInit {
                 },
                 {
                     title: this.translate.instant("ACTIONS.DELETE"),
-                    handler: async (objs) => {
-                        this.deletePage([objs[0].Key].toString());
+                    handler: async (objs: IPageRowModel[]) => {
+                        if (objs.length > 0) {
+                            this.deletePage(objs[0].Key);
+                        }
                     }
                 }
             ] : []
@@ -178,12 +180,14 @@ export class PagesManagerComponent implements OnInit {
     };
 
     createTemplatePage(template: TempPage  ){
-        this.pagesService.createNewPage(this.navigationService.addonUUID, template.id).subscribe(returnedData => {
-            this.navigationService.navigateToPage('1');
+        this.pagesService.createNewPage(this.navigationService.addonUUID, template.id).subscribe((page: Page) => {
+            if (page) {
+                this.navigationService.navigateToPage(page.Key);
+            } else {
+                // TODO: show error.
+            }
             //console.log(returnedData);
         });
-
-
     }
 
     deletePage(pageId: string){
@@ -193,7 +197,9 @@ export class PagesManagerComponent implements OnInit {
 
         this.dialog.openDefaultDialog(dataMsg).afterClosed().subscribe((isDeletePressed) => {
             if (isDeletePressed) {
-                this.pagesService.deletePage(this.navigationService.addonUUID, pageId);
+                this.pagesService.deletePage(this.navigationService.addonUUID, pageId).subscribe((res) => {
+                    debugger;
+                });
             }
         });
 

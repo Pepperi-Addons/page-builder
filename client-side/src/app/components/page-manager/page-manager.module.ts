@@ -25,6 +25,7 @@ import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { PepSideBarModule } from '@pepperi-addons/ngx-lib/side-bar';
 import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
+import { PepDialogModule } from '@pepperi-addons/ngx-lib/dialog';
 
 // import { SectionModule } from '../section/section.module'
 // import { ToolbarModule } from '../toolbar/toolbar.module'
@@ -72,6 +73,7 @@ const routes: Routes = [
         MatButtonModule,
         PepSideBarModule,
         PepMenuModule,
+        PepDialogModule,
         PepPageLayoutModule,
         PepSelectModule,
         PepTextboxModule,
