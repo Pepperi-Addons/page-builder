@@ -12,6 +12,7 @@ import { map } from 'rxjs/operators';
 import { GenericListDataSource } from '../generic-list/generic-list.component';
 import { GridDataViewField } from '@pepperi-addons/papi-sdk';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 export enum Page_Type { "Homepage" = 1, "Dashbaord" = 2, "Item" = 3, "Generic" = 4, "None" = 5 };
 
@@ -132,6 +133,12 @@ export class PagesManagerComponent implements OnInit {
                     handler: async (objs) => {
                         this.navigationService.navigateToPage([objs[0].Key].toString());
                     }
+                },{
+                    title: this.translate.instant("ACTIONS.EXPORT"),
+                    handler: async (objs) => {
+                        // TODO - ADD EXPORT PAGES CALL
+                        //this.pagesService.exportPage([objs[0].Key].toString());
+                    }
                 },
                 {
                     title: this.translate.instant("ACTIONS.DELETE"),
@@ -147,11 +154,7 @@ export class PagesManagerComponent implements OnInit {
         this.mainMenuItems = new Array<PepMenuItem>();
         this.mainMenuItems.push({
             key: 'import',
-            text: this.translate.instant('Import')
-            // ,disabled: this.selectedPageID == ''
-        },{
-            key: 'export',
-            text: this.translate.instant('Export')
+            text: this.translate.instant('ACTIONS.IMPORT')
             // ,disabled: this.selectedPageID == ''
         }
         );
@@ -161,7 +164,7 @@ export class PagesManagerComponent implements OnInit {
         this.isAddNewPage = true;
     }
 
-    onMenuItemClicked(event: IPepMenuItemClickEvent){
+    onMenuItemClicked(event: IPepMenuItemClickEvent = null){
         const menuItem = event.source;
         switch(menuItem.key){
             case 'export': {
