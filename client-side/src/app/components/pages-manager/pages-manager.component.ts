@@ -174,7 +174,7 @@ export class PagesManagerComponent implements OnInit {
 
         this.dialog.openDefaultDialog(dataMsg).afterClosed().subscribe((isDeletePressed) => {
             if (isDeletePressed) {
-                debugger;
+                this.pagesService.deletePage(this.navigationService.addonUUID, pageId);
             }
         });
 

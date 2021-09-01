@@ -9,7 +9,7 @@
         // This css is only for edit mode.
         &.editable-state {
             &.hidden-state {
-                @include pep-cross-hatch($pepperi-theme);
+                 @include pep-cross-hatch($pepperi-theme);
             }
 
             &.active-section {
