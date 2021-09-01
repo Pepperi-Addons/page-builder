@@ -74,7 +74,7 @@
         "SAVE": "Save",
         "PREVIEW": "Preview",
         "PUBLISH": "Publish",
-        "IMPORT": "Import",
-        "EXPORT": "Export"
+        "IMPORT": "Import a page",
+        "EXPORT": "Export a page"
     }
 }
