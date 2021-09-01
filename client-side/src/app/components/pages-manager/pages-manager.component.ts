@@ -35,7 +35,8 @@ export class TempPage {
 })
 
 export class PagesManagerComponent implements OnInit {
-
+    
+    private selectedPageID = '';
     mainMenuItems: Array<PepMenuItem> = null;
     secondaryMenuItems: Array<PepMenuItem> = null;
     isAddNewPage = false;
@@ -112,11 +113,11 @@ export class PagesManagerComponent implements OnInit {
                     this.getRegularReadOnlyColumn('Status')
                 ],
                 Columns: [
+                    { Width: 15 },
+                    { Width: 30 },
                     { Width: 20 },
                     { Width: 20 },
-                    { Width: 20 },
-                    { Width: 20 },
-                    { Width: 20 }
+                    { Width: 15}
                 ],
                 FrozenColumnsCount: 0,
                 MinimumColumnWidth: 0
@@ -124,7 +125,7 @@ export class PagesManagerComponent implements OnInit {
         },
 
         getActions: async (objs) => {
-
+            this.selectedPageID = objs[0].Key;
             return objs.length ? [
                 {
                     title: this.translate.instant("ACTIONS.EDIT"),
@@ -143,19 +144,34 @@ export class PagesManagerComponent implements OnInit {
     }
 
     ngOnInit() {
-
+        this.mainMenuItems = new Array<PepMenuItem>();
+        this.mainMenuItems.push({
+            key: 'import',
+            text: this.translate.instant('Import')
+            // ,disabled: this.selectedPageID == ''
+        },{
+            key: 'export',
+            text: this.translate.instant('Export')
+            // ,disabled: this.selectedPageID == ''
+        }
+        );
     }
 
     addNewPage() {
         this.isAddNewPage = true;
     }
 
-    onMainMenuItemClicked(event: IPepMenuItemClickEvent){
-
-    };
-
-    onSecondaryMenuItemClicked(event: IPepMenuItemClickEvent){
-
+    onMenuItemClicked(event: IPepMenuItemClickEvent){
+        const menuItem = event.source;
+        switch(menuItem.key){
+            case 'export': {
+                //this.pagesService.exportPage(this.selectedPageID == '');
+                break;
+            }
+            case 'import': {
+                break;
+            }
+        } 
     };
 
     createTemplatePage(template: TempPage  ){
@@ -174,7 +190,7 @@ export class PagesManagerComponent implements OnInit {
 
         this.dialog.openDefaultDialog(dataMsg).afterClosed().subscribe((isDeletePressed) => {
             if (isDeletePressed) {
-                debugger;
+                this.pagesService.deletePage(this.navigationService.addonUUID, pageId);
             }
         });
 
