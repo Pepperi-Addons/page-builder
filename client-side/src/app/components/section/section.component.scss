@@ -15,51 +15,7 @@ $z-index-toolbar: $z-index-min + 2;
     border-radius: $border-radius-md;
     min-height: 250px;
     
-    // // Mobile size
-    // @media (max-width: $screen-max-size-xs) {
-    //     &:not(&.editable-state) {
-    //         &.hidden-state {
-    //             display: none;
-    //         }
-    //     }
-    // }
-
-    // // Tablet size
-    // @media (max-width: $screen-max-size-sm) {
-    //     &:not(&.editable-state) {
-    //         &.hidden-state {
-    //             display: none;
-    //         }
-    //     }
-    // }
-
-    // // Desktop size
-    // @media (min-width: $screen-max-size-sm) {
-    //     &:not(&.editable-state) {
-    //         &.hidden-state {
-    //             display: none;
-    //         }
-    //     }
-    // }
-
-    // This css is run also without edit mode!!!.
-    .columns-wrapper {
-        display: grid;
-        grid-auto-flow: column;
-
-        @include gap-sizes();
-        
-        .section-column {
-            overflow: hidden;
-
-            // In vertical (small screens) we remove the section column if it's empty.
-            &.remove-vertical-empty-column {
-                display: none;
-            }
-        }
-    }
-    
-    // This css is only for edit mode!!!.
+    // This css is only for edit mode!!!
     &.editable-state {
         &.active-section {
             z-index: $z-index-min + 11;
@@ -113,6 +69,31 @@ $z-index-toolbar: $z-index-min + 2;
                     }
                 }
             }
+        }
+    }
+
+    // // This css is only for *NOT* edit mode!!!
+    // &:not(&.editable-state) {
+    //     &.section-hidden-state {
+    //         display: none;
+    //     }
+    //     // For blocks hidden state only inside section without hidden-state
+    //     &:not(&.section-hidden-state) {
+    //         .block-hidden-state {
+    //             display: none;
+    //         }
+    //     }
+    // }
+
+    // This css is run in edit mode and also without edit mode!!!
+    .columns-wrapper {
+        display: grid;
+        grid-auto-flow: column;
+
+        @include gap-sizes();
+        
+        .section-column {
+            overflow: hidden;
         }
     }
 }

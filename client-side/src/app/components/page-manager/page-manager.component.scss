@@ -50,30 +50,6 @@
             min-width: 800px;
         }
         
-        &.desktop {
-            // ::ng-deep :not(.editable-state) {
-            //     &.hidden-state {
-            //         display: none;
-            //     }
-            // }
-        }
-
-        &.tablet {
-            // ::ng-deep :not(.editable-state) {
-            //     &.hidden-state {
-            //         display: none;
-            //     }
-            // }
-        }
-
-        &.mobile {
-            // ::ng-deep :not(.editable-state) {
-            //     &.hidden-state {
-            //         display: none;
-            //     }
-            // }
-        }
-        
         .backdrop {
             position: absolute;
             width: 100%;

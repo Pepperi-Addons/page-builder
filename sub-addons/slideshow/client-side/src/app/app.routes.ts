@@ -17,7 +17,6 @@ const routes: Routes = [
             {
                 path: ':editor',
                 component: SlideshowComponent
-                // TODO: solve routing
                 // loadChildren: () => import('./components/addon/index').then(m => m.SlideshowModule)
             }
         ]

@@ -2,10 +2,10 @@ import { ActivatedRoute } from '@angular/router';
 import { Component, ElementRef, HostBinding, Input, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { CdkDragDrop  } from '@angular/cdk/drag-drop';
-import { PagesService } from '../../services/pages.service';
+import { IBlockProgress, PagesService } from '../../services/pages.service';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
-import { Page, PageSection, PageSizeType } from '@pepperi-addons/papi-sdk';
+import { Page, PageBlock, PageSection, PageSizeType } from '@pepperi-addons/papi-sdk';
 import { NavigationService } from 'src/app/services/navigation.service';
 
 @Component({
@@ -17,8 +17,16 @@ export class PageBuilderComponent implements OnInit {
     @ViewChild('sectionsCont', { static: true }) sectionsContainer: ElementRef;
 
     @Input() editMode: boolean = false;
-    @Input() screenSize: PepScreenSizeType;
     @Input() sectionsColumnsDropList = [];
+    
+    private _screenSize: PepScreenSizeType;
+    @Input()
+    set screenSize(value: PepScreenSizeType) {
+        this._screenSize = value;
+    }
+    get screenSize(): PepScreenSizeType {
+        return this._screenSize;
+    }
 
     @HostBinding('style.padding-inline')
     paddingInline = '0';
@@ -28,13 +36,18 @@ export class PageBuilderComponent implements OnInit {
     @HostBinding('style.padding-bottom')
     paddingBottom = '0';
 
+    sectionsGap: PageSizeType | 'NONE';
+    columnsGap: PageSizeType | 'NONE';
+
     private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
     get sections$(): Observable<PageSection[]> {
         return this._sectionsSubject.asObservable();
     }
 
-    sectionsGap: PageSizeType | 'NONE';
-    columnsGap: PageSizeType | 'NONE';
+    private _pageBlocksMap = new Map<string, PageBlock>();
+    get pageBlocksMap(): ReadonlyMap<string, PageBlock> {
+        return this._pageBlocksMap;
+    }
 
     constructor(
         private route: ActivatedRoute,
@@ -68,6 +81,14 @@ export class PageBuilderComponent implements OnInit {
 
         this.pageBuilderService.onSectionsChange$.subscribe(res => {
             this._sectionsSubject.next(res);
+        });
+
+        this.pageBuilderService.pageBlockProgress$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
+            // Clear the blocks map and set it again.
+            this._pageBlocksMap.clear();
+            blocksProgress.forEach(block => {
+                this._pageBlocksMap.set(block.block.Key, block.block);
+            });
         });
 
         this.pageBuilderService.pageDataChange$.subscribe((page: Page) => {

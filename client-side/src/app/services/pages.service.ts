@@ -3,10 +3,12 @@ import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { PepRemoteLoaderOptions } from "@pepperi-addons/ngx-remote-loader";
-import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn } from "@pepperi-addons/papi-sdk";
+import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize } from "@pepperi-addons/papi-sdk";
 import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 import { NavigationService } from "./navigation.service";
+
+// export type ScreenType = 'desktop' | 'tablet' | 'mobile';
 
 export type PageRowStatusType = 'draft' | 'published';
 export interface IPageRowModel {
@@ -107,26 +109,21 @@ export class PagesService {
         return this.sectionsSubject.asObservable();
     }
     
-    private _pageBlocksMap = new Map<string, PageBlock>();
-    get pageBlocksMap(): ReadonlyMap<string, PageBlock> {
-        return this._pageBlocksMap;
-    }
     private _pageBlockProgressMap = new Map<string, IBlockProgress>();
     get pageBlockProgressMap(): ReadonlyMap<string, IBlockProgress> {
         return this._pageBlockProgressMap;
     }
-    
     private _pageBlockProgress$ = new BehaviorSubject<ReadonlyMap<string, IBlockProgress>>(this.pageBlockProgressMap);
     get pageBlockProgress$(): Observable<ReadonlyMap<string, IBlockProgress>> {
         return this._pageBlockProgress$.asObservable();
     }
 
     private pageSubject: BehaviorSubject<Page> = new BehaviorSubject<Page>(null);
-    get pageDataChange$(): Observable<Page> {
-        return this.pageSubject.asObservable().pipe(filter(page => !!page));
-    }
     get pageLoad$(): Observable<Page> {
         return this.pageSubject.asObservable().pipe(filter(page => !!page), distinctUntilKeyChanged("Key"));
+    }
+    get pageDataChange$(): Observable<Page> {
+        return this.pageSubject.asObservable().pipe(filter(page => !!page));
     }
 
     constructor(
@@ -136,14 +133,6 @@ export class PagesService {
         private httpService: PepHttpService,
         private navigationService: NavigationService
     ) {
-        this._pageBlockProgress$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
-            // Clear the blocks map and set it again.
-            this._pageBlocksMap.clear();
-            blocksProgress.forEach(block => {
-                this._pageBlocksMap.set(block.block.Key, block.block);
-            });
-        });
-
         this.pageLoad$.subscribe((page: Page) => {
             this.loadDefaultEditor(page);
             this.loadSections(page);
@@ -151,12 +140,8 @@ export class PagesService {
         });
 
         // this.pageDataChange$.subscribe((page: Page) => {
-        //     this.updatePageDependencies(page);
         // });
     }
-
-    // private updatePageDependencies(page: Page) {
-    // }
 
     private loadDefaultEditor(page: Page) {
         this.editorsBreadCrumb = new Array<IEditor>();
@@ -186,8 +171,19 @@ export class PagesService {
         this.sectionsSubject.next(page?.Layout.Sections ?? []);
     }
 
+    private loadBlocks(page: Page) {
+        // TODO: Write some logic to load the blocks by priority.
+        if (page) {
+            this.addBlocks(page.Blocks);
+        }
+    }
+
     private addBlocks(blocks: PageBlock[]) {
         blocks.forEach(block => {
+            // Add the block to the page blocks.
+            this.pageSubject.value.Blocks.push(block);
+
+            // Create block progress and add it to the map.
             const initialProgress: IBlockProgress = {
                 block: block,
                 load: false
@@ -199,32 +195,41 @@ export class PagesService {
         this.notifyBlockProgressMapChange();
     }
     
-    private removeAllBlocks() {
-        this._pageBlockProgressMap.clear();
-        this.notifyBlockProgressMapChange();
+    removePageBlock(blockId: string) {
+        const index = this.pageSubject.value.Blocks.findIndex(block => block.Key === blockId);
+        if (index > -1) {
+            this.pageSubject.value.Blocks.splice(index, 1);
+        }
     }
 
     private removeBlocks(blockIds: string[]) {
-        blockIds.forEach(blockId => {
-            this._pageBlockProgressMap.delete(blockId);
-        });
-        this.notifyBlockProgressMapChange();
+        if (blockIds.length > 0) {
+            blockIds.forEach(blockId => {
+                // Remove the block from the page blocks.
+                this.removePageBlock(blockId)
+
+                // Remove the block progress from the map.
+                this._pageBlockProgressMap.delete(blockId);
+            });
+            
+            this.notifyBlockProgressMapChange();
+        }
     }
 
-    private updateBlockLoaded(blockKey: string, isLoad: boolean) {
-        this._pageBlockProgressMap.get(blockKey).load = isLoad;
+    private removeAllBlocks() {
+        this.pageSubject.value.Blocks = [];
+        this._pageBlockProgressMap.clear();
         this.notifyBlockProgressMapChange();
     }
     
+    // TODO:
+    // private updateBlockLoaded(blockKey: string, isLoad: boolean) {
+    //     this._pageBlockProgressMap.get(blockKey).load = isLoad;
+    //     this.notifyBlockProgressMapChange();
+    // }
+    
     private notifyBlockProgressMapChange() {
         this._pageBlockProgress$.next(this.pageBlockProgressMap);
-    }
-
-    private loadBlocks(page: Page) {
-        // TODO: Write some logic to load the blocks by priority.
-        if (page) {
-            this.addBlocks(page.Blocks);
-        }
     }
 
     private changeCurrentEditor() {
@@ -243,8 +248,8 @@ export class PagesService {
         return section;
     }
 
-    private getEditorFromPage(editorType: EditorType, id: string): IEditor {
-        // TODO: Build editor object from the page.
+    private getEditor(editorType: EditorType, id: string): IEditor {
+        // Build editor object.
         let editor: IEditor = null;
 
         if (editorType === 'section') {
@@ -258,12 +263,12 @@ export class PagesService {
 
     private getBlockEditor(blockId: string): IEditor {
         // Get the current block.
-        let block: PageBlock = this.pageSubject?.value?.Blocks.find(block => blockId);
+        let block: PageBlock = this.pageSubject?.value?.Blocks.find(block => block.Key === blockId);
         
         if (block) {
             // Change the RemoteLoaderOptions of the block for loading the block editor.
             let editorRelationOptions: PepRemoteLoaderOptions = JSON.parse(JSON.stringify(block.Relation.Options));
-            editorRelationOptions.exposedModule = block.Relation.EditorModuleName;
+            editorRelationOptions.exposedModule = './' + block.Relation.EditorModuleName;
             editorRelationOptions.componentName = block.Relation.EditorComponentName;
 
             return {
@@ -358,6 +363,14 @@ export class PagesService {
         }
     }
 
+    getScreenType(size: PepScreenSizeType): DataViewScreenSize {
+        const screenType: DataViewScreenSize =
+            size < PepScreenSizeType.MD ? 'Landscape' :
+            (size === PepScreenSizeType.MD || size === PepScreenSizeType.SM ? 'Tablet' : 'Phablet');
+
+        return screenType;
+    }
+    
     getSectionColumnKey(sectionKey: string = '', index: string = '') {
         return `${sectionKey}_column_${index}`;
     }
@@ -377,7 +390,7 @@ export class PagesService {
                     this.editorsBreadCrumb.pop();
                 }
 
-                let editor = this.getEditorFromPage(editorType, id);
+                let editor = this.getEditor(editorType, id);
                 this.editorsBreadCrumb.push(editor);
                 this.changeCurrentEditor();
                 success = true;
@@ -428,13 +441,16 @@ export class PagesService {
                     currentSection.Columns.push({});
                 }
             } else if (newColumnsLength < currentSection.Columns.length) {
+                const blocksIdsToRemove = [];
                 while (newColumnsLength < currentSection.Columns.length) {
                     const colunm = currentSection.Columns.pop();
                     // If there is block in this column delete it.
                     if (colunm.Block) {
-                        this.removeBlocks([colunm.Block.BlockKey]);
+                        blocksIdsToRemove.push(colunm.Block.BlockKey);
                     }
                 }
+                
+                this.removeBlocks(blocksIdsToRemove);
             }
         }
 
@@ -444,7 +460,6 @@ export class PagesService {
 
     // onClearPageSections() {
     //     // Remove all blocks.
-    //     this.pageSubject.value.Blocks = [];
     //     this.removeAllBlocks();
 
     //     // Remove all sections.
@@ -466,9 +481,11 @@ export class PagesService {
     removeSection(sectionId: string) {
         const index = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
         if (index > -1) {
-            // Remove all blocks from blocks map.
-            const blockIds = this.sectionsSubject.value[index].Columns.map(column => column?.Block?.BlockKey);
-            this.removeBlocks(blockIds)
+            // Get the blocks id's to remove.
+            const blocksIds = this.sectionsSubject.value[index].Columns.map(column => column?.Block?.BlockKey);
+            
+            // Remove the blocks by ids.
+            this.removeBlocks(blocksIds)
 
             // Remove section.
             this.sectionsSubject.value.splice(index, 1);
@@ -484,18 +501,13 @@ export class PagesService {
         if (index > -1) {
             const columnIndex = this.sectionsSubject.value[index].Columns.findIndex(column => column.Block?.BlockKey === blockId);
             if (columnIndex > -1) {
-                // Remove the block from blocks map.
+                // Remove the block.
                 this.removeBlocks([blockId]);
 
                 // Remove the block from section column.
                 delete this.sectionsSubject.value[index].Columns[columnIndex].Block;
             }
         }
-        // const blockIndex = this.blocksSubject.value.findIndex(block => block.Key === blockId);
-
-        // if (blockIndex >= 0) {
-        //     this.blocksSubject.value.splice(blockIndex, 1);
-        // }
     }
 
     onBlockDropped(event: CdkDragDrop<any[]>, sectionId: string) {
@@ -519,10 +531,7 @@ export class PagesService {
                 };
                 
                 // Add the block to the page blocks
-                this.pageSubject.value.Blocks.push(block);
                 this.addBlocks([block]);
-                
-                // copyArrayItem(event.previousContainer.data, this.sectionsSubject.value[sectionIndex].Columns, event.previousIndex, event.currentIndex);
             }
         } else {
             // If the block moved between columns the same section or between different sections but not in the same column.
@@ -534,8 +543,6 @@ export class PagesService {
 
                 currentColumn.Block = previuosColumn.Block;
                 delete previuosColumn.Block;
-                
-                // transferArrayItem(event.previousContainer.data, this.sectionsSubject.value[sectionIndex].Columns[columnIndex], event.previousIndex, event.currentIndex);
             }
         }
     }
@@ -617,11 +624,26 @@ export class PagesService {
             this.httpService.getHttpCall(`${baseUrl}/editor_page_data?key=${pageKey}`)
                 .subscribe((res: IPageBuilderDataForEditMode) => {
                     if (res.page && res.availableBlocks) {
-                        // Load the page.
-                        // TODO: remove this
-                        const savedPage: Page = null;//JSON.parse(sessionStorage.getItem('page')) ?? null;
+                        // HACK: TODO: Remove this.
+                        ////////////////////////////////////////////////////
+                        const sections = res.page.Layout.Sections;
+                        if (sections.length > 0) {
+                            sections.forEach((section, index) => {
+                                if (index === 0) {
+                                    section.Hide = ['Tablet'];
+                                }
 
-                        this.pageSubject.next(savedPage || res.page);
+                                section.Columns.forEach((column, index) => {
+                                    if (index == 0 && column.Block) {
+                                        column.Block.Hide = ['Landscape'];
+                                    }
+                                });
+                            });
+                        }
+                        ////////////////////////////////////////////////////
+
+                        // Load the page.
+                        this.pageSubject.next(res.page);
 
                         // Load the available blocks.
                         const availableBlocks: IAvailableBlock[] = [];

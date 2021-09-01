@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnChanges, OnInit, QueryList, Renderer2, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragStart, CdkDropList } from '@angular/cdk/drag-drop';
 import { IEditor, PagesService } from 'src/app/services/pages.service';
-import { PageSectionColumn, PageSizeType, SplitType } from '@pepperi-addons/papi-sdk';
+import { DataViewScreenSize, PageBlock, PageSectionColumn, PageSizeType, SplitType } from '@pepperi-addons/papi-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 
@@ -14,7 +14,8 @@ export class SectionComponent implements OnInit, OnChanges {
     @ViewChild('sectionContainer') sectionContainerRef: ElementRef;
     @ViewChildren('columnsWrapper') columnsElementRef: QueryList<ElementRef>;
 
-    @Input() sectionsColumnsDropList = [];
+    private readonly hideInClassPrefix = 'hide-in-';
+
     @Input() id: string;
     @Input() name: string;
 
@@ -33,6 +34,7 @@ export class SectionComponent implements OnInit, OnChanges {
     set screenSize(value: PepScreenSizeType) {
         this._screenSize = value;
         this.refreshSplit();
+        this.setScreenType();
     }
     get screenSize(): PepScreenSizeType {
         return this._screenSize;
@@ -53,12 +55,25 @@ export class SectionComponent implements OnInit, OnChanges {
     set columns(value: Array<PageSectionColumn>) {
         this._columns = value || [];
         this.calculateIfSectionContainsBlocks();
+        this.setIfHideColumnsForCurrentScreenTypeMap();
     }
     get columns(): Array<PageSectionColumn> {
         return this._columns;
     }
+    
+    private _hideIn: DataViewScreenSize[];
+    @Input()
+    set hideIn(value: DataViewScreenSize[]) {
+        this._hideIn = value;
+        this.setIfHideForCurrentScreenType();
+    }
+    get hideIn(): DataViewScreenSize[] {
+        return this._hideIn;
+    }
 
     @Input() columnsGap: PageSizeType | 'NONE';
+    @Input() sectionsColumnsDropList = [];
+    @Input() pageBlocksMap = new Map<string, PageBlock>();
 
     PepScreenSizeType = PepScreenSizeType;
     sectionColumnKeyPrefix = '';
@@ -69,11 +84,17 @@ export class SectionComponent implements OnInit, OnChanges {
     
     containsBlocks = false;
     pepScreenSizeToFlipToVertical = PepScreenSizeType.SM;
+    screenType: DataViewScreenSize;
+    hideForCurrentScreenType = false;
 
+    private _hideColumnsForCurrentScreenTypeMap = new Map<string, boolean>();
+    get hideColumnsForCurrentScreenTypeMap(): ReadonlyMap<string, boolean> {
+        return this._hideColumnsForCurrentScreenTypeMap;
+    }
+    
     constructor(
         private renderer: Renderer2,
         private translate: TranslateService,
-        private layoutService: PepLayoutService,
         public pageBuilderService: PagesService
     ) { }
 
@@ -81,6 +102,32 @@ export class SectionComponent implements OnInit, OnChanges {
         this.containsBlocks = this.columns.some(column => column.Block);
     }
 
+    private setScreenType() {
+        this.screenType = this.pageBuilderService.getScreenType(this.screenSize);
+        this.setIfHideForCurrentScreenType();
+        this.setIfHideColumnsForCurrentScreenTypeMap();
+    }
+
+    private setIfHideForCurrentScreenType(): void {
+        let isHidden = false;
+
+        if (this.hideIn) {
+            isHidden = this.hideIn.some(hideIn => hideIn === this.screenType);
+        }
+
+        this.hideForCurrentScreenType = isHidden;
+    }
+
+    private setIfHideColumnsForCurrentScreenTypeMap(): void {
+        this._hideColumnsForCurrentScreenTypeMap.clear();
+
+        this.columns.forEach(column => {
+            if (column.Block && column.Block.Hide.some(hideIn => hideIn === this.screenType)) {
+                this._hideColumnsForCurrentScreenTypeMap.set(column.Block.BlockKey, true);
+            }
+        })
+    }
+    
     private getCssSplitString() {
         switch (this.split) {
             case '1/2 1/2':
@@ -111,34 +158,37 @@ export class SectionComponent implements OnInit, OnChanges {
     private refreshSplit() {
         setTimeout(() => {
             if (this.sectionContainerRef) {
-                if (this.screenSize <= this.pepScreenSizeToFlipToVertical) {
-                    this.columnsElementRef.toArray().map((section, sectionIndex) => {
+                let cssSplitString = this.getCssSplitString();
+                
+                // Go for all the columns in the columnsWrapper
+                this.columnsElementRef.toArray().map((section, sectionIndex) => {
+                    // Horizontal (true) for large screens, false for small screens.
+                    const isHorizontalView = this.screenSize <= this.pepScreenSizeToFlipToVertical;
+
+                    if (isHorizontalView) {
                         this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'column');
                         this.renderer.setStyle(section.nativeElement, 'grid-template-rows', 'unset');
-                        this.renderer.setStyle(section.nativeElement, 'grid-template-columns', this.getCssSplitString());
-                    });
-
-                    // this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-auto-flow', 'column');
-                    // this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-template-columns', this.getCssSplitString());
-                } else {
-                    this.columnsElementRef.toArray().map((section, sectionIndex) => {
+                        this.renderer.setStyle(section.nativeElement, 'grid-template-columns', cssSplitString);
+                    } else {
                         this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'row');
                         this.renderer.setStyle(section.nativeElement, 'grid-template-columns', 'unset');
-                        this.renderer.setStyle(section.nativeElement, 'grid-template-rows', this.getCssSplitString());
-
-                        // If there is some hidden column change to auto (for cut the spacing of the grid-template-rows).
+                        this.renderer.setStyle(section.nativeElement, 'grid-template-rows', cssSplitString);
+                        
+                        // In runtime (or preview mode).
                         if (!this.editable) {
-                            let containsEmptyColumn = this.columns.some(column => !column.Block);
-                             
-                            if (containsEmptyColumn) {
-                                this.renderer.setStyle(section.nativeElement, 'grid-template-rows', 'auto');
-                            }
-                        }
-                    });
+                            const cssSplitArray = cssSplitString.split(' ');
+                            
+                            // If there are some hidden columns change the column width to 0 (for cut the spacing in the grid-template-rows).
+                            this.columns.forEach((column, index) => {
+                                if (!column.Block) {
+                                    cssSplitArray[index] = '0';
+                                }
+                            });
 
-                    // this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-auto-flow', 'row');
-                    // this.renderer.setStyle(this.sectionContainerRef.nativeElement, 'grid-template-rows', this.getCssSplitString());
-                }
+                            this.renderer.setStyle(section.nativeElement, 'grid-template-rows', cssSplitArray.join(' '));
+                        }
+                    }
+                });
             }
         }, 0);
     }
@@ -178,6 +228,7 @@ export class SectionComponent implements OnInit, OnChanges {
         this.pageBuilderService.onRemoveBlock(this.id, blockId);
     }
 
+    // TODO:
     onBlockChange(event, blockId: string) {
         switch(event.action){
             case 'update-addons':

@@ -8,12 +8,30 @@
         
         // This css is only for edit mode.
         &.editable-state {
-            &.hidden-state {
-                @include pep-cross-hatch($pepperi-theme);
-            }
-
             &.active-section {
                 @include focus($pepperi-theme);
+            }
+
+            // For section hidden state
+            &.section-hidden-state {
+                // If the current section is not active (his editor after edit click)
+                &:not(&.active-section) {
+                    @include pep-cross-hatch($pepperi-theme);
+                }
+            }
+            // For blocks hidden state only inside section without hidden-state
+            &:not(&.section-hidden-state) {
+                // If the current section is not active (his editor after edit click)
+                &:not(&.active-section) {
+                    .section-column {
+                        // If the current block is not active (his editor after edit click)
+                        &:not(&.active-column) {
+                            .block-hidden-state {
+                                @include pep-cross-hatch($pepperi-theme);
+                            }
+                        }
+                    }
+                }
             }
 
             .section-background {

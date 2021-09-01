@@ -4,13 +4,11 @@ import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@peppe
 import { PepButton } from '@pepperi-addons/ngx-lib/button';
 import { pepIconDeviceDesktop, pepIconDeviceMobile, pepIconDeviceTablet } from '@pepperi-addons/ngx-lib/icon';
 import { TranslateService } from '@ngx-translate/core';
-import { Page } from '@pepperi-addons/papi-sdk';
+import { DataViewScreenSize, Page } from '@pepperi-addons/papi-sdk';
 import { IEditor, PagesService, IPageEditor, ISectionEditor } from '../../services/pages.service';
 import { NavigationService } from '../../services/navigation.service';
 import { IPepSideBarStateChangeEvent } from '@pepperi-addons/ngx-lib/side-bar';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
-
-type ScreenSizeType = 'desktop' | 'tablet' | 'mobile';
 
 @Component({
     selector: 'page-manager',
@@ -27,8 +25,8 @@ export class PageManagerComponent implements OnInit {
     currentEditor: IEditor;
     sectionsColumnsDropList = [];
 
-    screenOptions: Array<PepButton>;
-    selectedScreenKey: ScreenSizeType;
+    screenTypes: Array<PepButton>;
+    selectedScreenType: DataViewScreenSize;
     viewportWidth: number;
     screenSize: PepScreenSizeType;
     menuItems: Array<PepMenuItem>;
@@ -44,28 +42,18 @@ export class PageManagerComponent implements OnInit {
         this.pageBuilderService.onEditorChange$.subscribe((editor) => {
             this.currentEditor = editor;
         });
-
-        // TODO: Block Screen button if the screen width is not enough.
-        this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
-            this.screenSize = size;
-            const screenType =
-                size < PepScreenSizeType.MD ? 'desktop' :
-                (size === PepScreenSizeType.MD || size === PepScreenSizeType.SM ? 'tablet' : 'mobile');
-
-            this.setScreenWidth(screenType);
-        });
     }
 
-    private setScreenWidth(screenType: ScreenSizeType) {
+    private setScreenWidth(screenType: DataViewScreenSize) {
         let widthToSet = '100%';
 
-        if (screenType === 'tablet') {
+        if (screenType === 'Tablet') {
             widthToSet = '720';
-        } else if (screenType === 'mobile') {
+        } else if (screenType === 'Phablet') {
             widthToSet = '360';
         }
 
-        this.selectedScreenKey = screenType;
+        this.selectedScreenType = screenType;
         this.pageBuilderService.setScreenWidth(widthToSet);
     }
 
@@ -81,16 +69,23 @@ export class PageManagerComponent implements OnInit {
         // Get the first translation for load all translations.
         const desktopTitle = await this.translate.get('PAGE_MANAGER.DESKTOP').toPromise();
 
-        this.screenOptions = [
-            { key: 'desktop', value: desktopTitle, callback: () => this.setScreenWidth('desktop'), iconName: pepIconDeviceDesktop.name, iconPosition: 'end' },
-            { key: 'tablet', value: this.translate.instant('PAGE_MANAGER.TABLET'), callback: () => this.setScreenWidth('tablet'), iconName: pepIconDeviceTablet.name, iconPosition: 'end' },
-            { key: 'mobile', value: this.translate.instant('PAGE_MANAGER.MOBILE'), callback: () => this.setScreenWidth('mobile'), iconName: pepIconDeviceMobile.name, iconPosition: 'end' }
+        this.screenTypes = [
+            { key: 'Landscape', value: desktopTitle, callback: () => this.setScreenWidth('Landscape'), iconName: pepIconDeviceDesktop.name, iconPosition: 'end' },
+            { key: 'Tablet', value: this.translate.instant('PAGE_MANAGER.TABLET'), callback: () => this.setScreenWidth('Tablet'), iconName: pepIconDeviceTablet.name, iconPosition: 'end' },
+            { key: 'Phablet', value: this.translate.instant('PAGE_MANAGER.MOBILE'), callback: () => this.setScreenWidth('Phablet'), iconName: pepIconDeviceMobile.name, iconPosition: 'end' }
         ];
 
         this.menuItems = [
             { key: this.importKey, text: this.translate.instant('ACTIONS.IMPORT') },
             { key: this.exportKey, text: this.translate.instant('ACTIONS.EXPORT') }
         ];
+
+        // TODO: Block Screen button if the screen width is not enough.
+        this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
+            this.screenSize = size;
+            const screenType = this.pageBuilderService.getScreenType(this.screenSize);
+            this.setScreenWidth(screenType);
+        });
 
         this.pageBuilderService.onScreenSizeChange$.subscribe((size: PepScreenSizeType) => {
             this.screenSize = size;

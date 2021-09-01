@@ -1,4 +1,5 @@
 @import 'ngx-lib/src/core/style/abstracts/variables';
+@import '../../../mixins.scss';
 
 :host {
     display: block;
@@ -7,19 +8,23 @@
 .toolbar-actions-container {
     height: 2.5rem;
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-radius: $border-radius-md;
-    overflow: hidden;
-}
-
-.start, .end {
     display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    grid-template-columns: auto auto;
+    border-radius: $border-radius-md;
+    padding-inline: $spacing-sm;
 }
 
-pep-button {
+.title-container {
+    overflow-x: hidden;
+    margin-inline: $spacing-sm;
+
+    .title {
+        display: block;
+    }
+}
+
+.actions {
     display: inline-flex;
+    gap: $spacing-xs;
 }

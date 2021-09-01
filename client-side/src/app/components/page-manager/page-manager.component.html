@@ -25,7 +25,7 @@
                     <span class="body-xs"><b>{{viewportWidth}}</b></span>
                 </div>
                 <div class="header-group-btn">
-                    <pep-group-buttons [buttons]="screenOptions" [selectedButtonKey]="selectedScreenKey" class="header-content" sizeType="sm" viewType="toggle" >
+                    <pep-group-buttons [buttons]="screenTypes" [selectedButtonKey]="selectedScreenType" class="header-content" sizeType="sm" viewType="toggle" >
                     </pep-group-buttons>
                 </div>
                 <div class="header-end header-content">
@@ -40,7 +40,7 @@
                     </pep-button> -->
                 </div>
             </div>
-            <div #pageBuilderWrapper class="page-builder-wrapper {{ selectedScreenKey }}" [ngClass]="{'limit-min-width': selectedScreenKey === 'desktop' }">
+            <div #pageBuilderWrapper class="page-builder-wrapper" [ngClass]="{'limit-min-width': selectedScreenType === 'Landscape' }">
                 <page-builder [editMode]="showEditor" [screenSize]="screenSize" [sectionsColumnsDropList]="sectionsColumnsDropList"></page-builder>
                 <div *ngIf="showEditor" class="backdrop" [ngClass]="{'show-backdrop': currentEditor?.type === 'section' || currentEditor?.type === 'block'}"></div>
             </div>

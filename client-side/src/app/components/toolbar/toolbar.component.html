@@ -1,10 +1,13 @@
 <div class="toolbar-actions-container">
-    <div class="start">
-        <pep-button sizeType="xs" classNames="lock-events pep-spacing-element" iconName="system_move"></pep-button>
-        <span *ngIf="title !== ''" class="body-sm bold ellipsis pep-spacing-element">{{title}}</span>
+    <div class="">
+        <pep-button classNames="lock-events" sizeType="xs" iconName="system_move"></pep-button>
     </div>
-    <div *ngIf="showActions" class="end">
-        <pep-button classNames="caution pep-spacing-element" sizeType="xs" iconName="system_bin" (buttonClick)="onRemoveClick();"></pep-button>
-        <pep-button sizeType="xs" classNames="pep-spacing-element" iconName="system_edit" (buttonClick)="onEditClick();"></pep-button>
+    <div *ngIf="title !== ''" class="title-container">
+        <span class="body-sm bold ellipsis title" title="{{title}}">{{title}}</span>
+    </div>
+    <div *ngIf="showActions" class="actions">
+        <pep-button class="action" classNames="caution" sizeType="xs" iconName="system_bin" (buttonClick)="onRemoveClick();"></pep-button>
+        <pep-menu class="action" sizeType="xs" iconName="system_view" ></pep-menu>
+        <pep-button class="action" sizeType="xs" iconName="system_edit" (buttonClick)="onEditClick();"></pep-button>
     </div>
 </div>
