@@ -8,7 +8,7 @@
                 </div>
             </div>
             <div header-end-content>
-                <pep-menu class="pep-spacing-element " [items]="mainMenuItems" (menuItemClick)="onMainMenuItemClicked($event)">
+                <pep-menu class="pep-spacing-element " [items]="mainMenuItems" (menuItemClick)="onMenuItemClicked($event)">
                 </pep-menu>
             </div>
         </pep-top-bar>
@@ -37,7 +37,7 @@
         </div>
         <generic-list [dataSource]="pagesDataSource" [inline]="true" [title]="'PAGES_MANAGER.SECONDARY_HEADER' | translate">
             <ng-container right-buttons>
-                    <pep-menu class="pep-spacing-element" [items]="mainMenuItems" [sizeType]="'sm'" (menuItemClick)="onSecondaryMenuItemClicked($event)">
+                    <pep-menu class="pep-spacing-element" [items]="mainMenuItems" [sizeType]="'sm'" (menuItemClick)="onMenuItemClicked($event)">
                     </pep-menu>
                     <pep-button class="pep-spacing-element" [value]="'PAGES_MANAGER.A_PAGE' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
                     </pep-button>
