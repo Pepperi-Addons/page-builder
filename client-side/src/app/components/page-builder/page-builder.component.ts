@@ -78,6 +78,7 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
         // TODO: Need to get the addonUUID not from the navigationService.
         const addonUUID = this.navigationService.addonUUID;
         const pageKey = this.route?.snapshot?.params['page_key'];
+
         this.pageBuilderService.loadPageBuilder(addonUUID, pageKey, this.editMode);
 
         this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {

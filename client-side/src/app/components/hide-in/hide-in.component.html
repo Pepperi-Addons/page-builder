@@ -1,0 +1,18 @@
+<pep-button sizeType="xs" iconName="system_view" [matMenuTriggerFor]="menu"></pep-button>
+
+<mat-menu #menu="matMenu" class="hide-in-menu">
+    <div mat-menu-item class="title" disabled>
+        <span>Hide on:</span>
+    </div>
+    <div mat-menu-item class="splitter"></div>
+    <ng-container *ngFor="let menuItem of menuItems">
+        <button mat-menu-item (click)="onItemClick(menuItem)" title="{{ menuItem.text }}"
+            [ngClass]="{ selected: menuItem.selected }">
+            
+            <!-- <input type="checkbox" class="pull-left flip"/> -->
+            <span class="pull-left flip title ellipsis" [title]="menuItem.text">
+                {{ menuItem.text }}
+            </span>
+        </button>
+    </ng-container>
+</mat-menu>

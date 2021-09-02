@@ -1,4 +1,5 @@
 import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
+import { DataViewScreenSize } from '@pepperi-addons/papi-sdk';
 
 @Component({
     selector: 'toolbar-actions',
@@ -11,6 +12,7 @@ export class ToolbarComponent implements OnInit {
     @HostBinding('style.cursor') _cursor = 'inherit';
 
     @Input() title = '';
+    @Input() hideIn: DataViewScreenSize[] = [];
     
     private _isDraggable = false;
     @Input()
@@ -25,8 +27,9 @@ export class ToolbarComponent implements OnInit {
 
     @Input() showActions = true;
 
-    @Output() remove: EventEmitter<void> = new EventEmitter();
-    @Output() edit: EventEmitter<void> = new EventEmitter();
+    @Output() removeClick: EventEmitter<void> = new EventEmitter();
+    @Output() editClick: EventEmitter<void> = new EventEmitter();
+    @Output() hideInChange: EventEmitter<DataViewScreenSize[]> = new EventEmitter();
 
     constructor() { }
 
@@ -34,11 +37,15 @@ export class ToolbarComponent implements OnInit {
     }
 
     onRemoveClick() {
-        this.remove.emit();
+        this.removeClick.emit();
     }
 
     onEditClick() {
-        this.edit.emit();
+        this.editClick.emit();
+    }
+
+    onHideInChange(event: DataViewScreenSize[]) {
+        this.hideInChange.emit(event);
     }
 
 }

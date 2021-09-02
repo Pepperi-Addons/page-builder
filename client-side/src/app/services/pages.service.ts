@@ -281,12 +281,16 @@ export class PagesService {
         }
     }
 
+    private getSectionEditorTitle(section: PageSection, sectionIndex: number): string {
+        return section.Name || `${this.translate.instant('PAGE_MANAGER.SECTION')} ${sectionIndex + 1}`;
+    }
+
     private getSectionEditor(sectionId: string): IEditor {
         // Get the current block.
         const sectionIndex = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
         
         if (sectionIndex >= 0) {
-            let section: PageSection = this.sectionsSubject.value[sectionIndex];
+            let section = this.sectionsSubject.value[sectionIndex];
             const sectionEditor: ISectionEditor = {
                 id: section.Key,
                 sectionName: section.Name || '',
@@ -297,7 +301,7 @@ export class PagesService {
             return {
                 id: sectionId,
                 type: 'section',
-                title: section.Name || `${this.translate.instant('PAGE_MANAGER.SECTION')} ${sectionIndex + 1}`,
+                title: this.getSectionEditorTitle(section, sectionIndex),
                 hostObject: sectionEditor
             }
         } else {
@@ -425,9 +429,11 @@ export class PagesService {
     }
 
     updateSectionFromEditor(sectionData: ISectionEditor) {
-        const currentSection = this.sectionsSubject.value.find(section => section.Key === sectionData.id);
-
-        if (currentSection) {
+        const sectionIndex = this.sectionsSubject.value.findIndex(section => section.Key === sectionData.id);
+        
+        // Update section details.
+        if (sectionIndex >= 0) {
+            const currentSection = this.sectionsSubject.value[sectionIndex];
             currentSection.Name = sectionData.sectionName;
             currentSection.Split = sectionData.split;
             currentSection.Height = sectionData.height;
@@ -450,10 +456,13 @@ export class PagesService {
                 
                 this.removeBlocks(blocksIdsToRemove);
             }
+        
+            // Update editor title 
+            const currentEditor = this.editorSubject.value;
+            if (currentEditor.type === 'section' && currentEditor.id === currentSection.Key) {
+                currentEditor.title = this.getSectionEditorTitle(currentSection, sectionIndex);
+            }
         }
-
-        // Update section details.
-        this.sectionsSubject.next(this.sectionsSubject.value);
     }
 
     addSection(section: PageSection = null) {
@@ -485,6 +494,13 @@ export class PagesService {
         }
     }
 
+    hideSection(sectionId: string, hideIn: DataViewScreenSize[]) {
+        const index = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
+        if (index > -1) {
+            this.sectionsSubject.value[index].Hide = hideIn;
+        }
+    }
+
     onSectionDropped(event: CdkDragDrop<any[]>) {
         moveItemInArray(this.sectionsSubject.value, event.previousIndex, event.currentIndex);
     }
@@ -499,6 +515,16 @@ export class PagesService {
 
                 // Remove the block from section column.
                 delete this.sectionsSubject.value[index].Columns[columnIndex].Block;
+            }
+        }
+    }
+
+    hideBlock(sectionId: string, blockId: string, hideIn: DataViewScreenSize[]) {
+        const index = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
+        if (index > -1) {
+            const columnIndex = this.sectionsSubject.value[index].Columns.findIndex(column => column.Block?.BlockKey === blockId);
+            if (columnIndex > -1) {
+                this.sectionsSubject.value[index].Columns[columnIndex].Block.Hide = hideIn;
             }
         }
     }

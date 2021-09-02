@@ -1,8 +1,8 @@
 import { MatTabsModule } from '@angular/material/tabs';
 import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
-import { PepIconModule, pepIconNumberPlus, PepIconRegistry,
-    pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit,
-pepIconSystemMove, pepIconSystemBin, pepIconViewCardLg, pepIconViewCardMd } from '@pepperi-addons/ngx-lib/icon';
+// import { PepIconModule, pepIconNumberPlus, PepIconRegistry,
+//     pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit,
+// pepIconSystemMove, pepIconSystemBin, pepIconViewCardLg, pepIconViewCardMd } from '@pepperi-addons/ngx-lib/icon';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
@@ -20,15 +20,15 @@ import { SectionEditorModule } from '../section-editor/section-editor.module';
 import { ToolbarModule } from '../toolbar/toolbar.module'
 import { TranslateModule, TranslateLoader, TranslateStore } from '@ngx-translate/core';
 
-const pepIcons = [
-    pepIconSystemClose,
-    pepIconNumberPlus,
-    pepIconSystemBolt,
-    pepIconSystemEdit,
-    pepIconSystemMove,
-    pepIconSystemBin,
-    pepIconViewCardMd
-];
+// const pepIcons = [
+//     pepIconSystemClose,
+//     pepIconNumberPlus,
+//     pepIconSystemBolt,
+//     pepIconSystemEdit,
+//     pepIconSystemMove,
+//     pepIconSystemBin,
+//     pepIconViewCardMd
+// ];
 
 @NgModule({
     declarations: [
@@ -47,7 +47,7 @@ const pepIcons = [
         PepButtonModule,
         PepCheckboxModule,
         PepGroupButtonsModule,
-        PepIconModule,
+        // PepIconModule,
         PepTextareaModule,
         SectionEditorModule,
         ToolbarModule,
@@ -69,7 +69,9 @@ const pepIcons = [
     ]
 })
 export class PageBuilderEditorModule {
-    constructor(private pepIconRegistry: PepIconRegistry) {
-        this.pepIconRegistry.registerIcons(pepIcons);
+    constructor(
+        // private pepIconRegistry: PepIconRegistry
+        ) {
+        // this.pepIconRegistry.registerIcons(pepIcons);
     }
 }

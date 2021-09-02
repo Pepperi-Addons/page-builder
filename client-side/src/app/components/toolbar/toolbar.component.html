@@ -6,8 +6,9 @@
         <span class="body-sm bold ellipsis title" title="{{title}}">{{title}}</span>
     </div>
     <div *ngIf="showActions" class="actions">
-        <pep-button class="action" classNames="caution" sizeType="xs" iconName="system_bin" (buttonClick)="onRemoveClick();"></pep-button>
-        <pep-menu class="action" sizeType="xs" iconName="system_view" ></pep-menu>
-        <pep-button class="action" sizeType="xs" iconName="system_edit" (buttonClick)="onEditClick();"></pep-button>
+        <pep-button classNames="caution" sizeType="xs" iconName="system_bin" (buttonClick)="onRemoveClick();"></pep-button>
+        <!-- <pep-menu sizeType="xs" iconName="system_view" ></pep-menu> -->
+        <hide-in [hideIn]="hideIn" (hideInChange)="onHideInChange($event)"></hide-in>
+        <pep-button sizeType="xs" iconName="system_edit" (buttonClick)="onEditClick();"></pep-button>
     </div>
 </div>

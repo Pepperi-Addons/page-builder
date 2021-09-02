@@ -2,9 +2,9 @@ import { GenericListModule } from './../generic-list/generic-list.module';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { PepIconModule, pepIconNumberPlus, PepIconRegistry,
-    pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit,
-pepIconSystemMove, pepIconSystemBin, pepIconViewCardMd } from '@pepperi-addons/ngx-lib/icon';
+// import { PepIconModule, pepIconNumberPlus, PepIconRegistry,
+//     pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit,
+// pepIconSystemMove, pepIconSystemBin, pepIconViewCardMd } from '@pepperi-addons/ngx-lib/icon';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
@@ -24,15 +24,15 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
 
-const pepIcons = [
-    pepIconSystemClose,
-    pepIconNumberPlus,
-    pepIconSystemBolt,
-    pepIconSystemEdit,
-    pepIconSystemMove,
-    pepIconSystemBin,
-    pepIconViewCardMd
-];
+// const pepIcons = [
+//     pepIconSystemClose,
+//     pepIconNumberPlus,
+//     pepIconSystemBolt,
+//     pepIconSystemEdit,
+//     pepIconSystemMove,
+//     pepIconSystemBin,
+//     pepIconViewCardMd
+// ];
 
 const routes: Routes = [
     {
@@ -60,11 +60,10 @@ const routes: Routes = [
         PepTextboxModule,
         PepMenuModule,
         GenericListModule,
-
         OverlayModule,
         PepButtonModule,
         PepCheckboxModule,
-        PepIconModule,
+        // PepIconModule,
         MatIconModule,
         TranslateModule.forChild({
             loader: {
@@ -88,11 +87,11 @@ const routes: Routes = [
 export class PagesManagerModule {
     constructor(
         translate: TranslateService,
-        private pepIconRegistry: PepIconRegistry,
+        // private pepIconRegistry: PepIconRegistry,
         private pepAddonService: PepAddonService
 
     ) {
-        this.pepIconRegistry.registerIcons(pepIcons);
+        // this.pepIconRegistry.registerIcons(pepIcons);
         this.pepAddonService.setDefaultTranslateLang(translate);
     }
 }

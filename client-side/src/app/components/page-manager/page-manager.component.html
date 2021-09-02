@@ -1,5 +1,5 @@
-<pep-page-layout [addPadding]="false" [showShadow]="showEditor">
-    <div pep-side-area *ngIf="showEditor" style="padding-inline-start: 1rem;">
+<pep-page-layout [addPadding]="false" [showShadow]="showEditor && currentEditor">
+    <div pep-side-area *ngIf="showEditor && currentEditor" style="padding-inline-start: 1rem;">
         <pep-side-bar #sideBar [ignoreResize]="true" (stateChange)="onSidebarStateChange($event)">
             <div header-content class="side-bar-title">
                 <pep-button class="back-button" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="onNavigateBackFromEditor();"></pep-button>

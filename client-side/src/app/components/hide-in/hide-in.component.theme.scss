@@ -1,0 +1,15 @@
+@mixin hide-in-component-theme($pepperi-theme) {
+
+    .hide-in-menu {
+        .mat-menu-item {
+            &.title {
+                color: get-pep-color($pepperi-theme, color-text, color-dimmed);
+            }
+
+            &.splitter { 
+                margin-inline: $spacing-sm; 
+            }
+        }
+    }
+
+}

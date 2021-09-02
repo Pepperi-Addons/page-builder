@@ -1,9 +1,9 @@
 import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { PepIconModule, pepIconNumberPlus, PepIconRegistry,
-    pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit,
-pepIconSystemMove, pepIconSystemBin, pepIconViewCardMd } from '@pepperi-addons/ngx-lib/icon';
+// import { PepIconModule, pepIconNumberPlus, PepIconRegistry,
+//     pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit,
+// pepIconSystemMove, pepIconSystemBin, pepIconViewCardMd } from '@pepperi-addons/ngx-lib/icon';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
@@ -25,15 +25,15 @@ import { SectionModule } from '../section/section.module'
 import { ToolbarModule } from '../toolbar/toolbar.module'
 import { PepSizeDetectorModule } from '@pepperi-addons/ngx-lib/size-detector';
 
-const pepIcons = [
-    pepIconSystemClose,
-    pepIconNumberPlus,
-    pepIconSystemBolt,
-    pepIconSystemEdit,
-    pepIconSystemMove,
-    pepIconSystemBin,
-    pepIconViewCardMd
-];
+// const pepIcons = [
+//     pepIconSystemClose,
+//     pepIconNumberPlus,
+//     pepIconSystemBolt,
+//     pepIconSystemEdit,
+//     pepIconSystemMove,
+//     pepIconSystemBin,
+//     pepIconViewCardMd
+// ];
 
 @NgModule({
     declarations: [
@@ -59,7 +59,7 @@ const pepIcons = [
         PepButtonModule,
         PepCheckboxModule,
         PepGroupButtonsModule,
-        PepIconModule,
+        // PepIconModule,
         MatIconModule,
         TranslateModule.forChild({
             loader: {
@@ -82,11 +82,11 @@ const pepIcons = [
 export class PageBuilderModule {
     constructor(
         translate: TranslateService,
-        private pepIconRegistry: PepIconRegistry,
+        // private pepIconRegistry: PepIconRegistry,
         private pepAddonService: PepAddonService
 
     ) {
-        this.pepIconRegistry.registerIcons(pepIcons);
+        // this.pepIconRegistry.registerIcons(pepIcons);
         this.pepAddonService.setDefaultTranslateLang(translate);
     }
 }

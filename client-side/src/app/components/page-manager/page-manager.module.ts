@@ -38,11 +38,9 @@ import { PageManagerComponent} from './page-manager.component';
 const pepIcons = [
     pepIconSystemClose,
     pepIconNumberPlus,
-    pepIconSystemBolt,
     pepIconSystemEdit,
     pepIconSystemMove,
     pepIconSystemBin,
-    pepIconViewCardMd,
     pepIconDeviceDesktop,
     pepIconDeviceTablet,
     pepIconDeviceMobile,

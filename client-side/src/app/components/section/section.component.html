@@ -3,7 +3,8 @@
     cdkDrag [cdkDragDisabled]="!editable" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" >
     <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
         class="section-toolbar" [title]="name" [isDraggable]="true"
-        (edit)="onEditSectionClick();" (remove)="onRemoveSectionClick()"></toolbar-actions>
+        (editClick)="onEditSectionClick();" (removeClick)="onRemoveSectionClick()"
+        [hideIn]="hideIn" (hideInChange)="onHideSectionChange($event)"></toolbar-actions>
     <div *ngIf="editable" class="section-background">
         <div class="back-template" *ngFor="let number of [0,1,2,3,4,5,6,7,8,9,10,11]"></div>
     </div>
@@ -26,7 +27,8 @@
             >
                 <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
                     class="block-toolbar" [title]="pageBlocksMap.get(column.Block.BlockKey).Relation?.Description" [isDraggable]="true"
-                    (edit)="onEditBlockClick(column.Block.BlockKey);" (remove)="onRemoveBlockClick(column.Block.BlockKey)">
+                    (editClick)="onEditBlockClick(column.Block.BlockKey);" (removeClick)="onRemoveBlockClick(column.Block.BlockKey)"
+                    [hideIn]="column.Block.Hide" (hideInChange)="onHideBlockChange(column.Block.BlockKey, $event)">
                 </toolbar-actions>
                 <div [ngClass]="{'block-editable-state': editable }">
                     <pep-remote-loader 

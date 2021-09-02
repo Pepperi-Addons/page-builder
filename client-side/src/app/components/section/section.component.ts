@@ -219,12 +219,22 @@ export class SectionComponent implements OnInit, OnChanges {
         this.pageBuilderService.removeSection(this.id);
     }
 
+    onHideSectionChange(hideIn: DataViewScreenSize[]) {
+        this.pageBuilderService.hideSection(this.id, hideIn);
+    }
+
     onEditBlockClick(blockId: string) {
         this.pageBuilderService.navigateToEditor('block', blockId);
     }
 
     onRemoveBlockClick(blockId: string) {
         this.pageBuilderService.onRemoveBlock(this.id, blockId);
+    }
+
+    onHideBlockChange(blockId: string, hideIn: DataViewScreenSize[]) {
+        this.pageBuilderService.hideBlock(this.id, blockId, hideIn);
+        // Refresh the map for show or hide this block.
+        this.setIfHideColumnsForCurrentScreenTypeMap();
     }
 
     // TODO:
