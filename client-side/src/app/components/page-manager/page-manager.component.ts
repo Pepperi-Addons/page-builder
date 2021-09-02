@@ -153,10 +153,6 @@ export class PageManagerComponent implements OnInit {
         }
     }
 
-    // clearPage() {
-    //     this.pageBuilderService.onClearPageSections();
-    // }
-
     // TODO:
     onMenuItemClick(action: IPepMenuItemClickEvent) {
         if (action.source.key === this.importKey) { // Import page

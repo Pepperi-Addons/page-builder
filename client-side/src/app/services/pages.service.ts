@@ -120,7 +120,8 @@ export class PagesService {
 
     private pageSubject: BehaviorSubject<Page> = new BehaviorSubject<Page>(null);
     get pageLoad$(): Observable<Page> {
-        return this.pageSubject.asObservable().pipe(filter(page => !!page), distinctUntilKeyChanged("Key"));
+        // return this.pageSubject.asObservable().pipe(filter(page => !!page), distinctUntilKeyChanged("Key"));
+        return this.pageSubject.asObservable().pipe(distinctUntilChanged((prevPage, nextPage) => prevPage?.Key === nextPage?.Key));
     }
     get pageDataChange$(): Observable<Page> {
         return this.pageSubject.asObservable().pipe(filter(page => !!page));
@@ -136,45 +137,23 @@ export class PagesService {
         this.pageLoad$.subscribe((page: Page) => {
             this.loadDefaultEditor(page);
             this.loadSections(page);
-            this.loadBlocks(page);
         });
 
         // this.pageDataChange$.subscribe((page: Page) => {
         // });
     }
 
-    private loadDefaultEditor(page: Page) {
-        this.editorsBreadCrumb = new Array<IEditor>();
-        const pageEditor: IPageEditor = {
-            id: page?.Key,
-            pageName: page?.Name,
-            pageDescription: page?.Description,
-            maxWidth: page?.Layout.MaxWidth,
-            // blocksHorizntalGap: page?.Layout.
-            // blocksVerticalGap: page?.Layout.
-            sectionsGap: page?.Layout.SectionsGap,
-            // columnsGap: page?.Layout.ColumnsGap,
-            // roundedCorners: page?.Layout.
-        };
-
-        this.editorsBreadCrumb.push({
-            id: 'main',
-            type : 'page-builder',
-            title: page?.Name,
-            hostObject: pageEditor
-        });
-
-        this.editorSubject.next(this.editorsBreadCrumb[0]);
-    }
-
     private loadSections(page: Page) {
         this.sectionsSubject.next(page?.Layout.Sections ?? []);
+        this.loadBlocks(page);
     }
 
     private loadBlocks(page: Page) {
-        // TODO: Write some logic to load the blocks by priority.
         if (page) {
+            // TODO: Write some logic to load the blocks by priority.
             this.addBlocks(page.Blocks);
+        } else {
+            this.removeAllBlocks();
         }
     }
 
@@ -184,10 +163,7 @@ export class PagesService {
             this.pageSubject.value.Blocks.push(block);
 
             // Create block progress and add it to the map.
-            const initialProgress: IBlockProgress = {
-                block: block,
-                load: false
-            };
+            const initialProgress: IBlockProgress = { block, load: false };
           
             this._pageBlockProgressMap.set(block.Key, initialProgress);
         });
@@ -195,7 +171,7 @@ export class PagesService {
         this.notifyBlockProgressMapChange();
     }
     
-    removePageBlock(blockId: string) {
+    private removePageBlock(blockId: string) {
         const index = this.pageSubject.value.Blocks.findIndex(block => block.Key === blockId);
         if (index > -1) {
             this.pageSubject.value.Blocks.splice(index, 1);
@@ -217,7 +193,10 @@ export class PagesService {
     }
 
     private removeAllBlocks() {
-        this.pageSubject.value.Blocks = [];
+        if (this.pageSubject.value) {
+            this.pageSubject.value.Blocks = [];
+        }
+
         this._pageBlockProgressMap.clear();
         this.notifyBlockProgressMapChange();
     }
@@ -232,20 +211,39 @@ export class PagesService {
         this._pageBlockProgress$.next(this.pageBlockProgressMap);
     }
 
+    private loadDefaultEditor(page: Page) {
+        this.editorsBreadCrumb = new Array<IEditor>();
+
+        if (page) {
+            const pageEditor: IPageEditor = {
+                id: page?.Key,
+                pageName: page?.Name,
+                pageDescription: page?.Description,
+                maxWidth: page?.Layout.MaxWidth,
+                // blocksHorizntalGap: page?.Layout.
+                // blocksVerticalGap: page?.Layout.
+                sectionsGap: page?.Layout.SectionsGap,
+                // columnsGap: page?.Layout.ColumnsGap,
+                // roundedCorners: page?.Layout.
+            };
+
+            this.editorsBreadCrumb.push({
+                id: 'main',
+                type : 'page-builder',
+                title: page?.Name,
+                hostObject: pageEditor
+            });
+
+            this.editorSubject.next(this.editorsBreadCrumb[0]);
+        } else {
+            this.editorSubject.next(null);
+        }
+    }
+
     private changeCurrentEditor() {
         if (this.editorsBreadCrumb.length > 0) {
             this.editorSubject.next(this.editorsBreadCrumb[this.editorsBreadCrumb.length - 1]);
         }
-    }
-
-    private createNewSection(): PageSection {
-        const section: PageSection = {
-            Key: PepGuid.newGuid(),
-            Columns: [{}], // Add empty section column
-            Hide: []
-        }
-
-        return section;
     }
 
     private getEditor(editorType: EditorType, id: string): IEditor {
@@ -458,19 +456,14 @@ export class PagesService {
         this.sectionsSubject.next(this.sectionsSubject.value);
     }
 
-    // onClearPageSections() {
-    //     // Remove all blocks.
-    //     this.removeAllBlocks();
-
-    //     // Remove all sections.
-    //     this.pageSubject.value.Layout.Sections = [];
-    //     this.sectionsSubject.next(this.pageSubject.value.Layout.Sections);
-    // }
-
     addSection(section: PageSection = null) {
         // Create new section
         if (!section) {
-            section = this.createNewSection();
+            section = {
+                Key: PepGuid.newGuid(),
+                Columns: [{}], // Add empty section column
+                Hide: []
+            }
         }
         
         // Add the new section to page layout.
@@ -613,7 +606,7 @@ export class PagesService {
         return this.httpService.getHttpCall(`${baseUrl}/remove_page?key=${pageKey}`);
     }
 
-    initPageBuilder(addonUUID: string, pageKey: string, editMode: boolean): void {
+    loadPageBuilder(addonUUID: string, pageKey: string, editMode: boolean): void {
         //  If is't not edit mode get the page from the CPI side.
         if (!editMode) {
             // TODO: Get from CPI side.
@@ -624,24 +617,6 @@ export class PagesService {
             this.httpService.getHttpCall(`${baseUrl}/get_page_builder_data?key=${pageKey}`)
                 .subscribe((res: IPageBuilderDataForEditMode) => {
                     if (res && res.page && res.availableBlocks) {
-                        // HACK: TODO: Remove this.
-                        ////////////////////////////////////////////////////
-                        const sections = res.page.Layout.Sections;
-                        if (sections.length > 0) {
-                            sections.forEach((section, index) => {
-                                if (index === 0) {
-                                    section.Hide = ['Tablet'];
-                                }
-
-                                section.Columns.forEach((column, index) => {
-                                    if (index == 0 && column.Block) {
-                                        column.Block.Hide = ['Landscape'];
-                                    }
-                                });
-                            });
-                        }
-                        ////////////////////////////////////////////////////
-
                         // Load the page.
                         this.pageSubject.next(res.page);
 
@@ -663,6 +638,10 @@ export class PagesService {
                     }
             });
         }
+    }
+
+    unloadPageBuilder() {
+        this.pageSubject.next(null);
     }
 
     // Restore the page to tha last publish

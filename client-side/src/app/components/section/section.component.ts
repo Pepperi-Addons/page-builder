@@ -122,7 +122,7 @@ export class SectionComponent implements OnInit, OnChanges {
         this._hideColumnsForCurrentScreenTypeMap.clear();
 
         this.columns.forEach(column => {
-            if (column.Block && column.Block.Hide.some(hideIn => hideIn === this.screenType)) {
+            if (column.Block?.Hide?.some(hideIn => hideIn === this.screenType)) {
                 this._hideColumnsForCurrentScreenTypeMap.set(column.Block.BlockKey, true);
             }
         })
@@ -198,10 +198,9 @@ export class SectionComponent implements OnInit, OnChanges {
 
         if (this.editable) {
             this.pageBuilderService.onEditorChange$.subscribe((editor: IEditor) => {
-                this.canDrag = editor.type === 'page-builder';
-                
-                this.selected = editor.type === 'section' && editor.id === this.id;
-                this.selectedBlockId = editor.type === 'block' ? editor.id : '';
+                this.canDrag = editor && editor.type === 'page-builder';
+                this.selected = editor && editor.type === 'section' && editor.id === this.id;
+                this.selectedBlockId = editor && editor.type === 'block' ? editor.id : '';
             });
         }
 

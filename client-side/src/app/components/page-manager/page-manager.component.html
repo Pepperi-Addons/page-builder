@@ -34,10 +34,6 @@
                     <pep-button [value]="'ACTIONS.SAVE' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="onSaveClick()"></pep-button>
                     <pep-button [value]="'ACTIONS.PUBLISH' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="onPublishClick();">
                     </pep-button>
-                    <!-- <pep-button [value]="'Load Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="buildSections(sectionsSubject$);">
-                    </pep-button>
-                    <pep-button [value]="'Clear Page' | translate" [sizeType]="'md'" classNames="pep-spacing-element" [styleType]="'strong'" (buttonClick)="clearPage();">
-                    </pep-button> -->
                 </div>
             </div>
             <div #pageBuilderWrapper class="page-builder-wrapper" [ngClass]="{'limit-min-width': selectedScreenType === 'Landscape' }">

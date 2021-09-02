@@ -1,5 +1,5 @@
 import { ActivatedRoute } from '@angular/router';
-import { Component, ElementRef, HostBinding, Input, OnInit, Renderer2, ViewChild } from "@angular/core";
+import { Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { CdkDragDrop  } from '@angular/cdk/drag-drop';
 import { IBlockProgress, PagesService } from '../../services/pages.service';
@@ -13,7 +13,7 @@ import { NavigationService } from 'src/app/services/navigation.service';
     templateUrl: './page-builder.component.html',
     styleUrls: ['./page-builder.component.scss']
 })
-export class PageBuilderComponent implements OnInit {
+export class PageBuilderComponent implements OnInit, OnDestroy {
     @ViewChild('sectionsCont', { static: true }) sectionsContainer: ElementRef;
 
     @Input() editMode: boolean = false;
@@ -75,6 +75,11 @@ export class PageBuilderComponent implements OnInit {
     }
 
     ngOnInit() {
+        // TODO: Need to get the addonUUID not from the navigationService.
+        const addonUUID = this.navigationService.addonUUID;
+        const pageKey = this.route?.snapshot?.params['page_key'];
+        this.pageBuilderService.loadPageBuilder(addonUUID, pageKey, this.editMode);
+
         this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
             this.screenSize = size;
         });
@@ -94,11 +99,10 @@ export class PageBuilderComponent implements OnInit {
         this.pageBuilderService.pageDataChange$.subscribe((page: Page) => {
             this.setPageDataProperties(page);
         });
+    }
 
-        // TODO: Need to get the addonUUID not from the navigationService.
-        const addonUUID = this.navigationService.addonUUID;
-        const pageKey = this.route?.snapshot?.params['page_key'];
-        this.pageBuilderService.initPageBuilder(addonUUID, pageKey, this.editMode);
+    ngOnDestroy() {
+        this.pageBuilderService.unloadPageBuilder();
     }
 
     onSectionDropped(event: CdkDragDrop<any[]>) {
