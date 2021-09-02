@@ -1,17 +1,16 @@
 import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SubAddon2Component } from './sub-addon-2.component';
+import { SubAddon2EditorComponent } from './sub-addon-2-editor.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { PepHttpService, PepAddonService, PepFileService, PepCustomizationService, PepNgxLibModule, PepLayoutService } from '@pepperi-addons/ngx-lib';
 import { PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
-import { PepImagesFilmstripModule } from '@pepperi-addons/ngx-lib/images-filmstrip';
 
 import { config } from '../addon.config';
 
 @NgModule({
-    declarations: [SubAddon2Component],
+    declarations: [SubAddon2EditorComponent],
     imports: [
         CommonModule,
         HttpClientModule,
@@ -26,9 +25,8 @@ import { config } from '../addon.config';
         }),
         PepNgxLibModule,
         PepSelectModule,
-        PepImagesFilmstripModule
     ],
-    exports: [SubAddon2Component],
+    exports: [SubAddon2EditorComponent],
     providers: [
         HttpClient,
         TranslateStore,
@@ -40,7 +38,7 @@ import { config } from '../addon.config';
         PepLayoutService
     ]
 })
-export class SubAddon2Module {
+export class SubAddon2EditorModule {
     constructor(
         translate: TranslateService,
         private pepAddonService: PepAddonService

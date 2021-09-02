@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 4401 --live-reload=false --sourceMap=true",
+    "start": "ng serve --live-reload=false",
+    "start-source-map": "ng serve --port 4401 --live-reload=false --sourceMap=true",
     "single-spa": "ng serve --port 4401 --configuration SingleSpa --sourceMap=false --live-reload=false",
     "standalone": "ng serve --port 4401 --configuration Standalone --sourceMap=false --live-reload=false",
     "build": "ng build",

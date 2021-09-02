@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SlideshowEditorComponent } from './index';
+import { SlideshowEditorComponent } from './slideshow-editor.component';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
@@ -8,8 +8,6 @@ import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { PepAddonService, PepCustomizationService, PepFileService, PepHttpService, PepNgxLibModule } from '@pepperi-addons/ngx-lib';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { MatCardModule } from '@angular/material/card';
-import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule, TranslateLoader, TranslateService, TranslateStore } from '@ngx-translate/core';
 
 import { config } from '../addon.config';

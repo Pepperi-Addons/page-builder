@@ -1,19 +1,16 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "allowSyntheticDefaultImports": true,
-        "resolveJsonModule": true,
         "baseUrl": "./",
         "outDir": "./dist/out-tsc",
+        "sourceMap": true,
         "declaration": false,
         "downlevelIteration": true,
         "experimentalDecorators": true,
-        "module": "es2020",
         "moduleResolution": "node",
         "importHelpers": true,
         "target": "es2015",
-        "esModuleInterop": true,
-        "types": [],
+        "module": "es2020",
         "typeRoots": [
             "node_modules/@types"
         ],
@@ -53,12 +50,12 @@
         "fullTemplateTypeCheck": true,
         "strictInjectionParameters": true
     },
-    "files": [
-      "src/main.ts"
-    ],
-    "include": [
-      "src/**/*.d.ts"
-    ],
+    // "files": [
+    //   "src/main.ts"
+    // ],
+    // "include": [
+    //   "src/**/*.d.ts"
+    // ],
 
 
 }
