@@ -66,7 +66,8 @@
         "NONE": "None",
         "SM": "SM",
         "MD": "MD",
-        "LG": "LG"
+        "LG": "LG",
+        "XL": "XL"
     },
     "ACTIONS": {
         "DELETE": "Delete",
@@ -80,5 +81,95 @@
     "MESSAGES": {
         "TITLE_NOTICE": "Notice",
         "OPERATION_SUCCESS": "Operation success."
+    },
+
+    "SLIDESHOW": {
+        "HEIGHTUNITS_TITLE": "Height units",
+        "HEIGHTUNITS_REM": "REM",
+        "HEIGHTUNITS_VH": "VH (precentage)",
+        "HEIGHT": "Height",
+        "INNERSPACING_TITLE": "Inner spacing",
+        "TRANSITION": "Transition",
+        "TRANSITION_TITLE": "Set transition duration and type.",
+        "SLIDE_DURATION": "Slide duration (s)",
+        "TRANSITION_TYPE": "Transition type",
+        "TRANSITION_TIME": "Transition time (s)",
+        "ARROWS": "Arrows",
+        "ARROWS_DESC": "Arrows used the navigate the slides from start to end.<br>Arrows are hidden in mobile view.",
+        "ARROWS_TYPE": "Arrows type",
+        "ARROWS_BUTTONS": "Arrows buttons",
+        "ARROWS_STYLE": "Style",
+        "ARROWS_COLOR": "Color",
+        "ARROW_TYPE": {
+            "TWO_ARROWS": ">>",
+            "ONE_ARROW": ">",
+            "STYLED_ARROW":" -->"
+        },
+        "ARROW_BUTTON": {
+            "RECT":"Rect",
+            "ROUNDED":"Rounded"
+        },
+        "CONTROLLERS": "Controllers",
+        "CONTROLLERS_DESC": "Dots indecate the number of sildes<br>and the silde position, they are<br>clickable and will change the silde.",
+        "CONTROLLERS_PROPERTIES":{
+            "PAUSE_PLAY": "Show Pause/Play",
+            "MOBILE": "Show on mobile",
+            "INVERT_STYLE": "Invert style",
+            "SHOW_CONTROLLERS": "Show controllers in slider"
+        },
+        "CONTROLLER_SIZE": "Controller size"
+    },
+    
+    "SLIDE_EDITOR": {
+        "TITLE": "Title",
+        "CONTENT": "Content",
+        "MAIN_TITLE_SIZE": "Main title size",
+        "SUB_TITLE": "Subtitle",
+        "SUB_TITLE_SIZE": "Sub title size",
+        "CONTENT_BLOCK_WIDTH": "Content block width",
+        "HORIZONTAL_ALIGN": "Horizontal Align",
+        "VERTICAL_ALIGN": "Vertical Align",
+        "TEXT_COLOR": "Text Color",
+        "BUTTONS": "BUTTONS",
+        "BUTTON_SIZE": "Button Size",
+        "BUTTON_COLOR": "Button Color",
+        "FIRST_BUTTON": "1st Button",
+        "LABEL": "Label",
+        "LINK_TO": "Link to",
+        "BUTTON_STYLE": "Button style",
+        "SECOND_BUTTON": "2st Button",
+        "GRADIENT_OVERLAY": "Gradient Overlay",
+        "GRADIENT_OVERLAY_COLOR": "Gradient Overlay Color",
+        "GRADIENT_OVERLAY_OPACITY": "Gradieant Overlay Opacity",
+        "OVERLAY": "Overlay",
+        "OVERLAY_OPACITY": "Overlay",
+        "IMAGE": "Image",
+        "CHOOSE_IMAGE": "Choose image",
+        "IMAGE_HORIZONTAL_POSITION": "Horizontal Position",
+        "IMAGE_VERTICAL_POSITION": "Vertical Position",
+        "DROP_SHADOW": "Drop Shadow",
+        "SOFT": "Soft",
+        "REGULAR": "Regular",
+        "SHADOW_INTENSITY": "Shadow Intensity",
+        "WIDTH_SIZE": {
+            "NARROW": "Narrow",
+            "REGULAR": "Regular",
+            "WIDE": "Wide"
+        },
+        "HORIZONTAL_ALIGN_DIRECTION": {
+            "LEFT": "Left",
+            "CENTER": "Center",
+            "RIGHT": "Right"
+        },
+        "VERTICAL_ALIGN_DIRECTION": {
+            "TOP": "Top",
+            "MIDDLE": "Middle",
+            "BOTTOM": "Bottom"
+        }
+
+
+
+
+
     }
 }

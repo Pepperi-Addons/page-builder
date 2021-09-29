@@ -20,6 +20,114 @@
                     >
                 </toolbar-actions>
             </div>
+            <div style="border:1px solid Red; display:block;max-width: 224px;">
+                <label class="body-xs ellipsis">{{'SLIDESHOW.HEIGHTUNITS_TITLE' | translate}}</label>
+                <pep-group-buttons [buttons]="HeightUnitsType" [selectedButtonKey]="'REM'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
+
+                <pep-textbox [value]="pageName" [label]="'SLIDESHOW.HEIGHT' | translate" (valueChange)="onPageNameChange($event)"></pep-textbox>
+                
+                <label class="body-xs ellipsis">{{'SLIDESHOW.INNERSPACING_TITLE' | translate}}</label>
+                <pep-group-buttons [buttons]="InnerSpacing" [selectedButtonKey]="'SM'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
+
+                <pep-checkbox [value]="isTransition" [label]="'SLIDESHOW.TRANSITION' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
+                <label class="body-xs ellipsis">{{'SLIDESHOW.TRANSITION_TITLE' | translate}}</label>
+                <pep-textbox [label]="'SLIDESHOW.SLIDE_DURATION' | translate" type="int" [disabled]="isTransition" [value]="maxWidth" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
+                
+                <div class="split-area" style="display: grid;grid-template-columns: 1fr 1fr;grid-gap: 1rem; gap: 1rem;">
+                    <pep-select [label]="'SLIDESHOW.TRANSITION_TYPE' | translate" [value]="" [options]="[]" 
+                        (valueChange)="null" [emptyOption]="false" [disabled]="false"></pep-select>
+                    <pep-select [label]="'SLIDESHOW.TRANSITION_TIME' | translate" [value]="" [options]="[]"
+                        (valueChange)="null" [emptyOption]="false" [disabled]="false"></pep-select>
+                </div>
+
+                <pep-checkbox [value]="useArrows" [label]="'SLIDESHOW.ARROWS' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
+                <label class="body-xs" [innerHTML]="'SLIDESHOW.ARROWS_DESC' | translate"></label>
+                
+                <label class="body-xs ellipsis">{{'SLIDESHOW.ARROWS_TYPE' | translate}}</label>
+                <pep-group-buttons [buttons]="ArrowsType" [selectedButtonKey]="'STYLED'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
+
+                <label class="body-xs ellipsis">{{'SLIDESHOW.ARROWS_BUTTONS' | translate}}</label>
+                <pep-group-buttons [buttons]="ArrowButtons" [selectedButtonKey]="'ROUNDED'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
+
+                <div class="split-area" style="display: grid;grid-template-columns: 1fr 1fr;grid-gap: 1rem; gap: 1rem;">
+                    <pep-select [label]="'SLIDESHOW.ARROWS_STYLE' | translate" [value]="" [options]="[]" 
+                        (valueChange)="null" [emptyOption]="false" [disabled]="false"></pep-select>
+                    <pep-select [label]="'SLIDESHOW.ARROWS_COLOR' | translate" [value]="" [options]="[]"
+                        (valueChange)="null" [emptyOption]="false" [disabled]="false"></pep-select>
+                </div>
+
+                <pep-checkbox [value]="useArrows" [label]="'SLIDESHOW.CONTROLLERS' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
+                <label class="body-xs" [innerHTML]="'SLIDESHOW.CONTROLLERS_DESC' | translate"></label>
+
+                <pep-checkbox class="body-sm" [value]="useArrows" [label]="'SLIDESHOW.CONTROLLERS_PROPERTIES.PAUSE_PLAY' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
+                <pep-checkbox class="body-sm" [value]="useArrows" [label]="'SLIDESHOW.CONTROLLERS_PROPERTIES.MOBILE' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
+                <pep-checkbox class="body-sm" [value]="useArrows" [label]="'SLIDESHOW.CONTROLLERS_PROPERTIES.INVERT_STYLE' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
+                <pep-checkbox class="body-sm" [value]="useArrows" [label]="'SLIDESHOW.CONTROLLERS_PROPERTIES.SHOW_CONTROLLERS' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
+                
+                <label class="body-xs ellipsis">{{'SLIDESHOW.CONTROLLER_SIZE' | translate}}</label>
+                <pep-group-buttons [buttons]="ControllerSize" [selectedButtonKey]="'SM'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
+            </div>
+
+            <div style="border:1px solid blue; display:block;max-width: 224px;">
+                <pep-checkbox [value]="showSlideTitle" [label]="'SLIDE_EDITOR.TITLE' | translate" [renderTitle]="false" (valueChange)="showSlideTitle = !showSlideTitle"></pep-checkbox>
+                <pep-textbox [label]="'SLIDE_EDITOR.CONTENT' | translate" type="string" [disabled]="!showSlideTitle" [value]="slideContent" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
+                
+                <label class="body-xs ellipsis">{{'SLIDE_EDITOR.MAIN_TITLE_SIZE' | translate}}</label>
+                <pep-group-buttons [buttons]="SlideTitleSize" [selectedButtonKey]="'LG'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
+
+                <pep-checkbox [value]="showSubTitle" [label]="'SLIDE_EDITOR.SUB_TITLE' | translate" [renderTitle]="false" (valueChange)="showSubTitle = !showSubTitle"></pep-checkbox>
+                <label class="body-xs ellipsis">{{'SLIDE_EDITOR.SUB_TITLE_SIZE' | translate}}</label>
+                <pep-textarea [value]="pageDescription" [label]="'SLIDE_EDITOR.CONTENT' | translate" [disabled]="!showSubTitle" rowSpan="2" (valueChange)="onPageDescriptionChange($event)"></pep-textarea>
+                <pep-group-buttons [buttons]="SlideSubTitleSize" [selectedButtonKey]="'LG'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
+
+                <label class="body-xl bold ellipsis">{{'SLIDE_EDITOR.CONTENT' | translate}}</label><br>
+                <label class="body-xs ellipsis">{{'SLIDE_EDITOR.CONTENT_BLOCK_WIDTH' | translate}}</label>
+                <pep-group-buttons [buttons]="WidthSize" [selectedButtonKey]="'REGULAR'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
+
+                <label class="body-xs ellipsis">{{'SLIDE_EDITOR.HORIZONTAL_ALIGN' | translate}}</label>
+                <pep-group-buttons [buttons]="HorizentalAlign" [selectedButtonKey]="'LEFT'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
+
+                <label class="body-xs ellipsis">{{'SLIDE_EDITOR.VERTICAL_ALIGN' | translate}}</label>
+                <pep-group-buttons [buttons]="VerticalAlign" [selectedButtonKey]="'BOTTOM'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
+
+                <pep-select [label]="'SLIDE_EDITOR.TEXT_COLOR' | translate" [value]="" [options]="[]"
+                        (valueChange)="null" [emptyOption]="false" [disabled]="false"></pep-select>
+
+                <label class="body-xl bold ellipsis">{{'SLIDE_EDITOR.BUTTONS' | translate}}</label><br>
+                <label class="body-xs ellipsis">{{'SLIDE_EDITOR.BUTTON_SIZE' | translate}}</label>
+                <pep-group-buttons [buttons]="SlideTitleSize" [selectedButtonKey]="'MD'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
+
+                <pep-color value="#ccc" [label]="'SLIDE_EDITOR.BUTTON_COLOR' | translate" [disabled]="false" xAlignment="left"
+                        type="any" [showTitle]="true" [showAAComplient]="true" (valueChange)="null">
+                </pep-color>
+
+                <pep-checkbox [value]="showFirstButton" [label]="'SLIDE_EDITOR.FIRST_BUTTON' | translate" [renderTitle]="false" (valueChange)="showFirstButton = !showFirstButton"></pep-checkbox>
+                <pep-textbox [label]="'SLIDE_EDITOR.LABEL' | translate" type="string" [disabled]="!showFirstButton" [value]="''" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
+                <pep-textbox [label]="'SLIDE_EDITOR.LINK_TO' | translate" type="link" [disabled]="!showFirstButton" [value]="''" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
+        
+                <pep-checkbox [value]="showSecondButton" [label]="'SLIDE_EDITOR.SECOND_BUTTON' | translate" [renderTitle]="false" (valueChange)="showSecondButton = !showSecondButton"></pep-checkbox>
+                <pep-textbox [label]="'SLIDE_EDITOR.LABEL' | translate" type="string" [disabled]="!showSecondButton" [value]="''" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
+                <pep-textbox [label]="'SLIDE_EDITOR.LINK_TO' | translate" type="link" [disabled]="!showSecondButton" [value]="''" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
+
+                <pep-select [label]="'SLIDE_EDITOR.BUTTON_STYLE' | translate" [value]="" [options]="[]"
+                (valueChange)="null" [emptyOption]="false" [disabled]="!showFirstButton && !showSecondButton"></pep-select>
+                
+                <pep-checkbox [value]="useGradientOverlay" [label]="'SLIDE_EDITOR.GRADIENT_OVERLAY' | translate" [renderTitle]="false" (valueChange)="useGradientOverlay = !useGradientOverlay"></pep-checkbox>
+                <pep-color value="#ccc" [label]="'SLIDE_EDITOR.GRADIENT_OVERLAY_COLOR' | translate" [disabled]="!useGradientOverlay" xAlignment="left"
+                        type="any" [showTitle]="true" [showAAComplient]="true" (valueChange)="null">
+                </pep-color>
+            </div>
         </div>
     </mat-tab>
     <mat-tab label="{{'PAGE_MANAGER.DESIGN' | translate}}">
@@ -29,25 +137,25 @@
             
             <!-- Spacing -->
             <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.SPACING_TITLE' | translate}}</label><br>
-            <label class="body-sm ellipsis">{{'PAGE_MANAGER.SPACING_HORIZONTAL_TITLE' | translate}}</label>
+            <label class="body-xs ellipsis">{{'PAGE_MANAGER.SPACING_HORIZONTAL_TITLE' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="horizontalSpacing" buttonsClass="md regular" viewType="toggle" stretch="true" 
                 (buttonClick)="setColumnsHorizntalGap($event)"></pep-group-buttons>
-            <label class="body-sm ellipsis">{{'PAGE_MANAGER.SPACING_VERTICAL_TITLE' | translate}}</label>
+            <label class="body-xs ellipsis">{{'PAGE_MANAGER.SPACING_VERTICAL_TITLE' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="verticalSpacing" buttonsClass="md regular" viewType="toggle" stretch="true" 
                 (buttonClick)="setColumnsVerticalGap($event)"></pep-group-buttons>
             
             <!-- Gaps -->
             <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.GAPS_TITLE' | translate}}</label><br>
-            <label class="body-sm ellipsis">{{'PAGE_MANAGER.SECTIONS_GAP_TITLE' | translate}}</label>
+            <label class="body-xs ellipsis">{{'PAGE_MANAGER.SECTIONS_GAP_TITLE' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="sectionsGap" buttonsClass="md regular" viewType="toggle" stretch="true" 
                 (buttonClick)="setSectionGap($event)"></pep-group-buttons>
-            <label class="body-sm ellipsis">{{'PAGE_MANAGER.COLUMNS_GAP_TITLE' | translate}}</label>
+            <label class="body-xs ellipsis">{{'PAGE_MANAGER.COLUMNS_GAP_TITLE' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="columnsGap" buttonsClass="md regular" viewType="toggle" stretch="true" 
                 (buttonClick)="setColumnsGap($event)"></pep-group-buttons>
 
             <!-- Rounded Corners -->
             <!-- <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.ROUNDED_CORNERS_TITLE' | translate}}</label><br>
-            <label class="body-sm ellipsis">{{'PAGE_MANAGER.BORDER_RADIUS_TITLE' | translate}}</label>
+            <label class="body-xs ellipsis">{{'PAGE_MANAGER.BORDER_RADIUS_TITLE' | translate}}</label>
             <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="roundedCorners" buttonsClass="ms regular" viewType="toggle"
                 (buttonClick)="setRoundedCorners($event)"></pep-group-buttons> -->
         </div>
