@@ -17,9 +17,10 @@ export async function install(client: Client, request: Request): Promise<any> {
 }
 
 export async function uninstall(client: Client, request: Request): Promise<any> {
-    const pageService = new PagesApiService(client);
-    const res = await pageService.dropPagesTables();
-    return { success:true, resultObject: {res} }
+    // const pageService = new PagesApiService(client);
+    // const res = await pageService.dropPagesTables();
+    // return { success:true, resultObject: {res} }
+    return { success:true, resultObject: {} };
 }
 
 export async function upgrade(client: Client, request: Request): Promise<any> {
