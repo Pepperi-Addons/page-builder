@@ -82,7 +82,9 @@
         "TITLE_NOTICE": "Notice",
         "OPERATION_SUCCESS": "Operation success."
     },
-
+    "HIDE_IN": {
+        "HIDE_IN_TITLE": "Hide on:"
+    },
     "SLIDESHOW": {
         "HEIGHTUNITS_TITLE": "Height units",
         "HEIGHTUNITS_REM": "REM",

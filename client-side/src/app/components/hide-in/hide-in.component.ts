@@ -35,11 +35,15 @@ export class HideInComponent implements OnInit {
         ];
     }
 
-    onItemClick(menuItem: hideInItem) {
+    onItemClick(event, menuItem: hideInItem) {
         menuItem.selected = !menuItem.selected;
 
         const hideIn = this.menuItems.filter(item => item.selected).map(item => item.key);
         this.hideInChange.emit(hideIn);
+
+        event.stopPropagation();
+        
+        return false;
     }
 
 }

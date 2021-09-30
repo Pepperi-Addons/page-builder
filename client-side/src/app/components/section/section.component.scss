@@ -59,6 +59,9 @@ $z-index-toolbar: $z-index-min + 2;
                 }
 
                 .section-column-block {
+                    height: 100%;
+                    width: 100%;
+
                     .block-editable-state {
                         pointer-events: none;
                         opacity: 0.5;

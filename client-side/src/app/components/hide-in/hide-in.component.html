@@ -1,18 +1,24 @@
-<pep-button sizeType="xs" iconName="system_view" [matMenuTriggerFor]="menu"></pep-button>
+<!-- <ng-container *ngIf="hideIn?.length > 0; then badgeBlock; else noneBlock"></ng-container>
+<ng-template #badgeBlock> -->
+    <pep-button sizeType="xs" iconName="system_view" [matMenuTriggerFor]="menu" class="badge-button" [ngClass]="{ 'none': !hideIn || hideIn.length === 0}"
+        matBadge="{{ hideIn?.length }}" matBadgePosition="after" matBadgeSize="small" 
+    ></pep-button>
+<!-- </ng-template>
+<ng-template #noneBlock>
+    <pep-button sizeType="xs" iconName="system_view" [matMenuTriggerFor]="menu"></pep-button>
+</ng-template> -->
 
 <mat-menu #menu="matMenu" class="hide-in-menu">
     <div mat-menu-item class="title" disabled>
-        <span>Hide on:</span>
+        <span>{{('HIDE_IN.HIDE_IN_TITLE' | translate)}}</span>
     </div>
     <div mat-menu-item class="splitter"></div>
     <ng-container *ngFor="let menuItem of menuItems">
-        <button mat-menu-item (click)="onItemClick(menuItem)" title="{{ menuItem.text }}"
-            [ngClass]="{ selected: menuItem.selected }">
-            
-            <!-- <input type="checkbox" class="pull-left flip"/> -->
-            <span class="pull-left flip title ellipsis" [title]="menuItem.text">
-                {{ menuItem.text }}
-            </span>
+        <button mat-menu-item (click)="onItemClick($event, menuItem)" title="{{ menuItem.text }}">
+            <mat-checkbox type="checkbox" title="{{ menuItem.text }}" class="md"
+                (change)="onItemClick($event, menuItem)" [checked]="menuItem.selected">
+                <span class="pull-left flip title ellipsis">{{ menuItem.text }}</span>
+            </mat-checkbox>
         </button>
     </ng-container>
 </mat-menu>
