@@ -114,17 +114,6 @@ export class PagesApiService {
         return Promise.all(promises);
     }
 
-    dropPagesTables(): Promise<any> {
-        const promises: any[] = [];
-        
-        // TODO: Check that this is working.
-        // return this.papiClient.addons.data.schemes.tableName('table').purge();
-        // promises.push(this.papiClient.post(`/addons/data/schemes/${PAGES_TABLE_NAME}/purge`));
-        // promises.push(this.papiClient.post(`/addons/data/schemes/${DRAFT_PAGES_TABLE_NAME}/purge`));
-
-        return Promise.all(promises);
-    }
-
     async getPages(options): Promise<any[]> {
         // TODO: Change to pages endpoint after added in NGINX.
         // return this.papiClient.pages.find

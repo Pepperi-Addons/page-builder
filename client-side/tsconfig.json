@@ -40,12 +40,12 @@
             // "@pepperi-addons/papi-sdk/*": [
             //     "../../../pepperi_addons/papi-sdk/*"
             // ],
-            "@pepperi-addons/ngx-lib": [
-                "../../ngx-lib/dist/ngx-lib"
-            ],
-            "@pepperi-addons/ngx-lib/*": [
-                "../../ngx-lib/dist/ngx-lib/*"
-            ]
+            // "@pepperi-addons/ngx-lib": [
+            //     "../../ngx-lib/dist/ngx-lib"
+            // ],
+            // "@pepperi-addons/ngx-lib/*": [
+            //     "../../ngx-lib/dist/ngx-lib/*"
+            // ]
 
           }
     },
