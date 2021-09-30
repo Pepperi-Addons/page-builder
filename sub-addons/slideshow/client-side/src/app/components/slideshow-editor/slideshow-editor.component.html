@@ -14,7 +14,7 @@
                 <label class="body-xs ellipsis">{{'SLIDESHOW.TRANSITION_TITLE' | translate}}</label>
                 <pep-textbox [label]="'SLIDESHOW.SLIDE_DURATION' | translate" type="int" [disabled]="isTransition" [value]="'10'"></pep-textbox>
                 
-                <div class="split-area" style="display: grid;grid-template-columns: 1fr 1fr;grid-gap: 1rem; gap: 1rem;">
+                <div class="split-area">
                     <pep-select [label]="'SLIDESHOW.TRANSITION_TYPE' | translate" [value]="" [options]="[]" 
                         (valueChange)="null" [emptyOption]="false" [disabled]="false"></pep-select>
                     <pep-select [label]="'SLIDESHOW.TRANSITION_TIME' | translate" [value]="" [options]="[]"
@@ -32,7 +32,7 @@
                 <pep-group-buttons [buttons]="ArrowButtons" [selectedButtonKey]="'ROUNDED'" buttonsClass="md regular" viewType="toggle" stretch="true">
                 </pep-group-buttons>
 
-                <div class="split-area" style="display: grid;grid-template-columns: 1fr 1fr;grid-gap: 1rem; gap: 1rem;">
+                <div class="split-area">
                     <pep-select [label]="'SLIDESHOW.ARROWS_STYLE' | translate" [value]="" [options]="[]" 
                         (valueChange)="null" [emptyOption]="false" [disabled]="false"></pep-select>
                     <pep-select [label]="'SLIDESHOW.ARROWS_COLOR' | translate" [value]="" [options]="[]"

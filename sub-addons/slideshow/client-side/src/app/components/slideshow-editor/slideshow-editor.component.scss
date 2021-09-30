@@ -1,35 +1,147 @@
 .editor-tabs {
     height: 100%;
     
-    ::ng-deep .mat-tab-header-pagination{
-        display: none;
-    }
-    ::ng-deep .mat-tab-labels {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-
-        .mat-tab-label {
-            padding: 0 .75rem !important;
+    label{ /* TODO - NEED TO BE REMOVED AFTER A SOLUTION FOR THE BOOTSTRAP STYLE*/
+        &.body-xs, 
+        &.body-sm{
+            font-weight: 400;
         }
     }
 
-    ::ng-deep .mat-tab-body-wrapper {
-        overflow: unset;
-        margin: 0;
-        display: block;
+    ::ng-deep {
+        .mat-tab-header-pagination{
+            display: none;
+        }
+        .mat-tab-labels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
 
-        .mat-tab-body {
-            &.mat-tab-body-active {
-                overflow: unset;
+            .mat-tab-label {
+                padding: 0 .75rem !important;
+            }
+        }
 
-                .mat-tab-body-content {
+        .group-buttons-container {
+            margin-bottom: 1rem;
+        }
+
+        .mat-tab-body-wrapper {
+            overflow: unset;
+            margin: 0;
+            display: block;
+
+            .mat-tab-body {
+                &.mat-tab-body-active {
                     overflow: unset;
-                    display: flex;
-                    flex-direction: column;
-                    padding-inline: 0;
 
+                    .mat-tab-body-content {
+                        overflow: unset;
+                        display: flex;
+                        flex-direction: column;
+                        padding-inline: 0;
+
+                    }
                 }
             }
+        }
+    }
+
+    pep-checkbox{
+        height: 2rem;
+        min-height: 2rem;
+        margin-bottom: .5rem;
+
+        ::ng-deep  .pep-checkbox-container{
+            background: transparent;
+            padding-inline: 0;
+
+            label{
+                &.mat-checkbox-layout{
+                    font-weight:  600;
+                    font-size: 1.25rem;
+
+                    .mat-checkbox-inner-container{
+                        margin-inline-start: 0 !important;
+                        margin-inline-end: .25rem !important;
+                    }
+                }
+            }
+        }
+
+        &.body-sm{
+
+            height: 1.5rem;
+            min-height: 1.5rem;
+            margin-bottom: .25rem;
+
+            ::ng-deep .pep-checkbox-container{
+                height: 1.5rem;
+
+                label{
+                &.mat-checkbox-layout{
+                    font-weight:  400;
+                    font-size: 1rem;
+
+                    .mat-checkbox-inner-container{
+                        height: 1rem;
+                        width: 1rem;
+                    }
+                }
+            }
+        }
+        }
+    }
+
+    mat-slider{
+        width: 100%;
+    }
+    ::ng-deep .mat-accent {
+        .mat-slider-thumb{
+            background-color: gray !important;
+        }
+        .mat-slider-track-fill {
+            background-image: linear-gradient(to right, white, black);
+            background: linear-gradient(to right, white, black);
+        }
+    }
+    
+    ::ng-deep{
+        .mat-slider.mat-slider-horizontal .mat-slider-wrapper {
+      top: 18px;
+    }
+    .mat-slider.mat-slider-horizontal .mat-slider-track-wrapper {
+      height: 12px;
+      border-radius: 10px
+    }
+    .mat-slider.mat-slider-horizontal .mat-slider-track-background,
+    .mat-slider.mat-slider-horizontal .mat-slider-track-fill {
+      height: 100%;
+    }
+    .mat-slider.mat-slider-horizontal .mat-slider-track-fill {
+      background-color: blue;
+    }
+    .mat-accent .mat-slider-thumb {
+      height: 30px;
+      width: 30px;
+      background-color: white;
+      border: solid 2px gray;
+      bottom: -20px;
+      right: -20px;
+    }
+    .mat-slider-min-value:not(.mat-slider-thumb-label-showing) .mat-slider-thumb {
+      background-color: white;
+    }
+    }
+
+    .split-area{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        column-gap: 1rem;
+
+        ::ng-deep pep-select{
+            display: block;
+            overflow: hidden;
         }
     }
 }
