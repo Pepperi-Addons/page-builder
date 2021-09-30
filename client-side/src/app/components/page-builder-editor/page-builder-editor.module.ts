@@ -19,7 +19,7 @@ import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { SectionEditorModule } from '../section-editor/section-editor.module';
 import { ToolbarModule } from '../toolbar/toolbar.module'
 import { TranslateModule, TranslateLoader, TranslateStore } from '@ngx-translate/core';
-
+import { PepColorModule } from '@pepperi-addons/ngx-lib/color';
 // const pepIcons = [
 //     pepIconSystemClose,
 //     pepIconNumberPlus,
@@ -47,7 +47,7 @@ import { TranslateModule, TranslateLoader, TranslateStore } from '@ngx-translate
         PepButtonModule,
         PepCheckboxModule,
         PepGroupButtonsModule,
-        // PepIconModule,
+        PepColorModule,
         PepTextareaModule,
         SectionEditorModule,
         ToolbarModule,

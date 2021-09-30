@@ -61,6 +61,75 @@ export class PageBuilderEditorComponent implements OnInit {
     availableBlocks: IAvailableBlock[] = [];
     sizesGroupButtons = Array<ISpacingOption>();
     
+    /*START - todo - remove this to slideshow componnent*/ 
+   
+    HeightUnitsType = [
+        { key: 'REM', value: this.translate.instant('SLIDESHOW.HEIGHTUNITS_REM') },
+        { key: 'VH', value: this.translate.instant('SLIDESHOW.HEIGHTUNITS_VH') }
+    ];
+
+    InnerSpacing = [
+        { key: 'SM', value: this.translate.instant('GROUP_SIZE.SM') },
+        { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') }
+    ]
+
+    ArrowsType = [
+        { key: 'TWO', value: this.translate.instant('SLIDESHOW.ARROW_TYPE.TWO_ARROWS') },
+        { key: 'ONE', value: this.translate.instant('SLIDESHOW.ARROW_TYPE.ONE_ARROW') },
+        { key: 'STYLED', value: this.translate.instant('SLIDESHOW.ARROW_TYPE.STYLED_ARROW') },
+    ]
+
+    ArrowButtons = [
+        { key: 'NONE', value: this.translate.instant('GROUP_SIZE.NONE') },
+        { key: 'RECT', value: this.translate.instant('SLIDESHOW.ARROW_BUTTON.RECT') },
+        { key: 'ROUNDED', value: this.translate.instant('SLIDESHOW.ARROW_BUTTON.ROUNDED') }
+    ]
+
+    ControllerSize = [
+        { key: 'SM', value: this.translate.instant('GROUP_SIZE.SM') },
+        { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') }
+    ]
+
+    SlideTitleSize = [
+        { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') },
+        { key: 'LG', value: this.translate.instant('GROUP_SIZE.LG') },
+        { key: 'XL', value: this.translate.instant('GROUP_SIZE.XL') },
+    ]
+
+    SlideSubTitleSize = [
+        { key: 'SM', value: this.translate.instant('GROUP_SIZE.SM') },
+        { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') },
+        { key: 'LG', value: this.translate.instant('GROUP_SIZE.LG') }
+    ]
+
+    WidthSize =  [
+        { key: 'NARROW', value: this.translate.instant('SLIDE_EDITOR.WIDTH_SIZE.NARROW') },
+        { key: 'REGULAR', value: this.translate.instant('SLIDE_EDITOR.WIDTH_SIZE.REGULAR') },
+        { key: 'WIDE', value: this.translate.instant('SLIDE_EDITOR.WIDTH_SIZE.WIDE') }
+    ]
+
+    HorizentalAlign =  [
+        { key: 'LEFT', value: this.translate.instant('SLIDE_EDITOR.HORIZONTAL_ALIGN_DIRECTION.LEFT') },
+        { key: 'CENTER', value: this.translate.instant('SLIDE_EDITOR.HORIZONTAL_ALIGN_DIRECTION.CENTER') },
+        { key: 'RIGHT', value: this.translate.instant('SLIDE_EDITOR.HORIZONTAL_ALIGN_DIRECTION.RIGHT') }
+    ]
+
+    VerticalAlign =  [
+        { key: 'TOP', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.TOP') },
+        { key: 'MIDDLE', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.MIDDLE') },
+        { key: 'BOTTOM', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.BOTTOM') }
+    ]
+
+    isTransition = true;
+    useArrows = true;
+    showSlideTitle = false;
+    slideContent = '';
+    showSubTitle = false;
+    showFirstButton = false;
+    showSecondButton = false;
+    useGradientOverlay = false;
+
+    /*END todo - remove this to slideshow componnent*/ 
     constructor(
         private translate: TranslateService,
         private pageBuilderService: PagesService,

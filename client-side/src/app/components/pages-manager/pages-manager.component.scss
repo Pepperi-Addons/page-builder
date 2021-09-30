@@ -34,7 +34,7 @@ $z-index-min: 0;
     }
 }
 
-.main-top-heaer{
+.main-top-header{
     .back-button {
         margin-inline-end: 0.5rem;
     }
@@ -164,4 +164,8 @@ $z-index-min: 0;
                     }
                 }
     }
+}
+
+::ng-deep .total-items-container{
+    height: 2.5rem !important;
 }

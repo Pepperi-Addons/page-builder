@@ -1,6 +1,6 @@
 <pep-page-layout [addPadding]="false">
     <ng-container pep-top-area>
-        <pep-top-bar class="main-top-heaer"  [title]="!isAddNewPage ?  ('PAGES_MANAGER.MAIN_HEADER' | translate) : ''">
+        <pep-top-bar class="main-top-header"  [title]="!isAddNewPage ?  ('PAGES_MANAGER.MAIN_HEADER' | translate) : ''">
             <div header-start-content>
                 <div *ngIf="isAddNewPage" header-end-content>
                     <pep-button  class="back-button pull-left flip pep-spacing-element" iconName="arrow_left_alt" (buttonClick)="navigateBackToMainPage();"></pep-button>
@@ -26,24 +26,34 @@
         <div class="pageExplanation">
             <span class="body-md">{{ 'PAGES_MANAGER.MAIN_EXPLANATION' | translate }}</span>
         </div>
-
-        <div *ngIf="!hasPages" class="PagesNotFoundMsg">
-                <div class="leaf-background">
-                    <img [src]="imagesPath + 'brand-leaf-skiny.svg'">
-                    <img [src]="imagesPath + 'brand-leaf-round.svg'">
-                </div>
-                <h2>{{ "PAGES_MANAGER.PAGES_HEADER" | translate}}</h2>
-                <span>{{ "PAGES_MANAGER.NO_PAGES_MSG" | translate}}</span>
-        </div>
-        <generic-list [dataSource]="pagesDataSource" [inline]="true" [title]="'PAGES_MANAGER.SECONDARY_HEADER' | translate">
+        <generic-list *ngIf="hasPages" [dataSource]="pagesDataSource" [inline]="true" [title]="'PAGES_MANAGER.SECONDARY_HEADER' | translate">
             <ng-container right-buttons>
-                    <pep-menu class="pep-spacing-element" [items]="mainMenuItems" [sizeType]="'sm'" (menuItemClick)="onMenuItemClicked($event)">
-                    </pep-menu>
-                    <pep-button class="pep-spacing-element" [value]="'PAGES_MANAGER.A_PAGE' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
-                    </pep-button>
+                <ng-container *ngTemplateOutlet="topBarEnd"></ng-container>
             </ng-container>
         </generic-list>
+        <ng-container *ngIf="!hasPages">
+            <pep-top-bar class="main-top-header" [inline]="true">
+                <div header-end-content>
+                    <ng-container *ngTemplateOutlet="topBarEnd"></ng-container>
+                </div>
+            </pep-top-bar>
+            <div class="PagesNotFoundMsg">
+                    <div class="leaf-background">
+                        <img [src]="imagesPath + 'brand-leaf-skiny.svg'">
+                        <img [src]="imagesPath + 'brand-leaf-round.svg'">
+                    </div>
+                    <h2>{{ "PAGES_MANAGER.PAGES_HEADER" | translate}}</h2>
+                    <span>{{ "PAGES_MANAGER.NO_PAGES_MSG" | translate}}</span>
+            </div>
+        </ng-container>
     </div>
+</ng-template>
+
+<ng-template #topBarEnd>
+    <pep-menu class="pep-spacing-element" [items]="mainMenuItems" [sizeType]="'sm'" (menuItemClick)="onMenuItemClicked($event)">
+    </pep-menu>
+    <pep-button class="pep-spacing-element" [value]="'PAGES_MANAGER.A_PAGE' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
+    </pep-button>
 </ng-template>
 
 <ng-template #addNewBlock>
