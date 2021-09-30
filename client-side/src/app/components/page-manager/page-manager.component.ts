@@ -131,6 +131,7 @@ export class PageManagerComponent implements OnInit {
 
     togglePreviewMode() {
         this.showEditor = !this.showEditor;
+        this.updateViewportWidth();
     }
 
     onPageEditorObjectChange(pageEditor: IPageEditor) {
@@ -173,16 +174,12 @@ export class PageManagerComponent implements OnInit {
 
     onSaveClick() {
         this.pageBuilderService.saveCurrentPage(this.navigationService.addonUUID).subscribe(res => {
-            // TODO: Show message.
-            debugger;
             this.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
         });
     }
 
     onPublishClick() {
         this.pageBuilderService.publishCurrentPage(this.navigationService.addonUUID).subscribe(res => {
-            // TODO: Show message.
-            debugger;
             this.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
         });
     }

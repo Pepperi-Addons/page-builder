@@ -151,26 +151,36 @@ export class PagesService {
     private loadBlocks(page: Page) {
         if (page) {
             // TODO: Write some logic to load the blocks by priority.
-            this.addBlocks(page.Blocks);
+            if (page.Blocks) {
+                page.Blocks.forEach(block => {
+                    this.addBlockProgress(block, false);
+                });
+                
+                this.notifyBlockProgressMapChange();
+            }
         } else {
             this.removeAllBlocks();
         }
     }
-
-    private addBlocks(blocks: PageBlock[]) {
-        blocks.forEach(block => {
-            // Add the block to the page blocks.
-            this.pageSubject.value.Blocks.push(block);
-
-            // Create block progress and add it to the map.
-            const initialProgress: IBlockProgress = { block, load: false };
-          
-            this._pageBlockProgressMap.set(block.Key, initialProgress);
-        });
-        
-        this.notifyBlockProgressMapChange();
-    }
     
+    private addBlockProgress(block: PageBlock, notify = true) {
+        // Create block progress and add it to the map.
+        const initialProgress: IBlockProgress = { block, load: false };
+        this._pageBlockProgressMap.set(block.Key, initialProgress);
+
+        if (notify) {
+            this.notifyBlockProgressMapChange();
+        }
+    }
+
+    private addPageBlock(block: PageBlock) {
+        // Add the block to the page blocks.
+        this.pageSubject.value.Blocks.push(block);
+
+        // Add the block progress.
+        this.addBlockProgress(block);
+    }
+
     private removePageBlock(blockId: string) {
         const index = this.pageSubject.value.Blocks.findIndex(block => block.Key === blockId);
         if (index > -1) {
@@ -550,7 +560,7 @@ export class PagesService {
                 };
                 
                 // Add the block to the page blocks
-                this.addBlocks([block]);
+                this.addPageBlock(block);
             }
         } else {
             // If the block moved between columns the same section or between different sections but not in the same column.

@@ -82,7 +82,45 @@
         "TITLE_NOTICE": "Notice",
         "OPERATION_SUCCESS": "Operation success."
     },
-    
+    "HIDE_IN": {
+        "HIDE_IN_TITLE": "Hide on:"
+    },
+    "SLIDESHOW": {
+        "HEIGHTUNITS_TITLE": "Height units",
+        "HEIGHTUNITS_REM": "REM",
+        "HEIGHTUNITS_VH": "VH (precentage)",
+        "HEIGHT": "Height",
+        "INNERSPACING_TITLE": "Inner spacing",
+        "TRANSITION": "Transition",
+        "TRANSITION_TITLE": "Set transition duration and type.",
+        "SLIDE_DURATION": "Slide duration (s)",
+        "TRANSITION_TYPE": "Transition type",
+        "TRANSITION_TIME": "Transition time (s)",
+        "ARROWS": "Arrows",
+        "ARROWS_DESC": "Arrows used the navigate the slides from start to end.<br>Arrows are hidden in mobile view.",
+        "ARROWS_TYPE": "Arrows type",
+        "ARROWS_BUTTONS": "Arrows buttons",
+        "ARROWS_STYLE": "Style",
+        "ARROWS_COLOR": "Color",
+        "ARROW_TYPE": {
+            "TWO_ARROWS": ">>",
+            "ONE_ARROW": ">",
+            "STYLED_ARROW":" -->"
+        },
+        "ARROW_BUTTON": {
+            "RECT":"Rect",
+            "ROUNDED":"Rounded"
+        },
+        "CONTROLLERS": "Controllers",
+        "CONTROLLERS_DESC": "Dots indecate the number of sildes<br>and the silde position, they are<br>clickable and will change the silde.",
+        "CONTROLLERS_PROPERTIES":{
+            "PAUSE_PLAY": "Show Pause/Play",
+            "MOBILE": "Show on mobile",
+            "INVERT_STYLE": "Invert style",
+            "SHOW_CONTROLLERS": "Show controllers in slider"
+        },
+        "CONTROLLER_SIZE": "Controller size"
+    },
     "SLIDE_EDITOR": {
         "TITLE": "Title",
         "CONTENT": "Content",
@@ -130,10 +168,5 @@
             "MIDDLE": "Middle",
             "BOTTOM": "Bottom"
         }
-
-
-
-
-
     }
 }

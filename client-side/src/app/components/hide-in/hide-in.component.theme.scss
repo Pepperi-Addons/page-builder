@@ -12,4 +12,26 @@
         }
     }
 
+    .mat-menu-item {
+        .mat-checkbox-layout {
+            .mat-checkbox-inner-container {
+                margin-inline-end: 0.25rem !important;
+            }
+        }
+    }
+
+    .badge-button {
+        @include pep-badge($pepperi-theme);
+        
+        &.none {
+            .mat-badge-content {
+                display: none;
+            }
+        }
+
+        .mat-badge-content {
+            top: -4px !important;
+            right: -4px !important;
+        }
+    }
 }
