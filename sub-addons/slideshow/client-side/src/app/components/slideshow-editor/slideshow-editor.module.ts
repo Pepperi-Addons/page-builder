@@ -9,7 +9,10 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { PepAddonService, PepCustomizationService, PepFileService, PepHttpService, PepNgxLibModule } from '@pepperi-addons/ngx-lib';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TranslateModule, TranslateLoader, TranslateService, TranslateStore } from '@ngx-translate/core';
-
+import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
+import { PepColorModule } from '@pepperi-addons/ngx-lib/color';
+import { PepImageModule } from '@pepperi-addons/ngx-lib/image';
+import {MatSliderModule} from '@angular/material/slider';
 import { config } from '../addon.config';
 
 @NgModule({
@@ -22,6 +25,10 @@ import { config } from '../addon.config';
         PepTextboxModule,
         PepSelectModule,
         PepCheckboxModule,
+        PepGroupButtonsModule,
+        PepColorModule,
+        PepImageModule,
+        PepColorModule,
         MatTabsModule,
         // When not using module as sub-addon please remark this for not loading twice resources
         TranslateModule.forChild({

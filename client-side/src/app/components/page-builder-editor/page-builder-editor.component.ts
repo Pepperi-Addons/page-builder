@@ -62,33 +62,6 @@ export class PageBuilderEditorComponent implements OnInit {
     sizesGroupButtons = Array<ISpacingOption>();
     
     /*START - todo - remove this to slideshow componnent*/ 
-   
-    HeightUnitsType = [
-        { key: 'REM', value: this.translate.instant('SLIDESHOW.HEIGHTUNITS_REM') },
-        { key: 'VH', value: this.translate.instant('SLIDESHOW.HEIGHTUNITS_VH') }
-    ];
-
-    InnerSpacing = [
-        { key: 'SM', value: this.translate.instant('GROUP_SIZE.SM') },
-        { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') }
-    ]
-
-    ArrowsType = [
-        { key: 'TWO', value: this.translate.instant('SLIDESHOW.ARROW_TYPE.TWO_ARROWS') },
-        { key: 'ONE', value: this.translate.instant('SLIDESHOW.ARROW_TYPE.ONE_ARROW') },
-        { key: 'STYLED', value: this.translate.instant('SLIDESHOW.ARROW_TYPE.STYLED_ARROW') },
-    ]
-
-    ArrowButtons = [
-        { key: 'NONE', value: this.translate.instant('GROUP_SIZE.NONE') },
-        { key: 'RECT', value: this.translate.instant('SLIDESHOW.ARROW_BUTTON.RECT') },
-        { key: 'ROUNDED', value: this.translate.instant('SLIDESHOW.ARROW_BUTTON.ROUNDED') }
-    ]
-
-    ControllerSize = [
-        { key: 'SM', value: this.translate.instant('GROUP_SIZE.SM') },
-        { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') }
-    ]
 
     SlideTitleSize = [
         { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') },
@@ -120,14 +93,20 @@ export class PageBuilderEditorComponent implements OnInit {
         { key: 'BOTTOM', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.BOTTOM') }
     ]
 
-    isTransition = true;
-    useArrows = true;
+    SlideDropShadowStyle = [
+        { key: 'SOFT', value: this.translate.instant('SLIDE_EDITOR.SOFT') },
+        { key: 'REGULAR', value: this.translate.instant('SLIDE_EDITOR.REGULAR') }
+    ]
+
     showSlideTitle = false;
     slideContent = '';
     showSubTitle = false;
     showFirstButton = false;
     showSecondButton = false;
     useGradientOverlay = false;
+    useOverlay = false;
+    hasImage = true;
+    useDropShadow = false;
 
     /*END todo - remove this to slideshow componnent*/ 
     constructor(
