@@ -121,7 +121,6 @@
         },
         "CONTROLLER_SIZE": "Controller size"
     },
-    
     "SLIDE_EDITOR": {
         "TITLE": "Title",
         "CONTENT": "Content",
@@ -144,6 +143,7 @@
         "GRADIENT_OVERLAY_COLOR": "Gradient Overlay Color",
         "GRADIENT_OVERLAY_OPACITY": "Gradieant Overlay Opacity",
         "OVERLAY": "Overlay",
+        "OVERLAY_COLOR": "Overlay Color",
         "OVERLAY_OPACITY": "Overlay",
         "IMAGE": "Image",
         "CHOOSE_IMAGE": "Choose image",
@@ -168,10 +168,5 @@
             "MIDDLE": "Middle",
             "BOTTOM": "Bottom"
         }
-
-
-
-
-
     }
 }

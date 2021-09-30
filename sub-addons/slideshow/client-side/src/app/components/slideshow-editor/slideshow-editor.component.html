@@ -1,8 +1,57 @@
 <mat-tab-group  #tabGroup class="editor-tabs" animationDuration="0ms">
-    <mat-tab label="General">
-        TODO:
+    <mat-tab label="{{'SLIDESHOW.GENERAL' | translate}}">
+        <label class="body-xs ellipsis">{{'SLIDESHOW.HEIGHTUNITS_TITLE' | translate}}</label>
+                <pep-group-buttons [buttons]="HeightUnitsType" [selectedButtonKey]="'REM'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
+
+                <pep-textbox [value]="slideshowHeight" [label]="'SLIDESHOW.HEIGHT' | translate" (valueChange)="onSlideshowHeightChange($event)"></pep-textbox>
+                
+                <label class="body-xs ellipsis">{{'SLIDESHOW.INNERSPACING_TITLE' | translate}}</label>
+                <pep-group-buttons [buttons]="InnerSpacing" [selectedButtonKey]="'SM'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
+
+                <pep-checkbox [value]="isTransition" [label]="'SLIDESHOW.TRANSITION' | translate" [renderTitle]="false" (valueChange)="isTransition = !isTransition"></pep-checkbox>
+                <label class="body-xs ellipsis">{{'SLIDESHOW.TRANSITION_TITLE' | translate}}</label>
+                <pep-textbox [label]="'SLIDESHOW.SLIDE_DURATION' | translate" type="int" [disabled]="isTransition" [value]="'10'"></pep-textbox>
+                
+                <div class="split-area" style="display: grid;grid-template-columns: 1fr 1fr;grid-gap: 1rem; gap: 1rem;">
+                    <pep-select [label]="'SLIDESHOW.TRANSITION_TYPE' | translate" [value]="" [options]="[]" 
+                        (valueChange)="null" [emptyOption]="false" [disabled]="false"></pep-select>
+                    <pep-select [label]="'SLIDESHOW.TRANSITION_TIME' | translate" [value]="" [options]="[]"
+                        (valueChange)="null" [emptyOption]="false" [disabled]="false"></pep-select>
+                </div>
+
+                <pep-checkbox [value]="useArrows" [label]="'SLIDESHOW.ARROWS' | translate" [renderTitle]="false"></pep-checkbox>
+                <label class="body-xs" [innerHTML]="'SLIDESHOW.ARROWS_DESC' | translate"></label>
+                
+                <label class="body-xs ellipsis">{{'SLIDESHOW.ARROWS_TYPE' | translate}}</label>
+                <pep-group-buttons [buttons]="ArrowsType" [selectedButtonKey]="'STYLED'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
+
+                <label class="body-xs ellipsis">{{'SLIDESHOW.ARROWS_BUTTONS' | translate}}</label>
+                <pep-group-buttons [buttons]="ArrowButtons" [selectedButtonKey]="'ROUNDED'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
+
+                <div class="split-area" style="display: grid;grid-template-columns: 1fr 1fr;grid-gap: 1rem; gap: 1rem;">
+                    <pep-select [label]="'SLIDESHOW.ARROWS_STYLE' | translate" [value]="" [options]="[]" 
+                        (valueChange)="null" [emptyOption]="false" [disabled]="false"></pep-select>
+                    <pep-select [label]="'SLIDESHOW.ARROWS_COLOR' | translate" [value]="" [options]="[]"
+                        (valueChange)="null" [emptyOption]="false" [disabled]="false"></pep-select>
+                </div>
+
+                <pep-checkbox [value]="useArrows" [label]="'SLIDESHOW.CONTROLLERS' | translate" [renderTitle]="false" (valueChange)="useArrows = !useArrows"></pep-checkbox>
+                <label class="body-xs" [innerHTML]="'SLIDESHOW.CONTROLLERS_DESC' | translate"></label>
+
+                <pep-checkbox class="body-sm" [value]="useArrows" [label]="'SLIDESHOW.CONTROLLERS_PROPERTIES.PAUSE_PLAY' | translate" [renderTitle]="false"></pep-checkbox>
+                <pep-checkbox class="body-sm" [value]="useArrows" [label]="'SLIDESHOW.CONTROLLERS_PROPERTIES.MOBILE' | translate" [renderTitle]="false"></pep-checkbox>
+                <pep-checkbox class="body-sm" [value]="useArrows" [label]="'SLIDESHOW.CONTROLLERS_PROPERTIES.INVERT_STYLE' | translate" [renderTitle]="false"></pep-checkbox>
+                <pep-checkbox class="body-sm" [value]="useArrows" [label]="'SLIDESHOW.CONTROLLERS_PROPERTIES.SHOW_CONTROLLERS' | translate" [renderTitle]="false"></pep-checkbox>
+                
+                <label class="body-xs ellipsis">{{'SLIDESHOW.CONTROLLER_SIZE' | translate}}</label>
+                <pep-group-buttons [buttons]="ControllerSize" [selectedButtonKey]="'SM'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                </pep-group-buttons>
     </mat-tab>
-    <mat-tab label="Content">
-        <label class="body-xl bold ellipsis">Slides</label>
+    <mat-tab label="{{'SLIDESHOW.CONTENT' | translate}}">
+        <label class="body-xl bold ellipsis">Slides1</label>
     </mat-tab>
 </mat-tab-group>
