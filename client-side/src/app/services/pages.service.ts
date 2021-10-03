@@ -472,6 +472,9 @@ export class PagesService {
             if (currentEditor.type === 'section' && currentEditor.id === currentSection.Key) {
                 currentEditor.title = this.getSectionEditorTitle(currentSection, sectionIndex);
             }
+
+            // Update sections change.
+            this.sectionsSubject.next(this.sectionsSubject.value);
         }
     }
 
