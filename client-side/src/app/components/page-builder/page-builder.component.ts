@@ -60,6 +60,22 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     ) {
     }
 
+    private convertPageSizeType(size: PageSizeType | 'NONE') {
+        let res;
+
+        if (size === 'LG') {
+            res = '2rem';
+        } else if (size === 'MD') {
+            res = '1rem';
+        } else if (size === 'SM') {
+            res = '0.5rem';
+        } else {
+            res = '0';
+        }
+
+        return res;
+    }
+
     private setPageDataProperties(page: Page) {
         if (page && this.sectionsContainer?.nativeElement) {
             let maxWidth = this.utilitiesService.coerceNumberProperty(page.Layout.MaxWidth, 0);
@@ -67,10 +83,10 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
             this.renderer.setStyle(this.sectionsContainer.nativeElement, 'max-width', maxWidthToSet);
 
             this.sectionsGap = page.Layout.SectionsGap || 'NONE';
-            this.columnsGap = page.Layout.CoulmnsGap || 'NONE';
+            this.columnsGap = page.Layout.ColumnsGap || 'NONE';
 
-            this.paddingInline = '1rem'; // page.Layout.HorizontalSpacing
-            this.paddingBottom = this.paddingTop = '1rem'; // page.Layout.VerticalSpacing
+            this.paddingInline = this.convertPageSizeType(page.Layout.HorizontalSpacing);
+            this.paddingBottom = this.paddingTop = this.convertPageSizeType(page.Layout.VerticalSpacing);
         }
     }
 
