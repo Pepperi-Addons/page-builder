@@ -155,15 +155,19 @@ export class PagesApiService {
     upsertPage(page: Page, tableName = DRAFT_PAGES_TABLE_NAME): Promise<Page | null> {
         let res: any;
 
-        if (!page.Key) {
-            page.Key = uuid();
-        }
+        if (page) {
+            if (!page.Key) {
+                page.Key = uuid();
+            }
 
-        try {
-            // TODO: Validate page object before upsert.
-            res = this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page);
-            return Promise.resolve(res);
-        } catch(err) {
+            try {
+                // TODO: Validate page object before upsert.
+                res = this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page);
+                return Promise.resolve(res);
+            } catch(err) {
+                return Promise.resolve(null);
+            }
+        } else {
             return Promise.resolve(null);
         }
     }
@@ -200,6 +204,7 @@ export class PagesApiService {
 
             // If page found get the available blocks by page type and return combined object.
             if (page) {
+                page.Hidden = false;
                 const pageType = page.Type || '';
                 const availableBlocks = await this.getAvailableBlocks(pageType) || [];
                 
