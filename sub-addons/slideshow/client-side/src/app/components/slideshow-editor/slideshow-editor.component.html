@@ -52,6 +52,8 @@
                 </pep-group-buttons>
     </mat-tab>
     <mat-tab label="{{'SLIDESHOW.CONTENT' | translate}}">
-        <label class="body-xl bold ellipsis">Slides1</label>
+        <label class="body-xl bold ellipsis">{{'SLIDESHOW.CONTENT' | translate}}</label>
+        <pep-button class="add-content-button" value="{{'PAGE_MANAGER.ADD_SECTION' | translate}}" styleType="regular" iconName="number_plus" iconPosition="end"
+                (buttonClick)="onAddContentClick($event)"></pep-button>
     </mat-tab>
 </mat-tab-group>

@@ -1,6 +1,10 @@
 .editor-tabs {
     height: 100%;
     
+    .add-content-button {
+        margin-bottom: 1rem;
+    }
+
     label{ /* TODO - NEED TO BE REMOVED AFTER A SOLUTION FOR THE BOOTSTRAP STYLE*/
         &.body-xs, 
         &.body-sm{

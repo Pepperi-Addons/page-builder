@@ -66,4 +66,8 @@ export class SlideshowEditorComponent implements OnInit {
     onSlideshowHeightChange(event){
         
     }
+
+    onAddContentClick(e) {
+        //this.pageBuilderService.addSection();
+    }
 }

@@ -18,6 +18,7 @@
     "SLIDESHOW": {
         "GENERAL": "General",
         "CONTENT": "Content",
+        "SLIDES": "Slides",
         "HEIGHTUNITS_TITLE": "Height units",
         "HEIGHTUNITS_REM": "REM",
         "HEIGHTUNITS_VH": "VH (precentage)",

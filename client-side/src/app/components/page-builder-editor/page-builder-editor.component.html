@@ -21,7 +21,7 @@
                 </toolbar-actions>
             </div>
 
-            <div style="border:1px solid blue; display:block;max-width: 224px;">
+            <div style="border:1px solid blue; display:block;max-width: 224px; display: none;">
                 <pep-checkbox [value]="showSlideTitle" [label]="'SLIDE_EDITOR.TITLE' | translate" [renderTitle]="false" (valueChange)="showSlideTitle = !showSlideTitle"></pep-checkbox>
                 <pep-textbox [label]="'SLIDE_EDITOR.CONTENT' | translate" type="string" [disabled]="!showSlideTitle" [value]="slideContent" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
                 
