@@ -1,0 +1,14 @@
+<div class="slide-container">
+    <div>
+        <pep-button classNames="lock-events" sizeType="xs" iconName="system_move"></pep-button>
+    </div>
+    <div *ngIf="title !== ''" class="title-container">
+        <span class="body-sm bold ellipsis title" title="{{title}}">{{title}}</span>
+    </div>
+    <div class="actions" *ngIf="showActions">
+        <pep-button classNames="caution" sizeType="xs" iconName="system_bin" (buttonClick)="onRemoveClick();"></pep-button>
+        <!-- <pep-menu sizeType="xs" iconName="system_view" ></pep-menu> -->
+        <!-- <hide-in [hideIn]="hideIn" (hideInChange)="onHideInChange($event)"></hide-in> -->
+        <pep-button sizeType="xs" iconName="system_edit" (buttonClick)="onEditClick();"></pep-button>
+    </div>
+</div>

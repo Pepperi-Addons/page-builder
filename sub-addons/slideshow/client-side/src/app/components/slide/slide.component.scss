@@ -1,0 +1,46 @@
+@import 'ngx-lib/src/core/style/abstracts/variables';
+@import 'ngx-lib/src/core/style/abstracts/mixins';
+// @import '../../../../../../../../page-builder/client-side/src/mixins.scss';
+
+// Define pepperi lib theme and include theme styles for pepperi components.
+@import '~@pepperi-addons/ngx-lib/theming';
+@include pepperi-theme();
+
+// Get the theme object.
+$pepperi-theme: get-pepperi-theme();
+
+:host {
+     display: block;
+}
+
+.slide-container {
+    height: 2.5rem;
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    border-radius: $border-radius-md;
+    padding-inline: $spacing-sm;
+    margin-bottom: .5rem;
+    @include state-regular-default($pepperi-theme, true);
+}
+
+.title-container {
+    overflow-x: hidden;
+    margin-inline: $spacing-sm;
+
+    .title {
+        display: block;
+    }
+}
+
+.actions {
+    display: inline-flex;
+    gap: $spacing-xs;
+}
+
+// @mixin slide-component-theme($pepperi-theme) {
+//     .slide-container {
+//         @include state-regular-default($pepperi-theme, true);
+//     }
+// }

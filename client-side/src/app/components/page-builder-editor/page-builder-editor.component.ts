@@ -61,64 +61,11 @@ export class PageBuilderEditorComponent implements OnInit {
     availableBlocks: IAvailableBlock[] = [];
     sizesGroupButtons = Array<ISpacingOption>();
     
-    /*START - todo - remove this to slideshow componnent*/ 
-
-    SlideTitleSize = [
-        { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') },
-        { key: 'LG', value: this.translate.instant('GROUP_SIZE.LG') },
-        { key: 'XL', value: this.translate.instant('GROUP_SIZE.XL') },
-    ]
-
-    SlideSubTitleSize = [
-        { key: 'SM', value: this.translate.instant('GROUP_SIZE.SM') },
-        { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') },
-        { key: 'LG', value: this.translate.instant('GROUP_SIZE.LG') }
-    ]
-
-    WidthSize =  [
-        { key: 'NARROW', value: this.translate.instant('SLIDE_EDITOR.WIDTH_SIZE.NARROW') },
-        { key: 'REGULAR', value: this.translate.instant('SLIDE_EDITOR.WIDTH_SIZE.REGULAR') },
-        { key: 'WIDE', value: this.translate.instant('SLIDE_EDITOR.WIDTH_SIZE.WIDE') }
-    ]
-
-    HorizentalAlign =  [
-        { key: 'LEFT', value: this.translate.instant('SLIDE_EDITOR.HORIZONTAL_ALIGN_DIRECTION.LEFT') },
-        { key: 'CENTER', value: this.translate.instant('SLIDE_EDITOR.HORIZONTAL_ALIGN_DIRECTION.CENTER') },
-        { key: 'RIGHT', value: this.translate.instant('SLIDE_EDITOR.HORIZONTAL_ALIGN_DIRECTION.RIGHT') }
-    ]
-
-    VerticalAlign =  [
-        { key: 'TOP', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.TOP') },
-        { key: 'MIDDLE', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.MIDDLE') },
-        { key: 'BOTTOM', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.BOTTOM') }
-    ]
-
-    SlideDropShadowStyle = [
-        { key: 'SOFT', value: this.translate.instant('SLIDE_EDITOR.SOFT') },
-        { key: 'REGULAR', value: this.translate.instant('SLIDE_EDITOR.REGULAR') }
-    ]
-
-    showSlideTitle = false;
-    slideContent = '';
-    showSubTitle = false;
-    showFirstButton = false;
-    showSecondButton = false;
-    useGradientOverlay = false;
-    useOverlay = false;
-    hasImage = true;
-    useDropShadow = false;
-
-    /*END todo - remove this to slideshow componnent*/ 
     constructor(
         private translate: TranslateService,
         private pageBuilderService: PagesService,
     ) { 
-        this.sizesGroupButtons = [
-            { key: 'NONE', value: this.translate.instant('GROUP_SIZE.NONE') },
-            { key: 'SM', value: this.translate.instant('GROUP_SIZE.SM') },
-            { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') },
-            { key: 'LG', value: this.translate.instant('GROUP_SIZE.LG') }
-        ];
+        
     }
 
     private updateHostObject() {
@@ -135,6 +82,14 @@ export class PageBuilderEditorComponent implements OnInit {
     }
 
     ngOnInit(): void {
+
+        this.sizesGroupButtons = [
+            { key: 'NONE', value: this.translate.instant('GROUP_SIZE.NONE') },
+            { key: 'SM', value: this.translate.instant('GROUP_SIZE.SM') },
+            { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') },
+            { key: 'LG', value: this.translate.instant('GROUP_SIZE.LG') }
+        ];
+        
         this.pageBuilderService.availableBlocksLoadedSubject$.subscribe(availableBlocks => {
             this.availableBlocks = availableBlocks;
         });

@@ -14,7 +14,6 @@ import { PepperiTableComponent } from './pepperi-table.component'
 import { MatDialogModule } from '@angular/material/dialog';
 import { PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
-
 import { config } from '../addon.config';
 
 @NgModule({
