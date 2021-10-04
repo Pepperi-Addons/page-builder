@@ -230,10 +230,10 @@ export class PagesService {
                 pageName: page?.Name,
                 pageDescription: page?.Description,
                 maxWidth: page?.Layout.MaxWidth,
-                // blocksHorizntalGap: page?.Layout.
-                // blocksVerticalGap: page?.Layout.
+                verticalSpacing: page?.Layout.VerticalSpacing,
+                horizontalSpacing: page?.Layout.HorizontalSpacing,
                 sectionsGap: page?.Layout.SectionsGap,
-                // columnsGap: page?.Layout.ColumnsGap,
+                columnsGap: page?.Layout.ColumnsGap,
                 // roundedCorners: page?.Layout.
             };
 
@@ -428,10 +428,10 @@ export class PagesService {
             currentPage.Name = pageData.pageName;
             currentPage.Description = pageData.pageDescription;
             currentPage.Layout.MaxWidth = pageData.maxWidth;
-            // currentPage.Layout.HorizontalSpacing = pageData.horizontalSpacing;
-            // currentPage.Layout.VerticalSpacing = pageData.verticalSpacing;
+            currentPage.Layout.HorizontalSpacing = pageData.horizontalSpacing;
+            currentPage.Layout.VerticalSpacing = pageData.verticalSpacing;
             currentPage.Layout.SectionsGap = pageData.sectionsGap;
-            // currentPage.Layout.ColumnsGap = pageData.columnsGap;
+            currentPage.Layout.ColumnsGap = pageData.columnsGap;
             // currentPage.Layout.RoundedCorners = pageData.roundedCorners;
 
             this.pageSubject.next(currentPage);
@@ -472,6 +472,9 @@ export class PagesService {
             if (currentEditor.type === 'section' && currentEditor.id === currentSection.Key) {
                 currentEditor.title = this.getSectionEditorTitle(currentSection, sectionIndex);
             }
+
+            // Update sections change.
+            this.sectionsSubject.next(this.sectionsSubject.value);
         }
     }
 

@@ -40,7 +40,7 @@
     "@ngx-translate/http-loader": "^6.0.0",
     "@pepperi-addons/ngx-lib": "^0.2.32",
     "@pepperi-addons/ngx-remote-loader": "0.0.37",
-    "@pepperi-addons/papi-sdk": "^1.28.4",
+    "@pepperi-addons/papi-sdk": "^1.28.6",
     "@tweenjs/tween.js": "^17.1.1",
     "again": "0.0.1",
     "disable-scroll": "^0.5.1",
