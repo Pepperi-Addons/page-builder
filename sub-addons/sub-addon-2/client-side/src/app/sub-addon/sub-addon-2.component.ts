@@ -23,7 +23,7 @@ export class SubAddon2Component implements OnInit {
     ngOnInit(): void {
         this.options.push({key:'OPEN_DIALOG', value: 'Text 1' });
         this.options.push({key:'OPEN_DIALOG', value: 'Text 2' });
-        this.hostEvents.emit({action: 'addon-loaded'});
+        this.hostEvents.emit({action: 'block-loaded'});
         this.images +=  ';' +this.hostObject?.Configuration?.imageURL;
     }
 

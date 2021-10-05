@@ -6,14 +6,14 @@
     >
     <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
         class="block-toolbar" [title]="pageBlock.Relation?.Description" [isDraggable]="true"
-        (editClick)="onEditBlockClick(columnBlock.BlockKey);" (removeClick)="onRemoveBlockClick(columnBlock.BlockKey)"
-        [hideIn]="columnBlock.Hide" (hideInChange)="onHideBlockChange(columnBlock.BlockKey, $event)">
+        (editClick)="onEditBlockClick();" (removeClick)="onRemoveBlockClick()"
+        [hideIn]="columnBlock.Hide" (hideInChange)="onHideBlockChange($event)">
     </toolbar-actions>
     <div [ngClass]="{'block-editable-state': editable }">
         <pep-remote-loader 
             [options]="pageBlock.Relation?.Options"
             [hostObject]="pageBlock.Configuration"
-            (hostEvents)="onBlockChange($event, columnBlock.BlockKey);">
+            (hostEvents)="onBlockChange($event);">
         </pep-remote-loader>
     </div>
 </div>

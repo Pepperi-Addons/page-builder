@@ -40,9 +40,10 @@ export class SlideshowComponent implements OnInit {
 
     }
 
-    ngOnInit(){
-       this.dataSource$ = this.addonService.pepGet(`/items`)
-       .pipe(tap(res => this.hostEvents.emit({action: 'addon-loaded'})));
+    ngOnInit() {
+       this.dataSource$ = this.addonService.pepGet(`/items`);
+       
+       this.dataSource$.toPromise().then(res => this.hostEvents.emit({action: 'block-loaded'}));
     //    .pipe(
     //        map((addons: InstalledAddon[]) =>
     //          addons.filter(addon => addon?.Addon).map(addon => addon?.Addon))
@@ -58,7 +59,6 @@ export class SlideshowComponent implements OnInit {
 
     ngAfterViewInit(): void {
         this.menuItems.push({key:'OpenDialog', text: 'Edit' });
-        // this.hostEvents.emit({action: 'addon-loaded'});
     }
 
     onMenuItemClicked(e){
