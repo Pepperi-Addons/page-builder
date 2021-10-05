@@ -143,8 +143,9 @@
 
     .split-area{
         display: flex;
-        flex-direction: row;
         flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: stretch;
         column-gap: 1rem;
 
         ::ng-deep pep-select{
