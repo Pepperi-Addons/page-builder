@@ -29,6 +29,12 @@
         "TRANSITION_TITLE": "Set transition duration and type.",
         "SLIDE_DURATION": "Slide duration (s)",
         "TRANSITION_TYPE": "Transition type",
+        "TRANSITIONTYPES": {
+            "FADE": "Fade",
+            "BLUR": "Blur",
+            "DISSOLVE": "Dissolve",
+            "IRIS": "Iris"
+        },
         "TRANSITION_TIME": "Transition time (s)",
         "ARROWS": "Arrows",
         "ARROWS_DESC": "Arrows used the navigate the slides from start to end.<br>Arrows are hidden in mobile view.",
