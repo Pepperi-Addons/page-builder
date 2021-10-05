@@ -14,23 +14,52 @@ export class SectionBlockComponent implements OnInit {
     
     @Input() sectionId: string;
     @Input() pageBlock: PageBlock;
-    @Input() columnBlock: PageSectionBlock;
     @Input() canDrag = false;
     @Input() editable = false;
+    @Input() active = false;
+    
+    private _columnBlock: PageSectionBlock;
+    @Input()
+    set columnBlock(value: PageSectionBlock) {
+        this._columnBlock = value;
+        this.setIfHideForCurrentScreenType();
+    }
+    get columnBlock(): PageSectionBlock {
+        return this._columnBlock;
+    }
 
-    @Output() hideInChange: EventEmitter<void> = new EventEmitter();
+    private _screenType: DataViewScreenSize;
+    @Input()
+    set screenType(value: DataViewScreenSize) {
+        this._screenType = value;
+        this.setIfHideForCurrentScreenType();
+    }
+    get screenType(): DataViewScreenSize {
+        return this._screenType;
+    }
+    
+    hideForCurrentScreenType = false;
 
     constructor(
         private renderer: Renderer2,
         private translate: TranslateService,
         public pageBuilderService: PagesService
     ) { }
+    
+    private setIfHideForCurrentScreenType(): void {
+        let isHidden = false;
+
+        if (this.columnBlock.Hide) {
+            isHidden = this.columnBlock.Hide.some(hideIn => hideIn === this.screenType);
+        }
+
+        this.hideForCurrentScreenType = isHidden;
+    }
 
     ngOnInit(): void {
        
     }
 
-    
     onEditBlockClick(blockId: string) {
         this.pageBuilderService.navigateToEditor('block', blockId);
     }
@@ -41,9 +70,7 @@ export class SectionBlockComponent implements OnInit {
 
     onHideBlockChange(blockId: string, hideIn: DataViewScreenSize[]) {
         this.pageBuilderService.hideBlock(this.sectionId, blockId, hideIn);
-        
-        // Refresh the map for show or hide this block.
-        this.hideInChange.emit();
+        this.setIfHideForCurrentScreenType();
     }
 
     // TODO: Implement all producer & consumers.
@@ -53,5 +80,13 @@ export class SectionBlockComponent implements OnInit {
                 // propsSubject.next(e);
             break;
         }
+    }
+
+    onDragStart(event: CdkDragStart) {
+        this.pageBuilderService.changeCursorOnDragStart();
+    }
+
+    onDragEnd(event: CdkDragEnd) {
+        this.pageBuilderService.changeCursorOnDragEnd();
     }
 }

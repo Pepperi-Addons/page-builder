@@ -2,3 +2,46 @@
 @import 'ngx-lib/src/core/style/abstracts/mixins';
 @import '../../../mixins.scss';
 
+.section-block {
+    height: 100%;
+    width: 100%;
+
+    // This css is only for edit mode!!!
+    &.editable-state {
+
+        &.active {
+            .block-editable-state {
+                opacity: 1;
+                pointer-events: unset;
+            }
+        }
+
+        .block-editable-state {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        
+        .block-toolbar {
+            @include block-toolbar();
+        }
+    }               
+}
+
+.cdk-drag-preview {
+    &.section-block {
+        .block-editable-state {
+            opacity: 0;
+        }
+    }
+
+    .block-toolbar {
+        @include block-toolbar();
+    }
+}
+
+// The placeholder of the sections and the blocks in the section.
+.cdk-drag-placeholder {
+    .block-toolbar {
+        opacity: 0;
+    }
+}

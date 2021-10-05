@@ -1,4 +1,5 @@
 @import '../../../mixins.scss';
+$dash-border-color: #000;
 
 @mixin section-component-theme($pepperi-theme) {
     .section-container {
@@ -17,31 +18,17 @@
                     @include pep-cross-hatch($pepperi-theme);
                 }
             }
-            // For blocks hidden state only inside section without hidden-state
-            &:not(&.section-hidden-state) {
-                // If the current section is not active (his editor after edit click)
-                &:not(&.active-section) {
-                    .section-column {
-                        // If the current block is not active (his editor after edit click)
-                        &:not(&.active-column) {
-                            .block-hidden-state {
-                                @include pep-cross-hatch($pepperi-theme);
-                            }
-                        }
-                    }
-                }
-            }
-
+            
             .section-background {
                 .back-template {
                     background-color: #BEC3E5;
-                    @include dash-border(border-right, 2px, #000);
+                    @include dash-border(border-right, 2px, $dash-border-color);
                 }
             }
 
             .columns-wrapper {
                 .section-column {
-                    @include dash-border(border, 2px, #000);
+                    @include dash-border(border, 2px, $dash-border-color);
 
                     &.active-column {
                         background: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
@@ -49,7 +36,7 @@
 
                     &.cdk-drop-list-dragging {
                         @include focus($pepperi-theme);
-                        @include dash-border(border, 3px, #000); // important is for override the none side for no dupplicate.
+                        @include dash-border(border, 3px, $dash-border-color); // important is for override the none side for no dupplicate.
                     }
                 }
     
@@ -62,7 +49,7 @@
                                 border-left: unset;
                                 
                                 &.cdk-drop-list-dragging {
-                                    @include dash-border(border-left, 2px, #000);
+                                    @include dash-border(border-left, 2px, $dash-border-color);
                                 }
                             }
 
@@ -70,7 +57,7 @@
                                 border-top: unset;
                                 
                                 &.cdk-drop-list-dragging {
-                                    @include dash-border(border-top, 2px, #000);
+                                    @include dash-border(border-top, 2px, $dash-border-color);
                                 }
                             }
                         }

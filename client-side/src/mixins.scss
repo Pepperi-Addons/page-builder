@@ -3,6 +3,14 @@ $z-index-min: 0;
 //**************************************************************************
 // This file contains all mixins.
 //**************************************************************************
+
+$z-index-toolbar: $z-index-min + 2;
+
+@mixin block-toolbar() {
+    @include block-editor-toolbar();
+    z-index: $z-index-toolbar;
+}
+
 @mixin block-editor-toolbar() {
     position: absolute;
     top: calc(50%);

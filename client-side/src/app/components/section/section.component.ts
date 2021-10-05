@@ -53,7 +53,6 @@ export class SectionComponent implements OnInit {
     set columns(value: Array<PageSectionColumn>) {
         this._columns = value || [];
         this.calculateIfSectionContainsBlocks();
-        this.setIfHideColumnsForCurrentScreenTypeMap();
     }
     get columns(): Array<PageSectionColumn> {
         return this._columns;
@@ -84,11 +83,6 @@ export class SectionComponent implements OnInit {
     pepScreenSizeToFlipToVertical = PepScreenSizeType.SM;
     screenType: DataViewScreenSize;
     hideForCurrentScreenType = false;
-
-    private _hideColumnsForCurrentScreenTypeMap = new Map<string, boolean>();
-    get hideColumnsForCurrentScreenTypeMap(): ReadonlyMap<string, boolean> {
-        return this._hideColumnsForCurrentScreenTypeMap;
-    }
     
     constructor(
         private renderer: Renderer2,
@@ -103,7 +97,6 @@ export class SectionComponent implements OnInit {
     private setScreenType() {
         this.screenType = this.pageBuilderService.getScreenType(this.screenSize);
         this.setIfHideForCurrentScreenType();
-        this.setIfHideColumnsForCurrentScreenTypeMap();
     }
 
     private setIfHideForCurrentScreenType(): void {
@@ -114,16 +107,6 @@ export class SectionComponent implements OnInit {
         }
 
         this.hideForCurrentScreenType = isHidden;
-    }
-
-    private setIfHideColumnsForCurrentScreenTypeMap(): void {
-        this._hideColumnsForCurrentScreenTypeMap.clear();
-
-        this.columns.forEach(column => {
-            if (column.Block?.Hide?.some(hideIn => hideIn === this.screenType)) {
-                this._hideColumnsForCurrentScreenTypeMap.set(column.Block.BlockKey, true);
-            }
-        })
     }
     
     private getCssSplitString() {
@@ -215,34 +198,6 @@ export class SectionComponent implements OnInit {
 
     onHideSectionChange(hideIn: DataViewScreenSize[]) {
         this.pageBuilderService.hideSection(this.id, hideIn);
-    }
-
-    // onEditBlockClick(blockId: string) {
-    //     this.pageBuilderService.navigateToEditor('block', blockId);
-    // }
-
-    // onRemoveBlockClick(blockId: string) {
-    //     this.pageBuilderService.onRemoveBlock(this.id, blockId);
-    // }
-
-    // onHideBlockChange(blockId: string, hideIn: DataViewScreenSize[]) {
-    //     this.pageBuilderService.hideBlock(this.id, blockId, hideIn);
-    //     // Refresh the map for show or hide this block.
-    //     this.setIfHideColumnsForCurrentScreenTypeMap();
-    // }
-
-    // // TODO: Implement all producer & consumers.
-    // onBlockChange(event, blockId: string) {
-    //     switch(event.action){
-    //         case 'update-addons':
-    //             // propsSubject.next(e);
-    //         break;
-    //     }
-    // }
-
-    onBlockHideChange(event) {
-        // Refresh the map for show or hide this block.
-        this.setIfHideColumnsForCurrentScreenTypeMap();
     }
 
     onBlockDropped(event: CdkDragDrop<any[]>) {
