@@ -6,15 +6,13 @@ import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 
 @Component({
-    selector: 'page-builder-section',
+    selector: 'section',
     templateUrl: './section.component.html',
     styleUrls: ['./section.component.scss']
 })
-export class SectionComponent implements OnInit, OnChanges {
+export class SectionComponent implements OnInit {
     @ViewChild('sectionContainer') sectionContainerRef: ElementRef;
     @ViewChildren('columnsWrapper') columnsElementRef: QueryList<ElementRef>;
-
-    private readonly hideInClassPrefix = 'hide-in-';
 
     @Input() id: string;
     @Input() name: string;
@@ -207,10 +205,6 @@ export class SectionComponent implements OnInit, OnChanges {
         this.sectionColumnKeyPrefix = this.pageBuilderService.getSectionColumnKey(this.id);
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        // throw new Error('Method not implemented.');
-    }
-
     onEditSectionClick() {
         this.pageBuilderService.navigateToEditor('section', this.id);
     }
@@ -223,27 +217,32 @@ export class SectionComponent implements OnInit, OnChanges {
         this.pageBuilderService.hideSection(this.id, hideIn);
     }
 
-    onEditBlockClick(blockId: string) {
-        this.pageBuilderService.navigateToEditor('block', blockId);
-    }
+    // onEditBlockClick(blockId: string) {
+    //     this.pageBuilderService.navigateToEditor('block', blockId);
+    // }
 
-    onRemoveBlockClick(blockId: string) {
-        this.pageBuilderService.onRemoveBlock(this.id, blockId);
-    }
+    // onRemoveBlockClick(blockId: string) {
+    //     this.pageBuilderService.onRemoveBlock(this.id, blockId);
+    // }
 
-    onHideBlockChange(blockId: string, hideIn: DataViewScreenSize[]) {
-        this.pageBuilderService.hideBlock(this.id, blockId, hideIn);
+    // onHideBlockChange(blockId: string, hideIn: DataViewScreenSize[]) {
+    //     this.pageBuilderService.hideBlock(this.id, blockId, hideIn);
+    //     // Refresh the map for show or hide this block.
+    //     this.setIfHideColumnsForCurrentScreenTypeMap();
+    // }
+
+    // // TODO: Implement all producer & consumers.
+    // onBlockChange(event, blockId: string) {
+    //     switch(event.action){
+    //         case 'update-addons':
+    //             // propsSubject.next(e);
+    //         break;
+    //     }
+    // }
+
+    onBlockHideChange(event) {
         // Refresh the map for show or hide this block.
         this.setIfHideColumnsForCurrentScreenTypeMap();
-    }
-
-    // TODO:
-    onBlockChange(event, blockId: string) {
-        switch(event.action){
-            case 'update-addons':
-                // propsSubject.next(e);
-            break;
-        }
     }
 
     onBlockDropped(event: CdkDragDrop<any[]>) {

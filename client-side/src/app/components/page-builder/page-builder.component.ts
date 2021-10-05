@@ -109,7 +109,8 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
             // Clear the blocks map and set it again.
             this._pageBlocksMap.clear();
             blocksProgress.forEach(block => {
-                this._pageBlocksMap.set(block.block.Key, block.block);
+                // if (block.load)
+                    this._pageBlocksMap.set(block.block.Key, block.block);
             });
         });
 

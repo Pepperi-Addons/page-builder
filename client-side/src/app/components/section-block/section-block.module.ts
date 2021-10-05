@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SectionComponent } from './section.component';
-import { SectionBlockModule } from '../section-block/section-block.module';
+import { SectionBlockComponent } from './section-block.component'
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { ToolbarModule } from '../toolbar/toolbar.module';
@@ -11,23 +10,22 @@ import { TranslateModule, TranslateLoader, TranslateStore } from '@ngx-translate
 import { PepAddonService, PepFileService, PepHttpService } from '@pepperi-addons/ngx-lib';
 
 @NgModule({
-    declarations: [SectionComponent],
+    declarations: [SectionBlockComponent],
     imports: [
         CommonModule,
         DragDropModule,
         PepButtonModule,
         ToolbarModule,
         PepAddonLoaderModule,
-        SectionBlockModule,
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
                 useFactory: PepAddonService.createDefaultMultiTranslateLoader,
                 deps: [HttpClient, PepFileService, PepAddonService]
             }, isolate: false
-        })
+        }),
     ],
-    exports: [SectionComponent],
+    exports: [SectionBlockComponent],
     providers: [
         HttpClient,
         TranslateStore,
@@ -36,4 +34,4 @@ import { PepAddonService, PepFileService, PepHttpService } from '@pepperi-addons
         PepFileService,
     ]
 })
-export class SectionModule { }
+export class SectionBlockModule { }

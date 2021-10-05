@@ -10,8 +10,8 @@
             <page-builder-editor *ngIf="currentEditor?.type === 'page-builder'" [sectionsColumnsDropList]="sectionsColumnsDropList"
                 [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onPageEditorObjectChange($event)"></page-builder-editor>
         
-            <page-builder-section-editor *ngIf="currentEditor?.type === 'section'" 
-                [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onSectionEditorObjectChange($event)"></page-builder-section-editor>
+            <section-editor *ngIf="currentEditor?.type === 'section'" 
+                [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onSectionEditorObjectChange($event)"></section-editor>
         
             <pep-remote-loader *ngIf="currentEditor?.type === 'block'" [options]="currentEditor?.remoteModuleOptions" 
                 [hostObject]="currentEditor?.hostObject" (hostEvents)="onBlockEditorObjectChange($event);"></pep-remote-loader>

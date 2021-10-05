@@ -29,3 +29,7 @@ $z-index-min: 0;
         gap: 2rem;
     }
 }
+
+@mixin dash-border($property, $border-width, $color) {
+    #{$property}: $border-width dashed $color;
+}

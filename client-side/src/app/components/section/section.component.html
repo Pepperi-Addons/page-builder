@@ -1,6 +1,6 @@
 <div #sectionContainer *ngIf="editable || (containsBlocks && !hideForCurrentScreenType)" class="section-container " 
     [ngClass]="{ 'editable-state': editable, 'active-section': selected, 'section-hidden-state': hideForCurrentScreenType }" 
-    cdkDrag [cdkDragDisabled]="!editable" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" >
+    cdkDrag [cdkDragDisabled]="!editable || selected || selectedBlockId.length > 0" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" >
     <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
         class="section-toolbar" [title]="name" [isDraggable]="true"
         (editClick)="onEditSectionClick();" (removeClick)="onRemoveSectionClick()"
@@ -25,7 +25,9 @@
                 [ngClass]="{ 'block-hidden-state': hideColumnsForCurrentScreenTypeMap.has(column.Block.BlockKey) }"
                 cdkDrag [cdkDragData]="column.Block" [cdkDragDisabled]="!editable || !canDrag" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" 
             >
-                <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
+                <section-block [sectionId]="id" [pageBlock]="pageBlocksMap.get(column.Block.BlockKey)" [columnBlock]="column.Block" [editable]="editable" [canDrag]="canDrag"
+                    (hideInChange)="onBlockHideChange($event)"></section-block>
+                <!-- <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
                     class="block-toolbar" [title]="pageBlocksMap.get(column.Block.BlockKey).Relation?.Description" [isDraggable]="true"
                     (editClick)="onEditBlockClick(column.Block.BlockKey);" (removeClick)="onRemoveBlockClick(column.Block.BlockKey)"
                     [hideIn]="column.Block.Hide" (hideInChange)="onHideBlockChange(column.Block.BlockKey, $event)">
@@ -36,7 +38,7 @@
                         [hostObject]="pageBlocksMap.get(column.Block.BlockKey).Configuration"
                         (hostEvents)="onBlockChange($event, column.Block.BlockKey);">
                     </pep-remote-loader>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>

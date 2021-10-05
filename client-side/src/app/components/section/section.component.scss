@@ -56,18 +56,25 @@ $z-index-toolbar: $z-index-min + 2;
                     .block-editable-state {
                         opacity: 1;
                     }
+
+                    .section-column-block {
+                        ::ng-deep .block-editable-state {
+                            opacity: 1;
+                            pointer-events: unset;
+                        }
+                    }
                 }
 
                 .section-column-block {
                     height: 100%;
                     width: 100%;
 
-                    .block-editable-state {
+                    ::ng-deep .block-editable-state {
                         pointer-events: none;
                         opacity: 0.5;
                     }
                     
-                    .block-toolbar {
+                    ::ng-deep .block-toolbar {
                         @include block-toolbar();
                     }
                 }
@@ -102,11 +109,11 @@ $z-index-toolbar: $z-index-min + 2;
 }
 
 .cdk-drag-preview {
-    .block-editable-state {
+    ::ng-deep .block-editable-state {
         opacity: 0;
     }
 
-    .block-toolbar {
+    ::ng-deep .block-toolbar {
         @include block-toolbar();
     }
 }
@@ -117,7 +124,7 @@ $z-index-toolbar: $z-index-min + 2;
         opacity: 0.5;
     }
 
-    .block-toolbar {
+    ::ng-deep .block-toolbar {
         opacity: 0;
     }
 }
