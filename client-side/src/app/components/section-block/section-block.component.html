@@ -1,0 +1,19 @@
+<div *ngIf="pageBlock && (editable || !hideForCurrentScreenType)" 
+    class="section-block"
+    [ngClass]="{ 'editable-state': editable, 'block-hidden-state': hideForCurrentScreenType, 'active': active }"
+    cdkDrag [cdkDragData]="columnBlock" [cdkDragDisabled]="!editable || !canDrag" 
+    (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)"
+    >
+    <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
+        class="block-toolbar" [title]="pageBlock.Relation?.Description" [isDraggable]="true"
+        (editClick)="onEditBlockClick(columnBlock.BlockKey);" (removeClick)="onRemoveBlockClick(columnBlock.BlockKey)"
+        [hideIn]="columnBlock.Hide" (hideInChange)="onHideBlockChange(columnBlock.BlockKey, $event)">
+    </toolbar-actions>
+    <div [ngClass]="{'block-editable-state': editable }">
+        <pep-remote-loader 
+            [options]="pageBlock.Relation?.Options"
+            [hostObject]="pageBlock.Configuration"
+            (hostEvents)="onBlockChange($event, columnBlock.BlockKey);">
+        </pep-remote-loader>
+    </div>
+</div>

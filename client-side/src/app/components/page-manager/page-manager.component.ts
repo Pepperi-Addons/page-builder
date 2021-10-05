@@ -143,7 +143,7 @@ export class PageManagerComponent implements OnInit {
     }
 
     onBlockEditorObjectChange(event: any) {
-
+        // TODO: Implement configuration data change.
     }
 
     onNavigateBackFromEditor() {

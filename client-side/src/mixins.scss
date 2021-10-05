@@ -3,6 +3,14 @@ $z-index-min: 0;
 //**************************************************************************
 // This file contains all mixins.
 //**************************************************************************
+
+$z-index-toolbar: $z-index-min + 2;
+
+@mixin block-toolbar() {
+    @include block-editor-toolbar();
+    z-index: $z-index-toolbar;
+}
+
 @mixin block-editor-toolbar() {
     position: absolute;
     top: calc(50%);
@@ -28,4 +36,8 @@ $z-index-min: 0;
     &.gap-LG {
         gap: 2rem;
     }
+}
+
+@mixin dash-border($property, $border-width, $color) {
+    #{$property}: $border-width dashed $color;
 }

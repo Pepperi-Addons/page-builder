@@ -6,15 +6,13 @@ import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 
 @Component({
-    selector: 'page-builder-section',
+    selector: 'section',
     templateUrl: './section.component.html',
     styleUrls: ['./section.component.scss']
 })
-export class SectionComponent implements OnInit, OnChanges {
+export class SectionComponent implements OnInit {
     @ViewChild('sectionContainer') sectionContainerRef: ElementRef;
     @ViewChildren('columnsWrapper') columnsElementRef: QueryList<ElementRef>;
-
-    private readonly hideInClassPrefix = 'hide-in-';
 
     @Input() id: string;
     @Input() name: string;
@@ -55,7 +53,6 @@ export class SectionComponent implements OnInit, OnChanges {
     set columns(value: Array<PageSectionColumn>) {
         this._columns = value || [];
         this.calculateIfSectionContainsBlocks();
-        this.setIfHideColumnsForCurrentScreenTypeMap();
     }
     get columns(): Array<PageSectionColumn> {
         return this._columns;
@@ -86,11 +83,6 @@ export class SectionComponent implements OnInit, OnChanges {
     pepScreenSizeToFlipToVertical = PepScreenSizeType.SM;
     screenType: DataViewScreenSize;
     hideForCurrentScreenType = false;
-
-    private _hideColumnsForCurrentScreenTypeMap = new Map<string, boolean>();
-    get hideColumnsForCurrentScreenTypeMap(): ReadonlyMap<string, boolean> {
-        return this._hideColumnsForCurrentScreenTypeMap;
-    }
     
     constructor(
         private renderer: Renderer2,
@@ -105,7 +97,6 @@ export class SectionComponent implements OnInit, OnChanges {
     private setScreenType() {
         this.screenType = this.pageBuilderService.getScreenType(this.screenSize);
         this.setIfHideForCurrentScreenType();
-        this.setIfHideColumnsForCurrentScreenTypeMap();
     }
 
     private setIfHideForCurrentScreenType(): void {
@@ -116,16 +107,6 @@ export class SectionComponent implements OnInit, OnChanges {
         }
 
         this.hideForCurrentScreenType = isHidden;
-    }
-
-    private setIfHideColumnsForCurrentScreenTypeMap(): void {
-        this._hideColumnsForCurrentScreenTypeMap.clear();
-
-        this.columns.forEach(column => {
-            if (column.Block?.Hide?.some(hideIn => hideIn === this.screenType)) {
-                this._hideColumnsForCurrentScreenTypeMap.set(column.Block.BlockKey, true);
-            }
-        })
     }
     
     private getCssSplitString() {
@@ -207,10 +188,6 @@ export class SectionComponent implements OnInit, OnChanges {
         this.sectionColumnKeyPrefix = this.pageBuilderService.getSectionColumnKey(this.id);
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        // throw new Error('Method not implemented.');
-    }
-
     onEditSectionClick() {
         this.pageBuilderService.navigateToEditor('section', this.id);
     }
@@ -221,29 +198,6 @@ export class SectionComponent implements OnInit, OnChanges {
 
     onHideSectionChange(hideIn: DataViewScreenSize[]) {
         this.pageBuilderService.hideSection(this.id, hideIn);
-    }
-
-    onEditBlockClick(blockId: string) {
-        this.pageBuilderService.navigateToEditor('block', blockId);
-    }
-
-    onRemoveBlockClick(blockId: string) {
-        this.pageBuilderService.onRemoveBlock(this.id, blockId);
-    }
-
-    onHideBlockChange(blockId: string, hideIn: DataViewScreenSize[]) {
-        this.pageBuilderService.hideBlock(this.id, blockId, hideIn);
-        // Refresh the map for show or hide this block.
-        this.setIfHideColumnsForCurrentScreenTypeMap();
-    }
-
-    // TODO:
-    onBlockChange(event, blockId: string) {
-        switch(event.action){
-            case 'update-addons':
-                // propsSubject.next(e);
-            break;
-        }
     }
 
     onBlockDropped(event: CdkDragDrop<any[]>) {

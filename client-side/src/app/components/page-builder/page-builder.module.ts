@@ -48,7 +48,6 @@ import { PepSizeDetectorModule } from '@pepperi-addons/ngx-lib/size-detector';
         //// When not using module as sub-addon please remark this for not loading twice resources
         MatCardModule,
         MatButtonModule,
-        SectionModule,
         ToolbarModule,
         PepPageLayoutModule,
         PepSelectModule,
@@ -61,6 +60,7 @@ import { PepSizeDetectorModule } from '@pepperi-addons/ngx-lib/size-detector';
         PepGroupButtonsModule,
         // PepIconModule,
         MatIconModule,
+        SectionModule,
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,

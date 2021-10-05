@@ -13,7 +13,7 @@ export interface IAllSplitOption {
 }
 
 @Component({
-    selector: 'page-builder-section-editor',
+    selector: 'section-editor',
     templateUrl: './section-editor.component.html',
     styleUrls: ['./section-editor.component.scss']
 })

@@ -2,13 +2,6 @@
 @import 'ngx-lib/src/core/style/abstracts/mixins';
 @import '../../../mixins.scss';
 
-$z-index-toolbar: $z-index-min + 2;
-
-@mixin block-toolbar() {
-    @include block-editor-toolbar();
-    z-index: $z-index-toolbar;
-}
-
 .section-container {
     position: relative;
     display: grid;
@@ -52,41 +45,10 @@ $z-index-toolbar: $z-index-min + 2;
                 &.active-column {
                     z-index: $z-index-min + 12;
                     position: relative;
-                    
-                    .block-editable-state {
-                        opacity: 1;
-                    }
-                }
-
-                .section-column-block {
-                    height: 100%;
-                    width: 100%;
-
-                    .block-editable-state {
-                        pointer-events: none;
-                        opacity: 0.5;
-                    }
-                    
-                    .block-toolbar {
-                        @include block-toolbar();
-                    }
                 }
             }
         }
     }
-
-    // // This css is only for *NOT* edit mode!!!
-    // &:not(&.editable-state) {
-    //     &.section-hidden-state {
-    //         display: none;
-    //     }
-    //     // For blocks hidden state only inside section without hidden-state
-    //     &:not(&.section-hidden-state) {
-    //         .block-hidden-state {
-    //             display: none;
-    //         }
-    //     }
-    // }
 
     // This css is run in edit mode and also without edit mode!!!
     .columns-wrapper {
@@ -101,23 +63,9 @@ $z-index-toolbar: $z-index-min + 2;
     }
 }
 
-.cdk-drag-preview {
-    .block-editable-state {
-        opacity: 0;
-    }
-
-    .block-toolbar {
-        @include block-toolbar();
-    }
-}
-
 // The placeholder of the sections and the blocks in the section.
 .cdk-drag-placeholder {
     &.section-container {
         opacity: 0.5;
-    }
-
-    .block-toolbar {
-        opacity: 0;
     }
 }
