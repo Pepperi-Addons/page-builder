@@ -6,6 +6,7 @@ import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 import { SlideshowService, PepperiTableComponent } from './index';
 import { Observable } from 'rxjs';
 import { PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
+import { ISlideEditor, ISlideShow, ISlideshowEditor } from '../slideshow.model';
 
 
 @Component({
@@ -22,8 +23,25 @@ export class SlideshowComponent implements OnInit {
     options: {key:string, value:string}[] = [{key: "Option1", value: 'Option 1'},{key: "Option2", value: 'Option 2'}];
     dataSource$: Observable<any[]>
     displayedColumns = ['Name'];
-    @Input() hostObject: any;
+
+    // @Input() hostObject: any;
+    // @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
+    private _hostObject: ISlideShow = this.getDefaultHostObject();
+    @Input() 
+    set hostObject(value: ISlideShow) {
+        
+        if (!value) {
+            value = this.getDefaultHostObject();
+        }
+
+        this._hostObject = value;
+    }
+    get hostObject(): ISlideShow {
+        return this._hostObject;
+    }
+
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
+
     @ViewChild(PepperiTableComponent) table: PepperiTableComponent;
 
 
@@ -39,15 +57,18 @@ export class SlideshowComponent implements OnInit {
         });
 
     }
+    
+    private getDefaultHostObject(): ISlideShow {
+        return { slideshowConfig: new ISlideshowEditor(), slides: Array<ISlideEditor>() };
+    }
+
+    private raiseBlockLoadedEvent() {
+        this.hostEvents.emit({action: 'block-loaded'});
+    }
 
     ngOnInit() {
-       this.dataSource$ = this.addonService.pepGet(`/items`);
-       
-       this.dataSource$.toPromise().then(res => this.hostEvents.emit({action: 'block-loaded'}));
-    //    .pipe(
-    //        map((addons: InstalledAddon[]) =>
-    //          addons.filter(addon => addon?.Addon).map(addon => addon?.Addon))
-    //     );
+        this.dataSource$ = this.addonService.pepGet(`/items`);
+        this.dataSource$.toPromise().then(res => this.raiseBlockLoadedEvent());
     }
 
     openDialog(){
