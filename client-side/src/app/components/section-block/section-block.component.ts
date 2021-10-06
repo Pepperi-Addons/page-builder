@@ -60,25 +60,28 @@ export class SectionBlockComponent implements OnInit {
        
     }
 
-    onEditBlockClick(blockId: string) {
-        this.pageBuilderService.navigateToEditor('block', blockId);
+    onEditBlockClick() {
+        this.pageBuilderService.navigateToEditor('block', this.pageBlock.Key);
     }
 
-    onRemoveBlockClick(blockId: string) {
-        this.pageBuilderService.onRemoveBlock(this.sectionId, blockId);
+    onRemoveBlockClick() {
+        this.pageBuilderService.onRemoveBlock(this.sectionId, this.pageBlock.Key);
     }
 
-    onHideBlockChange(blockId: string, hideIn: DataViewScreenSize[]) {
-        this.pageBuilderService.hideBlock(this.sectionId, blockId, hideIn);
+    onHideBlockChange(hideIn: DataViewScreenSize[]) {
+        this.pageBuilderService.hideBlock(this.sectionId, this.pageBlock.Key, hideIn);
         this.setIfHideForCurrentScreenType();
     }
 
-    // TODO: Implement all producer & consumers.
-    onBlockChange(event, blockId: string) {
+    onBlockChange(event) {
+        // TODO: Implement all other events.
         switch(event.action){
-            case 'update-addons':
+            case 'block-loaded':
+                this.pageBuilderService.updateBlockLoaded(this.pageBlock.Key);
+                break;
+            // case 'update-addons':
                 // propsSubject.next(e);
-            break;
+                // break;
         }
     }
 

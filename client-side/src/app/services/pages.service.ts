@@ -70,13 +70,18 @@ export interface IAvailableBlock {
 
 export interface IBlockProgress {
     block: PageBlock;
-    load: boolean;
+    loaded: boolean;
+    priority: number;
 }
 
 @Injectable({
     providedIn: 'root',
 })
 export class PagesService {
+    private readonly MIN_PRIORITY = 1;
+    private readonly MID_PRIORITY = 2;
+    private readonly MAX_PRIORITY = 3;
+
     private editorsBreadCrumb = Array<IEditor>();
 
     // This subject is for the screen size change events.
@@ -118,6 +123,11 @@ export class PagesService {
         return this._pageBlockProgress$.asObservable();
     }
 
+    private _currentBlocksPriority: number = this.MIN_PRIORITY;
+    get currentBlocksPriority() {
+        return this._currentBlocksPriority;
+    }
+
     private pageSubject: BehaviorSubject<Page> = new BehaviorSubject<Page>(null);
     get pageLoad$(): Observable<Page> {
         // return this.pageSubject.asObservable().pipe(filter(page => !!page), distinctUntilKeyChanged("Key"));
@@ -150,10 +160,16 @@ export class PagesService {
 
     private loadBlocks(page: Page) {
         if (page) {
-            // TODO: Write some logic to load the blocks by priority.
+            // Some logic to load the blocks by priority (first none or Produce only, second Consume & Produce, third Consume only).
             if (page.Blocks) {
                 page.Blocks.forEach(block => {
-                    this.addBlockProgress(block, false);
+                    const bp = this.addBlockProgress(block);
+                    
+                    // If the currentBlocksPriority is smaller then bp.priority set the bp.priority as the current.
+                    if (this.currentBlocksPriority < bp.priority) {
+                        // Set the current priority to start load all blocks by the current priority.
+                        this._currentBlocksPriority = bp.priority;
+                    }
                 });
                 
                 this.notifyBlockProgressMapChange();
@@ -163,14 +179,71 @@ export class PagesService {
         }
     }
     
-    private addBlockProgress(block: PageBlock, notify = true) {
-        // Create block progress and add it to the map.
-        const initialProgress: IBlockProgress = { block, load: false };
-        this._pageBlockProgressMap.set(block.Key, initialProgress);
+    private getBlockPriority(block: PageBlock): number {
+        // first none or Produce only, second Consume & Produce, third Consume only
+        let priority = this.MAX_PRIORITY;
 
-        if (notify) {
+        if (block.PageConfiguration) {
+            if (block.PageConfiguration.Consume && block.PageConfiguration.Produce) {
+                priority = this.MID_PRIORITY;
+            } else if (block.PageConfiguration.Consume) {
+                priority = this.MIN_PRIORITY;
+            }
+        }
+
+        // TODO: Remove this - only for test the logic.
+        // if (block.Key !== "dfc30eb3-a9bf-321c-8639-254ac7f2c66c") {
+        //     priority = this.MIN_PRIORITY;
+        // }
+
+        return priority;
+    }
+    
+    private setBlockAsLoadedAndCalculateCurrentPriority(blockKey: string) {
+        const bpToUpdate = this._pageBlockProgressMap.get(blockKey);
+
+        if (bpToUpdate) {
+            bpToUpdate.loaded = true;
+            let allBlocksWithSamePriorityLoaded = true;
+
+            this._pageBlockProgressMap.forEach(bp => {
+                if (bp.priority === this.currentBlocksPriority && !bp.loaded) {
+                    allBlocksWithSamePriorityLoaded = false;
+                }
+            });
+
+            // Only if all blocks from the same priority are loaded then move on to the next priority.
+            if (allBlocksWithSamePriorityLoaded) {
+                let nextPriority = this.MIN_PRIORITY;
+
+                // Find the next priority to load.
+                this._pageBlockProgressMap.forEach(bp => {
+                    if (!bp.loaded && bp.priority > nextPriority) {
+                        nextPriority = bp.priority;
+                    }
+                });
+
+                // Set the next priority.
+                this._currentBlocksPriority = nextPriority;
+            }
+
             this.notifyBlockProgressMapChange();
         }
+    }
+
+    private addBlockProgress(block: PageBlock): IBlockProgress {
+        const priority = this.getBlockPriority(block);
+
+        // Create block progress and add it to the map.
+        const initialProgress: IBlockProgress = { 
+            loaded: false,
+            priority,
+            block
+        };
+
+        this._pageBlockProgressMap.set(block.Key, initialProgress);
+
+        return initialProgress;
     }
 
     private addPageBlock(block: PageBlock) {
@@ -179,6 +252,7 @@ export class PagesService {
 
         // Add the block progress.
         this.addBlockProgress(block);
+        this.notifyBlockProgressMapChange();
     }
 
     private removePageBlock(blockId: string) {
@@ -210,12 +284,6 @@ export class PagesService {
         this._pageBlockProgressMap.clear();
         this.notifyBlockProgressMapChange();
     }
-    
-    // TODO:
-    // private updateBlockLoaded(blockKey: string, isLoad: boolean) {
-    //     this._pageBlockProgressMap.get(blockKey).load = isLoad;
-    //     this.notifyBlockProgressMapChange();
-    // }
     
     private notifyBlockProgressMapChange() {
         this._pageBlockProgress$.next(this.pageBlockProgressMap);
@@ -578,7 +646,11 @@ export class PagesService {
             }
         }
     }
-
+    
+    updateBlockLoaded(blockKey: string) {
+        this.setBlockAsLoadedAndCalculateCurrentPriority(blockKey);
+    }
+    
     changeCursorOnDragStart() {
         document.body.classList.add('inheritCursors');
         document.body.style.cursor = 'grabbing';
