@@ -14,7 +14,7 @@
                 [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onSectionEditorObjectChange($event)"></section-editor>
         
             <pep-remote-loader *ngIf="currentEditor?.type === 'block'" [options]="currentEditor?.remoteModuleOptions" 
-                [hostObject]="currentEditor?.hostObject" (hostEvents)="onBlockEditorObjectChange($event);"></pep-remote-loader>
+                [hostObject]="currentEditor?.hostObject" (hostEvents)="onBlockEditorHostEvents($event);"></pep-remote-loader>
         </pep-side-bar>
     </div>
     <ng-container pep-main-area>

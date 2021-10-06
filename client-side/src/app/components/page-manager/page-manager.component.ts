@@ -142,7 +142,13 @@ export class PageManagerComponent implements OnInit {
         this.pageBuilderService.updateSectionFromEditor(sectionEditor);
     }
 
-    onBlockEditorObjectChange(event: any) {
+    onBlockEditorHostEvents(event: any) {
+        switch(event.action){
+            case 'set-configuration':
+                this.pageBuilderService.updateBlockConfiguration(this.currentEditor.id, event.configuration);
+                break;
+        }
+        
         // TODO: Implement configuration data change.
     }
 

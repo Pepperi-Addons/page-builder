@@ -108,16 +108,16 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
         this.pageBuilderService.pageBlockProgress$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
             // Clear the blocks map and set it again.
             this._pageBlocksMap.clear();
-            const pbRelationsNames = [];
+            const pbRelationsNames = new Map<string, boolean>();
 
             blocksProgress.forEach(bp => {
                 if (bp.priority >= this.pageBuilderService.currentBlocksPriority) {
                     // Check that there is no other block with the same relation name that need to load.
-                    if (bp.loaded || !pbRelationsNames.some(relationName => relationName === bp.block.Relation.Name)) {
+                    if (bp.loaded || !pbRelationsNames.has(bp.block.Relation.Name)) {
                         
                         // Add to the map only relations that not added yet.
                         if (!bp.loaded) {
-                            pbRelationsNames.push(bp.block.Relation.Name);
+                            pbRelationsNames.set(bp.block.Relation.Name, true);
                         }
 
                         this._pageBlocksMap.set(bp.block.Key, bp.block);

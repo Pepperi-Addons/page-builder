@@ -57,7 +57,11 @@ export class SectionBlockComponent implements OnInit {
     }
 
     ngOnInit(): void {
-       
+        this.pageBuilderService.onPageBlockChange$.subscribe((pageBlock: PageBlock) => {
+            if (this.pageBlock.Key === pageBlock.Key) {
+                this.pageBlock = pageBlock;
+            }
+        });
     }
 
     onEditBlockClick() {
@@ -73,15 +77,12 @@ export class SectionBlockComponent implements OnInit {
         this.setIfHideForCurrentScreenType();
     }
 
-    onBlockChange(event) {
+    onBlockHostEvents(event) {
         // TODO: Implement all other events.
         switch(event.action){
             case 'block-loaded':
                 this.pageBuilderService.updateBlockLoaded(this.pageBlock.Key);
                 break;
-            // case 'update-addons':
-                // propsSubject.next(e);
-                // break;
         }
     }
 

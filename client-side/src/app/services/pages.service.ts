@@ -82,38 +82,39 @@ export class PagesService {
     private readonly MID_PRIORITY = 2;
     private readonly MAX_PRIORITY = 3;
 
-    private editorsBreadCrumb = Array<IEditor>();
+    private _editorsBreadCrumb = Array<IEditor>();
 
     // This subject is for the screen size change events.
-    private screenSizeSubject: BehaviorSubject<PepScreenSizeType> = new BehaviorSubject<PepScreenSizeType>(PepScreenSizeType.XL);
+    private _screenSizeSubject: BehaviorSubject<PepScreenSizeType> = new BehaviorSubject<PepScreenSizeType>(PepScreenSizeType.XL);
     get onScreenSizeChange$(): Observable<PepScreenSizeType> {
-        return this.screenSizeSubject.asObservable().pipe(distinctUntilChanged());
+        return this._screenSizeSubject.asObservable().pipe(distinctUntilChanged());
     }
 
     // This subject is for demostrate the container size (Usage only in edit mode).
-    private screenWidthSubject: BehaviorSubject<string> = new BehaviorSubject<string>('100%');
+    private _screenWidthSubject: BehaviorSubject<string> = new BehaviorSubject<string>('100%');
     get onScreenWidthChange$(): Observable<string> {
-        return this.screenWidthSubject.asObservable().pipe(distinctUntilChanged());
+        return this._screenWidthSubject.asObservable().pipe(distinctUntilChanged());
     }
 
     // This subject is for load the current editor (Usage only in edit mode).
-    private editorSubject: BehaviorSubject<IEditor> = new BehaviorSubject<IEditor>(null);
+    private _editorSubject: BehaviorSubject<IEditor> = new BehaviorSubject<IEditor>(null);
     get onEditorChange$(): Observable<IEditor> {
-        return this.editorSubject.asObservable().pipe(distinctUntilChanged());
+        return this._editorSubject.asObservable().pipe(distinctUntilChanged());
     }
 
     // This subject is for load available blocks on the main editor (Usage only in edit mode).
-    private availableBlocksSubject: BehaviorSubject<IAvailableBlock[]> = new BehaviorSubject<IAvailableBlock[]>([]);
+    private _availableBlocksSubject: BehaviorSubject<IAvailableBlock[]> = new BehaviorSubject<IAvailableBlock[]>([]);
     get availableBlocksLoadedSubject$(): Observable<IAvailableBlock[]> {
-        return this.availableBlocksSubject.asObservable().pipe(distinctUntilChanged());
+        return this._availableBlocksSubject.asObservable().pipe(distinctUntilChanged());
     }
 
     // This is the sections subject (a pare from the page object)
-    private sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
+    private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
     get onSectionsChange$(): Observable<PageSection[]> {
-        return this.sectionsSubject.asObservable();
+        return this._sectionsSubject.asObservable();
     }
     
+    // This subjects is for load the page blocks into map for better performance and order them by priorities.
     private _pageBlockProgressMap = new Map<string, IBlockProgress>();
     get pageBlockProgressMap(): ReadonlyMap<string, IBlockProgress> {
         return this._pageBlockProgressMap;
@@ -123,9 +124,16 @@ export class PagesService {
         return this._pageBlockProgress$.asObservable();
     }
 
+    // This is for the current stage of the priority to know what to load in each step.
     private _currentBlocksPriority: number = this.MIN_PRIORITY;
     get currentBlocksPriority() {
         return this._currentBlocksPriority;
+    }
+    
+    // This subject is for page block change.
+    private _pageBlockSubject: BehaviorSubject<PageBlock> = new BehaviorSubject<PageBlock>(null);
+    get onPageBlockChange$(): Observable<PageBlock> {
+        return this._pageBlockSubject.asObservable();
     }
 
     private pageSubject: BehaviorSubject<Page> = new BehaviorSubject<Page>(null);
@@ -154,7 +162,7 @@ export class PagesService {
     }
 
     private loadSections(page: Page) {
-        this.sectionsSubject.next(page?.Layout.Sections ?? []);
+        this._sectionsSubject.next(page?.Layout.Sections ?? []);
         this.loadBlocks(page);
     }
 
@@ -290,7 +298,7 @@ export class PagesService {
     }
 
     private loadDefaultEditor(page: Page) {
-        this.editorsBreadCrumb = new Array<IEditor>();
+        this._editorsBreadCrumb = new Array<IEditor>();
 
         if (page) {
             const pageEditor: IPageEditor = {
@@ -305,22 +313,22 @@ export class PagesService {
                 // roundedCorners: page?.Layout.
             };
 
-            this.editorsBreadCrumb.push({
+            this._editorsBreadCrumb.push({
                 id: 'main',
                 type : 'page-builder',
                 title: page?.Name,
                 hostObject: pageEditor
             });
 
-            this.editorSubject.next(this.editorsBreadCrumb[0]);
+            this._editorSubject.next(this._editorsBreadCrumb[0]);
         } else {
-            this.editorSubject.next(null);
+            this._editorSubject.next(null);
         }
     }
 
     private changeCurrentEditor() {
-        if (this.editorsBreadCrumb.length > 0) {
-            this.editorSubject.next(this.editorsBreadCrumb[this.editorsBreadCrumb.length - 1]);
+        if (this._editorsBreadCrumb.length > 0) {
+            this._editorSubject.next(this._editorsBreadCrumb[this._editorsBreadCrumb.length - 1]);
         }
     }
 
@@ -365,10 +373,10 @@ export class PagesService {
 
     private getSectionEditor(sectionId: string): IEditor {
         // Get the current block.
-        const sectionIndex = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
+        const sectionIndex = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
         
         if (sectionIndex >= 0) {
-            let section = this.sectionsSubject.value[sectionIndex];
+            let section = this._sectionsSubject.value[sectionIndex];
             const sectionEditor: ISectionEditor = {
                 id: section.Key,
                 sectionName: section.Name || '',
@@ -397,10 +405,10 @@ export class PagesService {
         if (sectionColumnArr.length === 2) {
             // Get the section id to get the section index.
             const sectionId = sectionColumnArr[0];
-            const sectionIndex = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
+            const sectionIndex = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
             // Get the column index.
             const columnIndex = sectionColumnArr[1];
-            currentColumn = this.sectionsSubject.value[sectionIndex].Columns[columnIndex];
+            currentColumn = this._sectionsSubject.value[sectionIndex].Columns[columnIndex];
         } 
         
         return currentColumn;
@@ -461,17 +469,17 @@ export class PagesService {
         // Cannot navigate into 'page-builder' because this is first and const in the editorsBreadCrumbs.
         if (editorType !== 'page-builder' && id?.length > 0) {
             // Check which editor we have now
-            const currentEditor = this.editorsBreadCrumb[this.editorsBreadCrumb.length - 1];
+            const currentEditor = this._editorsBreadCrumb[this._editorsBreadCrumb.length - 1];
 
             // Only if it's another editor.
             if(currentEditor.id !== id) {
                 if (currentEditor.type !== 'page-builder') {
                     // Always pop the last and insert the current.
-                    this.editorsBreadCrumb.pop();
+                    this._editorsBreadCrumb.pop();
                 }
 
                 let editor = this.getEditor(editorType, id);
-                this.editorsBreadCrumb.push(editor);
+                this._editorsBreadCrumb.push(editor);
                 this.changeCurrentEditor();
                 success = true;
             }
@@ -482,9 +490,9 @@ export class PagesService {
 
     navigateBackFromEditor() {
         // Keep the page builder editor.
-        if (this.editorsBreadCrumb.length > 1) {
+        if (this._editorsBreadCrumb.length > 1) {
             // Maybe we want to compare the last editor for validation ?
-            const lastEditor = this.editorsBreadCrumb.pop();
+            const lastEditor = this._editorsBreadCrumb.pop();
             this.changeCurrentEditor();
         }
     }
@@ -507,11 +515,11 @@ export class PagesService {
     }
 
     updateSectionFromEditor(sectionData: ISectionEditor) {
-        const sectionIndex = this.sectionsSubject.value.findIndex(section => section.Key === sectionData.id);
+        const sectionIndex = this._sectionsSubject.value.findIndex(section => section.Key === sectionData.id);
         
         // Update section details.
         if (sectionIndex >= 0) {
-            const currentSection = this.sectionsSubject.value[sectionIndex];
+            const currentSection = this._sectionsSubject.value[sectionIndex];
             currentSection.Name = sectionData.sectionName;
             currentSection.Split = sectionData.split;
             currentSection.Height = sectionData.height;
@@ -536,13 +544,13 @@ export class PagesService {
             }
         
             // Update editor title 
-            const currentEditor = this.editorSubject.value;
+            const currentEditor = this._editorSubject.value;
             if (currentEditor.type === 'section' && currentEditor.id === currentSection.Key) {
                 currentEditor.title = this.getSectionEditorTitle(currentSection, sectionIndex);
             }
 
             // Update sections change.
-            this.sectionsSubject.next(this.sectionsSubject.value);
+            this._sectionsSubject.next(this._sectionsSubject.value);
         }
     }
 
@@ -558,54 +566,54 @@ export class PagesService {
         
         // Add the new section to page layout.
         this.pageSubject.value.Layout.Sections.push(section);
-        this.sectionsSubject.next(this.pageSubject.value.Layout.Sections);
+        this._sectionsSubject.next(this.pageSubject.value.Layout.Sections);
     }
 
     removeSection(sectionId: string) {
-        const index = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
+        const index = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
         if (index > -1) {
             // Get the blocks id's to remove.
-            const blocksIds = this.sectionsSubject.value[index].Columns.map(column => column?.Block?.BlockKey);
+            const blocksIds = this._sectionsSubject.value[index].Columns.map(column => column?.Block?.BlockKey);
             
             // Remove the blocks by ids.
             this.removeBlocks(blocksIds)
 
             // Remove section.
-            this.sectionsSubject.value.splice(index, 1);
+            this._sectionsSubject.value.splice(index, 1);
         }
     }
 
     hideSection(sectionId: string, hideIn: DataViewScreenSize[]) {
-        const index = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
+        const index = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
         if (index > -1) {
-            this.sectionsSubject.value[index].Hide = hideIn;
+            this._sectionsSubject.value[index].Hide = hideIn;
         }
     }
 
     onSectionDropped(event: CdkDragDrop<any[]>) {
-        moveItemInArray(this.sectionsSubject.value, event.previousIndex, event.currentIndex);
+        moveItemInArray(this._sectionsSubject.value, event.previousIndex, event.currentIndex);
     }
 
     onRemoveBlock(sectionId: string, blockId: string) {
-        const index = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
+        const index = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
         if (index > -1) {
-            const columnIndex = this.sectionsSubject.value[index].Columns.findIndex(column => column.Block?.BlockKey === blockId);
+            const columnIndex = this._sectionsSubject.value[index].Columns.findIndex(column => column.Block?.BlockKey === blockId);
             if (columnIndex > -1) {
                 // Remove the block.
                 this.removeBlocks([blockId]);
 
                 // Remove the block from section column.
-                delete this.sectionsSubject.value[index].Columns[columnIndex].Block;
+                delete this._sectionsSubject.value[index].Columns[columnIndex].Block;
             }
         }
     }
 
     hideBlock(sectionId: string, blockId: string, hideIn: DataViewScreenSize[]) {
-        const index = this.sectionsSubject.value.findIndex(section => section.Key === sectionId);
+        const index = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
         if (index > -1) {
-            const columnIndex = this.sectionsSubject.value[index].Columns.findIndex(column => column.Block?.BlockKey === blockId);
+            const columnIndex = this._sectionsSubject.value[index].Columns.findIndex(column => column.Block?.BlockKey === blockId);
             if (columnIndex > -1) {
-                this.sectionsSubject.value[index].Columns[columnIndex].Block.Hide = hideIn;
+                this._sectionsSubject.value[index].Columns[columnIndex].Block.Hide = hideIn;
             }
         }
     }
@@ -651,6 +659,16 @@ export class PagesService {
         this.setBlockAsLoadedAndCalculateCurrentPriority(blockKey);
     }
     
+    updateBlockConfiguration(blockKey: string, configuration: any) {
+        const pageBlock = this.pageBlockProgressMap.get(blockKey);
+        
+        if (pageBlock) {
+            pageBlock.block.Configuration = configuration;
+            this._pageBlockSubject.next(pageBlock.block);
+        }
+    }
+    
+
     changeCursorOnDragStart() {
         document.body.classList.add('inheritCursors');
         document.body.style.cursor = 'grabbing';
@@ -663,7 +681,7 @@ export class PagesService {
 
     doesColumnContainBlock(sectionId: string, columnIndex: number): boolean {
         let res = false;
-        const section = this.sectionsSubject.value.find(section => section.Key === sectionId);
+        const section = this._sectionsSubject.value.find(section => section.Key === sectionId);
 
         if (section && columnIndex >= 0 && section.Columns.length > columnIndex) {
             res = !!section.Columns[columnIndex].Block;
@@ -675,22 +693,22 @@ export class PagesService {
     setScreenWidth(value: string) {
         let width = this.utilitiesService.coerceNumberProperty(value, 0);
         if (width === 0) {
-            this.screenWidthSubject.next('100%');
-            this.screenSizeSubject.next(PepScreenSizeType.XL);
+            this._screenWidthSubject.next('100%');
+            this._screenSizeSubject.next(PepScreenSizeType.XL);
         } else {
-            this.screenWidthSubject.next(`${width}px`);
+            this._screenWidthSubject.next(`${width}px`);
 
             // Change the size according the width.
             if (width >= 1920) {
-                this.screenSizeSubject.next(PepScreenSizeType.XL);
+                this._screenSizeSubject.next(PepScreenSizeType.XL);
             } else if (width >= 1280 && width < 1920) {
-                this.screenSizeSubject.next(PepScreenSizeType.LG);
+                this._screenSizeSubject.next(PepScreenSizeType.LG);
             } else if (width >= 960 && width < 1280) {
-                this.screenSizeSubject.next(PepScreenSizeType.MD);
+                this._screenSizeSubject.next(PepScreenSizeType.MD);
             } else if (width >= 600 && width < 960) {
-                this.screenSizeSubject.next(PepScreenSizeType.SM);
+                this._screenSizeSubject.next(PepScreenSizeType.SM);
             } else if (width < 600) {
-                this.screenSizeSubject.next(PepScreenSizeType.XS);
+                this._screenSizeSubject.next(PepScreenSizeType.XS);
             }
         }
     }
@@ -745,7 +763,7 @@ export class PagesService {
                             }
                         });
                             
-                        this.availableBlocksSubject.next(availableBlocks);
+                        this._availableBlocksSubject.next(availableBlocks);
                     }
             });
         }
