@@ -1,7 +1,7 @@
 <mat-tab-group  #tabGroup class="editor-tabs" animationDuration="0ms">
     <mat-tab label="{{'SLIDESHOW.GENERAL' | translate}}">
         <label class="body-xs ellipsis">{{'SLIDESHOW.HEIGHTUNITS_TITLE' | translate}}</label>
-                <pep-group-buttons [buttons]="HeightUnitsType" [selectedButtonKey]="slideShowConfig.heightUnit" buttonsClass="md regular" viewType="toggle" stretch="true" (buttonClick)="onSlideshowFieldChange('heightUnits',$event)">
+                <pep-group-buttons [buttons]="HeightUnitsType" [selectedButtonKey]="slideShowConfig.heightUnit" buttonsClass="md regular" viewType="toggle" stretch="true" (buttonClick)="onSlideshowFieldChange('heightUnit',$event)">
                 </pep-group-buttons>
 
                 <pep-textbox [value]="slideShowConfig?.height" [label]="'SLIDESHOW.HEIGHT' | translate" (valueChange)="onSlideshowFieldChange('height',$event)"></pep-textbox>
@@ -13,7 +13,7 @@
                 <pep-checkbox [value]="slideShowConfig?.isTransition" [label]="'SLIDESHOW.TRANSITION' | translate" [renderTitle]="false" (valueChange)="onSlideshowFieldChange('isTransition',$event)"></pep-checkbox>
                 <label class="body-xs ellipsis">{{'SLIDESHOW.TRANSITION_TITLE' | translate}}</label>
                 <pep-textbox [label]="'SLIDESHOW.SLIDE_DURATION' | translate" type="int" [disabled]="!slideShowConfig?.isTransition" 
-                             [value]="slideShowConfig.transitionDuration" (valueChange)="onSlideshowFieldChange('duration',$event)"></pep-textbox>
+                             [value]="slideShowConfig.transitionDuration" (valueChange)="onSlideshowFieldChange('transitionDuration',$event)"></pep-textbox>
                 
                 <div class="split-area">
                     <pep-select [label]="'SLIDESHOW.TRANSITION_TYPE' | translate" [value]="slideShowConfig.transitionType" [options]="transitionTypes" 
@@ -22,7 +22,7 @@
                         (valueChange)="onSlideshowFieldChange('transitionTime',$event)" [emptyOption]="false" [disabled]="!slideShowConfig?.isTransition"></pep-select>
                 </div>
 
-                <pep-checkbox [value]="slideShowConfig.isUseArrows" [label]="'SLIDESHOW.ARROWS' | translate" [renderTitle]="false" (valueChange)="onSlideshowFieldChange('useArrows',$event)"></pep-checkbox>
+                <pep-checkbox [value]="slideShowConfig.isUseArrows" [label]="'SLIDESHOW.ARROWS' | translate" [renderTitle]="false" (valueChange)="onSlideshowFieldChange('isUseArrows',$event)"></pep-checkbox>
                 <label class="body-xs" [innerHTML]="'SLIDESHOW.ARROWS_DESC' | translate"></label>
                 
                 <label class="body-xs ellipsis">{{'SLIDESHOW.ARROWS_TYPE' | translate}}</label>
@@ -36,9 +36,9 @@
                 </pep-group-buttons>
 
                 <div class="split-area">
-                    <pep-select [disabled]="!slideShowConfig.isUseArrows" [label]="'SLIDESHOW.ARROWS_STYLE' | translate" [value]="slideShowConfig.arrowStyle" [options]="arrowStyles" 
+                    <pep-select [disabled]="!slideShowConfig.isUseArrows" [label]="'SLIDESHOW.ARROWS_STYLE' | translate" [value]="slideShowConfig.arrowsStyle" [options]="arrowStyles" 
                         (valueChange)="onSlideshowFieldChange('arrowsStyle',$event)" [emptyOption]="false"></pep-select>
-                    <pep-select [disabled]="!slideShowConfig.isUseArrows" [label]="'SLIDESHOW.ARROWS_COLOR' | translate" [value]="slideShowConfig.arrowColor" [options]="arrowStyles"
+                    <pep-select [disabled]="!slideShowConfig.isUseArrows" [label]="'SLIDESHOW.ARROWS_COLOR' | translate" [value]="slideShowConfig.arrowsColor" [options]="arrowStyles"
                         (valueChange)="onSlideshowFieldChange('arrowsColor',$event)" [emptyOption]="false"></pep-select>
                 </div>
 
@@ -47,7 +47,7 @@
 
                 <pep-checkbox class="body-sm" [disabled]="!slideShowConfig.useControllers" [value]="slideShowConfig.usePauseButton" 
                               [label]="'SLIDESHOW.CONTROLLERS_PROPERTIES.PAUSE_PLAY' | translate" [renderTitle]="false" 
-                              (valueChange)="onSlideshowFieldChange('usePauseBtn',$event)"></pep-checkbox>
+                              (valueChange)="onSlideshowFieldChange('usePauseButton',$event)"></pep-checkbox>
                 <pep-checkbox class="body-sm" [disabled]="!slideShowConfig.useControllers" [value]="slideShowConfig.showOnMobile" 
                               [label]="'SLIDESHOW.CONTROLLERS_PROPERTIES.MOBILE' | translate" [renderTitle]="false" 
                               (valueChange)="onSlideshowFieldChange('showOnMobile',$event)"></pep-checkbox>
@@ -59,19 +59,20 @@
                               (valueChange)="onSlideshowFieldChange('showControllersInSlider',$event)"></pep-checkbox>
                 
                 <label class="body-xs ellipsis">{{'SLIDESHOW.CONTROLLER_SIZE' | translate}}</label>
-                <pep-group-buttons [buttons]="ControllerSize" [selectedButtonKey]="'SM'" buttonsClass="md regular" viewType="toggle" stretch="true">
+                <pep-group-buttons [buttons]="ControllerSize" [selectedButtonKey]="'SM'" buttonsClass="md regular" 
+                                   (buttonClick)="onSlideshowFieldChange('controllerSize',$event)" viewType="toggle" stretch="true">
                 </pep-group-buttons>
     </mat-tab>
     <mat-tab label="{{'SLIDESHOW.CONTENT' | translate}}">
         <ng-container *ngIf="!showSlideEditor">
             <label class="body-xl bold ellipsis">{{'SLIDESHOW.SLIDES' | translate}}</label>
             <div #availableSlidesContainer id="availableSlides" class="available-slides">
-                    <slide *ngFor="let availableSlide of availableSlides;" class="available-slide"
-                    [title]="availableSlide?.Title" [id]="availableSlide?.id" [showActions]="true" [isDraggable]="true" (editClick)='onSlideEditClick($event);'></slide>
+                    <slide *ngFor="let availableSlide of hostObject?.slides;" class="available-slide"
+                    [title]="availableSlide?.titleContent" [id]="availableSlide?.id" [showActions]="true" [isDraggable]="true" (editClick)='onSlideEditClick($event);'></slide>
             </div>
 
             <pep-button class="add-content-button" value="{{'SLIDESHOW.ADD_SLIDE' | translate}}" styleType="regular" iconName="number_plus" iconPosition="end"
-                    (buttonClick)="onAddContentClick($event)"></pep-button>
+                    (buttonClick)="onAddNewSlideClick($event)"></pep-button>
         </ng-container>
         <ng-container *ngIf="showSlideEditor">
                 <pep-button sizeType="xs" iconName="arrow_left_alt" (buttonClick)="navigateBack();"></pep-button>

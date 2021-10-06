@@ -20,29 +20,29 @@ export type ArrowShape = 'None' | 'Rect' | 'Rounded';
 export type WidthUnits = 'Narrow' | 'Regular' | 'Wide';
 export type Intensity = 'Soft' | 'Regular';
 
-export type SlideButton = {
-    useButton: boolean,
-    label: string,
-    linkTo: string,
-    style: PepStyleType
+export class SlideButton {
+    useButton: boolean = true;
+    label: string = '1st button';
+    linkTo: string = '';
+    style: PepStyleType = 'regular'
 }
 
-export type Overlay = {
-    useGradientOverlay: boolean,
-    color: string,
-    opacity: string,
+export class Overlay {
+    useGradientOverlay: boolean = false;
+    color: string = '000';
+    opacity: string = '1';
 }
 
-export type SlideImage = {
-    useImage: boolean,
-    src: string,
-    horizontalPosition: string,
-    verticalPosition: string
+export class SlideImage {
+    useImage: boolean = false;
+    src: string = '';
+    horizontalPosition: string = '0';
+    verticalPosition: string = '0';
 }
 
-export type DropShadow = {
-    useDropShadow: boolean,
-    intensity:  Intensity
+export class DropShadow {
+    useDropShadow: boolean = false;
+    intensity:  Intensity = 'Regular';
 }
 
 
@@ -59,8 +59,8 @@ export class ISlideshowEditor {
     isUseArrows: boolean = true;
     arrowType: ArrowType = 'One';
     arrowShape: ArrowShape = 'Rect';
-    arrowStyle: PepStyleType = 'regular';
-    arrowColor: PepStyleType = 'weak';
+    arrowsStyle: PepStyleType = 'regular';
+    arrowsColor: PepStyleType = 'weak';
     useControllers: boolean = true;
     usePauseButton: boolean = true;
     showOnMobile: boolean = true;
@@ -69,24 +69,24 @@ export class ISlideshowEditor {
     controllerSize: HeightUnit
 }
 
-export interface ISlideEditor {
-    id: string,
-    useTitle: boolean,
-    titleContent: string,
-    titleSize: PepSizeType,
-    useSubTitle: boolean,
-    subTitleContent: string,
-    subTitleSize: PepSizeType,
-    contentWidth: WidthUnits,
-    horizontalAlign: PepHorizontalAlignment,
-    verticalAlign: PepVerticalAlignment,
-    textColor: string,
-    firstButton: SlideButton,
-    secondButton: SlideButton,
-    gradientOverlay: Overlay,
-    overlay: Overlay,
-    image: SlideImage,
-    dropShadow: DropShadow
+export class ISlideEditor {
+    id: string;
+    useTitle: boolean = false;
+    titleContent: string = 'Title';
+    titleSize: PepSizeType = 'lg';
+    useSubTitle: boolean = false;
+    subTitleContent: string;
+    subTitleSize: PepSizeType = 'md';
+    contentWidth: WidthUnits = 'Regular';
+    horizontalAlign: PepHorizontalAlignment = 'left';
+    verticalAlign: PepVerticalAlignment = 'middle';
+    textColor: string;
+    firstButton: SlideButton = new SlideButton();
+    secondButton: SlideButton  = new SlideButton();
+    gradientOverlay: Overlay = new Overlay();
+    overlay: Overlay = new Overlay();
+    image: SlideImage = new SlideImage();
+    dropShadow: DropShadow = new DropShadow();
 }
 
 interface groupButtonArray {
@@ -101,7 +101,7 @@ export interface slide {
 
 export interface ISlideShow{
     slideshowConfig: ISlideshowEditor,
-    // slides: Array<ISlideEditor>;
+    slides: Array<ISlideEditor>
 }
 
 @Component({
@@ -126,7 +126,7 @@ export class SlideshowEditorComponent implements OnInit {
 
     @Output() hostObjectChange: EventEmitter<ISlideShow> = new EventEmitter<ISlideShow>();
     
-    hostObject: ISlideShow = { slideshowConfig: new ISlideshowEditor()};
+    hostObject: ISlideShow = { slideshowConfig: new ISlideshowEditor(), slides: Array<ISlideEditor>() };
     slideShowConfig = new ISlideshowEditor();
 
     availableSlides: Array<slide> = [{id: '1', Title: "Slide1"},{id: '2', Title: "Slide2"}];
@@ -164,7 +164,6 @@ export class SlideshowEditorComponent implements OnInit {
 
     constructor(private translate: TranslateService) { 
         this.hostObject.slideshowConfig = new ISlideshowEditor();
-        debugger;
     }
 
     private updateHostObject() {
@@ -174,83 +173,13 @@ export class SlideshowEditorComponent implements OnInit {
 
 
     onSlideshowFieldChange(key, event){
-        switch(key){
-            case 'heightUnits': {
-                this.slideShowConfig.heightUnit = event.source.key;
-                break;
-            }
-            case 'height':{
-                this.slideShowConfig.height = event;
-                break;
-            }
-            case 'innerspacing': {
-                this.slideShowConfig.innerSpacing = event.source.key;
-                break;
-            }
-            case 'duration':{
-                this.slideShowConfig.transitionDuration = event;
-                break;
-            }
-            case 'isTransition':{
-                
-                this.slideShowConfig.isTransition = event;
-                break;
-            } 
-            case 'transitionType':{
-                this.slideShowConfig.transitionType = event;
-                break;
-            } 
-            case 'transitionTime':{
-                this.slideShowConfig.transitionTime = event;
-                break;
-            } 
-            case 'useArrows':{
-                this.slideShowConfig.isUseArrows = event;
-                break;
-            } 
-            case 'arrowType':{
-                this.slideShowConfig.arrowType = event.source.key;
-                break;
-            } 
-            case 'arrowShape':{
-                this.slideShowConfig.arrowShape = event.source.key;
-                break;
-            } 
-            case 'arrowsStyle':{
-                this.slideShowConfig.arrowStyle = event;
-                break;
-            } 
-            case 'arrowsColor':{
-                this.slideShowConfig.arrowColor = event;
-                break;
-            } 
-            case 'useControllers':{
-                this.slideShowConfig.useControllers = event;
-                break;
-            } 
-            case 'usePauseBtn':{
-                this.slideShowConfig.usePauseButton = event;
-                break;
-            } 
-            case 'showOnMobile':{
-                this.slideShowConfig.showOnMobile = event;
-                break;
-            } 
-            case 'useInverStyle':{
-                this.slideShowConfig.useInverStyle = event;
-                break;
-            } 
-            case 'showControllersInSlider':{
-                this.slideShowConfig.showControllersInSlider = event;
-                break;
-            } 
-            
+        if(event && event.source && event.source.key){
+            this.slideShowConfig[key] = event.source.key;
         }
-        this.updateHostObject();
-    }
+        else{
+            this.slideShowConfig[key] = event;
+        }
 
-    onIsTransitionChange(value: boolean) {
-        this.slideShowConfig.isTransition = value;
         this.updateHostObject();
     }
 
@@ -346,16 +275,10 @@ export class SlideshowEditorComponent implements OnInit {
 
   
 
-    onAddContentClick(e) {
+    onAddNewSlideClick(e) {
+        let slide = new ISlideEditor();
+        this.hostObject.slides.push( slide);
         //this.pageBuilderService.addSection();
-    }
-
-    onDragStart(event: CdkDragStart) {
-        //this.pageBuilderService.changeCursorOnDragStart();
-    }
-
-    onDragEnd(event: CdkDragEnd) {
-        //this.pageBuilderService.changeCursorOnDragEnd();
     }
 
     onSlideEditClick(event){
