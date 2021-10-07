@@ -5,14 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { PepStyleType, PepSizeType, PepHorizontalAlignment, PepVerticalAlignment, PepScreenSizeType} from '@pepperi-addons/ngx-lib';
 import { IPepButtonClickEvent } from '@pepperi-addons/ngx-lib/button';
 import { ISlideShow, ISlideshowEditor, slide, TransitionType, ArrowShape, ISlideEditor } from '../slideshow.model';
-// import { PageSizeType } from '@pepperi-addons/papi-sdk';
 
-// type UiPageSizeType = PageSizeType | 'NONE';
-
-// export interface ISpacingOption {
-//     key?: UiPageSizeType; 
-//     value: string;
-// }
 interface groupButtonArray {
     key: string; 
     value: string;
@@ -45,11 +38,6 @@ export class SlideshowEditorComponent implements OnInit {
 
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
     
-    // hostObject: ISlideShow = { slideshowConfig: new ISlideshowEditor(), slides: Array<ISlideEditor>() };
-    slideShowConfig = new ISlideshowEditor();
-
-    availableSlides: Array<slide> = [{id: '1', Title: "Slide1"},{id: '2', Title: "Slide2"}];
-    
     transitionTypes: Array<{key: TransitionType, value: string}>;
     transitionTimes: Array<{key: string, value: string}>;
     arrowStyles: Array<{key: PepStyleType, value: string}>;
@@ -68,21 +56,9 @@ export class SlideshowEditorComponent implements OnInit {
     SlideDropShadowStyle: Array<groupButtonArray>;
 
     showSlideEditor = false;
-
-    // SLIDE ATTR
-    showSlideTitle = false;
-    slideContent = '';
-    showSubTitle = false;
-    showFirstButton = false;
-    showSecondButton = false;
-    useGradientOverlay = false;
-    useOverlay = false;
-    hasImage = true;
-    useDropShadow = false;
-    
-
+    currentSlideindex = 0;
     constructor(private translate: TranslateService) { 
-        // this.hostObject.slideshowConfig = new ISlideshowEditor();
+        
     }
 
     private getDefaultHostObject(): ISlideShow {
@@ -90,21 +66,29 @@ export class SlideshowEditorComponent implements OnInit {
     }
 
     private updateHostObject() {
-        this.hostObject.slideshowConfig = this.slideShowConfig;
         
         this.hostEvents.emit({
             action: 'set-configuration',
             configuration: this.hostObject
         });
     }
+    onSlideFieldChange(key, event){
+        if(event && event.source && event.source.key){
+            this.hostObject.slides[this.currentSlideindex][key] = event.source.key;
+        }
+        else{
+            this.hostObject.slides[this.currentSlideindex][key] = event;
+        }
 
+        this.updateHostObject();
+    }
 
     onSlideshowFieldChange(key, event){
         if(event && event.source && event.source.key){
-            this.slideShowConfig[key] = event.source.key;
+            this.hostObject.slideshowConfig[key] = event.source.key;
         }
         else{
-            this.slideShowConfig[key] = event;
+            this.hostObject.slideshowConfig[key] = event;
         }
 
         this.updateHostObject();
@@ -159,20 +143,20 @@ export class SlideshowEditorComponent implements OnInit {
         ];
     
         this.ControllerSize = [
-            { key: 'SM', value: this.translate.instant('GROUP_SIZE.SM') },
-            { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') }
+            { key: 'sm', value: this.translate.instant('GROUP_SIZE.SM') },
+            { key: 'md', value: this.translate.instant('GROUP_SIZE.MD') }
         ];
 
         this.SlideTitleSize = [
-            { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') },
-            { key: 'LG', value: this.translate.instant('GROUP_SIZE.LG') },
-            { key: 'XL', value: this.translate.instant('GROUP_SIZE.XL') },
+            { key: 'md', value: this.translate.instant('GROUP_SIZE.MD') },
+            { key: 'lg', value: this.translate.instant('GROUP_SIZE.LG') },
+            { key: 'xl', value: this.translate.instant('GROUP_SIZE.XL') },
         ];
     
         this.SlideSubTitleSize = [
-            { key: 'SM', value: this.translate.instant('GROUP_SIZE.SM') },
-            { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') },
-            { key: 'LG', value: this.translate.instant('GROUP_SIZE.LG') }
+            { key: 'sm', value: this.translate.instant('GROUP_SIZE.SM') },
+            { key: 'md', value: this.translate.instant('GROUP_SIZE.MD') },
+            { key: 'lg', value: this.translate.instant('GROUP_SIZE.LG') }
         ];
     
         this.WidthSize =  [
@@ -202,13 +186,21 @@ export class SlideshowEditorComponent implements OnInit {
 
     onAddNewSlideClick(e) {
         let slide = new ISlideEditor();
+        slide.id = (this.hostObject.slides.length).toString();
+
         this.hostObject.slides.push( slide);
         //this.pageBuilderService.addSection();
     }
 
     onSlideEditClick(event){
+        this.currentSlideindex = event.id;
+        debugger;
         this.showSlideEditor = true;
          //this.pageBuilderService.navigateToEditor('section', this.id);
+    }
+    onSlideRemoveClick(event){
+        this.hostObject.slides.splice(event.id, 1);
+        this.hostObject.slides.forEach(function(slide, index, arr) {slide.id = index.toString(); });
     }
 
     navigateBack() {

@@ -69,6 +69,8 @@ export class ISlideEditor {
     horizontalAlign: PepHorizontalAlignment = 'left';
     verticalAlign: PepVerticalAlignment = 'middle';
     textColor: string;
+    buttonsSize: PepSizeType  = 'md';
+    buttonsColor: string;
     firstButton: SlideButton = new SlideButton();
     secondButton: SlideButton  = new SlideButton();
     gradientOverlay: Overlay = new Overlay();

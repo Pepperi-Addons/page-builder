@@ -1,19 +1,37 @@
 .ng-component-container{
     width: inherit;
-    // padding-top: 2rem;
+    background: linear-gradient(45deg, rgb(21, 24, 26) 0%, rgba(21, 24, 26, 0.35) 50%, rgba(21, 24, 26, 0) 100%);
+    display: block;
+    height: inherit;
 }
 
+label{
 
-.table-content{
-    height: 16rem;
-    overflow-y: auto;
+    color: rgb(255, 255, 255);
+    font-family: Inter;
+    font-weight: normal;
+    letter-spacing: 0.19px;
 
-
-}
-
-:host ::ng-deep pep-list {
-    .table-header {
-        top: 0 !important;
+    &.size_xl{
+        font-size: 4.5rem !important;
+        line-height: 4.5rem !important;
     }
+    &.size_lg{
+        font-size: 3.5rem !important;
+        line-height: 3.5rem !important;
+    }
+    &.size_md{
+        font-size: 2.5rem !important;
+        line-height: 2.5rem !important;
+    }
+    &.size_sm{
+        font-size: 1.5rem !important;
+        line-height: 1.5rem !important;
+    }
+    &.size_xs{
+        font-size: .75rem !important;
+        line-height: .75rem !important;
+    }
+
 }
 
