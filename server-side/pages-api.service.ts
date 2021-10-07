@@ -83,7 +83,6 @@ export class PagesApiService {
     }
 
     async createPagesTablesSchemes(): Promise<AddonDataScheme[]> {
-        // TODO: Check that the table is not exist.
         const promises: AddonDataScheme[] = [];
         
         // Create pages table
@@ -123,10 +122,14 @@ export class PagesApiService {
         //  Add the pages into map for distinct them.
         const distinctPagesMap = new Map<string, Page>();
         pages.forEach(page => {
-            distinctPagesMap.set(page.Key || '', page); // TODO: Key sould be mandatory.
+            if (page.Key) {
+                distinctPagesMap.set(page.Key, page);
+            }
         });
         draftPages.forEach(draftPage => {
-            distinctPagesMap.set(draftPage.Key || '', draftPage); // TODO: Key sould be mandatory.
+            if (draftPage.Key) {
+                distinctPagesMap.set(draftPage.Key, draftPage);
+            }
         });
 
         // Convert the map values to array.

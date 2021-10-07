@@ -9,8 +9,7 @@ The error Message is importent! it will be written in the audit log and help the
 */
 
 import { Client, Request } from '@pepperi-addons/debug-server'
-import { Relation } from './metadata';
-import { PageComponentRelations } from './metadata';
+import { Relation } from '@pepperi-addons/papi-sdk';
 import MyService from './my.service';
 
 export async function install(client: Client, request: Request): Promise<any> {
@@ -33,22 +32,26 @@ export async function downgrade(client: Client, request: Request): Promise<any> 
 
 async function runMigration(client){
     try {
-        await addRelations(client, PageComponentRelations, "PageBlock");
-        return { success: true };
+        const pageComponentRelation: Relation = {
+            RelationName: "PageBlock",
+            Name: "Producer",
+            Description: "Producer example",
+            Type: "NgComponent",
+            SubType: "NG11",
+            AddonUUID: client.AddonUUID,
+            AddonRelativeURL: "sub_addon_3",
+            ComponentName: "SubAddon3Component",
+            ModuleName: "SubAddon3Module",
+            EditorComponentName: 'SubAddon3EditorComponent',
+            EditorModuleName: 'SubAddon3EditorModule'
+        };
+
+        pageComponentRelation.Key = `${pageComponentRelation.Name}_${pageComponentRelation.AddonUUID}_${pageComponentRelation.RelationName}`;
+
+        const service = new MyService(client);
+        const result = await service.upsertRelation(pageComponentRelation);
+        return result;
     } catch(e){
         return { success: false };
     }
-}
-
-async function addRelations(client: Client, relations: Relation[], relationName){
-    const service = new MyService(client);
-    const promises: Promise<any>[] = [];
-    relations.forEach(relation =>{ 
-        relation.RelationName = relationName;
-        const key = `${relation.Name}_${relation.AddonUUID}_${relation.RelationName}`;
-        relation.Key = key;
-        promises.push(service.upsertRelation(relation));
-    });
-    const result = await Promise.all(promises);
-    return result;
 }

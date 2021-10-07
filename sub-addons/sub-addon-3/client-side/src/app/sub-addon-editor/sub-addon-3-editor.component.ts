@@ -2,16 +2,16 @@ import { TranslateService } from '@ngx-translate/core';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
-    selector: 'sub-addon-3',
-    templateUrl: './sub-addon-3.component.html',
-    styleUrls: ['./sub-addon-3.component.css']
+    selector: 'sub-addon-3-editor',
+    templateUrl: './sub-addon-3-editor.component.html',
+    styleUrls: ['./sub-addon-3-editor.component.css']
 })
-export class SubAddon3Component implements OnInit {
-  
+export class SubAddon3EditorComponent implements OnInit {
     richHtml;
     inputTitle;
     @Input() hostObject: any;
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
+
     constructor(private translate: TranslateService) { }
 
     ngOnInit(): void {
