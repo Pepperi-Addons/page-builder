@@ -31,8 +31,7 @@ module.exports = (config, options, env) => {
                     filename: "slideshow.js",
                     exposes: {
                         './SlideshowModule': './src/app/components/slideshow/index.ts',
-                        './SlideshowEditorModule': './src/app/components/slideshow-editor/index.ts',
-                        './SlideModule': './src/app/components/slide/index.ts',
+                        './SlideshowEditorModule': './src/app/components/slideshow-editor/index.ts'
                     },
                     shared: {
                         // ...deps,

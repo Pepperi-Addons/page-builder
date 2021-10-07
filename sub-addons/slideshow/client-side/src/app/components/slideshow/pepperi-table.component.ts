@@ -13,7 +13,7 @@ import { PepListComponent } from '@pepperi-addons/ngx-lib/list';
       [viewType]="'table'"
       [supportSorting]="false"
       [supportResizing]="false"
-      [selectionTypeForActions]="'single'"
+      [selectionTypeForActions]="'multi'"
       [noDataFoundMsg]="'No data'"
       (listChange)="listChanged.emit($event)"
       (sortingChange)="sortingChanged.emit($event)"

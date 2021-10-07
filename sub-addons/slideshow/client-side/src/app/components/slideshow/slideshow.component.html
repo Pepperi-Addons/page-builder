@@ -6,7 +6,7 @@
                     <pep-button [value]="'Open_Dialog' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="openDialog();">
                     </pep-button>
                 </div>
-                <pep-list-actions *ngIf="menuItems?.length > 0" (stateChange)="onActionsStateChanged($event);" (actionClick)="onMenuItemClicked($event)" [actions]="menuItems">
+                <pep-list-actions *ngIf="menuItems?.length > 0 && selectedItems > 0" (stateChange)="onActionsStateChanged($event);" (actionClick)="onMenuItemClicked($event)" [actions]="menuItems">
 
                 </pep-list-actions>
             </pep-top-bar>
@@ -14,7 +14,7 @@
         <ng-container pep-main-area> -->
 
             <div class="table-content">
-                <pep-table [displayedColumns]="displayedColumns" [dataSource]="(dataSource$ | async)"></pep-table>
+                <pep-table [displayedColumns]="displayedColumns" [dataSource]="(dataSource$ | async)" (selectedItemsChanged)="onSelectedItemsChange($event)"></pep-table>
             </div>
             <div>
                 <!-- <pep-select #pepSelect [value]="'Option 1'"[options]="options" [label]="'Select_Label' | translate "

@@ -23,6 +23,7 @@ export class SlideshowComponent implements OnInit {
     options: {key:string, value:string}[] = [{key: "Option1", value: 'Option 1'},{key: "Option2", value: 'Option 2'}];
     dataSource$: Observable<any[]>
     displayedColumns = ['Name'];
+    selectedItems = 0;
 
     // @Input() hostObject: any;
     // @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
@@ -90,7 +91,9 @@ export class SlideshowComponent implements OnInit {
 
     }
 
-
+    onSelectedItemsChange(e) {
+        this.selectedItems = e;
+    }
 
 
 }
