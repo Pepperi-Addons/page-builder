@@ -18,7 +18,7 @@ export class SlideComponent implements OnInit {
     @Input() isDraggable = false;
     @Input() showActions = true;
 
-    @Output() removeClick: EventEmitter<void> = new EventEmitter();
+    @Output() removeClick: EventEmitter<any> = new EventEmitter();
     @Output() editClick: EventEmitter<any> = new EventEmitter();
 
     constructor(
@@ -33,11 +33,11 @@ export class SlideComponent implements OnInit {
     }
 
     onRemoveClick() {
-        this.removeClick.emit();
+        this.removeClick.emit({id: this.id});
     }
 
     onEditClick() {
-        this.editClick.emit({type: 'slide', id: this.id});
+        this.editClick.emit({id: this.id});
     }
 
     // onHideInChange(event: DataViewScreenSize[]) {

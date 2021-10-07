@@ -1,11 +1,10 @@
-import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
+// import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import {  map, tap } from 'rxjs/operators';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
-import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
-import { SlideshowService, PepperiTableComponent } from './index';
+import { PepLayoutService, PepScreenSizeType, PepSizeType, PepStyleType } from '@pepperi-addons/ngx-lib';
+import { SlideshowService } from './index';
 import { Observable } from 'rxjs';
-import { PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 import { ISlideEditor, ISlideShow, ISlideshowEditor } from '../slideshow.model';
 
 
@@ -17,13 +16,11 @@ import { ISlideEditor, ISlideShow, ISlideshowEditor } from '../slideshow.model';
 })
 export class SlideshowComponent implements OnInit {
 
-    menuItems: Array<PepMenuItem> = [];
-    showListActions = false;
     screenSize: PepScreenSizeType;
-    options: {key:string, value:string}[] = [{key: "Option1", value: 'Option 1'},{key: "Option2", value: 'Option 2'}];
-    dataSource$: Observable<any[]>
-    displayedColumns = ['Name'];
-    selectedItems = 0;
+    //mainTitleSize: string;
+    //subTitleSize: string;
+
+    //dataSource$: Observable<any[]>
 
     // @Input() hostObject: any;
     // @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
@@ -43,13 +40,13 @@ export class SlideshowComponent implements OnInit {
 
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
 
-    @ViewChild(PepperiTableComponent) table: PepperiTableComponent;
+    // @ViewChild(PepperiTableComponent) table: PepperiTableComponent;
 
 
     constructor(
         public addonService: SlideshowService,
         public layoutService: PepLayoutService,
-        public dialog: PepDialogService,
+        // public dialog: PepDialogService,
         public translate: TranslateService
     ) {
 
@@ -68,19 +65,16 @@ export class SlideshowComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.dataSource$ = this.addonService.pepGet(`/items`);
-        this.dataSource$.toPromise().then(res => this.raiseBlockLoadedEvent());
+        //this.mainTitleSize = this.getTitleFontClass(this.hostObject.slides[0].titleSize);
+        //this.subTitleSize = this.getTitleFontClass(this.hostObject.slides[0].subTitleSize);
+        //this.dataSource$ = this.addonService.pepGet(`/items`);
+        //this.dataSource$.toPromise().then(res => this.raiseBlockLoadedEvent());
     }
 
-    openDialog(){
-        const content = this.translate.instant('Dialog_Body');
-        const title = this.translate.instant('Dialog_Title');
-        const dataMsg = new PepDialogData({title, actionsType: "close", content});
-        this.dialog.openDefaultDialog(dataMsg);
-    }
+    
 
     ngAfterViewInit(): void {
-        this.menuItems.push({key:'OpenDialog', text: 'Edit' });
+        
     }
 
     onMenuItemClicked(e){

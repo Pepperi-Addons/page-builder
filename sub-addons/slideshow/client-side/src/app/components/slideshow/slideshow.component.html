@@ -1,29 +1,24 @@
-<div class="ng-component-container" *ngIf="(dataSource$ | async) as installedAddons">
-    <!-- <pep-page-layout>
-        <ng-container pep-top-area> -->
+<div class="ng-component-container" >
+    <pep-page-layout>
+        <!-- <ng-container pep-top-area> 
             <pep-top-bar [inline]="true" [title]="hostObject?.slideshowConfig?.height">
-                <div header-end-content class="pep-spacing-element">
-                    <pep-button [value]="'Open_Dialog' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="openDialog();">
-                    </pep-button>
-                </div>
-                <pep-list-actions *ngIf="menuItems?.length > 0 && selectedItems > 0" (stateChange)="onActionsStateChanged($event);" (actionClick)="onMenuItemClicked($event)" [actions]="menuItems">
-
-                </pep-list-actions>
+                <div header-end-content class="pep-spacing-element"></div>
             </pep-top-bar>
-        <!-- </ng-container>
-        <ng-container pep-main-area> -->
+        </ng-container> -->
+        <ng-container pep-main-area>
+            <div style="padding: 2rem;">
+                <div>
+                    <label class="body-sm ellipsis" *ngIf="hostObject?.slides[0].useTitle" [ngClass]="'size_'+hostObject?.slides[0].titleSize">{{hostObject?.slides[0].titleContent}}</label>
+                </div>
+                <div>
+                    <label class="body-sm ellipsis" *ngIf="hostObject?.slides[0].useSubTitle" [ngClass]="'size_'+hostObject?.slides[0].subTitleSize">{{hostObject?.slides[0].subTitleContent}}</label>
+                </div>
+                <pep-button *ngIf="hostObject?.slides[0].firstButton.useButton" class="add-content-button" value="hostObject?.slides[0].firstButton.label" styleType="hostObject?.slides[0].firstButton.style" iconPosition="end"
+                (buttonClick)="null"></pep-button>
+            </div>
 
-            <div class="table-content">
-                <pep-table [displayedColumns]="displayedColumns" [dataSource]="(dataSource$ | async)" (selectedItemsChanged)="onSelectedItemsChange($event)"></pep-table>
-            </div>
-            <div>
-                <!-- <pep-select #pepSelect [value]="'Option 1'"[options]="options" [label]="'Select_Label' | translate "
-                ></pep-select> -->
-                <!-- <pep-button *ngIf="hostObject" [value]="'Close' | translate" [sizeType]="'md'" [styleType]="'strong'" (buttonClick)="hostEvents.emit({closeDialog: true});">
-                </pep-button> -->
-            </div>
-        <!-- </ng-container>
-    </pep-page-layout> -->
+        </ng-container>
+    </pep-page-layout> 
 
 
 
