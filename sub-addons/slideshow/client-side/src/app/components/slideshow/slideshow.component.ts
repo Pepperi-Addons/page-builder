@@ -85,9 +85,4 @@ export class SlideshowComponent implements OnInit {
 
     }
 
-    onSelectedItemsChange(e) {
-        this.selectedItems = e;
-    }
-
-
 }
