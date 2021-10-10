@@ -6,29 +6,22 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 import { singleSpaPropsSubject } from './single-spa/single-spa-props';
 
-
 if (environment.production) {
     enableProdMode();
 }
 
 let lifecycles = null;
 
-
-
-    lifecycles = singleSpaAngular({
-        bootstrapFunction: singleSpaProps => {
-            singleSpaPropsSubject.next(singleSpaProps);
-            return platformBrowserDynamic(getSingleSpaExtraProviders()).bootstrapModule(AppModule);
-        },
-        template: '<addon-root />',
-        Router,
-        NgZone
-    });
-
-
+lifecycles = singleSpaAngular({
+    bootstrapFunction: singleSpaProps => {
+        singleSpaPropsSubject.next(singleSpaProps);
+        return platformBrowserDynamic(getSingleSpaExtraProviders()).bootstrapModule(AppModule);
+    },
+    template: '<addon-root />',
+    Router,
+    NgZone
+});
 
 export const bootstrap = lifecycles.bootstrap;
 export const mount = lifecycles.mount;
 export const unmount = lifecycles.unmount;
-
-
