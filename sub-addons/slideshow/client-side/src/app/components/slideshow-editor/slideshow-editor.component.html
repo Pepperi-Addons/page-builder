@@ -112,7 +112,7 @@
                                     (buttonClick)="onSlideFieldChange('verticalAlign',$event)" viewType="toggle" stretch="true">
                 </pep-group-buttons>
 
-                <pep-select [label]="'SLIDE_EDITOR.TEXT_COLOR' | translate" [value]="hostObject?.slides[currentSlideindex].textColor" [options]="[]"
+                <pep-select [label]="'SLIDE_EDITOR.TEXT_COLOR_TITLE' | translate" [value]="hostObject?.slides[currentSlideindex].textColor" [options]="textColors"
                             (valueChange)="onSlideFieldChange('textColor',$event)" [emptyOption]="false" [disabled]="false"></pep-select>
 
                 <label class="body-xl bold ellipsis">{{'SLIDE_EDITOR.BUTTONS' | translate}}</label><br>
@@ -121,15 +121,21 @@
                                    (buttonClick)="onSlideFieldChange('buttonsSize',$event)" viewType="toggle" stretch="true">
                 </pep-group-buttons>
 
-                <pep-color value="hostObject?.slides[currentSlideindex].buttonsColor" [label]="'SLIDE_EDITOR.BUTTON_COLOR' | translate" [disabled]="false" xAlignment="left"
+                <!-- <pep-color [value]="hostObject?.slides[currentSlideindex].buttonsColor" [label]="'SLIDE_EDITOR.BUTTON_COLOR' | translate" [disabled]="false" xAlignment="left"
                         type="any" [showTitle]="true" [showAAComplient]="true" (valueChange)="onSlideFieldChange('buttonsColor',$event)">
-                </pep-color>
+                </pep-color> -->
+
+                <pep-select [label]="'SLIDE_EDITOR.BUTTON_COLOR' | translate" [value]="hostObject?.slides[currentSlideindex].buttonsColor" 
+                            [options]="textColors" (valueChange)="onSlideFieldChange('buttonsColor',$event)" [emptyOption]="false" 
+                            [disabled]="false" styleType="regular"></pep-select>
+
 
                 <pep-checkbox [value]="hostObject?.slides[currentSlideindex].firstButton.useButton" [label]="'SLIDE_EDITOR.FIRST_BUTTON' | translate" [renderTitle]="false" (valueChange)="onSlideFieldChange('firstButton.useButton',$event)"></pep-checkbox>
                 <pep-textbox [label]="'SLIDE_EDITOR.LABEL' | translate" type="string" [disabled]="!hostObject?.slides[currentSlideindex].firstButton.useButton" [value]="hostObject?.slides[currentSlideindex].firstButton.label" (valueChange)="onSlideFieldChange('firstButton.label',$event)"></pep-textbox>
                 <pep-textbox [label]="'SLIDE_EDITOR.LINK_TO' | translate" type="link" [disabled]="!hostObject?.slides[currentSlideindex].firstButton.useButton" [value]="hostObject?.slides[currentSlideindex].firstButton.linkTo" (valueChange)="onSlideFieldChange('firstButton.linkTo',$event)"></pep-textbox>
-                <pep-select [label]="'SLIDE_EDITOR.BUTTON_STYLE' | translate" [value]="hostObject?.slides[currentSlideindex].firstButton.style" [options]="arrowStyles"
-                            (valueChange)="onSlideFieldChange('firstButton.style',$event)" [emptyOption]="false" [disabled]="!hostObject?.slides[currentSlideindex].firstButton.useButton">
+                <pep-select [label]="'SLIDE_EDITOR.BUTTON_STYLE' | translate" [value]="hostObject?.slides[currentSlideindex].firstButton.style" 
+                            [options]="arrowStyles" (valueChange)="onSlideFieldChange('firstButton.style',$event)" [emptyOption]="false" 
+                            [disabled]="!hostObject?.slides[currentSlideindex].firstButton.useButton" styleType="weak">
                 </pep-select>
 
                 <pep-checkbox [value]="hostObject?.slides[currentSlideindex].secondButton.useButton" [label]="'SLIDE_EDITOR.SECOND_BUTTON' | translate" [renderTitle]="false" (valueChange)="onSlideFieldChange('secondButton.useButton',$event)"></pep-checkbox>
@@ -140,7 +146,7 @@
                 </pep-select>
                 
                 <pep-checkbox [value]="hostObject?.slides[currentSlideindex].gradientOverlay.useGradientOverlay" [label]="'SLIDE_EDITOR.GRADIENT_OVERLAY' | translate" [renderTitle]="false" (valueChange)="onSlideFieldChange('gradientOverlay.useGradientOverlay',$event)"></pep-checkbox>
-                <pep-color value="hostObject?.slides[currentSlideindex].gradientOverlay.color" [label]="'SLIDE_EDITOR.GRADIENT_OVERLAY_COLOR' | translate" [disabled]="!hostObject?.slides[currentSlideindex].gradientOverlay.useGradientOverlay" xAlignment="left"
+                <pep-color [value]="hostObject?.slides[currentSlideindex].gradientOverlay.color" [label]="'SLIDE_EDITOR.GRADIENT_OVERLAY_COLOR' | translate" [disabled]="!hostObject?.slides[currentSlideindex].gradientOverlay.useGradientOverlay" xAlignment="left"
                         type="any" [showTitle]="true" [showAAComplient]="true" (valueChange)="onSlideFieldChange('gradientOverlay.color',$event)">
                 </pep-color>
                 <div>
@@ -151,7 +157,7 @@
                 </div>
 
                 <pep-checkbox [value]="hostObject?.slides[currentSlideindex].overlay.useGradientOverlay" [label]="'SLIDE_EDITOR.OVERLAY' | translate" [renderTitle]="false" (valueChange)="onSlideFieldChange('overlay.useGradientOverlay',$event)"></pep-checkbox>
-                <pep-color value="hostObject?.slides[currentSlideindex].buttonsColor" [label]="'SLIDE_EDITOR.OVERLAY_COLOR' | translate" [disabled]="!hostObject?.slides[currentSlideindex].overlay.useGradientOverlay" xAlignment="left"
+                <pep-color [value]="hostObject?.slides[currentSlideindex].buttonsColor" [label]="'SLIDE_EDITOR.OVERLAY_COLOR' | translate" [disabled]="!hostObject?.slides[currentSlideindex].overlay.useGradientOverlay" xAlignment="left"
                         type="any" [showTitle]="true" [showAAComplient]="true" (valueChange)="onSlideFieldChange('overlay.useGradientOverlay',$event)">
                 </pep-color>
                 <div>

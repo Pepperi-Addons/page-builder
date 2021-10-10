@@ -71,7 +71,7 @@
         "CONTENT_BLOCK_WIDTH": "Content block width",
         "HORIZONTAL_ALIGN": "Horizontal Align",
         "VERTICAL_ALIGN": "Vertical Align",
-        "TEXT_COLOR": "Text Color",
+        "TEXT_COLOR_TITLE": "Text Color",
         "BUTTONS": "BUTTONS",
         "BUTTON_SIZE": "Button Size",
         "BUTTON_COLOR": "Button Color",
@@ -94,6 +94,12 @@
         "SOFT": "Soft",
         "REGULAR": "Regular",
         "SHADOW_INTENSITY": "Shadow Intensity",
+        "TEXT_COLOR": {
+            "REGULAR": "Regular",
+            "WEAK": "Weak",
+            "WEAK_INVERT": "Weak invert",
+            "STRONG": "Strong" 
+        },
         "WIDTH_SIZE": {
             "NARROW": "Narrow",
             "REGULAR": "Regular",

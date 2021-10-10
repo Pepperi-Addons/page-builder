@@ -1,6 +1,7 @@
 import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { slideCalendar } from '@mat-datetimepicker/core/datetimepicker/datetimepicker-animations';
 import { TranslateService } from '@ngx-translate/core';
 import { PepStyleType, PepSizeType, PepHorizontalAlignment, PepVerticalAlignment, PepScreenSizeType} from '@pepperi-addons/ngx-lib';
 import { IPepButtonClickEvent } from '@pepperi-addons/ngx-lib/button';
@@ -54,6 +55,7 @@ export class SlideshowEditorComponent implements OnInit {
     HorizentalAlign: Array<groupButtonArray>;
     VerticalAlign: Array<groupButtonArray>;
     SlideDropShadowStyle: Array<groupButtonArray>;
+    textColors: Array<groupButtonArray>;
 
     showSlideEditor = false;
     currentSlideindex = 0;
@@ -73,11 +75,15 @@ export class SlideshowEditorComponent implements OnInit {
         });
     }
     onSlideFieldChange(key, event){
-        if(event && event.source && event.source.key){
-            this.hostObject.slides[this.currentSlideindex][key] = event.source.key;
+        
+        const value = event && event.source && event.source.key ? event.source.key : event;
+        
+        if(key.indexOf('.') > -1){
+            let keyObj = key.split('.');
+            this.hostObject.slides[this.currentSlideindex][keyObj[0]][keyObj[1]] = value;
         }
         else{
-            this.hostObject.slides[this.currentSlideindex][key] = event;
+            this.hostObject.slides[this.currentSlideindex][key] = value;
         }
 
         this.updateHostObject();
@@ -160,27 +166,34 @@ export class SlideshowEditorComponent implements OnInit {
         ];
     
         this.WidthSize =  [
-            { key: 'NARROW', value: this.translate.instant('SLIDE_EDITOR.WIDTH_SIZE.NARROW') },
-            { key: 'REGULAR', value: this.translate.instant('SLIDE_EDITOR.WIDTH_SIZE.REGULAR') },
-            { key: 'WIDE', value: this.translate.instant('SLIDE_EDITOR.WIDTH_SIZE.WIDE') }
+            { key: 'narrow', value: this.translate.instant('SLIDE_EDITOR.WIDTH_SIZE.NARROW') },
+            { key: 'regular', value: this.translate.instant('SLIDE_EDITOR.WIDTH_SIZE.REGULAR') },
+            { key: 'wide', value: this.translate.instant('SLIDE_EDITOR.WIDTH_SIZE.WIDE') }
         ];
     
         this.HorizentalAlign =  [
-            { key: 'LEFT', value: this.translate.instant('SLIDE_EDITOR.HORIZONTAL_ALIGN_DIRECTION.LEFT') },
-            { key: 'CENTER', value: this.translate.instant('SLIDE_EDITOR.HORIZONTAL_ALIGN_DIRECTION.CENTER') },
-            { key: 'RIGHT', value: this.translate.instant('SLIDE_EDITOR.HORIZONTAL_ALIGN_DIRECTION.RIGHT') }
+            { key: 'left', value: this.translate.instant('SLIDE_EDITOR.HORIZONTAL_ALIGN_DIRECTION.LEFT') },
+            { key: 'center', value: this.translate.instant('SLIDE_EDITOR.HORIZONTAL_ALIGN_DIRECTION.CENTER') },
+            { key: 'right', value: this.translate.instant('SLIDE_EDITOR.HORIZONTAL_ALIGN_DIRECTION.RIGHT') }
         ];
     
         this.VerticalAlign =  [
-            { key: 'TOP', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.TOP') },
-            { key: 'MIDDLE', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.MIDDLE') },
-            { key: 'BOTTOM', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.BOTTOM') }
+            { key: 'top', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.TOP') },
+            { key: 'middle', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.MIDDLE') },
+            { key: 'bottom', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.BOTTOM') }
         ];
     
         this.SlideDropShadowStyle = [
-            { key: 'SOFT', value: this.translate.instant('SLIDE_EDITOR.SOFT') },
-            { key: 'REGULAR', value: this.translate.instant('SLIDE_EDITOR.REGULAR') }
+            { key: 'Soft', value: this.translate.instant('SLIDE_EDITOR.SOFT') },
+            { key: 'Regular', value: this.translate.instant('SLIDE_EDITOR.REGULAR') }
         ];
+
+        this.textColors = [  
+            { key: 'regular', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.REGULAR') },
+            { key: 'weak', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.WEAK') },
+            { key: 'weak-invert', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.WEAK_INVERT') },
+            { key: 'strong', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.STRONG') }
+        ]
 
     }
 
@@ -194,7 +207,6 @@ export class SlideshowEditorComponent implements OnInit {
 
     onSlideEditClick(event){
         this.currentSlideindex = event.id;
-        debugger;
         this.showSlideEditor = true;
          //this.pageBuilderService.navigateToEditor('section', this.id);
     }

@@ -38,7 +38,7 @@ export class DropShadow {
 export class ISlideshowEditor {
     id: string;
     heightUnit: HeightUnit = "REM";
-    height: string = '300';
+    height: string = '16';
     innerSpacing?: PepSizeType = "md";
     isTransition: boolean = false;
     transitionDuration: number = 10;
@@ -68,9 +68,9 @@ export class ISlideEditor {
     contentWidth: WidthUnits = 'Regular';
     horizontalAlign: PepHorizontalAlignment = 'left';
     verticalAlign: PepVerticalAlignment = 'middle';
-    textColor: string;
+    textColor: PepStyleType = 'regular';
     buttonsSize: PepSizeType  = 'md';
-    buttonsColor: string;
+    buttonsColor: PepStyleType= 'regular';
     firstButton: SlideButton = new SlideButton();
     secondButton: SlideButton  = new SlideButton();
     gradientOverlay: Overlay = new Overlay();
