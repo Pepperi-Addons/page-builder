@@ -5,16 +5,16 @@ const { merge } = require('webpack-merge');
 // const deps = require('./package.json').dependencies;
 
 module.exports = (config, options, env) => {
-    config.plugins.push(
-        new webpack.DefinePlugin({
-            CLIENT_MODE: JSON.stringify(env.configuration),
-        })
-    )
-    // Only if you need standalone
-    if (env.configuration === 'Standalone') {
-        return config;
-    }
-    else {
+    // config.plugins.push(
+    //     new webpack.DefinePlugin({
+    //         CLIENT_MODE: JSON.stringify(env.configuration),
+    //     })
+    // )
+    // // Only if you need standalone
+    // if (env.configuration === 'Standalone') {
+    //     return config;
+    // }
+    // else {
         const mfConfig = {
             output: {
                 uniqueName: "slideshow",
@@ -47,6 +47,6 @@ module.exports = (config, options, env) => {
         const merged = merge(config, mfConfig);
         const singleSpaWebpackConfig = singleSpaAngularWebpack(merged, options);
         return singleSpaWebpackConfig;
-    }
+    // }
     // Feel free to modify this webpack config however you'd like to
 };

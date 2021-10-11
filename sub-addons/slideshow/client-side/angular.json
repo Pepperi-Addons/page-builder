@@ -42,9 +42,6 @@
             "styles": [
               "src/styles.scss",
               "src/theme.scss"
-          ],
-            "scripts": [
-              "node_modules/quill/dist/quill.core.js"
             ],
             "customWebpackConfig": {
               "path": "webpack.config.js",

@@ -21,12 +21,6 @@
       "dom"
     ],
     "paths": {
-  //     "@pepperi-addons/ngx-remote-loader": [
-  //       "../../../../ngx-remote-loader/dist/remote-loader"
-  //  ],
-  //  "@pepperi-addons/ngx-remote-loader/*": [
-  //    "../../../../ngx-remote-loader/dist/remote-loader/*"
-  //  ],
       "test": [
         "dist/test/test",
         "dist/test"
