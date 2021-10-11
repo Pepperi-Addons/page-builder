@@ -58,7 +58,7 @@ export class SectionBlockComponent implements OnInit {
 
     ngOnInit(): void {
         this.pageBuilderService.onPageBlockChange$.subscribe((pageBlock: PageBlock) => {
-            if (this.pageBlock.Key === pageBlock.Key) {
+            if (pageBlock && this.pageBlock.Key === pageBlock.Key) {
                 this.pageBlock = pageBlock;
             }
         });

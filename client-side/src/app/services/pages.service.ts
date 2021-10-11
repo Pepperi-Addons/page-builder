@@ -721,7 +721,7 @@ export class PagesService {
     getPages(addonUUID: string, options: any): Observable<IPageRowModel[]> {
         // Get the pages from the server.
         const baseUrl = this.getBaseUrl(addonUUID);
-        return this.httpService.getHttpCall(`${baseUrl}/pages?${options}`);
+        return this.httpService.getHttpCall(`${baseUrl}/get_pages_data?${options}`);
     }
 
     createNewPage(addonUUID: string, templateId: any): Observable<Page> {

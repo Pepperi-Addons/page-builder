@@ -114,44 +114,7 @@ export class PagesApiService {
     }
 
     async getPages(options): Promise<any[]> {
-        // TODO: Change to pages endpoint after added in NGINX.
-        // return this.papiClient.pages.find
-        let pages: Page[] = await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_TABLE_NAME).find(options) as Page[];
-        let draftPages: Page[] = await this.papiClient.addons.data.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).find(options) as Page[];
-
-        //  Add the pages into map for distinct them.
-        const distinctPagesMap = new Map<string, Page>();
-        pages.forEach(page => {
-            if (page.Key) {
-                distinctPagesMap.set(page.Key, page);
-            }
-        });
-        draftPages.forEach(draftPage => {
-            if (draftPage.Key) {
-                distinctPagesMap.set(draftPage.Key, draftPage);
-            }
-        });
-
-        // Convert the map values to array.
-        const distinctPagesArray = Array.from(distinctPagesMap.values());
-        
-        const promise = new Promise<any[]>((resolve, reject): void => {
-            let allPages = distinctPagesArray.map((page: Page) => {
-                // Return projection object.
-                return {
-                    Key: page.Key,
-                    Name: page.Name,
-                    Description: page.Description,
-                    CreationDate: page.CreationDateTime,
-                    ModificationDate: page.ModificationDateTime,
-                    Status: draftPages.some(draft => draft.Key === page.Key) ? 'draft' : 'published',
-                }
-            });
-
-            resolve(allPages);
-        });
-
-        return promise;
+        return await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_TABLE_NAME).find(options) as Page[];
     }
 
     // Upsert page object if key not exist create new one.
@@ -190,6 +153,47 @@ export class PagesApiService {
         let res = await this.hidePage(pagekey, PAGES_TABLE_NAME);
 
         return Promise.resolve(draftRes || res);
+    }
+
+    async getPagesData(options): Promise<any[]> {
+        // TODO: Change to pages endpoint after added in NGINX.
+        // return this.papiClient.pages.find
+        let pages: Page[] = await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_TABLE_NAME).find(options) as Page[];
+        let draftPages: Page[] = await this.papiClient.addons.data.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).find(options) as Page[];
+
+        //  Add the pages into map for distinct them.
+        const distinctPagesMap = new Map<string, Page>();
+        pages.forEach(page => {
+            if (page.Key) {
+                distinctPagesMap.set(page.Key, page);
+            }
+        });
+        draftPages.forEach(draftPage => {
+            if (draftPage.Key) {
+                distinctPagesMap.set(draftPage.Key, draftPage);
+            }
+        });
+
+        // Convert the map values to array.
+        const distinctPagesArray = Array.from(distinctPagesMap.values());
+        
+        const promise = new Promise<any[]>((resolve, reject): void => {
+            let allPages = distinctPagesArray.map((page: Page) => {
+                // Return projection object.
+                return {
+                    Key: page.Key,
+                    Name: page.Name,
+                    Description: page.Description,
+                    CreationDate: page.CreationDateTime,
+                    ModificationDate: page.ModificationDateTime,
+                    Status: draftPages.some(draft => draft.Key === page.Key) ? 'draft' : 'published',
+                }
+            });
+
+            resolve(allPages);
+        });
+
+        return promise;
     }
 
     async getPageBuilderData(query: any) {
