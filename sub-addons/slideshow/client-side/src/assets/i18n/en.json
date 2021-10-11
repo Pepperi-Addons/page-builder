@@ -74,7 +74,7 @@
         "TEXT_COLOR_TITLE": "Text Color",
         "BUTTONS": "BUTTONS",
         "BUTTON_SIZE": "Button Size",
-        "BUTTON_COLOR": "Button Color",
+        "BUTTON_COLOR_TITLE": "Button Color",
         "FIRST_BUTTON": "1st Button",
         "LABEL": "Label",
         "LINK_TO": "Link to",
@@ -95,10 +95,21 @@
         "REGULAR": "Regular",
         "SHADOW_INTENSITY": "Shadow Intensity",
         "TEXT_COLOR": {
-            "REGULAR": "Regular",
-            "WEAK": "Weak",
-            "WEAK_INVERT": "Weak invert",
-            "STRONG": "Strong" 
+            "SYSTEM": "System",
+            "DIMMED": "Dimmed",
+            "INVERTED": "Inverted",
+            "STRONG": "Strong"
+        },"BUTTON_STYLES": {
+            "REGULAR": "System",
+            "WEAK": "weak",
+            "WEAK-INVERT": "Weak invert",
+            "STRONG": "Strong"
+        },
+        "BUTTON_COLOR": {
+            "SYSTEM": "System",
+            "SYSTEM-INVERTED": "System inverted",
+            "PRIMARY": "Primary",
+            "SECONDARY": "Secondary"
         },
         "WIDTH_SIZE": {
             "NARROW": "Narrow",
