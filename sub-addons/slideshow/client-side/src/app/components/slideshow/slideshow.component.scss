@@ -1,37 +1,111 @@
+@import '~@pepperi-addons/ngx-lib/theming';
+@include pepperi-theme();
+// Get the theme object.
+$pepperi-theme: get-pepperi-theme();
+
 .ng-component-container{
     width: inherit;
     background: linear-gradient(45deg, rgb(21, 24, 26) 0%, rgba(21, 24, 26, 0.35) 50%, rgba(21, 24, 26, 0) 100%);
     display: block;
     height: inherit;
+    margin: 0 auto;
+
+    &.contentWidth_narrow{
+        width: 50%;
+    }
+    &.contentWidth_regular{
+        width: 75%;
+    }
+    &.contentWidth_wide{
+        width: 100%;
+    }
+
+    ::ng-deep {
+        .pep-main-area{
+            display: grid !important;
+       }
+    }
+        .slide-box{
+            display: grid;
+            grid-template-rows: min-content min-content min-content;
+            align-self: center;
+            color: get-pep-color($pepperi-theme, color-text, color-main);
+
+            &.horAlign_left{
+                text-align: left;
+            }
+            &.horAlign_center{
+                text-align: center;
+            }
+            &.horAlign_right{
+                text-align: right;
+            }
+
+            &.verAlign_top{
+                align-self: start;
+            }
+            &.verAlign_middle{
+                align-self: center;
+            }
+            &.verAlign_bottom{
+                align-self: end;
+            }
+
+            &.textColor_regular{
+                color: #fff;
+                //color: get-pep-color($pepperi-theme, color-text, color-regular);
+
+            }
+            &.textColor_weak{
+                color: yellow;
+                //color: get-pep-color($pepperi-theme, color-text, color-main);
+            }
+            &.textColor_weak-invert{
+                color: blue;
+                //color: get-pep-color($pepperi-theme, color-text, color-regular);
+            }
+            &.textColor_strong{
+                color: #000;
+                //color: get-pep-color($pepperi-theme, color-text, color-main);
+            }
+
+            .buttons-box{
+                display: grid;
+                grid-template-columns: max-content max-content;
+                grid-column-gap: 1rem;
+            }
+        }
+
+        label{
+
+            color: inherit;
+            font-family: Inter;
+            font-weight: normal;
+            letter-spacing: 0.19px;
+        
+            &.size_xl{
+                font-size: 4.5rem !important;
+                line-height: 4.5rem !important;
+            }
+            &.size_lg{
+                font-size: 3.5rem !important;
+                line-height: 3.5rem !important;
+            }
+            &.size_md{
+                font-size: 2.5rem !important;
+                line-height: 2.5rem !important;
+            }
+            &.size_sm{
+                font-size: 1.5rem !important;
+                line-height: 1.5rem !important;
+            }
+            &.size_xs{
+                font-size: .75rem !important;
+                line-height: .75rem !important;
+            }
+        
+        }
 }
 
-label{
 
-    color: rgb(255, 255, 255);
-    font-family: Inter;
-    font-weight: normal;
-    letter-spacing: 0.19px;
-
-    &.size_xl{
-        font-size: 4.5rem !important;
-        line-height: 4.5rem !important;
-    }
-    &.size_lg{
-        font-size: 3.5rem !important;
-        line-height: 3.5rem !important;
-    }
-    &.size_md{
-        font-size: 2.5rem !important;
-        line-height: 2.5rem !important;
-    }
-    &.size_sm{
-        font-size: 1.5rem !important;
-        line-height: 1.5rem !important;
-    }
-    &.size_xs{
-        font-size: .75rem !important;
-        line-height: .75rem !important;
-    }
-
-}
 
