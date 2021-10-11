@@ -13,19 +13,15 @@ if (environment.production) {
 
 let lifecycles = null;
 
-
-    lifecycles = singleSpaAngular({
-        bootstrapFunction: singleSpaProps => {
-            singleSpaPropsSubject.next(singleSpaProps);
-            return platformBrowserDynamic(getSingleSpaExtraProviders()).bootstrapModule(AppModule);
-        },
-        template: '<addon-root />',
-        Router,
-        NgZone
-    });
-
-
-}
+lifecycles = singleSpaAngular({
+    bootstrapFunction: singleSpaProps => {
+        singleSpaPropsSubject.next(singleSpaProps);
+        return platformBrowserDynamic(getSingleSpaExtraProviders()).bootstrapModule(AppModule);
+    },
+    template: '<addon-root />',
+    Router,
+    NgZone
+});
 
 export const bootstrap = lifecycles.bootstrap;
 export const mount = lifecycles.mount;
