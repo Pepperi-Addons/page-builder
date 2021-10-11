@@ -20,7 +20,7 @@
             (cdkDropListDropped)="onBlockDropped($event)"
             [cdkDropListEnterPredicate]="canDropPredicate(i)"
         >
-            <section-block *ngIf="column.Block" [sectionId]="id" [pageBlock]="pageBlocksMap.get(column.Block.BlockKey)" [columnBlock]="column.Block" [editable]="editable" [canDrag]="canDrag"
+            <section-block *ngIf="column.Block && pageBlocksMap.has(column.Block.BlockKey)" [sectionId]="id" [pageBlock]="pageBlocksMap.get(column.Block.BlockKey)" [columnBlock]="column.Block" [editable]="editable" [canDrag]="canDrag"
                 [active]="selectedBlockId === column.Block?.BlockKey" [screenType]="screenType"></section-block>
 
             <!-- <div *ngIf="column.Block && pageBlocksMap.has(column.Block.BlockKey) && (editable || !hideColumnsForCurrentScreenTypeMap.has(column.Block.BlockKey))" 

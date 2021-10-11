@@ -26,6 +26,11 @@ export async function remove_page(client: Client, request: Request): Promise<any
     return service.removePage(request.query);
 }
 
+export async function get_pages_data(client: Client, request: Request): Promise<any> {
+    const service = new PagesApiService(client);
+    return service.getPagesData(request.query);
+};
+
 export async function get_page_builder_data(client: Client, request: Request): Promise<any> {
     const service = new PagesApiService(client);
     return service.getPageBuilderData(request.query);
