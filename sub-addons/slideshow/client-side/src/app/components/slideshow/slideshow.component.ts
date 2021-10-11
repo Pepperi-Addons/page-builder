@@ -69,6 +69,7 @@ export class SlideshowComponent implements OnInit {
         //this.subTitleSize = this.getTitleFontClass(this.hostObject.slides[0].subTitleSize);
         //this.dataSource$ = this.addonService.pepGet(`/items`);
         //this.dataSource$.toPromise().then(res => this.raiseBlockLoadedEvent());
+        this.raiseBlockLoadedEvent();
     }
 
     
