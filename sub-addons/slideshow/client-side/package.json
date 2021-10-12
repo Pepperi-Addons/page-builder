@@ -18,7 +18,7 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-architects/module-federation": "^12.4.0",
+    "@angular-architects/module-federation": "^12.5.3",
     "@angular/animations": "~12.1.1",
     "@angular/cdk": "~12.1.1",
     "@angular/common": "~12.1.1",
@@ -39,7 +39,6 @@
     "@ngx-translate/core": "^13.0.0",
     "@ngx-translate/http-loader": "^6.0.0",
     "@pepperi-addons/ngx-lib": "^0.2.19",
-    "@pepperi-addons/ngx-remote-loader": "^0.0.32",
     "@pepperi-addons/papi-sdk": "^1.24.0",
     "@tweenjs/tween.js": "^17.1.1",
     "again": "0.0.1",
@@ -61,6 +60,7 @@
     "single-spa": "^5.9.1",
     "single-spa-angular": "^5.0.2",
     "tslib": "^2.0.0",
+    "webpack-merge": "^5.7.3",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
@@ -86,8 +86,7 @@
     "protractor": "~7.0.0",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
-    "typescript": "~4.2.4",
-    "webpack-merge": "^5.7.3"
+    "typescript": "~4.2.4"
   },
   "browserslist": [
     "supports es6-module"
