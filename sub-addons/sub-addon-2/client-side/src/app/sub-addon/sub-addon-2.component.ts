@@ -1,4 +1,4 @@
-// import { TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 
 @Component({
@@ -19,7 +19,7 @@ export class SubAddon2Component implements OnInit {
     currIndex = 0;
     
     constructor(
-        // private translate: TranslateService,
+        private translate: TranslateService,
         private cd: ChangeDetectorRef) { }
 
     ngOnInit(): void {

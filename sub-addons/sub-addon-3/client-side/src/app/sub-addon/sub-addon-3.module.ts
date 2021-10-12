@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 
-// import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 
 import { PepHttpService, PepAddonService, PepFileService, PepCustomizationService, PepNgxLibModule } from '@pepperi-addons/ngx-lib';
 import { PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
@@ -29,14 +29,14 @@ import {config } from './addon.config';
         MatDialogModule,
         MatCardModule,
         // When not using module as sub-addon please remark this for not loading twice resources
-        // TranslateModule.forChild({
-        //     loader: {
-        //         provide: TranslateLoader,
-        //         useFactory: (http: HttpClient, fileService: PepFileService, addonService: PepAddonService) => 
-        //             PepAddonService.createDefaultMultiTranslateLoader(http, fileService, addonService, config.AddonUUID),
-        //         deps: [HttpClient, PepFileService, PepAddonService],
-        //     }, isolate: false
-        // }),
+        TranslateModule.forChild({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: (http: HttpClient, fileService: PepFileService, addonService: PepAddonService) => 
+                    PepAddonService.createDefaultMultiTranslateLoader(http, fileService, addonService, config.AddonUUID),
+                deps: [HttpClient, PepFileService, PepAddonService],
+            }, isolate: false
+        }),
         PepNgxLibModule,
         PepButtonModule,
         PepSelectModule,
@@ -49,7 +49,7 @@ import {config } from './addon.config';
     exports: [SubAddon3Component],
     providers: [
         HttpClient,
-        // TranslateStore,
+        TranslateStore,
         PepHttpService,
         PepAddonService,
         PepFileService,
@@ -59,10 +59,9 @@ import {config } from './addon.config';
 })
 export class SubAddon3Module {
     constructor(
-        // translate: TranslateService,
-        // private pepAddonService: PepAddonService
+        translate: TranslateService,
+        private pepAddonService: PepAddonService
     ) {
-
-        // this.pepAddonService.setDefaultTranslateLang(translate);
+        this.pepAddonService.setDefaultTranslateLang(translate);
     }
 }

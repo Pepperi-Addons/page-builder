@@ -24,6 +24,7 @@ module.exports = {
             shared: {
                 "@angular/core": { eager: true, singleton: true, strictVersion: false },
                 "@angular/common": { eager: true, singleton: true, strictVersion: false },
+                "@angular/common/http": { eager: true, singleton: true, strictVersion: false },
                 "rxjs": { eager: true, singleton: true, strictVersion: false },
                 "@ngx-translate/core": { eager: true, singleton: true, strictVersion: false },
                 "@angular/router": { eager: true, singleton: true,  strictVersion: false }

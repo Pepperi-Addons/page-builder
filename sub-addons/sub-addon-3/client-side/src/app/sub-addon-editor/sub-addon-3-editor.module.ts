@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SubAddon3EditorComponent } from './sub-addon-3-editor.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { PepHttpService, PepAddonService, PepFileService, PepCustomizationService, PepNgxLibModule, PepLayoutService } from '@pepperi-addons/ngx-lib';
+import { PepHttpService, PepAddonService, PepFileService, PepCustomizationService, PepNgxLibModule } from '@pepperi-addons/ngx-lib';
 import { PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepImagesFilmstripModule } from '@pepperi-addons/ngx-lib/images-filmstrip';
@@ -36,8 +36,7 @@ import {config } from './addon.config';
         PepAddonService,
         PepFileService,
         PepCustomizationService,
-        PepDialogService,
-        PepLayoutService
+        PepDialogService
     ]
 })
 export class SubAddon3EditorModule {

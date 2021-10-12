@@ -1,4 +1,4 @@
-// import { TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
@@ -13,7 +13,7 @@ export class SubAddon3Component implements OnInit {
     @Input() hostObject: any;
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
     constructor(
-        // private translate: TranslateService
+        private translate: TranslateService
         ) { }
 
     ngOnInit(): void {
