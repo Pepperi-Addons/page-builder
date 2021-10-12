@@ -67,8 +67,8 @@ export class SlideshowComponent implements OnInit {
     }
 
     ngOnInit() {
-        let startGradientColor = this.hostObject.slides[0].gradientOverlay.color;
-        let gradientOpacity = this.hostObject.slides[0].gradientOverlay.opacity + '%';
+        let startGradientColor = this.hostObject.slides[0]?.gradientOverlay.color;
+        let gradientOpacity = this.hostObject.slides[0]?.gradientOverlay.opacity + '%';
 
         this.renderer.setStyle(
             this.slideContainer.nativeElement,
