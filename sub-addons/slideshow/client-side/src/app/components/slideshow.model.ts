@@ -1,5 +1,4 @@
-import { PepStyleType, PepSizeType, PepHorizontalAlignment, PepVerticalAlignment } from "@pepperi-addons/ngx-lib";
-
+import { PepStyleType, PepStyleStateType, PepSizeType, PepHorizontalAlignment, PepVerticalAlignment, PepScreenSizeType} from '@pepperi-addons/ngx-lib';
 export type HeightUnit = 'REM' | 'VH';
 
 export type TransitionType = 'Fade' | 'Blur' | 'Dissolve' | 'Iris';
@@ -7,18 +6,20 @@ export type ArrowType = 'Two' | 'One' | 'Styled';
 export type ArrowShape = 'None' | 'Rect' | 'Rounded';
 export type WidthUnits = 'Narrow' | 'Regular' | 'Wide';
 export type Intensity = 'Soft' | 'Regular';
+export type textColor = 'system' | 'dimmed' | 'inverted' | 'strong';
+export type buttonColor = 'system' | 'system-inverted' | 'primary' | 'secondary'
 
 export class SlideButton {
     useButton: boolean = true;
     label: string = '1st button';
     linkTo: string = '';
-    style: PepStyleType = 'regular'
+    style: PepStyleStateType = 'system'
 }
 
 export class Overlay {
-    useGradientOverlay: boolean = false;
+    useGradientOverlay: boolean = true;
     color: string = '000';
-    opacity: string = '1';
+    opacity: string = '100';
 }
 
 export class SlideImage {
@@ -39,7 +40,7 @@ export class ISlideshowEditor {
     id: string;
     heightUnit: HeightUnit = "REM";
     height: string = '16';
-    innerSpacing?: PepSizeType = "md";
+    innerSpacing: PepSizeType = "md";
     isTransition: boolean = false;
     transitionDuration: number = 10;
     transitionType: TransitionType = 'Fade';
@@ -68,9 +69,10 @@ export class ISlideEditor {
     contentWidth: WidthUnits = 'Regular';
     horizontalAlign: PepHorizontalAlignment = 'left';
     verticalAlign: PepVerticalAlignment = 'middle';
-    textColor: PepStyleType = 'regular';
+    innerSpacing: PepSizeType = "md";
+    textColor: textColor = 'system';
     buttonsSize: PepSizeType  = 'md';
-    buttonsColor: PepStyleType= 'regular';
+    buttonsColor: buttonColor= 'system';
     firstButton: SlideButton = new SlideButton();
     secondButton: SlideButton  = new SlideButton();
     gradientOverlay: Overlay = new Overlay();

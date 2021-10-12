@@ -1,7 +1,7 @@
 // import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import {  map, tap } from 'rxjs/operators';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from "@angular/core";
 import { PepLayoutService, PepScreenSizeType, PepSizeType, PepStyleType } from '@pepperi-addons/ngx-lib';
 import { SlideshowService } from './index';
 import { Observable } from 'rxjs';
@@ -15,7 +15,7 @@ import { ISlideEditor, ISlideShow, ISlideshowEditor } from '../slideshow.model';
   providers: [TranslatePipe]
 })
 export class SlideshowComponent implements OnInit {
-
+    @ViewChild('mainSlideCont', { static: true }) slideContainer: ElementRef;
     screenSize: PepScreenSizeType;
     //mainTitleSize: string;
     //subTitleSize: string;
@@ -44,6 +44,8 @@ export class SlideshowComponent implements OnInit {
 
 
     constructor(
+        private renderer: Renderer2, 
+        private elementRef: ElementRef,
         public addonService: SlideshowService,
         public layoutService: PepLayoutService,
         // public dialog: PepDialogService,
@@ -65,6 +67,14 @@ export class SlideshowComponent implements OnInit {
     }
 
     ngOnInit() {
+        let startGradientColor = this.hostObject.slides[0].gradientOverlay.color;
+        let gradientOpacity = this.hostObject.slides[0].gradientOverlay.opacity + '%';
+
+        this.renderer.setStyle(
+            this.slideContainer.nativeElement,
+            "background",
+            "linear-gradient(to right, "+startGradientColor+", rgba(255,255,255,1) "+gradientOpacity+")" //no semicolon in the end
+          );
         //this.mainTitleSize = this.getTitleFontClass(this.hostObject.slides[0].titleSize);
         //this.subTitleSize = this.getTitleFontClass(this.hostObject.slides[0].subTitleSize);
         //this.dataSource$ = this.addonService.pepGet(`/items`);

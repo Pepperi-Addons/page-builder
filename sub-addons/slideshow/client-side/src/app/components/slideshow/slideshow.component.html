@@ -1,4 +1,4 @@
-<div class="ng-component-container" [ngStyle]="{'height': hostObject?.slideshowConfig.height + hostObject?.slideshowConfig.heightUnit}" [ngClass]="['contentWidth_'+hostObject?.slides[0]?.contentWidth]" >
+<div #mainSlideCont class="ng-component-container" [ngStyle]="{'height': hostObject?.slideshowConfig.height + hostObject?.slideshowConfig.heightUnit}" [ngClass]="['horAlign_'+hostObject?.slides[0]?.horizontalAlign, 'verAlign_'+hostObject?.slides[0]?.verticalAlign]">
     <pep-page-layout>
         <!-- <ng-container pep-top-area> 
             <pep-top-bar [inline]="true" [title]="hostObject?.slideshowConfig?.height">
@@ -6,7 +6,7 @@
             </pep-top-bar>
         </ng-container> -->
         <ng-container pep-main-area>
-            <div class="slide-box" [ngClass]="['horAlign_'+hostObject?.slides[0]?.horizontalAlign, 'verAlign_'+hostObject?.slides[0]?.verticalAlign, 'textColor_'+hostObject?.slides[0]?.textColor]">
+            <div class="slide-box" [ngClass]="['contentWidth_'+hostObject?.slides[0]?.contentWidth, 'horAlign_'+hostObject?.slides[0]?.horizontalAlign, 'verAlign_'+hostObject?.slides[0]?.verticalAlign, 'textColor_'+hostObject?.slides[0]?.textColor, 'rowGap_'+hostObject?.slides[0]?.innerSpacing]" >
                 <div>
                     <label class="body-sm ellipsis" *ngIf="hostObject?.slides[0]?.useTitle" [ngClass]="'size_'+hostObject?.slides[0]?.titleSize">{{hostObject?.slides[0]?.titleContent}}</label>
                 </div>
@@ -14,8 +14,8 @@
                     <label class="body-sm ellipsis" *ngIf="hostObject?.slides[0]?.useSubTitle" [ngClass]="'size_'+hostObject?.slides[0]?.subTitleSize">{{hostObject?.slides[0]?.subTitleContent}}</label>
                 </div>
                 <div class="buttons-box">
-                    <pep-button class="pull-left flip" *ngIf="hostObject?.slides[0]?.firstButton.useButton" [sizeType]="hostObject?.slides[0]?.buttonsSize" [value]="hostObject?.slides[0]?.firstButton.label" [styleType]="hostObject?.slides[0]?.firstButton.style"  (buttonClick)="null;"></pep-button>
-                    <pep-button class="pull-left flip" *ngIf="hostObject?.slides[0]?.secondButton.useButton" [sizeType]="hostObject?.slides[0]?.buttonsSize" [value]="hostObject?.slides[0]?.secondButton.label" [styleType]="hostObject?.slides[0]?.secondButton.style"  (buttonClick)="null;"></pep-button>
+                    <pep-button *ngIf="hostObject?.slides[0]?.firstButton.useButton" [sizeType]="hostObject?.slides[0]?.buttonsSize" [value]="hostObject?.slides[0]?.firstButton.label" [styleType]="hostObject?.slides[0]?.firstButton.style" [styleStateType]="hostObject?.slides[0]?.buttonsColor" (buttonClick)="null"></pep-button>
+                    <pep-button *ngIf="hostObject?.slides[0]?.secondButton.useButton" [sizeType]="hostObject?.slides[0]?.buttonsSize" [value]="hostObject?.slides[0]?.secondButton.label" [styleType]="hostObject?.slides[0]?.secondButton.style" [styleStateType]="hostObject?.slides[0]?.buttonsColor"  (buttonClick)="null"></pep-button>
                 </div>
             </div>
 

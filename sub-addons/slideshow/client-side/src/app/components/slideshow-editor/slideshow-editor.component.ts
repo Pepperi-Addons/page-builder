@@ -5,7 +5,7 @@ import { slideCalendar } from '@mat-datetimepicker/core/datetimepicker/datetimep
 import { TranslateService } from '@ngx-translate/core';
 import { PepStyleType, PepSizeType, PepHorizontalAlignment, PepVerticalAlignment, PepScreenSizeType} from '@pepperi-addons/ngx-lib';
 import { IPepButtonClickEvent } from '@pepperi-addons/ngx-lib/button';
-import { ISlideShow, ISlideshowEditor, slide, TransitionType, ArrowShape, ISlideEditor } from '../slideshow.model';
+import { ISlideShow, ISlideshowEditor, slide, TransitionType, ArrowShape, ISlideEditor, textColor } from '../slideshow.model';
 
 interface groupButtonArray {
     key: string; 
@@ -41,7 +41,7 @@ export class SlideshowEditorComponent implements OnInit {
     
     transitionTypes: Array<{key: TransitionType, value: string}>;
     transitionTimes: Array<{key: string, value: string}>;
-    arrowStyles: Array<{key: PepStyleType, value: string}>;
+    buttonStyles: Array<{key: PepStyleType, value: string}>;
 
     HeightUnitsType: Array<groupButtonArray>;
     InnerSpacing: Array<{key: PepSizeType, value: string}>;
@@ -56,6 +56,7 @@ export class SlideshowEditorComponent implements OnInit {
     VerticalAlign: Array<groupButtonArray>;
     SlideDropShadowStyle: Array<groupButtonArray>;
     textColors: Array<groupButtonArray>;
+    buttonColors: Array<groupButtonArray>;
 
     showSlideEditor = false;
     currentSlideindex = 0;
@@ -75,8 +76,7 @@ export class SlideshowEditorComponent implements OnInit {
         });
     }
     onSlideFieldChange(key, event){
-        
-        const value = event && event.source && event.source.key ? event.source.key : event;
+        const value = event && event.source && event.source.key ? event.source.key : event && event.source && event.source.value ? event.source.value :  event;
         
         if(key.indexOf('.') > -1){
             let keyObj = key.split('.');
@@ -119,12 +119,13 @@ export class SlideshowEditorComponent implements OnInit {
             { key: '15', value: '15'},
         ]
         
-        this.arrowStyles = [
-            { key: 'weak', value: 'Weak' },
-            { key: 'weak-invert', value:'Weak-Invert' },
-            { key: 'regular', value: 'Regular' },
-            { key: 'strong', value: 'Strong' }
+        this.buttonStyles = [
+            { key: 'regular', value: this.translate.instant('SLIDE_EDITOR.BUTTON_STYLES.REGULAR') },
+            { key: 'weak', value: this.translate.instant('SLIDE_EDITOR.BUTTON_STYLES.WEAK') },
+            { key: 'weak-invert', value:this.translate.instant('SLIDE_EDITOR.BUTTON_STYLES.WEAK-INVERT') },
+            { key: 'strong', value:this.translate.instant('SLIDE_EDITOR.BUTTON_STYLES.STRONG') }
         ];
+        
 
         this.HeightUnitsType = [
             { key: 'REM', value: this.translate.instant('SLIDESHOW.HEIGHTUNITS_REM') },
@@ -133,7 +134,8 @@ export class SlideshowEditorComponent implements OnInit {
     
         this.InnerSpacing = [
             { key: 'sm', value: this.translate.instant('GROUP_SIZE.SM') },
-            { key: 'md', value: this.translate.instant('GROUP_SIZE.MD') }
+            { key: 'md', value: this.translate.instant('GROUP_SIZE.MD') },
+            { key: 'lg', value: this.translate.instant('GROUP_SIZE.LG') }
         ];
     
         this.ArrowsType = [
@@ -187,12 +189,19 @@ export class SlideshowEditorComponent implements OnInit {
             { key: 'Soft', value: this.translate.instant('SLIDE_EDITOR.SOFT') },
             { key: 'Regular', value: this.translate.instant('SLIDE_EDITOR.REGULAR') }
         ];
-
+        
         this.textColors = [  
-            { key: 'regular', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.REGULAR') },
-            { key: 'weak', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.WEAK') },
-            { key: 'weak-invert', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.WEAK_INVERT') },
+            { key: 'system', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.SYSTEM') },
+            { key: 'dimmed', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.DIMMED') },
+            { key: 'inverted', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.INVERTED') },
             { key: 'strong', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.STRONG') }
+        ];
+
+        this.buttonColors = [
+            { key: 'system', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.SYSTEM') },
+            { key: 'system-inverted', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.DIMMED') },
+            { key: 'primary', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.INVERTED') },
+            { key: 'secondary', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.STRONG') }
         ]
 
     }
