@@ -11,9 +11,9 @@ module.exports = {
         runtimeChunk: false
     },
     plugins: [
-        new webpack.ProvidePlugin({
-            process: 'process/browser',
-        }),
+        // new webpack.ProvidePlugin({
+        //     process: 'process/browser',
+        // }),
         new ModuleFederationPlugin({
             name: "sub_addon_2",
             filename: "sub_addon_2.js",
