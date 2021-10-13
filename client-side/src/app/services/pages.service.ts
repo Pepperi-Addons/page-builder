@@ -414,7 +414,7 @@ export class PagesService {
         return currentColumn;
     }
 
-    private getRemoteEntryByType(relation: NgComponentRelation, entryAddon, remoteName = 'remoteEntry') {
+    private getRemoteEntryByType(relation: NgComponentRelation, remoteBasePath: string, remoteName: string) {
         switch (relation.Type){
             case "NgComponent":
                 // For devBlocks gets the remote entry from the query params.
@@ -424,17 +424,17 @@ export class PagesService {
                         return devBlocks.get(relation?.ComponentName);
                     }
                 } else {
-                    return entryAddon?.PublicBaseURL + remoteName + '.js';
+                    return `${remoteBasePath}${remoteName}.js`;
                 }
             default:
                 return relation?.AddonRelativeURL;
         }
     }
 
-    private getRemoteLoaderOptions(relation: NgComponentRelation, addon: InstalledAddon) {
+    private getRemoteLoaderOptions(relation: NgComponentRelation, remoteBasePath: string) {
         return {
             addonId: relation?.AddonUUID,
-            remoteEntry: this.getRemoteEntryByType(relation, addon, relation.AddonRelativeURL),
+            remoteEntry: this.getRemoteEntryByType(relation, remoteBasePath, relation.AddonRelativeURL),
             remoteName: relation.AddonRelativeURL,
             exposedModule: './' + relation?.ModuleName,
             componentName: relation?.ComponentName,
@@ -498,6 +498,12 @@ export class PagesService {
     }
 
     updatePageFromEditor(pageData: IPageEditor) {
+        // Update editor title 
+        const currentEditor = this._editorSubject.value;
+        if (currentEditor.type === 'page-builder' && currentEditor.id === 'main') {
+            currentEditor.title = pageData.pageName;
+        }
+
         const currentPage = this.pageSubject.value;
 
         if (currentPage) {
@@ -746,9 +752,6 @@ export class PagesService {
             this.httpService.getHttpCall(`${baseUrl}/get_page_builder_data?key=${pageKey}`)
                 .subscribe((res: IPageBuilderDataForEditMode) => {
                     if (res && res.page && res.availableBlocks) {
-                        // Load the page.
-                        this.pageSubject.next(res.page);
-
                         // Load the available blocks.
                         const availableBlocks: IAvailableBlock[] = [];
                         res.availableBlocks.forEach(data => {
@@ -758,12 +761,29 @@ export class PagesService {
                             if (relation && addon) {
                                 availableBlocks.push({
                                     relation: relation,
-                                    options: this.getRemoteLoaderOptions(relation, addon)
+                                    options: this.getRemoteLoaderOptions(relation, addon?.PublicBaseURL)
                                 });
                             }
                         });
                             
                         this._availableBlocksSubject.next(availableBlocks);
+
+                        // Update the relation options of the save blocks.
+                        // if exist in the available blocks take the relation options, 
+                        // else take it from the save data (if there is devBlocks parameter handled in getRemoteLoaderOptions function).
+                        res.page.Blocks.forEach(block => {
+                            const availableBlock = availableBlocks.find(ab => ab.relation.AddonUUID === block.Relation.AddonUUID && ab.relation.Name === block.Relation.Name);
+
+                            if (availableBlock) {
+                                block.Relation.Options = availableBlock.options;
+                            } else {
+                                const remoteBasePath = block.Relation.Options.remoteEntry.replace(`${block.Relation.Options.remoteName}.js`, '');
+                                block.Relation.Options = this.getRemoteLoaderOptions(block.Relation, remoteBasePath);
+                            }
+                        });
+                        
+                        // Load the page.
+                        this.pageSubject.next(res.page);
                     }
             });
         }
