@@ -1,7 +1,6 @@
 import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { slideCalendar } from '@mat-datetimepicker/core/datetimepicker/datetimepicker-animations';
 import { TranslateService } from '@ngx-translate/core';
 import { PepStyleType, PepSizeType} from '@pepperi-addons/ngx-lib';
 import { IPepButtonClickEvent } from '@pepperi-addons/ngx-lib/button';

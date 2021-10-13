@@ -6,6 +6,7 @@ import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { PepHttpService, PepFileService, PepNgxLibModule, PepAddonService, PepCustomizationService } from '@pepperi-addons/ngx-lib';
 import { SlideshowComponent } from './slideshow.component';
+import { SlideModule } from '../slide/slide.module';
 // import { PepperiTableComponent } from './pepperi-table.component'
 import { PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
@@ -19,6 +20,7 @@ import { config } from '../addon.config';
     imports: [
         CommonModule,
         HttpClientModule,
+        SlideModule,
         // When not using module as sub-addon please remark this for not loading twice resources
         TranslateModule.forChild({
             loader: {

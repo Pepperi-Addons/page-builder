@@ -1,25 +1,7 @@
-<div #mainSlideCont 
-     class="ng-component-container" 
-     [ngStyle]="{'height': hostObject?.slideshowConfig.height + hostObject?.slideshowConfig.heightUnit,
-                 'background': 'linear-gradient(to right ' +',' + hostObject?.slides[this.hostObject?.slideshowConfig.editSlideIndex]?.gradientOverlay?.color + ',' + '#fff '  + hostObject?.slides[this.hostObject?.slideshowConfig.editSlideIndex]?.gradientOverlay?.opacity  +'%'}"  
-     [ngClass]="['horAlign_'+hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.horizontalAlign, 
-                 'verAlign_'+hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.verticalAlign]">
-    <pep-page-layout>
-        <ng-container pep-main-area>
-            <div class="slide-box" [ngClass]="['contentWidth_'+hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.contentWidth, 'horAlign_'+hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.horizontalAlign, 'verAlign_'+hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.verticalAlign, 'textColor_'+hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.textColor, 'rowGap_'+hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.innerSpacing]" >
-                <div>
-                    <label class="body-sm ellipsis" *ngIf="hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.useTitle" [ngClass]="'size_'+hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.titleSize">{{hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.titleContent}}</label>
-                </div>
-                <div>
-                    <label class="body-sm ellipsis" *ngIf="hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.useSubTitle" [ngClass]="'size_'+hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.subTitleSize">{{hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.subTitleContent}}</label>
-                </div>
-                <div class="buttons-box">
-                    <pep-button *ngIf="hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.firstButton.useButton" [sizeType]="hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.buttonsSize" [value]="hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.firstButton.label" [styleType]="hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.firstButton.style" [styleStateType]="hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.buttonsColor" (buttonClick)="onSlideButtonClicked('firstButton')"></pep-button>
-                    <pep-button *ngIf="hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.secondButton.useButton" [sizeType]="hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.buttonsSize" [value]="hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.secondButton.label" [styleType]="hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.secondButton.style" [styleStateType]="hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.buttonsColor"  (buttonClick)="onSlideButtonClicked('secondButton')"></pep-button>
-                </div>
-            </div>
-        </ng-container>
-    </pep-page-layout> 
-</div>
+<slide *ngFor="let currentSlide of hostObject?.slides" 
+       [showSlide]="slideIndex == currentSlide.id"
+       [slide]="currentSlide" 
+       [slideshowConfig]="hostObject?.slideshowConfig">
+</slide>
 
 
