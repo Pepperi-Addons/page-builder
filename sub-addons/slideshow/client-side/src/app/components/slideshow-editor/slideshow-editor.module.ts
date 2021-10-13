@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SlideModule } from '../slide/slide.module';
+import { SlideEditorModule } from '../slide-editor/slide-editor.module';
 import { SlideshowEditorComponent } from './slideshow-editor.component';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
@@ -46,7 +46,7 @@ const pepIcons = [
         PepPageLayoutModule,
         PepGroupButtonsModule,
         MatTabsModule,
-        SlideModule,
+        SlideEditorModule,
         PepColorModule,
         PepImageModule,
         PepTextareaModule,

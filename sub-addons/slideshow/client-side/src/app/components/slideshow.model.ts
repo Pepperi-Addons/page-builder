@@ -1,6 +1,6 @@
 import { PepStyleType, PepStyleStateType, PepSizeType, PepHorizontalAlignment, PepVerticalAlignment, PepScreenSizeType} from '@pepperi-addons/ngx-lib';
-export type HeightUnit = 'REM' | 'VH';
 
+export type HeightUnit = 'REM' | 'VH';
 export type TransitionType = 'Fade' | 'Blur' | 'Dissolve' | 'Iris';
 export type ArrowType = 'Two' | 'One' | 'Styled';
 export type ArrowShape = 'None' | 'Rect' | 'Rounded';
@@ -37,7 +37,7 @@ export class DropShadow {
 
 //export interface ISlideshowEditor {
 export class ISlideshowEditor {
-    id: string;
+    editSlideIndex: string = "-1";
     heightUnit: HeightUnit = "REM";
     height: string = '16';
     innerSpacing: PepSizeType = "md";
@@ -59,7 +59,7 @@ export class ISlideshowEditor {
 }
 
 export class ISlideEditor {
-    id: string;
+    id: number;
     useTitle: boolean = false;
     titleContent: string = 'Title';
     titleSize: PepSizeType = 'lg';
