@@ -1,135 +1,23 @@
-<div class="slide-container">
-    <div>
-        <pep-button classNames="lock-events" sizeType="xs" iconName="system_move"></pep-button>
-    </div>
-    <div *ngIf="title !== ''" class="title-container">
-        <span class="body-sm bold ellipsis title" title="{{title}}">{{id}}.&nbsp;{{title}}</span>
-    </div>
-    <div class="actions" *ngIf="showActions">
-        <pep-button classNames="caution" sizeType="xs" iconName="system_bin" (buttonClick)="onRemoveClick();"></pep-button>
-        <!-- <pep-menu sizeType="xs" iconName="system_view" ></pep-menu> -->
-        <!-- <hide-in [hideIn]="hideIn" (hideInChange)="onHideInChange($event)"></hide-in> -->
-        <pep-button sizeType="xs" iconName="system_edit" (buttonClick)="onEditClick();"></pep-button>
-    </div>
-    <div class="editorCont" *ngIf="id == hostObject?.slideshowConfig?.editSlideIndex">
-   <pep-checkbox [value]="hostObject?.slides[id].useTitle" [label]="'SLIDE_EDITOR.TITLE' | translate" [renderTitle]="false" 
-    (valueChange)="onSlideFieldChange('useTitle',$event)"></pep-checkbox>
-    <pep-textbox [label]="'SLIDE_EDITOR.CONTENT' | translate" type="string" [disabled]="!hostObject?.slides[id].useTitle" [value]="hostObject?.slides[id].titleContent" (valueChange)="onSlideFieldChange('titleContent',$event)"></pep-textbox>
-      
-    <label class="body-xs ellipsis">{{'SLIDE_EDITOR.MAIN_TITLE_SIZE' | translate}}</label>
-    <pep-group-buttons [buttons]="SlideTitleSize" [selectedButtonKey]="hostObject?.slides[id].titleSize" buttonsClass="md regular" viewType="toggle" stretch="true"
-                       (buttonClick)="onSlideFieldChange('titleSize',$event)" [buttonsDisabled]="!hostObject?.slides[id].useTitle"></pep-group-buttons>
-
-    <pep-checkbox [value]="hostObject?.slides[id].useSubTitle" [label]="'SLIDE_EDITOR.SUB_TITLE' | translate" [renderTitle]="false" 
-    (valueChange)="onSlideFieldChange('useSubTitle',$event)"></pep-checkbox>
-    
-    <pep-textarea [value]="hostObject?.slides[id].subTitleContent" [label]="'SLIDE_EDITOR.CONTENT' | translate" [disabled]="!hostObject?.slides[id].useSubTitle" 
-                  rowSpan="2" (valueChange)="onSlideFieldChange('subTitleContent',$event)">
-    </pep-textarea>
-
-    <label class="body-xs ellipsis">{{'SLIDE_EDITOR.SUB_TITLE_SIZE' | translate}}</label>
-    <pep-group-buttons [buttons]="SlideSubTitleSize" [selectedButtonKey]="hostObject?.slides[id].subTitleSize" buttonsClass="md regular" 
-                       [buttonsDisabled]="!hostObject?.slides[id].useSubTitle" (buttonClick)="onSlideFieldChange('subTitleSize',$event)" viewType="toggle" stretch="true">
-    </pep-group-buttons>
-
-    <label class="body-xl bold ellipsis">{{'SLIDE_EDITOR.CONTENT' | translate}}</label><br>
-    <label class="body-xs ellipsis">{{'SLIDE_EDITOR.CONTENT_BLOCK_WIDTH' | translate}}</label>
-    <pep-group-buttons [buttons]="WidthSize" [selectedButtonKey]="hostObject?.slides[id].contentWidth" buttonsClass="md regular" 
-                       (buttonClick)="onSlideFieldChange('contentWidth',$event)" viewType="toggle" stretch="true">
-    </pep-group-buttons>
-
-    <label class="body-xs ellipsis">{{'SLIDESHOW.INNERSPACING_TITLE' | translate}}</label>
-    <pep-group-buttons [buttons]="InnerSpacing" [selectedButtonKey]="hostObject?.slideshowConfig?.innerSpacing" buttonsClass="md regular" 
-                        viewType="toggle" stretch="true" (buttonClick)="onSlideFieldChange('innerSpacing',$event)">
-    </pep-group-buttons>
-
-    <label class="body-xs ellipsis">{{'SLIDE_EDITOR.HORIZONTAL_ALIGN' | translate}}</label>
-    <pep-group-buttons [buttons]="HorizentalAlign" [selectedButtonKey]="hostObject?.slides[id].horizontalAlign" buttonsClass="md regular" 
-                        (buttonClick)="onSlideFieldChange('horizontalAlign',$event)" viewType="toggle" stretch="true">
-    </pep-group-buttons>
-
-    <label class="body-xs ellipsis">{{'SLIDE_EDITOR.VERTICAL_ALIGN' | translate}}</label>
-    <pep-group-buttons [buttons]="VerticalAlign" [selectedButtonKey]="hostObject?.slides[id].verticalAlign" buttonsClass="md regular" 
-                        (buttonClick)="onSlideFieldChange('verticalAlign',$event)" viewType="toggle" stretch="true">
-    </pep-group-buttons>
-
-    <pep-select [label]="'SLIDE_EDITOR.TEXT_COLOR_TITLE' | translate" [value]="hostObject?.slides[id].textColor" [options]="textColors"
-                (valueChange)="onSlideFieldChange('textColor',$event)" [emptyOption]="false" [disabled]="false"></pep-select>
-
-    <label class="body-xl bold ellipsis">{{'SLIDE_EDITOR.BUTTONS' | translate}}</label><br>
-    <label class="body-xs ellipsis">{{'SLIDE_EDITOR.BUTTON_SIZE' | translate}}</label>
-    <pep-group-buttons [buttons]="SlideTitleSize" [selectedButtonKey]="hostObject?.slides[id].buttonsSize" buttonsClass="md regular" 
-                       (buttonClick)="onSlideFieldChange('buttonsSize',$event)" viewType="toggle" stretch="true">
-    </pep-group-buttons>
-
-    <pep-select [label]="'SLIDE_EDITOR.BUTTON_COLOR_TITLE' | translate" [value]="hostObject?.slides[id].buttonsColor" 
-                [options]="buttonColors" (valueChange)="onSlideFieldChange('buttonsColor',$event)" [emptyOption]="false" 
-                [disabled]="false" styleType="regular"></pep-select>
-
-
-    <pep-checkbox [value]="hostObject?.slides[id].firstButton.useButton" [label]="'SLIDE_EDITOR.FIRST_BUTTON' | translate" [renderTitle]="false" (valueChange)="onSlideFieldChange('firstButton.useButton',$event)"></pep-checkbox>
-    <pep-textbox [label]="'SLIDE_EDITOR.LABEL' | translate" type="string" [disabled]="!hostObject?.slides[id].firstButton.useButton" [value]="hostObject?.slides[id].firstButton.label" (valueChange)="onSlideFieldChange('firstButton.label',$event)"></pep-textbox>
-    <pep-textbox [label]="'SLIDE_EDITOR.LINK_TO' | translate" type="link" [disabled]="!hostObject?.slides[id].firstButton.useButton" [value]="hostObject?.slides[id].firstButton.linkTo" (valueChange)="onSlideFieldChange('firstButton.linkTo',$event)"></pep-textbox>
-    <pep-select [label]="'SLIDE_EDITOR.BUTTON_STYLE' | translate" [value]="hostObject?.slides[id].firstButton.style" 
-                [options]="buttonStyles" (valueChange)="onSlideFieldChange('firstButton.style',$event)" [emptyOption]="false" 
-                [disabled]="!hostObject?.slides[id].firstButton.useButton" styleType="weak">
-    </pep-select>
-
-    <pep-checkbox [value]="hostObject?.slides[id].secondButton.useButton" [label]="'SLIDE_EDITOR.SECOND_BUTTON' | translate" [renderTitle]="false" (valueChange)="onSlideFieldChange('secondButton.useButton',$event)"></pep-checkbox>
-    <pep-textbox [label]="'SLIDE_EDITOR.LABEL' | translate" type="string" [disabled]="!hostObject?.slides[id].secondButton.useButton" [value]="hostObject?.slides[id].secondButton.label" (valueChange)="onSlideFieldChange('secondButton.label',$event)"></pep-textbox>
-    <pep-textbox [label]="'SLIDE_EDITOR.LINK_TO' | translate" type="link" [disabled]="!hostObject?.slides[id].secondButton.useButton" [value]="hostObject?.slides[id].secondButton.linkTo" (valueChange)="onSlideFieldChange('secondButton.linkTo',$event)"></pep-textbox>
-    <pep-select [label]="'SLIDE_EDITOR.BUTTON_STYLE' | translate" [value]="hostObject?.slides[id].secondButton.style" [options]="buttonStyles"
-                (valueChange)="onSlideFieldChange('secondButton.style',$event)" [emptyOption]="false" [disabled]="!hostObject?.slides[id].secondButton.useButton">
-    </pep-select>
-    
-    <pep-checkbox [value]="hostObject?.slides[id].gradientOverlay.useGradientOverlay" [label]="'SLIDE_EDITOR.GRADIENT_OVERLAY' | translate" [renderTitle]="false" (valueChange)="onSlideFieldChange('gradientOverlay.useGradientOverlay',$event)"></pep-checkbox>
-    <pep-color [value]="hostObject?.slides[id].gradientOverlay.color" [label]="'SLIDE_EDITOR.GRADIENT_OVERLAY_COLOR' | translate" [disabled]="!hostObject?.slides[id].gradientOverlay.useGradientOverlay" xAlignment="left"
-            type="any" [showTitle]="true" [showAAComplient]="true" (valueChange)="onSlideFieldChange('gradientOverlay.color',$event)">
-    </pep-color>
-    <div>
-        <label class="body-xs ellipsis">{{'SLIDE_EDITOR.GRADIENT_OVERLAY_OPACITY' | translate}}</label>
-        <mat-slider [value]="hostObject?.slides[id].gradientOverlay.opacity" aria-label="unit(s)" [min]="'0'" [max]="'100'" [disabled]="!hostObject?.slides[id].gradientOverlay.opacity" 
-                    (change)="onSlideFieldChange('gradientOverlay.opacity',$event)" [thumbLabel]="'false'">
-        </mat-slider>
-    </div>
-
-    <pep-checkbox [value]="hostObject?.slides[id].overlay.useGradientOverlay" [label]="'SLIDE_EDITOR.OVERLAY' | translate" [renderTitle]="false" (valueChange)="onSlideFieldChange('overlay.useGradientOverlay',$event)"></pep-checkbox>
-    <pep-color [value]="hostObject?.slides[id].buttonsColor" [label]="'SLIDE_EDITOR.OVERLAY_COLOR' | translate" [disabled]="!hostObject?.slides[id].overlay.useGradientOverlay" xAlignment="left"
-            type="any" [showTitle]="true" [showAAComplient]="true" (valueChange)="onSlideFieldChange('overlay.useGradientOverlay',$event)">
-    </pep-color>
-    <div>
-        <label class="body-xs ellipsis">{{'SLIDE_EDITOR.OVERLAY_OPACITY' | translate}}</label>
-        <mat-slider [value]="hostObject?.slides[id].overlay.opacity" aria-label="unit(s)" [min]="'0'" [max]="'100'" [disabled]="!hostObject?.slides[id].overlay.opacity" 
-                    (change)="onSlideFieldChange('overlay.opacity',$event)" [thumbLabel]="'false'">
-        </mat-slider>
-    </div>
-
-    <pep-checkbox [value]="hostObject?.slides[id].image.useImage" [label]="'SLIDE_EDITOR.IMAGE' | translate" [renderTitle]="false" (valueChange)="onSlideFieldChange('mage.useImage',$event)"></pep-checkbox>
-    <pep-image [disabled]="!hostObject?.slides[id].image.useImage" [label]="'SLIDE_EDITOR.CHOOSE_IMAGE' | translate" [showTitle]="true" [xAlignment]="'left'" [rowSpan]="2">
-    </pep-image>
-    <div>
-        <label class="body-xs ellipsis">{{'SLIDE_EDITOR.IMAGE_HORIZONTAL_POSITION' | translate}}</label>
-        <mat-slider [value]="hostObject?.slides[id].image.horizontalPosition" aria-label="unit(s)" [min]="'0'" [max]="'100'" [disabled]="!hostObject?.slides[id].image.useImage" 
-                    (change)="onSlideFieldChange('gradientOverlay.opacity',$event)" [thumbLabel]="'false'">
-        </mat-slider>
-    </div>
-    <div>
-        <label class="body-xs ellipsis">{{'SLIDE_EDITOR.IMAGE_VERTICAL_POSITION' | translate}}</label>
-        <mat-slider [value]="hostObject?.slides[id].image.verticalPosition" aria-label="unit(s)" [min]="'0'" [max]="'100'" [disabled]="!hostObject?.slides[id].image.useImage" 
-                    (change)="onSlideFieldChange('gradientOverlay.opacity',$event)" [thumbLabel]="'false'">
-        </mat-slider>
-    </div>
-
-    <pep-checkbox [value]="hostObject?.slides[id].dropShadow.useDropShadow" [label]="'SLIDE_EDITOR.DROP_SHADOW' | translate" [renderTitle]="false" (valueChange)="onSlideFieldChange('dropShadow.useDropShadow',$event)"></pep-checkbox>
-    <label class="body-xs ellipsis">{{'SLIDE_EDITOR.SHADOW_INTENSITY' | translate}}</label>
-    <pep-group-buttons [buttons]="SlideDropShadowStyle" [selectedButtonKey]="hostObject?.slides[id].dropShadow.intensity" buttonsClass="md regular" 
-                       [buttonsDisabled]="!hostObject?.slides[id].dropShadow.useDropShadow"(buttonClick)="onSlideFieldChange('dropShadow.intensity',$event)" viewType="toggle" stretch="true">
-    </pep-group-buttons>
-    <div>
-        <label class="body-xs ellipsis">{{'SLIDE_EDITOR.SHADOW_INTENSITY' | translate}}</label>
-        <mat-slider [value]="hostObject?.slides[id].dropShadow.opacity" aria-label="unit(s)" [min]="'0'" [max]="'100'" [disabled]="!hostObject?.slides[id].dropShadow.useDropShadow" 
-                    (change)="onSlideFieldChange('dropShadow.opacity',$event)" [thumbLabel]="'false'">
-        </mat-slider>
-    </div>
-</div>
+<div #mainSlideCont *ngIf="showSlide"
+     class="ng-component-container" 
+     [ngStyle]="{'height': slideshowConfig.height + slideshowConfig.heightUnit,
+                 'background': 'linear-gradient(to right ' +',' + slide?.gradientOverlay?.color + ',' + '#fff '  + slide?.gradientOverlay?.opacity  +'%'}"  
+     [ngClass]="['horAlign_'+slide?.horizontalAlign, 
+                 'verAlign_'+slide?.verticalAlign]">
+    <pep-page-layout>
+        <ng-container pep-main-area>
+            <div class="slide-box" [ngClass]="['contentWidth_'+slide?.contentWidth, 'horAlign_'+slide?.horizontalAlign, 'verAlign_'+slide?.verticalAlign, 'textColor_'+slide?.textColor, 'rowGap_'+slide?.innerSpacing]" >
+                <div>
+                    <label class="body-sm ellipsis" *ngIf="slide?.useTitle" [ngClass]="'size_'+slide?.titleSize">{{slide?.titleContent}}</label>
+                </div>
+                <div>
+                    <label class="body-sm ellipsis" *ngIf="slide?.useSubTitle" [ngClass]="'size_'+slide?.subTitleSize">{{slide?.subTitleContent}}</label>
+                </div>
+                <div class="buttons-box">
+                    <pep-button *ngIf="slide?.firstButton.useButton" [sizeType]="slide?.buttonsSize" [value]="slide?.firstButton.label" [styleType]="slide?.firstButton.style" [styleStateType]="slide?.buttonsColor" (buttonClick)="onSlideButtonClicked('firstButton')"></pep-button>
+                    <pep-button *ngIf="slide?.secondButton.useButton" [sizeType]="slide?.buttonsSize" [value]="slide?.secondButton.label" [styleType]="slide?.secondButton.style" [styleStateType]="slide?.buttonsColor"  (buttonClick)="onSlideButtonClicked('secondButton')"></pep-button>
+                </div>
+            </div>
+        </ng-container>
+    </pep-page-layout> 
 </div>

@@ -1,11 +1,9 @@
-// import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
-import {  map, tap } from 'rxjs/operators';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from "@angular/core";
-import { PepLayoutService, PepScreenSizeType, PepSizeType, PepStyleType } from '@pepperi-addons/ngx-lib';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 import { SlideshowService } from './index';
-import { Observable } from 'rxjs';
 import { ISlideEditor, ISlideShow, ISlideshowEditor } from '../slideshow.model';
+import { NgtscCompilerHost } from '@angular/compiler-cli/src/ngtsc/file_system';
 
 
 @Component({
@@ -14,15 +12,14 @@ import { ISlideEditor, ISlideShow, ISlideshowEditor } from '../slideshow.model';
   styleUrls: ['./slideshow.component.scss'],
   providers: [TranslatePipe]
 })
+
 export class SlideshowComponent implements OnInit {
     @ViewChild('mainSlideCont', { static: true }) slideContainer: ElementRef;
     screenSize: PepScreenSizeType;
 
-    // @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
     private _hostObject: ISlideShow = this.getDefaultHostObject();
     @Input() 
     set hostObject(value: ISlideShow) {
-        
         if (!value) {
             value = this.getDefaultHostObject();
         }
@@ -35,12 +32,11 @@ export class SlideshowComponent implements OnInit {
 
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
 
+    public slideIndex = 0;
+
     constructor(
-        private renderer: Renderer2, 
-        private elementRef: ElementRef,
         public addonService: SlideshowService,
         public layoutService: PepLayoutService,
-        // public dialog: PepDialogService,
         public translate: TranslateService
     ) {
 
@@ -58,48 +54,25 @@ export class SlideshowComponent implements OnInit {
         this.hostEvents.emit({action: 'block-loaded'});
     }
     
-    ngOnChanges(changes) {
-        debugger;
-        if (changes) {
-        }
-    }
     ngOnInit() {
-
-        this.hostObject.slideshowConfig.editSlideIndex = "-1"; // TODO - NEED TO THINK ABOUT A BETTER SOLUTION
-
-        // let startGradientColor = this.hostObject.slides[this.hostObject?.slideshowConfig.editSlideIndex].gradientOverlay.color;
-        // let gradientOpacity = this.hostObject.slides[this.hostObject?.slideshowConfig.editSlideIndex].gradientOverlay.opacity + '%';
-
-        // this.renderer.setStyle(
-        //     this.slideContainer.nativeElement,
-        //     "background",
-        //     "linear-gradient(to right, "+startGradientColor+", rgba(255,255,255,1) "+gradientOpacity+")" //no semicolon in the end
-        //   );
-        //this.mainTitleSize = this.getTitleFontClass(this.hostObject.slides[0].titleSize);
-        //this.subTitleSize = this.getTitleFontClass(this.hostObject.slides[0].subTitleSize);
-        //this.dataSource$ = this.addonService.pepGet(`/items`);
-        //this.dataSource$.toPromise().then(res => this.raiseBlockLoadedEvent());
+        //this.hostObject.slideshowConfig.editSlideIndex = "-1"; // TODO - NEED TO THINK ABOUT A BETTER SOLUTION
         this.raiseBlockLoadedEvent();
+        this.showSlides();
     }
 
-    
+    showSlides() {
 
-    ngAfterViewInit(): void {
+        var slides = this.hostObject.slides; 
+        //var dots = document.getElementsByClassName("dot");
+        if (this.slideIndex >= slides.length) {this.slideIndex = 0}
+        //if (this.slideIndex < 1) {this.slideIndex = slides.length}
         
-    }
-    onSlideButtonClicked(btnName: string){
-        if(this.hostObject.slides[0][btnName] && this.hostObject.slides[this.hostObject.slideshowConfig.editSlideIndex][btnName].linkTo != ''){
-            var linkTo = window.open('', '_blank');
-            linkTo.location.href = this.hostObject.slides[this.hostObject.slideshowConfig.editSlideIndex][btnName].linkTo;
-        }
-    }
+        
+        var that = this;
+        setTimeout(function(){that.slideIndex ++; that.showSlides() }, 3000);
+      }
 
-    onMenuItemClicked(e){
 
-    }
 
-    onActionsStateChanged(e){
-
-    }
 
 }

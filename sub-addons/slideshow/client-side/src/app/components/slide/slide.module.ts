@@ -17,6 +17,7 @@ import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
 import { PepImageModule } from '@pepperi-addons/ngx-lib/image';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepTextareaModule } from '@pepperi-addons/ngx-lib/textarea';
+import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
 
 @NgModule({
     declarations: [SlideComponent],
@@ -27,7 +28,7 @@ import { PepTextareaModule } from '@pepperi-addons/ngx-lib/textarea';
         PepMenuModule,
         PepTextboxModule,
         PepCheckboxModule,
-        //HttpClientModule,
+        PepPageLayoutModule,
         PepNgxLibModule,
         PepSelectModule,
         MatDialogModule,

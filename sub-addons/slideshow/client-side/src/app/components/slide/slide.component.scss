@@ -1,54 +1,149 @@
-@import 'ngx-lib/src/core/style/abstracts/variables';
-@import 'ngx-lib/src/core/style/abstracts/mixins';
-// @import '../../../../../../../../page-builder/client-side/src/mixins.scss';
-
-// Define pepperi lib theme and include theme styles for pepperi components.
 @import '~@pepperi-addons/ngx-lib/theming';
 @include pepperi-theme();
-
 // Get the theme object.
 $pepperi-theme: get-pepperi-theme();
 
-:host {
-     display: block;
-}
+.ng-component-container{
+    width: inherit;
+    // background: linear-gradient(45deg, rgb(21, 24, 26) 0%, rgba(21, 24, 26, 0.35) 50%, rgba(21, 24, 26, 0) 100%);
+    display: block;
+    height: inherit;
+    margin: 0 auto;
 
-.slide-container {
-    min-height: 2.5rem;
-    width: 100%;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    padding-top: .4rem;
-    border-radius: $border-radius-md;
-    padding-inline: $spacing-sm;
-    margin-bottom: .5rem;
-    @include state-regular-default($pepperi-theme, true);
-
-    .editorCont{
-        grid-column: 1 / 4;
-        grid-row: 2 / 4;
-    }
-
-    .title-container {
-        margin-top: .15rem;
-        overflow-x: hidden;
-        margin-inline: $spacing-sm;
-    
-        .title {
-            display: block;
+    &.horAlign_right{
+        ::ng-deep{
+            .pep-main-area{
+                display: grid !important;
+                justify-items: end;
+            }
         }
     }
+    &.horAlign_center{
+        ::ng-deep{
+            .pep-main-area{
+                display: grid !important;
+                justify-items: center;
+            }
+        }
+    }
+    &.horAlign_left{
+        ::ng-deep{
+            .pep-main-area{
+                display: grid !important;
+                justify-items: start;
+            }
+        }
+    }
+    
+   
+        .slide-box{
+            border: 2px dashed darkblue;
+            display: grid;
+            grid-template-rows: min-content min-content min-content;
+            align-self: center;
+            color: get-pep-color($pepperi-theme, color-text, color-main);
+
+            &.contentWidth_narrow{
+                width: 50%;
+            }
+            &.contentWidth_regular{
+                width: 75%;
+            }
+            &.contentWidth_wide{
+                width: 100%;
+            }
+
+            &.horAlign_left{
+                text-align: left;
+            }
+            &.horAlign_center{
+                text-align: center;
+            }
+            &.horAlign_right{
+                text-align: right;
+            }
+
+            &.verAlign_top{
+                align-self: start;
+            }
+            &.verAlign_middle{
+                align-self: center;
+            }
+            &.verAlign_bottom{
+                align-self: end;
+            }
+
+            &.rowGap_sm{
+                grid-row-gap: .25rem;
+            }
+            &.rowGap_md{
+                grid-row-gap: .5rem;
+            }
+            &.rowGap_lg{
+                grid-row-gap: 1rem;
+            }
+
+            &.textColor_system{
+                //color: #fff;
+                color: get-pep-color($pepperi-theme, color-text, color-regular);
+
+            }
+            &.textColor_dimmed{
+                //color: yellow;
+                color: get-pep-color($pepperi-theme, color-text, color-dimmed);
+            }
+            &.textColor_inverted{
+                //color: blue;
+                color: get-pep-color($pepperi-theme, color-text, color-invert);
+
+            }
+            &.textColor_strong{
+                //color: #000;
+                color: get-pep-color($pepperi-theme, color-text, color-strong);
+            }
+
+            .buttons-box{
+
+                pep-button{
+                    display: inline;;
+                    
+                    &:first-of-type{
+                        margin-inline-end: 1rem;
+                    }
+                }
+            }
+        }
+
+        label{
+
+            color: inherit;
+            font-family: Inter;
+            font-weight: normal;
+            letter-spacing: 0.19px;
+        
+            &.size_xl{
+                font-size: 4.5rem !important;
+                line-height: 4.5rem !important;
+            }
+            &.size_lg{
+                font-size: 3.5rem !important;
+                line-height: 3.5rem !important;
+            }
+            &.size_md{
+                font-size: 2.5rem !important;
+                line-height: 2.5rem !important;
+            }
+            &.size_sm{
+                font-size: 1.5rem !important;
+                line-height: 1.5rem !important;
+            }
+            &.size_xs{
+                font-size: .75rem !important;
+                line-height: .75rem !important;
+            }
+        
+        }
 }
 
 
 
-.actions {
-    display: inline-flex;
-    gap: $spacing-xs;
-}
-
-// @mixin slide-component-theme($pepperi-theme) {
-//     .slide-container {
-//         @include state-regular-default($pepperi-theme, true);
-//     }
-// }
