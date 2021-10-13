@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SlideComponent } from './slide.component'
+import { SlideEditorComponent } from './slide-editor.component'
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
@@ -19,7 +19,7 @@ import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepTextareaModule } from '@pepperi-addons/ngx-lib/textarea';
 
 @NgModule({
-    declarations: [SlideComponent],
+    declarations: [SlideEditorComponent],
     imports: [
         CommonModule,
         DragDropModule,
@@ -46,6 +46,6 @@ import { PepTextareaModule } from '@pepperi-addons/ngx-lib/textarea';
             }, isolate: false
         }),
     ],
-    exports: [SlideComponent]
+    exports: [SlideEditorComponent]
 })
-export class SlideModule { }
+export class SlideEditorModule { }

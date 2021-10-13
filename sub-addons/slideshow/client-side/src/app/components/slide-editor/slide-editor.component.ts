@@ -9,11 +9,11 @@ interface groupButtonArray {
 }
 
 @Component({
-    selector: 'slide',
-    templateUrl: './slide.component.html',
-    styleUrls: ['./slide.component.scss']
+    selector: 'slide-editor',
+    templateUrl: './slide-editor.component.html',
+    styleUrls: ['./slide-editor.component.scss']
 })
-export class SlideComponent implements OnInit {
+export class SlideEditorComponent implements OnInit {
     
     @Input() hostObject: ISlideShow;
     @Input() id: string;

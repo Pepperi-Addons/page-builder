@@ -17,12 +17,7 @@ import { ISlideEditor, ISlideShow, ISlideshowEditor } from '../slideshow.model';
 export class SlideshowComponent implements OnInit {
     @ViewChild('mainSlideCont', { static: true }) slideContainer: ElementRef;
     screenSize: PepScreenSizeType;
-    //mainTitleSize: string;
-    //subTitleSize: string;
 
-    //dataSource$: Observable<any[]>
-
-    // @Input() hostObject: any;
     // @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
     private _hostObject: ISlideShow = this.getDefaultHostObject();
     @Input() 
@@ -39,9 +34,6 @@ export class SlideshowComponent implements OnInit {
     }
 
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
-
-    // @ViewChild(PepperiTableComponent) table: PepperiTableComponent;
-
 
     constructor(
         private renderer: Renderer2, 
@@ -65,16 +57,24 @@ export class SlideshowComponent implements OnInit {
     private raiseBlockLoadedEvent() {
         this.hostEvents.emit({action: 'block-loaded'});
     }
-
+    
+    ngOnChanges(changes) {
+        debugger;
+        if (changes) {
+        }
+    }
     ngOnInit() {
-        let startGradientColor = this.hostObject.slides[0]?.gradientOverlay.color;
-        let gradientOpacity = this.hostObject.slides[0]?.gradientOverlay.opacity + '%';
 
-        this.renderer.setStyle(
-            this.slideContainer.nativeElement,
-            "background",
-            "linear-gradient(to right, "+startGradientColor+", rgba(255,255,255,1) "+gradientOpacity+")" //no semicolon in the end
-          );
+        this.hostObject.slideshowConfig.editSlideIndex = "-1"; // TODO - NEED TO THINK ABOUT A BETTER SOLUTION
+
+        // let startGradientColor = this.hostObject.slides[this.hostObject?.slideshowConfig.editSlideIndex].gradientOverlay.color;
+        // let gradientOpacity = this.hostObject.slides[this.hostObject?.slideshowConfig.editSlideIndex].gradientOverlay.opacity + '%';
+
+        // this.renderer.setStyle(
+        //     this.slideContainer.nativeElement,
+        //     "background",
+        //     "linear-gradient(to right, "+startGradientColor+", rgba(255,255,255,1) "+gradientOpacity+")" //no semicolon in the end
+        //   );
         //this.mainTitleSize = this.getTitleFontClass(this.hostObject.slides[0].titleSize);
         //this.subTitleSize = this.getTitleFontClass(this.hostObject.slides[0].subTitleSize);
         //this.dataSource$ = this.addonService.pepGet(`/items`);
@@ -86,6 +86,12 @@ export class SlideshowComponent implements OnInit {
 
     ngAfterViewInit(): void {
         
+    }
+    onSlideButtonClicked(btnName: string){
+        if(this.hostObject.slides[0][btnName] && this.hostObject.slides[this.hostObject.slideshowConfig.editSlideIndex][btnName].linkTo != ''){
+            var linkTo = window.open('', '_blank');
+            linkTo.location.href = this.hostObject.slides[this.hostObject.slideshowConfig.editSlideIndex][btnName].linkTo;
+        }
     }
 
     onMenuItemClicked(e){

@@ -64,19 +64,20 @@
                 </pep-group-buttons>
     </mat-tab>
     <mat-tab label="{{'SLIDESHOW.CONTENT' | translate}}">
-        <ng-container *ngIf="!showSlideEditor">
+        <ng-container>
             <label class="body-xl bold ellipsis">{{'SLIDESHOW.SLIDES' | translate}}</label>
             <div #availableSlidesContainer id="availableSlides" class="available-slides">
-                <slide *ngFor="let availableSlide of hostObject?.slides;" class="available-slide"
-                    [title]="availableSlide?.titleContent + availableSlide?.id"[id]="availableSlide?.id" [showActions]="true" 
-                    [isDraggable]="true" (editClick)='onSlideEditClick($event);' (removeClick)='onSlideRemoveClick($event);'>
-                </slide>
+                <slide-editor *ngFor="let currentSlide of hostObject?.slides;" class="available-slide"
+                    [id]="currentSlide?.id" [showActions]="true" 
+                    [isDraggable]="true" (editClick)='onSlideEditClick($event);' (removeClick)='onSlideRemoveClick($event);'
+                    [hostObject]="hostObject">
+                </slide-editor>
             </div>
 
             <pep-button class="add-content-button" value="{{'SLIDESHOW.ADD_SLIDE' | translate}}" styleType="regular" iconName="number_plus" iconPosition="end"
                     (buttonClick)="onAddNewSlideClick($event)"></pep-button>
         </ng-container>
-        <ng-container *ngIf="showSlideEditor">
+        <!-- <ng-container *ngIf="showSlideEditor">
                 <pep-button sizeType="xs" iconName="arrow_left_alt" (buttonClick)="navigateBack();"></pep-button>
                 <pep-checkbox [value]="hostObject?.slides[currentSlideindex].useTitle" [label]="'SLIDE_EDITOR.TITLE' | translate" [renderTitle]="false" 
                 (valueChange)="onSlideFieldChange('useTitle',$event)"></pep-checkbox>
@@ -142,8 +143,8 @@
                 </pep-select>
 
                 <pep-checkbox [value]="hostObject?.slides[currentSlideindex].secondButton.useButton" [label]="'SLIDE_EDITOR.SECOND_BUTTON' | translate" [renderTitle]="false" (valueChange)="onSlideFieldChange('secondButton.useButton',$event)"></pep-checkbox>
-                <pep-textbox [label]="'SLIDE_EDITOR.LABEL' | translate" type="string" [disabled]="!hostObject?.slides[currentSlideindex].secondButton.useButton" [value]="hostObject?.slides[currentSlideindex].firstButton.label" (valueChange)="onSlideFieldChange('secondButton.label',$event)"></pep-textbox>
-                <pep-textbox [label]="'SLIDE_EDITOR.LINK_TO' | translate" type="link" [disabled]="!hostObject?.slides[currentSlideindex].secondButton.useButton" [value]="hostObject?.slides[currentSlideindex].firstButton.linkTo" (valueChange)="onSlideFieldChange('secondButton.linkTo',$event)"></pep-textbox>
+                <pep-textbox [label]="'SLIDE_EDITOR.LABEL' | translate" type="string" [disabled]="!hostObject?.slides[currentSlideindex].secondButton.useButton" [value]="hostObject?.slides[currentSlideindex].secondButton.label" (valueChange)="onSlideFieldChange('secondButton.label',$event)"></pep-textbox>
+                <pep-textbox [label]="'SLIDE_EDITOR.LINK_TO' | translate" type="link" [disabled]="!hostObject?.slides[currentSlideindex].secondButton.useButton" [value]="hostObject?.slides[currentSlideindex].secondButton.linkTo" (valueChange)="onSlideFieldChange('secondButton.linkTo',$event)"></pep-textbox>
                 <pep-select [label]="'SLIDE_EDITOR.BUTTON_STYLE' | translate" [value]="hostObject?.slides[currentSlideindex].secondButton.style" [options]="buttonStyles"
                             (valueChange)="onSlideFieldChange('secondButton.style',$event)" [emptyOption]="false" [disabled]="!hostObject?.slides[currentSlideindex].secondButton.useButton">
                 </pep-select>
@@ -197,6 +198,6 @@
                                 (change)="onSlideFieldChange('dropShadow.opacity',$event)" [thumbLabel]="'false'">
                     </mat-slider>
                 </div>
-        </ng-container>
+        </ng-container> -->
     </mat-tab>
 </mat-tab-group>

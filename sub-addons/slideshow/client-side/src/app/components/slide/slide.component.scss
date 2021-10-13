@@ -14,25 +14,33 @@ $pepperi-theme: get-pepperi-theme();
 }
 
 .slide-container {
-    height: 2.5rem;
+    min-height: 2.5rem;
     width: 100%;
     display: grid;
     grid-template-columns: auto 1fr auto;
-    align-items: center;
+    padding-top: .4rem;
     border-radius: $border-radius-md;
     padding-inline: $spacing-sm;
     margin-bottom: .5rem;
     @include state-regular-default($pepperi-theme, true);
-}
 
-.title-container {
-    overflow-x: hidden;
-    margin-inline: $spacing-sm;
+    .editorCont{
+        grid-column: 1 / 4;
+        grid-row: 2 / 4;
+    }
 
-    .title {
-        display: block;
+    .title-container {
+        margin-top: .15rem;
+        overflow-x: hidden;
+        margin-inline: $spacing-sm;
+    
+        .title {
+            display: block;
+        }
     }
 }
+
+
 
 .actions {
     display: inline-flex;

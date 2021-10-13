@@ -103,8 +103,13 @@ $pepperi-theme: get-pepperi-theme();
             }
 
             .buttons-box{
-                pep-button:first-of-type{
+
+                pep-button{
+                    display: inline;;
+                    
+                    &:first-of-type{
                         margin-inline-end: 1rem;
+                    }
                 }
             }
         }

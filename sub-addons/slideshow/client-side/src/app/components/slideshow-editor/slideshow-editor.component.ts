@@ -3,7 +3,7 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { slideCalendar } from '@mat-datetimepicker/core/datetimepicker/datetimepicker-animations';
 import { TranslateService } from '@ngx-translate/core';
-import { PepStyleType, PepSizeType, PepHorizontalAlignment, PepVerticalAlignment, PepScreenSizeType} from '@pepperi-addons/ngx-lib';
+import { PepStyleType, PepSizeType} from '@pepperi-addons/ngx-lib';
 import { IPepButtonClickEvent } from '@pepperi-addons/ngx-lib/button';
 import { ISlideShow, ISlideshowEditor, slide, TransitionType, ArrowShape, ISlideEditor, textColor } from '../slideshow.model';
 
@@ -49,16 +49,8 @@ export class SlideshowEditorComponent implements OnInit {
     ArrowButtons: Array<{key: ArrowShape, value: string}>;
     ControllerSize: Array<groupButtonArray>;
     
-    SlideTitleSize:Array<groupButtonArray>;
-    SlideSubTitleSize: Array<groupButtonArray>;
-    WidthSize: Array<groupButtonArray>;
-    HorizentalAlign: Array<groupButtonArray>;
-    VerticalAlign: Array<groupButtonArray>;
-    SlideDropShadowStyle: Array<groupButtonArray>;
-    textColors: Array<groupButtonArray>;
-    buttonColors: Array<groupButtonArray>;
+   
 
-    showSlideEditor = false;
     currentSlideindex = 0;
     constructor(private translate: TranslateService) { 
         
@@ -155,77 +147,30 @@ export class SlideshowEditorComponent implements OnInit {
             { key: 'md', value: this.translate.instant('GROUP_SIZE.MD') }
         ];
 
-        this.SlideTitleSize = [
-            { key: 'md', value: this.translate.instant('GROUP_SIZE.MD') },
-            { key: 'lg', value: this.translate.instant('GROUP_SIZE.LG') },
-            { key: 'xl', value: this.translate.instant('GROUP_SIZE.XL') },
-        ];
-    
-        this.SlideSubTitleSize = [
-            { key: 'sm', value: this.translate.instant('GROUP_SIZE.SM') },
-            { key: 'md', value: this.translate.instant('GROUP_SIZE.MD') },
-            { key: 'lg', value: this.translate.instant('GROUP_SIZE.LG') }
-        ];
-    
-        this.WidthSize =  [
-            { key: 'narrow', value: this.translate.instant('SLIDE_EDITOR.WIDTH_SIZE.NARROW') },
-            { key: 'regular', value: this.translate.instant('SLIDE_EDITOR.WIDTH_SIZE.REGULAR') },
-            { key: 'wide', value: this.translate.instant('SLIDE_EDITOR.WIDTH_SIZE.WIDE') }
-        ];
-    
-        this.HorizentalAlign =  [
-            { key: 'left', value: this.translate.instant('SLIDE_EDITOR.HORIZONTAL_ALIGN_DIRECTION.LEFT') },
-            { key: 'center', value: this.translate.instant('SLIDE_EDITOR.HORIZONTAL_ALIGN_DIRECTION.CENTER') },
-            { key: 'right', value: this.translate.instant('SLIDE_EDITOR.HORIZONTAL_ALIGN_DIRECTION.RIGHT') }
-        ];
-    
-        this.VerticalAlign =  [
-            { key: 'top', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.TOP') },
-            { key: 'middle', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.MIDDLE') },
-            { key: 'bottom', value: this.translate.instant('SLIDE_EDITOR.VERTICAL_ALIGN_DIRECTION.BOTTOM') }
-        ];
-    
-        this.SlideDropShadowStyle = [
-            { key: 'Soft', value: this.translate.instant('SLIDE_EDITOR.SOFT') },
-            { key: 'Regular', value: this.translate.instant('SLIDE_EDITOR.REGULAR') }
-        ];
-        
-        this.textColors = [  
-            { key: 'system', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.SYSTEM') },
-            { key: 'dimmed', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.DIMMED') },
-            { key: 'inverted', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.INVERTED') },
-            { key: 'strong', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.STRONG') }
-        ];
-
-        this.buttonColors = [
-            { key: 'system', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.SYSTEM') },
-            { key: 'system-inverted', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.DIMMED') },
-            { key: 'primary', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.INVERTED') },
-            { key: 'secondary', value: this.translate.instant('SLIDE_EDITOR.TEXT_COLOR.STRONG') }
-        ]
-
     }
 
     onAddNewSlideClick(e) {
         let slide = new ISlideEditor();
-        slide.id = (this.hostObject.slides.length).toString();
+        slide.id = (this.hostObject.slides.length);
 
         this.hostObject.slides.push( slide);
         //this.pageBuilderService.addSection();
     }
 
     onSlideEditClick(event){
-        this.currentSlideindex = event.id;
-        this.showSlideEditor = true;
-         //this.pageBuilderService.navigateToEditor('section', this.id);
+       
+        if(this.hostObject.slideshowConfig.editSlideIndex === event.id){ //close the editor
+            this.hostObject.slideshowConfig.editSlideIndex = "-1";
+        }
+        else{ 
+            this.currentSlideindex = this.hostObject.slideshowConfig.editSlideIndex = event.id;
+        }
+
+        this.updateHostObject();
     }
     onSlideRemoveClick(event){
         this.hostObject.slides.splice(event.id, 1);
-        this.hostObject.slides.forEach(function(slide, index, arr) {slide.id = index.toString(); });
-    }
-
-    navigateBack() {
-        this.showSlideEditor = false;
+        this.hostObject.slides.forEach(function(slide, index, arr) {slide.id = index; });
     }
 
     onValueChange(event){
