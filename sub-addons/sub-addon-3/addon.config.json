@@ -17,13 +17,6 @@
   ],
   "PublishConfig": {
     "ClientStack": "ng10",
-    "Editors": [
-      {
-        "ParentPackageName": "CHANGE_TO_ADDON_CONTAINER_NAME",
-        "PackageName": "CHANGE_TO_ADDON_PATH",
-        "Description": "CHANGE_TO_ADDON_DESCRIPTION"
-      }
-    ],
     "Dependencies": {},
     "CPISide": [
       "addon-cpi.ts"

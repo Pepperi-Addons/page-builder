@@ -29,13 +29,6 @@
   ],
   "PublishConfig": {
     "ClientStack": "ng10",
-    "Editors": [
-      {
-        "ParentPackageName": "Page Layout",
-        "PackageName": "sub_addon_3",
-        "Description": "Sub Addon 3"
-      }
-    ],
     "Dependencies": {}
   },
   "CPISide": [

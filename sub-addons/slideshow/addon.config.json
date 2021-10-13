@@ -13,13 +13,6 @@
   ],
   "PublishConfig": {
     "ClientStack": "ng10",
-    "Editors": [
-      {
-        "ParentPackageName": "Pages Builder",
-        "PackageName": "sub_addon_2",
-        "Description": "Sub Addon 2"
-      }
-    ],
     "Dependencies": {}
   }
 }
