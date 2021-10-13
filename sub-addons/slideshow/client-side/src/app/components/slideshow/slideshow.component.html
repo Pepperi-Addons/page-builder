@@ -1,7 +1,7 @@
 <div #mainSlideCont 
      class="ng-component-container" 
      [ngStyle]="{'height': hostObject?.slideshowConfig.height + hostObject?.slideshowConfig.heightUnit,
-                 'background': 'linear-gradient(to right ' +',' + hostObject?.slides[this.hostObject?.slideshowConfig.editSlideIndex].gradientOverlay.color + ',' + '#fff '  + hostObject?.slides[this.hostObject?.slideshowConfig.editSlideIndex].gradientOverlay.opacity  +'%'}" 
+                 'background': 'linear-gradient(to right ' +',' + hostObject?.slides[this.hostObject?.slideshowConfig.editSlideIndex]?.gradientOverlay?.color + ',' + '#fff '  + hostObject?.slides[this.hostObject?.slideshowConfig.editSlideIndex]?.gradientOverlay?.opacity  +'%'}"  
      [ngClass]="['horAlign_'+hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.horizontalAlign, 
                  'verAlign_'+hostObject?.slides[hostObject?.slideshowConfig.editSlideIndex]?.verticalAlign]">
     <pep-page-layout>

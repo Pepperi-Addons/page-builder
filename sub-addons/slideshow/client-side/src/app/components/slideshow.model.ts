@@ -18,7 +18,7 @@ export class SlideButton {
 
 export class Overlay {
     useGradientOverlay: boolean = true;
-    color: string = '000';
+    color: string = '#000';
     opacity: string = '100';
 }
 

@@ -18,7 +18,7 @@ import { PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatDialogModule } from '@angular/material/dialog';
-import { pepIconArrowLeftAlt, PepIconModule, pepIconNumberPlus, PepIconRegistry, pepIconSystemBin, pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit, pepIconSystemMove } from '@pepperi-addons/ngx-lib/icon';
+import { pepIconArrowLeftAlt,pepIconArrowDown, pepIconArrowUp, PepIconModule, pepIconNumberPlus, PepIconRegistry, pepIconSystemBin, pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit, pepIconSystemMove } from '@pepperi-addons/ngx-lib/icon';
 
 import { config } from '../addon.config';
 
@@ -29,7 +29,9 @@ const pepIcons = [
     pepIconSystemEdit,
     pepIconSystemMove,
     pepIconSystemBin,
-    pepIconArrowLeftAlt
+    pepIconArrowLeftAlt,
+    pepIconArrowDown,
+    pepIconArrowUp
 ];
 
 @NgModule({
