@@ -18,7 +18,9 @@ export class SubAddon2Component implements OnInit {
     inputTitle = '';
     currIndex = 0;
     
-    constructor(private translate: TranslateService, private cd: ChangeDetectorRef) { }
+    constructor(
+        private translate: TranslateService,
+        private cd: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.options.push({key:'OPEN_DIALOG', value: 'Text 1' });

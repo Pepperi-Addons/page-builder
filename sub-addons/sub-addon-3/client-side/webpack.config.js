@@ -11,21 +11,22 @@ module.exports = {
         runtimeChunk: false
     },
     plugins: [
-        new webpack.ProvidePlugin({
-            process: 'process/browser',
-        }),
+        // new webpack.ProvidePlugin({
+        //     process: 'process/browser',
+        // }),
         new ModuleFederationPlugin({
             name: "sub_addon_3",
             filename: "sub_addon_3.js",
             exposes: {
-                './SubAddon3Module': './src/app/sub-addon/index.ts',
-                './SubAddon3EditorModule': './src/app/sub-addon-editor/index.ts',
+                './SubAddon3Module': './src/app/sub-addon/index',
+                './SubAddon3EditorModule': './src/app/sub-addon-editor/index'
             },
             shared: {
-                "@angular/core": { singleton: true,  strictVersion: false  },
-                "@angular/common": {singleton: true,strictVersion: false   },
-                "rxjs": { singleton: true,strictVersion: false   },
-                "@ngx-translate/core": { singleton: true, strictVersion: false   },
+                "@angular/core": { eager: true, singleton: true, strictVersion: false },
+                "@angular/common": { eager: true, singleton: true, strictVersion: false },
+                "@angular/common/http": { eager: true, singleton: true, strictVersion: false },
+                "rxjs": { eager: true, singleton: true, strictVersion: false },
+                "@ngx-translate/core": { eager: true, singleton: true, strictVersion: false },
                 "@angular/router": { eager: true, singleton: true,  strictVersion: false }
             }
         }),

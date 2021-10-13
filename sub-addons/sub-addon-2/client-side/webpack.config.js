@@ -11,9 +11,9 @@ module.exports = {
         runtimeChunk: false
     },
     plugins: [
-        new webpack.ProvidePlugin({
-            process: 'process/browser',
-        }),
+        // new webpack.ProvidePlugin({
+        //     process: 'process/browser',
+        // }),
         new ModuleFederationPlugin({
             name: "sub_addon_2",
             filename: "sub_addon_2.js",
@@ -24,6 +24,7 @@ module.exports = {
             shared: {
                 "@angular/core": { eager: true, singleton: true, strictVersion: false },
                 "@angular/common": { eager: true, singleton: true, strictVersion: false },
+                "@angular/common/http": { eager: true, singleton: true, strictVersion: false },
                 "rxjs": { eager: true, singleton: true, strictVersion: false },
                 "@ngx-translate/core": { eager: true, singleton: true, strictVersion: false },
                 "@angular/router": { eager: true, singleton: true,  strictVersion: false }
