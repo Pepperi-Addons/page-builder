@@ -21,7 +21,7 @@ import { config } from './addon.config';
     declarations: [SubAddon2Component],
     imports: [
         CommonModule,
-        HttpClientModule,
+        // HttpClientModule,
         // When not using module as sub-addon please remark this for not loading twice resources
         TranslateModule.forChild({
             loader: {
@@ -31,21 +31,21 @@ import { config } from './addon.config';
                 deps: [HttpClient, PepFileService, PepAddonService],
             }, isolate: false
         }),
-        PepNgxLibModule,
-        PepButtonModule,
-        PepSelectModule,
-        PepTopBarModule,
-        PepListModule,
-        PepPageLayoutModule,
+        // PepNgxLibModule,
+        // PepButtonModule,
+        // PepSelectModule,
+        // PepTopBarModule,
+        // PepListModule,
+        // PepPageLayoutModule,
         PepImagesFilmstripModule
     ],
     exports: [SubAddon2Component],
     providers: [
-        HttpClient,
+        // HttpClient,
         TranslateStore,
-        PepHttpService,
-        PepAddonService,
-        PepFileService,
+        // PepHttpService,
+        // PepAddonService,
+        // PepFileService,
         PepCustomizationService,
         PepDialogService
     ]

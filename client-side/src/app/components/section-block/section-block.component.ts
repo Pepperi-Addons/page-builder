@@ -1,10 +1,17 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, Renderer2, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragStart, CdkDropList } from '@angular/cdk/drag-drop';
 import { IEditor, PagesService } from 'src/app/services/pages.service';
-import { DataViewScreenSize, PageBlock, PageSectionBlock, PageSectionColumn, PageSizeType, SplitType } from '@pepperi-addons/papi-sdk';
+import { DataViewScreenSize, PageBlock, PageConfiguration, PageSectionBlock, PageSectionColumn, PageSizeType, SplitType } from '@pepperi-addons/papi-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 
+interface IHostObject {
+    configuration: any;
+    pageConfiguration?: PageConfiguration;
+    pageType?: any;
+    context?: any;
+    filter?: any;
+}
 @Component({
     selector: 'section-block',
     templateUrl: './section-block.component.html',
@@ -13,11 +20,20 @@ import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 export class SectionBlockComponent implements OnInit {
     
     @Input() sectionId: string;
-    @Input() pageBlock: PageBlock;
     @Input() canDrag = false;
     @Input() editable = false;
     @Input() active = false;
     
+    private _pageBlock: PageBlock;
+    @Input()
+    set pageBlock(value: PageBlock) {
+        this._pageBlock = value;
+        this.setHostObject();
+    }
+    get pageBlock(): PageBlock {
+        return this._pageBlock;
+    }
+
     private _columnBlock: PageSectionBlock;
     @Input()
     set columnBlock(value: PageSectionBlock) {
@@ -39,6 +55,11 @@ export class SectionBlockComponent implements OnInit {
     }
     
     hideForCurrentScreenType = false;
+    
+    private _hostObject: IHostObject;
+    get hostObject() {
+        return this._hostObject;
+    }
 
     constructor(
         private renderer: Renderer2,
@@ -46,6 +67,17 @@ export class SectionBlockComponent implements OnInit {
         public pageBuilderService: PagesService
     ) { }
     
+    private setHostObject(): void {
+        this._hostObject = {
+            configuration: this.pageBlock.Configuration,
+            // filter
+        }
+
+        if (this.editable) {
+            this._hostObject['pageConfiguration'] = this.pageBlock.PageConfiguration;
+        }
+    }
+
     private setIfHideForCurrentScreenType(): void {
         let isHidden = false;
 
@@ -82,6 +114,11 @@ export class SectionBlockComponent implements OnInit {
         switch(event.action){
             case 'block-loaded':
                 this.pageBuilderService.updateBlockLoaded(this.pageBlock.Key);
+                break;
+            case 'set-filters':
+                this.pageBuilderService.updateBlockFilters(this.pageBlock.Key, event.filters);
+                break;
+            case 'set-context':
                 break;
         }
     }

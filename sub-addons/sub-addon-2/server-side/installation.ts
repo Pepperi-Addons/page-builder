@@ -47,7 +47,7 @@ async function runMigration(client){
             EditorModuleName: 'SubAddon2EditorModule'
         };
 
-        pageComponentRelation.Key = `${pageComponentRelation.Name}_${pageComponentRelation.AddonUUID}_${pageComponentRelation.RelationName}`;
+        // pageComponentRelation.Key = `${pageComponentRelation.Name}_${pageComponentRelation.AddonUUID}_${pageComponentRelation.RelationName}`;
 
         const service = new MyService(client);
         const result = await service.upsertRelation(pageComponentRelation);

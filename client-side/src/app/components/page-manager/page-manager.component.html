@@ -1,9 +1,9 @@
 <pep-page-layout [addPadding]="false" [showShadow]="showEditor && currentEditor">
-    <div pep-side-area *ngIf="showEditor && currentEditor" style="padding-inline-start: 1rem;">
+    <div pep-side-area *ngIf="showEditor && currentEditor" style="padding-inline-start: 1rem; height: inherit;">
         <pep-side-bar #sideBar [ignoreResize]="true" (stateChange)="onSidebarStateChange($event)">
             <div header-content class="side-bar-title">
                 <pep-button class="back-button" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="onNavigateBackFromEditor();"></pep-button>
-                <div class=" title-xl ellipsis" title="{{ currentEditor?.title }}">
+                <div class=" title-xl ellipsis" [title]="currentEditor?.title">
                     <span>{{ currentEditor?.title }}</span>
                 </div>
             </div>

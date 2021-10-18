@@ -118,7 +118,7 @@ export class PagesApiService {
     }
 
     // Upsert page object if key not exist create new one.
-    upsertPage(page: Page, tableName = DRAFT_PAGES_TABLE_NAME): Promise<Page | null> {
+    upsertPage(page: Page, tableName = PAGES_TABLE_NAME): Promise<Page | null> {
         let res: any;
 
         if (page) {
@@ -143,7 +143,7 @@ export class PagesApiService {
         // TODO: Get the correct page by template (options.TemplateKey)
         const page: Page = TempBlankPageData;
         page.Key = '';
-        return this.upsertPage(page);
+        return this.upsertPage(page, DRAFT_PAGES_TABLE_NAME);
     }
 
     async removePage(query: any): Promise<boolean> {
@@ -153,6 +153,10 @@ export class PagesApiService {
         let res = await this.hidePage(pagekey, PAGES_TABLE_NAME);
 
         return Promise.resolve(draftRes || res);
+    }
+
+    async savePage(page: Page): Promise<Page | null>  {
+        return this.upsertPage(page, DRAFT_PAGES_TABLE_NAME);
     }
 
     async getPagesData(options): Promise<any[]> {

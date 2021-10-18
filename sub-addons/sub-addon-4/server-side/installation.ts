@@ -45,8 +45,8 @@ async function addRelations(client: Client, relations: Relation[], relationName)
     const promises: Promise<any>[] = [];
     relations.forEach(relation =>{ 
         relation.RelationName = relationName;
-        const key = `${relation.Name}_${relation.AddonUUID}_${relation.RelationName}`;
-        relation.Key = key;
+        // const key = `${relation.Name}_${relation.AddonUUID}_${relation.RelationName}`;
+        // relation.Key = key;
         promises.push(service.upsertRelation(relation));
     });
     const result = await Promise.all(promises);

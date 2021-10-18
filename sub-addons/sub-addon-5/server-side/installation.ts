@@ -47,8 +47,8 @@ async function addRelations(client: Client, relations: Relation[], relationName)
     relations.forEach(relation =>{ 
         relation.AddonUUID = client.AddonUUID;
         relation.RelationName = relationName;
-        const key = `${relation.Name}_${relation.AddonUUID}_${relation.RelationName}`;
-        relation.Key = key;
+        // const key = `${relation.Name}_${relation.AddonUUID}_${relation.RelationName}`;
+        // relation.Key = key;
         promises.push(service.upsertRelation(relation));
     });
     // const result = await service.upsertRelation(relations);

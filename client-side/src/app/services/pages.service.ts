@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { PepRemoteLoaderOptions } from "@pepperi-addons/ngx-remote-loader";
-import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize } from "@pepperi-addons/papi-sdk";
+import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, ResourceType } from "@pepperi-addons/papi-sdk";
 import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 import { NavigationService } from "./navigation.service";
@@ -71,16 +71,30 @@ export interface IAvailableBlock {
 export interface IBlockProgress {
     block: PageBlock;
     loaded: boolean;
+    openEditorOnLoaded: boolean,
     priority: number;
+}
+
+export interface IBlockFilterData {
+    FieldType: string;
+    ApiName: string
+    Operation: string
+    Values: string[]
+}
+
+export interface IBlockFilter {
+    key: string;
+    resource: ResourceType;
+    filter: IBlockFilterData;
 }
 
 @Injectable({
     providedIn: 'root',
 })
 export class PagesService {
-    private readonly MIN_PRIORITY = 1;
-    private readonly MID_PRIORITY = 2;
-    private readonly MAX_PRIORITY = 3;
+    private readonly CONSUMERS_PRIORITY = 1;
+    private readonly PRODUCERS_AND_CONSUMERS_PRIORITY = 2;
+    private readonly PRODUCERS_PRIORITY = 3;
 
     private _editorsBreadCrumb = Array<IEditor>();
 
@@ -119,13 +133,13 @@ export class PagesService {
     get pageBlockProgressMap(): ReadonlyMap<string, IBlockProgress> {
         return this._pageBlockProgressMap;
     }
-    private _pageBlockProgress$ = new BehaviorSubject<ReadonlyMap<string, IBlockProgress>>(this.pageBlockProgressMap);
-    get pageBlockProgress$(): Observable<ReadonlyMap<string, IBlockProgress>> {
-        return this._pageBlockProgress$.asObservable();
+    private _pageBlockProgressSubject$ = new BehaviorSubject<ReadonlyMap<string, IBlockProgress>>(this.pageBlockProgressMap);
+    get pageBlockProgressChange$(): Observable<ReadonlyMap<string, IBlockProgress>> {
+        return this._pageBlockProgressSubject$.asObservable();
     }
 
     // This is for the current stage of the priority to know what to load in each step.
-    private _currentBlocksPriority: number = this.MIN_PRIORITY;
+    private _currentBlocksPriority: number = this.CONSUMERS_PRIORITY;
     get currentBlocksPriority() {
         return this._currentBlocksPriority;
     }
@@ -136,13 +150,22 @@ export class PagesService {
         return this._pageBlockSubject.asObservable();
     }
 
+    // This subject is for page change.
     private pageSubject: BehaviorSubject<Page> = new BehaviorSubject<Page>(null);
     get pageLoad$(): Observable<Page> {
-        // return this.pageSubject.asObservable().pipe(filter(page => !!page), distinctUntilKeyChanged("Key"));
         return this.pageSubject.asObservable().pipe(distinctUntilChanged((prevPage, nextPage) => prevPage?.Key === nextPage?.Key));
     }
     get pageDataChange$(): Observable<Page> {
         return this.pageSubject.asObservable().pipe(filter(page => !!page));
+    }
+
+    // This map is for producers filters.
+    private _pageProducersFiltersMap = new Map<string, IBlockFilter[]>();
+    
+    // This subject is for consumers filters change.
+    private _pageConsumersFiltersSubject$ = new BehaviorSubject<Map<string, any>>(null);
+    get pageConsumersFiltersChange$(): Observable<ReadonlyMap<string, any>> {
+        return this._pageConsumersFiltersSubject$.asObservable();
     }
 
     constructor(
@@ -157,8 +180,21 @@ export class PagesService {
             this.loadSections(page);
         });
 
-        // this.pageDataChange$.subscribe((page: Page) => {
-        // });
+        this.pageBlockProgressChange$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
+            let needToRebuildFilters = false;
+
+            // Check that all pageProducersFiltersMap blocks keys exist in blocksProgress (if some block is removed we need to clear his filter)
+            this._pageProducersFiltersMap.forEach((value: IBlockFilter[], key: string) => {
+                if (!blocksProgress.has(key)) {
+                    this._pageProducersFiltersMap.delete(key);
+                    needToRebuildFilters = true;
+                }
+            });
+
+            if (needToRebuildFilters) {
+                this.buildConsumersFilters();
+            }
+        });
     }
 
     private loadSections(page: Page) {
@@ -189,20 +225,15 @@ export class PagesService {
     
     private getBlockPriority(block: PageBlock): number {
         // first none or Produce only, second Consume & Produce, third Consume only
-        let priority = this.MAX_PRIORITY;
+        let priority = this.PRODUCERS_PRIORITY;
 
         if (block.PageConfiguration) {
             if (block.PageConfiguration.Consume && block.PageConfiguration.Produce) {
-                priority = this.MID_PRIORITY;
+                priority = this.PRODUCERS_AND_CONSUMERS_PRIORITY;
             } else if (block.PageConfiguration.Consume) {
-                priority = this.MIN_PRIORITY;
+                priority = this.CONSUMERS_PRIORITY;
             }
         }
-
-        // TODO: Remove this - only for test the logic.
-        // if (block.Key !== "dfc30eb3-a9bf-321c-8639-254ac7f2c66c") {
-        //     priority = this.MIN_PRIORITY;
-        // }
 
         return priority;
     }
@@ -211,7 +242,16 @@ export class PagesService {
         const bpToUpdate = this._pageBlockProgressMap.get(blockKey);
 
         if (bpToUpdate) {
+            // Load editor only for the first time if openEditorOnLoaded is true.
+            if (!bpToUpdate.loaded && bpToUpdate.openEditorOnLoaded) {
+                // setTimeout 0 for navigate on the UI thread.
+                setTimeout(() => {
+                    this.navigateToEditor('block', bpToUpdate.block.Key);
+                }, 0);
+            }
+
             bpToUpdate.loaded = true;
+
             let allBlocksWithSamePriorityLoaded = true;
 
             this._pageBlockProgressMap.forEach(bp => {
@@ -222,7 +262,8 @@ export class PagesService {
 
             // Only if all blocks from the same priority are loaded then move on to the next priority.
             if (allBlocksWithSamePriorityLoaded) {
-                let nextPriority = this.MIN_PRIORITY;
+                // Start from the lowest priority and change to the higest priority if exist
+                let nextPriority = this.CONSUMERS_PRIORITY;
 
                 // Find the next priority to load.
                 this._pageBlockProgressMap.forEach(bp => {
@@ -232,19 +273,27 @@ export class PagesService {
                 });
 
                 // Set the next priority.
-                this._currentBlocksPriority = nextPriority;
+                if (this._currentBlocksPriority != nextPriority) {
+                    this._currentBlocksPriority = nextPriority;
+    
+                    // If we move to the consumers priority
+                    if (this._currentBlocksPriority === this.CONSUMERS_PRIORITY) {
+                        this.buildConsumersFilters();
+                    }
+                }
             }
 
             this.notifyBlockProgressMapChange();
         }
     }
 
-    private addBlockProgress(block: PageBlock): IBlockProgress {
+    private addBlockProgress(block: PageBlock, openEditorOnLoaded: boolean = false): IBlockProgress {
         const priority = this.getBlockPriority(block);
 
         // Create block progress and add it to the map.
         const initialProgress: IBlockProgress = { 
             loaded: false,
+            openEditorOnLoaded,
             priority,
             block
         };
@@ -254,12 +303,12 @@ export class PagesService {
         return initialProgress;
     }
 
-    private addPageBlock(block: PageBlock) {
+    private addPageBlock(block: PageBlock, openEditorOnLoaded: boolean) {
         // Add the block to the page blocks.
         this.pageSubject.value.Blocks.push(block);
 
         // Add the block progress.
-        this.addBlockProgress(block);
+        this.addBlockProgress(block, openEditorOnLoaded);
         this.notifyBlockProgressMapChange();
     }
 
@@ -294,7 +343,17 @@ export class PagesService {
     }
     
     private notifyBlockProgressMapChange() {
-        this._pageBlockProgress$.next(this.pageBlockProgressMap);
+        this._pageBlockProgressSubject$.next(this.pageBlockProgressMap);
+    }
+
+    private buildConsumersFilters() {
+        // TODO: Build consumers filters
+        // this._pageProducersFiltersMap
+
+        // _pageConsumersFiltersSubject
+
+        let value = null;
+        this._pageConsumersFiltersSubject$.next(value);
     }
 
     private loadDefaultEditor(page: Page) {
@@ -644,8 +703,8 @@ export class PagesService {
                     BlockKey: block.Key
                 };
                 
-                // Add the block to the page blocks
-                this.addPageBlock(block);
+                // Add the block to the page blocks and navigate to block editor when the block will loaded.
+                this.addPageBlock(block, true);
             }
         } else {
             // If the block moved between columns the same section or between different sections but not in the same column.
@@ -674,6 +733,33 @@ export class PagesService {
         }
     }
     
+    updateBlockFilters(blockKey: string, blockFilters: IBlockFilter[]) {
+        const pageBlock = this.pageBlockProgressMap.get(blockKey);
+        // Only if this block is declared as produce.
+        if (pageBlock?.block?.PageConfiguration?.Produce) {
+            // Check if this block can raise those filters.
+            const produceFilters = pageBlock.block.PageConfiguration.Produce.Filters;
+            let canRasieFilters = true;
+
+            for (let index = 0; index < blockFilters.length; index++) {
+                const bf = blockFilters[index];
+                if (!produceFilters.some(filter => filter.Resource === bf.resource)) {
+                    canRasieFilters = false;
+                    break;
+                }
+            }
+
+            if (canRasieFilters) {
+                this._pageProducersFiltersMap.set(blockKey, blockFilters);
+    
+                // Raise the filters change only if this block has loaded AND the currentBlocksPriority is CONSUMERS_PRIORITY (consumers stage)
+                // because in case that the block isn't loaded we will raise the event once when all the blocks are ready.
+                if (pageBlock.loaded && this.currentBlocksPriority === this.CONSUMERS_PRIORITY) {
+                    this.buildConsumersFilters();
+                }
+            }
+        }
+    }
 
     changeCursorOnDragStart() {
         document.body.classList.add('inheritCursors');
@@ -771,7 +857,7 @@ export class PagesService {
                         // Update the relation options of the save blocks.
                         // if exist in the available blocks take the relation options, 
                         // else take it from the save data (if there is devBlocks parameter handled in getRemoteLoaderOptions function).
-                        res.page.Blocks.forEach(block => {
+                        res.page.Blocks?.forEach(block => {
                             const availableBlock = availableBlocks.find(ab => ab.relation.AddonUUID === block.Relation.AddonUUID && ab.relation.Name === block.Relation.Name);
 
                             if (availableBlock) {
@@ -804,7 +890,7 @@ export class PagesService {
         const page: Page = this.pageSubject.value;
         const body = JSON.stringify(page);
         const baseUrl = this.getBaseUrl(addonUUID);
-        return this.httpService.postHttpCall(`${baseUrl}/pages`, body);
+        return this.httpService.postHttpCall(`${baseUrl}/save_page`, body);
     }
 
     // Publish the current page.

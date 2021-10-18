@@ -41,9 +41,6 @@ export class PageManagerComponent implements OnInit {
         private pageBuilderService: PagesService,
         private navigationService: NavigationService,
     ) {
-        this.pageBuilderService.onEditorChange$.subscribe((editor) => {
-            this.currentEditor = editor;
-        });
     }
 
     private setScreenWidth(screenType: DataViewScreenSize) {
@@ -68,6 +65,10 @@ export class PageManagerComponent implements OnInit {
     }
     
     async ngOnInit() {
+        this.pageBuilderService.onEditorChange$.subscribe((editor) => {
+            this.currentEditor = editor;
+        });
+
         // Get the first translation for load all translations.
         const desktopTitle = await this.translate.get('PAGE_MANAGER.DESKTOP').toPromise();
 
@@ -147,9 +148,10 @@ export class PageManagerComponent implements OnInit {
             case 'set-configuration':
                 this.pageBuilderService.updateBlockConfiguration(this.currentEditor.id, event.configuration);
                 break;
+            case 'set-page-configuration':
+                // TODO:
+                break;
         }
-        
-        // TODO: Implement configuration data change.
     }
 
     onNavigateBackFromEditor() {

@@ -10,8 +10,6 @@ import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepImagesFilmstripModule } from '@pepperi-addons/ngx-lib/images-filmstrip';
 import { PepRichHtmlTextareaModule } from '@pepperi-addons/ngx-lib/rich-html-textarea';
 
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatCardModule } from '@angular/material/card';
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
 import { PepListModule } from '@pepperi-addons/ngx-lib/list';
 import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
@@ -25,9 +23,7 @@ import {config } from './addon.config';
     declarations: [SubAddon3Component],
     imports: [
         CommonModule,
-        HttpClientModule,
-        MatDialogModule,
-        MatCardModule,
+        // HttpClientModule,
         // When not using module as sub-addon please remark this for not loading twice resources
         TranslateModule.forChild({
             loader: {
@@ -37,24 +33,24 @@ import {config } from './addon.config';
                 deps: [HttpClient, PepFileService, PepAddonService],
             }, isolate: false
         }),
-        PepNgxLibModule,
-        PepButtonModule,
-        PepSelectModule,
-        PepTopBarModule,
-        PepListModule,
-        PepPageLayoutModule,
-        PepImagesFilmstripModule,
-        PepRichHtmlTextareaModule
+        // PepNgxLibModule,
+        // PepButtonModule,
+        // PepSelectModule,
+        // PepTopBarModule,
+        // PepListModule,
+        // PepPageLayoutModule,
+        // PepImagesFilmstripModule,
+        // PepRichHtmlTextareaModule
     ],
     exports: [SubAddon3Component],
     providers: [
-        HttpClient,
+        // HttpClient,
         TranslateStore,
-        PepHttpService,
-        PepAddonService,
-        PepFileService,
-        PepCustomizationService,
-        PepDialogService
+        // PepHttpService,
+        // PepAddonService,
+        // PepFileService,
+        // PepCustomizationService,
+        // PepDialogService
     ]
 })
 export class SubAddon3Module {
