@@ -404,6 +404,24 @@ export class PagesService {
         return editor;
     }
 
+    private getHostObject(block: PageBlock): any {
+        
+        let hostObject = {
+            pageType: this.pageSubject?.value.Type,
+            configuration: block.Configuration
+        };
+
+        if (block.PageConfiguration) {
+            hostObject['pageConfiguration'] = block.PageConfiguration
+        }
+        
+        // TODO: Add filter.
+        
+        // TODO: Add context.
+
+        return hostObject;
+    }
+
     private getBlockEditor(blockId: string): IEditor {
         // Get the current block.
         let block: PageBlock = this.pageSubject?.value?.Blocks.find(block => block.Key === blockId);
@@ -414,12 +432,14 @@ export class PagesService {
             editorRelationOptions.exposedModule = './' + block.Relation.EditorModuleName;
             editorRelationOptions.componentName = block.Relation.EditorComponentName;
 
+            const hostObject = this.getHostObject(block);
+
             return {
                 id: blockId,
                 type: 'block',
                 title: block.Relation.Description,
                 remoteModuleOptions: editorRelationOptions,
-                hostObject: block
+                hostObject: hostObject
             }
         } else {
             return null;
