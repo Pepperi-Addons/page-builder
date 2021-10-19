@@ -26,7 +26,7 @@ export class SubAddon2Component implements OnInit {
         this.options.push({key:'OPEN_DIALOG', value: 'Text 1' });
         this.options.push({key:'OPEN_DIALOG', value: 'Text 2' });
         this.hostEvents.emit({action: 'block-loaded'});
-        this.images +=  ';' +this.hostObject?.Configuration?.imageURL;
+        this.images +=  ';' +this.hostObject?.configuration?.imageURL;
     }
 
     ngOnChanges(e: any): void { 
