@@ -419,7 +419,7 @@ export class PagesService {
                 type: 'block',
                 title: block.Relation.Description,
                 remoteModuleOptions: editorRelationOptions,
-                hostObject: block.Configuration
+                hostObject: block
             }
         } else {
             return null;
