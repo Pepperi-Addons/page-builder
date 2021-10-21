@@ -1,7 +1,7 @@
 import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, PageSection, SplitTypes, DataViewScreenSizes, PageBlock, PageSectionColumn } from '@pepperi-addons/papi-sdk'
 import { Client } from '@pepperi-addons/debug-server';
 import { v4 as uuid } from 'uuid';
-import { TempBlankPageData } from './pages.model';
+import { PageRowProjection, TempBlankPageData } from './pages.model';
 
 const PAGES_TABLE_NAME = 'Pages';
 const DRAFT_PAGES_TABLE_NAME = 'PagesDrafts';
@@ -74,39 +74,36 @@ export class PagesApiService {
     private async hidePage(pagekey: string, tableName: string): Promise<boolean> {
         let page = await this.getPage(pagekey, tableName);
 
-        if (page) {
-            page.Hidden = true;
-            await this.upsertPageInternal(page, tableName);
-            return Promise.resolve(true);
-        }
-    
-        return Promise.resolve(false);
-    }
-
-    private upsertPageInternal(page: Page, tableName = PAGES_TABLE_NAME): Promise<Page> {
-        let res: any;
-
-        if (page) {
-            if (!page.Key) {
-                page.Key = uuid();
-            }
-
-            // Validate page object before upsert.
-            this.validatePage(page);
-            page = this.getPageAccordingInterface(page);
-
-            res = this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page);
-            return Promise.resolve(res);
-        } else {
+        if (!page) {
             return Promise.reject(null);
         }
+
+        page.Hidden = true;
+        const res = await this.upsertPageInternal(page, tableName);
+        return Promise.resolve(res != null);
     }
 
-    private getNotExistError(objectBreadcrumb: string, propertyName: string) {
+    private async upsertPageInternal(page: Page, tableName = PAGES_TABLE_NAME): Promise<Page> {
+        if (!page) {
+            return Promise.reject(null);
+        }
+
+        if (!page.Key) {
+            page.Key = uuid();
+        }
+
+        // Validate page object before upsert.
+        this.validatePage(page);
+        page = this.getPageAccordingInterface(page);
+
+        return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page) as Page;
+    }
+
+    private getNotExistError(objectBreadcrumb: string, propertyName: string): string {
         return `${objectBreadcrumb} -> ${propertyName} is missing.`;
     }
     
-    private getWrongTypeError(objectBreadcrumb: string, propertyName: string, typeName: string) {
+    private getWrongTypeError(objectBreadcrumb: string, propertyName: string, typeName: string): string {
         return `${objectBreadcrumb} -> ${propertyName} should be ${typeName}.`;
     }
 
@@ -359,7 +356,7 @@ export class PagesApiService {
         }
     }
 
-    private addOptionalPropertyIfExist(source: any, target: any, propertyName: string) {
+    private addOptionalPropertyIfExist(source: any, target: any, propertyName: string): void {
         if (source.hasOwnProperty(propertyName)) {
             target[propertyName] = source[propertyName];
         }
@@ -462,7 +459,7 @@ export class PagesApiService {
         return Promise.all(promises);
     }
 
-    async getPages(options): Promise<any[]> {
+    async getPages(options): Promise<Page[]> {
         return await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_TABLE_NAME).find(options) as Page[];
     }
 
@@ -492,7 +489,7 @@ export class PagesApiService {
         return this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
     }
 
-    async getPagesData(options): Promise<any[]> {
+    async getPagesData(options): Promise<PageRowProjection[]> {
         // TODO: Change to pages endpoint after added in NGINX.
         // return this.papiClient.pages.find
         let pages: Page[] = await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_TABLE_NAME).find(options) as Page[];
@@ -517,14 +514,16 @@ export class PagesApiService {
         const promise = new Promise<any[]>((resolve, reject): void => {
             let allPages = distinctPagesArray.map((page: Page) => {
                 // Return projection object.
-                return {
+                const prp: PageRowProjection = {
                     Key: page.Key,
                     Name: page.Name,
                     Description: page.Description,
                     CreationDate: page.CreationDateTime,
                     ModificationDate: page.ModificationDateTime,
                     Status: draftPages.some(draft => draft.Key === page.Key) ? 'draft' : 'published',
-                }
+                };
+
+                return prp;
             });
 
             resolve(allPages);

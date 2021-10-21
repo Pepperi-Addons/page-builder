@@ -6,7 +6,6 @@
     position: relative;
     display: grid;
     border-radius: $border-radius-md;
-    min-height: 250px;
     
     // This css is only for edit mode!!!
     &.editable-state {

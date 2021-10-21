@@ -1,5 +1,14 @@
 import { Page } from "@pepperi-addons/papi-sdk";
 
+export interface PageRowProjection {
+    Key?: string,
+    Name?: string,
+    Description?: string,
+    CreationDate?: string,
+    ModificationDate?: string,
+    Status: string
+}
+
 export const TempBlankPageData: Page = {
     // Regular ADAL fields
     "Hidden": false,
