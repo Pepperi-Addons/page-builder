@@ -1,17 +1,10 @@
-import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, PageSection, SplitTypes, DataViewScreenSizes, PageBlock, PageSectionColumn } from '@pepperi-addons/papi-sdk'
+import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, PageSection, SplitTypes, DataViewScreenSizes, PageBlock, PageSectionColumn, PageSizeTypes } from '@pepperi-addons/papi-sdk'
 import { Client } from '@pepperi-addons/debug-server';
 import { v4 as uuid } from 'uuid';
 import { PageRowProjection, TempBlankPageData } from './pages.model';
 
 const PAGES_TABLE_NAME = 'Pages';
 const DRAFT_PAGES_TABLE_NAME = 'PagesDrafts';
-
-// TODO: Use it from the papi-sdk
-const PageSizeTypes = [
-    'SM',
-    'MD',
-    'LG',
-];
 
 export class PagesApiService {
     papiClient: PapiClient;
