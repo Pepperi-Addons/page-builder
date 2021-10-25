@@ -4,6 +4,7 @@ $z-index-min: 0;
 // This file contains all mixins.
 //**************************************************************************
 
+$toolbar-height: 2.5rem;
 $z-index-toolbar: $z-index-min + 2;
 
 @mixin block-toolbar() {

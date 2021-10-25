@@ -3,12 +3,10 @@ import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { PepRemoteLoaderOptions } from "@pepperi-addons/ngx-remote-loader";
-import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, ResourceType } from "@pepperi-addons/papi-sdk";
+import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, ResourceType, PageFilter } from "@pepperi-addons/papi-sdk";
 import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 import { NavigationService } from "./navigation.service";
-
-// export type ScreenType = 'desktop' | 'tablet' | 'mobile';
 
 export type PageRowStatusType = 'draft' | 'published';
 export interface IPageRowModel {
@@ -183,7 +181,7 @@ export class PagesService {
         this.pageBlockProgressChange$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
             let needToRebuildFilters = false;
 
-            // Check that all pageProducersFiltersMap blocks keys exist in blocksProgress (if some block is removed we need to clear his filter)
+            // Check that all pageProducersFiltersMap blocks keys exist in blocksProgress (if some block is removed we need to clear his filter).
             this._pageProducersFiltersMap.forEach((value: IBlockFilter[], key: string) => {
                 if (!blocksProgress.has(key)) {
                     this._pageProducersFiltersMap.delete(key);
@@ -346,14 +344,75 @@ export class PagesService {
         this._pageBlockProgressSubject$.next(this.pageBlockProgressMap);
     }
 
+    private getProducerFiltersByConsumerFilter(producerFilters: IBlockFilter[], consumerFilter: PageFilter): IBlockFilter[] {
+        // TODO: Get the match filters by the resource and fields.
+        return [];
+    }
+
+    private getHostObjectFilter(filters: IBlockFilter[]): any {
+        let res = {};
+
+        if (filters.length === 1) {
+            res = filters.pop();
+        } else if (filters.length >= 2) {
+            const rightFilter = filters.pop();
+            
+            res['Operation'] = 'AND';
+            res['RightNode'] = rightFilter;
+
+            // After pop (when we have exaclly 2 filters)
+            if (filters.length == 1) {
+                res['LeftNode'] = filters.pop();
+            } else {
+                res['LeftNode'] = this.getHostObjectFilter(filters);
+            }
+        } 
+
+        return res;
+    }
+
+    private canProducerRaiseFilter(produceFilters: PageFilter[], blockFilter: IBlockFilter): boolean {
+        // Get the match filters that blockFilter.resource is equals produceFilters Resource.
+        const matchProduceFilters = produceFilters.filter(filter => filter.Resource === blockFilter.resource);
+        
+        if (matchProduceFilters && matchProduceFilters.length > 0) {
+            // Check if the blockFilter.ApiName exist in the matchProduceFilters.Fields.
+            matchProduceFilters.forEach(filter => {
+                if (filter.Fields.some(field => field === blockFilter.filter.ApiName)) {
+                    return true;
+                }
+            });
+        }
+
+        return false;
+    }
+
     private buildConsumersFilters() {
-        // TODO: Build consumers filters
-        // this._pageProducersFiltersMap
+        // Build consumers filters
+        let consumersFilters = new Map<string, any>();
 
-        // _pageConsumersFiltersSubject
+        // Run on all consumers.
+        this.pageBlockProgressMap.forEach((value: IBlockProgress, key: string) => {
+            const consume = value.block.PageConfiguration?.Consume || null;
+            if (consume && consume.Filter) {
+                let consumerFilters: IBlockFilter[] = [];
 
-        let value = null;
-        this._pageConsumersFiltersSubject$.next(value);
+                // Check if resource exist in the producers filters.
+                this._pageProducersFiltersMap.forEach((value: IBlockFilter[], key: string) => {
+                    let filtersByConsumerResource = this.getProducerFiltersByConsumerFilter(value, consume.Filter);
+                    
+                    if (filtersByConsumerResource) {
+                        consumerFilters.push(...filtersByConsumerResource);
+                    }
+                });
+
+                // Build host object filter from consumerFilters ("Operation": "AND", "RightNode": { etc..)
+                let hostObjectFilter = this.getHostObjectFilter(consumerFilters);
+                consumersFilters.set(value.block.Key, hostObjectFilter);
+            }
+        });
+
+        this._pageConsumersFiltersSubject$.next(consumersFilters);
     }
 
     private loadDefaultEditor(page: Page) {
@@ -404,21 +463,40 @@ export class PagesService {
         return editor;
     }
 
-    private getHostObject(block: PageBlock): any {
+    private getBlockHostObject(block: PageBlock): any {
         
         let hostObject = {
             pageType: this.pageSubject?.value.Type,
             configuration: block.Configuration
         };
 
+        // Add pageConfiguration if exist.
         if (block.PageConfiguration) {
             hostObject['pageConfiguration'] = block.PageConfiguration
         }
         
-        // TODO: Add filter.
+        // Add filter if exist.
+        if (this._pageConsumersFiltersSubject$.value.has(block.Key)) {
+            hostObject['filter'] = this._pageConsumersFiltersSubject$.value.get(block.Key);
+        }
         
         // TODO: Add context.
 
+        return hostObject;
+    }
+
+    private getEditorHostObject(block: PageBlock): any {
+        
+        let hostObject = {
+            pageType: this.pageSubject?.value.Type,
+            configuration: block.Configuration
+        };
+
+        // Add pageConfiguration if exist.
+        if (block.PageConfiguration) {
+            hostObject['pageConfiguration'] = block.PageConfiguration
+        }
+        
         return hostObject;
     }
 
@@ -432,7 +510,7 @@ export class PagesService {
             editorRelationOptions.exposedModule = './' + block.Relation.EditorModuleName;
             editorRelationOptions.componentName = block.Relation.EditorComponentName;
 
-            const hostObject = this.getHostObject(block);
+            const hostObject = this.getEditorHostObject(block);
 
             return {
                 id: blockId,
@@ -755,6 +833,7 @@ export class PagesService {
     
     updateBlockFilters(blockKey: string, blockFilters: IBlockFilter[]) {
         const pageBlock = this.pageBlockProgressMap.get(blockKey);
+
         // Only if this block is declared as produce.
         if (pageBlock?.block?.PageConfiguration?.Produce) {
             // Check if this block can raise those filters.
@@ -762,9 +841,12 @@ export class PagesService {
             let canRasieFilters = true;
 
             for (let index = 0; index < blockFilters.length; index++) {
-                const bf = blockFilters[index];
-                if (!produceFilters.some(filter => filter.Resource === bf.resource)) {
-                    canRasieFilters = false;
+                const blockFilter = blockFilters[index];
+                canRasieFilters = this.canProducerRaiseFilter(produceFilters, blockFilter);
+
+                if (!canRasieFilters) {
+                    // Write error to the console "You cannot raise this filter (not declared)."
+                    console.error('One or more from the raised filters are not declared in PageConfiguration object.');
                     break;
                 }
             }
@@ -775,6 +857,7 @@ export class PagesService {
                 // Raise the filters change only if this block has loaded AND the currentBlocksPriority is CONSUMERS_PRIORITY (consumers stage)
                 // because in case that the block isn't loaded we will raise the event once when all the blocks are ready.
                 if (pageBlock.loaded && this.currentBlocksPriority === this.CONSUMERS_PRIORITY) {
+                    // TODO: Maybe we should update only needed consumers.
                     this.buildConsumersFilters();
                 }
             }
