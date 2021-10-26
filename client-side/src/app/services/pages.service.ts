@@ -86,6 +86,11 @@ export interface IBlockFilter {
     filter: IBlockFilterData;
 }
 
+interface IMappingResource {
+    ResourceApiNames: string[];
+    SearchIn: string[]
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -131,9 +136,9 @@ export class PagesService {
     get pageBlockProgressMap(): ReadonlyMap<string, IBlockProgress> {
         return this._pageBlockProgressMap;
     }
-    private _pageBlockProgressSubject$ = new BehaviorSubject<ReadonlyMap<string, IBlockProgress>>(this.pageBlockProgressMap);
-    get pageBlockProgressChange$(): Observable<ReadonlyMap<string, IBlockProgress>> {
-        return this._pageBlockProgressSubject$.asObservable();
+    private _pageBlockProgressMapSubject$ = new BehaviorSubject<ReadonlyMap<string, IBlockProgress>>(this.pageBlockProgressMap);
+    get pageBlockProgressMapChange$(): Observable<ReadonlyMap<string, IBlockProgress>> {
+        return this._pageBlockProgressMapSubject$.asObservable();
     }
 
     // This is for the current stage of the priority to know what to load in each step.
@@ -161,10 +166,12 @@ export class PagesService {
     private _pageProducersFiltersMap = new Map<string, IBlockFilter[]>();
     
     // This subject is for consumers filters change.
-    private _pageConsumersFiltersSubject$ = new BehaviorSubject<Map<string, any>>(null);
-    get pageConsumersFiltersChange$(): Observable<ReadonlyMap<string, any>> {
-        return this._pageConsumersFiltersSubject$.asObservable();
+    private _pageConsumersFiltersMapSubject = new BehaviorSubject<Map<string, any>>(null);
+    get pageConsumersFiltersMapChange$(): Observable<ReadonlyMap<string, any>> {
+        return this._pageConsumersFiltersMapSubject.asObservable();
     }
+
+    private _mappingsResourcesFields = new Map<string, IMappingResource>();
 
     constructor(
         private utilitiesService: PepUtilitiesService,
@@ -175,10 +182,11 @@ export class PagesService {
     ) {
         this.pageLoad$.subscribe((page: Page) => {
             this.loadDefaultEditor(page);
-            this.loadSections(page);
+            this._sectionsSubject.next(page?.Layout.Sections ?? []);
+            this.loadBlocks(page);
         });
 
-        this.pageBlockProgressChange$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
+        this.pageBlockProgressMapChange$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
             let needToRebuildFilters = false;
 
             // Check that all pageProducersFiltersMap blocks keys exist in blocksProgress (if some block is removed we need to clear his filter).
@@ -193,11 +201,26 @@ export class PagesService {
                 this.buildConsumersFilters();
             }
         });
+
+        // Set the mappings resources.
+        this.createMappingsResourcesMap();
     }
 
-    private loadSections(page: Page) {
-        this._sectionsSubject.next(page?.Layout.Sections ?? []);
-        this.loadBlocks(page);
+    private createMappingsResourcesMap(): void {
+        this._mappingsResourcesFields.set('accounts', {
+            ResourceApiNames: ['Account', 'OriginAccount'],
+            SearchIn: ['activities', 'transactions', 'transaction_lines']
+        });
+
+        this._mappingsResourcesFields.set('transactions', {
+            ResourceApiNames: ['Transaction'],
+            SearchIn: ['transaction_lines']
+        });
+
+        this._mappingsResourcesFields.set('items', {
+            ResourceApiNames: ['Item'],
+            SearchIn: ['transaction_lines']
+        });
     }
 
     private loadBlocks(page: Page) {
@@ -341,12 +364,40 @@ export class PagesService {
     }
     
     private notifyBlockProgressMapChange() {
-        this._pageBlockProgressSubject$.next(this.pageBlockProgressMap);
+        this._pageBlockProgressMapSubject$.next(this.pageBlockProgressMap);
     }
 
     private getProducerFiltersByConsumerFilter(producerFilters: IBlockFilter[], consumerFilter: PageFilter): IBlockFilter[] {
-        // TODO: Get the match filters by the resource and fields.
-        return [];
+        // Get the match filters by the resource and fields.
+        let consumerFilters = [];
+
+        producerFilters.forEach(producerFilter => {
+            // Search for exact match
+            if (producerFilter.resource === consumerFilter.Resource && consumerFilter.Fields.some((apiName) => apiName === producerFilter.filter.ApiName)) {
+                consumerFilters.push(producerFilter);
+            } else {
+                // Check if there is a match by the mapping.
+                if (this._mappingsResourcesFields.has(producerFilter.resource)) {
+                    let mappingResource = this._mappingsResourcesFields.get(producerFilter.resource);
+                    
+                    // If the consumer resource is in the mappingResource.SearchIn then look for match.
+                    if (mappingResource.SearchIn.some((resourceToSearch) => resourceToSearch === consumerFilter.Resource)) {
+                        // Go for all the resources.
+                        for (let index = 0; index < mappingResource.ResourceApiNames.length; index++) {
+                            // Declare the complex api name
+                            const complexApiName = `${mappingResource.ResourceApiNames[index]}.${producerFilter.filter.ApiName}`;
+                            
+                            // If the complex api name exist in the consumerFilter.Fields (even a part of it).
+                            if (consumerFilter.Fields.some((apiName) => apiName.indexOf(complexApiName) >= 0)) {
+                                consumerFilters.push(producerFilter);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        return consumerFilters;
     }
 
     private getHostObjectFilter(filters: IBlockFilter[]): any {
@@ -412,7 +463,7 @@ export class PagesService {
             }
         });
 
-        this._pageConsumersFiltersSubject$.next(consumersFilters);
+        this._pageConsumersFiltersMapSubject.next(consumersFilters);
     }
 
     private loadDefaultEditor(page: Page) {
@@ -461,28 +512,6 @@ export class PagesService {
         }
 
         return editor;
-    }
-
-    private getBlockHostObject(block: PageBlock): any {
-        
-        let hostObject = {
-            pageType: this.pageSubject?.value.Type,
-            configuration: block.Configuration
-        };
-
-        // Add pageConfiguration if exist.
-        if (block.PageConfiguration) {
-            hostObject['pageConfiguration'] = block.PageConfiguration
-        }
-        
-        // Add filter if exist.
-        if (this._pageConsumersFiltersSubject$.value.has(block.Key)) {
-            hostObject['filter'] = this._pageConsumersFiltersSubject$.value.get(block.Key);
-        }
-        
-        // TODO: Add context.
-
-        return hostObject;
     }
 
     private getEditorHostObject(block: PageBlock): any {
@@ -606,6 +635,18 @@ export class PagesService {
             const baseUrl = this.sessionService.getPapiBaseUrl();
             return `${baseUrl}/addons/api/${addonUUID}/api`;
         }
+    }
+
+    getBlockHostObject(block: PageBlock): any {
+        
+        let hostObject = this.getEditorHostObject(block);
+        
+        // Add filter.
+        hostObject['filter'] = this._pageConsumersFiltersMapSubject.value.get(block.Key) || null;
+        
+        // TODO: Add context.
+
+        return hostObject;
     }
 
     getScreenType(size: PepScreenSizeType): DataViewScreenSize {
@@ -857,7 +898,6 @@ export class PagesService {
                 // Raise the filters change only if this block has loaded AND the currentBlocksPriority is CONSUMERS_PRIORITY (consumers stage)
                 // because in case that the block isn't loaded we will raise the event once when all the blocks are ready.
                 if (pageBlock.loaded && this.currentBlocksPriority === this.CONSUMERS_PRIORITY) {
-                    // TODO: Maybe we should update only needed consumers.
                     this.buildConsumersFilters();
                 }
             }

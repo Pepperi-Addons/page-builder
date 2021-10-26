@@ -9,7 +9,7 @@
     
     // This css is only for edit mode!!!
     &.editable-state {
-        min-height: $toolbar-height;
+        min-height: 250px; // $toolbar-height;
 
         &.active-section {
             z-index: $z-index-min + 11;

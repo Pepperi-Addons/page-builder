@@ -68,14 +68,7 @@ export class SectionBlockComponent implements OnInit {
     ) { }
     
     private setHostObject(): void {
-        this._hostObject = {
-            configuration: this.pageBlock.Configuration,
-            // filter
-        }
-
-        if (this.editable) {
-            this._hostObject['pageConfiguration'] = this.pageBlock.PageConfiguration;
-        }
+        this._hostObject = this.pageBuilderService.getBlockHostObject(this.pageBlock);
     }
 
     private setIfHideForCurrentScreenType(): void {
@@ -92,6 +85,13 @@ export class SectionBlockComponent implements OnInit {
         this.pageBuilderService.onPageBlockChange$.subscribe((pageBlock: PageBlock) => {
             if (pageBlock && this.pageBlock.Key === pageBlock.Key) {
                 this.pageBlock = pageBlock;
+            }
+        });
+
+        this.pageBuilderService.pageConsumersFiltersMapChange$.subscribe((map: Map<string, any>) => {
+            // Only if this block is consumer and he's in the map than set hostObject (cause some filter was change).
+            if (this.pageBlock.PageConfiguration?.Consume && map.has(this.pageBlock.Key)) {
+                this.setHostObject();
             }
         });
     }
