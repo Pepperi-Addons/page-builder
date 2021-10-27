@@ -642,7 +642,7 @@ export class PagesService {
         let hostObject = this.getEditorHostObject(block);
         
         // Add filter.
-        hostObject['filter'] = this._pageConsumersFiltersMapSubject.value.get(block.Key) || null;
+        hostObject['filter'] = this._pageConsumersFiltersMapSubject.value?.get(block.Key) || null;
         
         // TODO: Add context.
 
