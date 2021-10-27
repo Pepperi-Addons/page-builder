@@ -6,7 +6,7 @@
 }
 
 .toolbar-actions-container {
-    height: 2.5rem;
+    height: $toolbar-height;
     width: 100%;
     display: grid;
     grid-template-columns: auto 1fr auto;

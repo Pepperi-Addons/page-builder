@@ -3,12 +3,10 @@ import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { PepRemoteLoaderOptions } from "@pepperi-addons/ngx-remote-loader";
-import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, ResourceType } from "@pepperi-addons/papi-sdk";
+import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, ResourceType, PageFilter } from "@pepperi-addons/papi-sdk";
 import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 import { NavigationService } from "./navigation.service";
-
-// export type ScreenType = 'desktop' | 'tablet' | 'mobile';
 
 export type PageRowStatusType = 'draft' | 'published';
 export interface IPageRowModel {
@@ -88,6 +86,11 @@ export interface IBlockFilter {
     filter: IBlockFilterData;
 }
 
+interface IMappingResource {
+    ResourceApiNames: string[];
+    SearchIn: string[]
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -133,9 +136,9 @@ export class PagesService {
     get pageBlockProgressMap(): ReadonlyMap<string, IBlockProgress> {
         return this._pageBlockProgressMap;
     }
-    private _pageBlockProgressSubject$ = new BehaviorSubject<ReadonlyMap<string, IBlockProgress>>(this.pageBlockProgressMap);
-    get pageBlockProgressChange$(): Observable<ReadonlyMap<string, IBlockProgress>> {
-        return this._pageBlockProgressSubject$.asObservable();
+    private _pageBlockProgressMapSubject$ = new BehaviorSubject<ReadonlyMap<string, IBlockProgress>>(this.pageBlockProgressMap);
+    get pageBlockProgressMapChange$(): Observable<ReadonlyMap<string, IBlockProgress>> {
+        return this._pageBlockProgressMapSubject$.asObservable();
     }
 
     // This is for the current stage of the priority to know what to load in each step.
@@ -163,10 +166,12 @@ export class PagesService {
     private _pageProducersFiltersMap = new Map<string, IBlockFilter[]>();
     
     // This subject is for consumers filters change.
-    private _pageConsumersFiltersSubject$ = new BehaviorSubject<Map<string, any>>(null);
-    get pageConsumersFiltersChange$(): Observable<ReadonlyMap<string, any>> {
-        return this._pageConsumersFiltersSubject$.asObservable();
+    private _pageConsumersFiltersMapSubject = new BehaviorSubject<Map<string, any>>(null);
+    get pageConsumersFiltersMapChange$(): Observable<ReadonlyMap<string, any>> {
+        return this._pageConsumersFiltersMapSubject.asObservable();
     }
+
+    private _mappingsResourcesFields = new Map<string, IMappingResource>();
 
     constructor(
         private utilitiesService: PepUtilitiesService,
@@ -177,13 +182,14 @@ export class PagesService {
     ) {
         this.pageLoad$.subscribe((page: Page) => {
             this.loadDefaultEditor(page);
-            this.loadSections(page);
+            this._sectionsSubject.next(page?.Layout.Sections ?? []);
+            this.loadBlocks(page);
         });
 
-        this.pageBlockProgressChange$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
+        this.pageBlockProgressMapChange$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
             let needToRebuildFilters = false;
 
-            // Check that all pageProducersFiltersMap blocks keys exist in blocksProgress (if some block is removed we need to clear his filter)
+            // Check that all pageProducersFiltersMap blocks keys exist in blocksProgress (if some block is removed we need to clear his filter).
             this._pageProducersFiltersMap.forEach((value: IBlockFilter[], key: string) => {
                 if (!blocksProgress.has(key)) {
                     this._pageProducersFiltersMap.delete(key);
@@ -195,11 +201,26 @@ export class PagesService {
                 this.buildConsumersFilters();
             }
         });
+
+        // Set the mappings resources.
+        this.createMappingsResourcesMap();
     }
 
-    private loadSections(page: Page) {
-        this._sectionsSubject.next(page?.Layout.Sections ?? []);
-        this.loadBlocks(page);
+    private createMappingsResourcesMap(): void {
+        this._mappingsResourcesFields.set('accounts', {
+            ResourceApiNames: ['Account', 'OriginAccount'],
+            SearchIn: ['activities', 'transactions', 'transaction_lines']
+        });
+
+        this._mappingsResourcesFields.set('transactions', {
+            ResourceApiNames: ['Transaction'],
+            SearchIn: ['transaction_lines']
+        });
+
+        this._mappingsResourcesFields.set('items', {
+            ResourceApiNames: ['Item'],
+            SearchIn: ['transaction_lines']
+        });
     }
 
     private loadBlocks(page: Page) {
@@ -343,17 +364,106 @@ export class PagesService {
     }
     
     private notifyBlockProgressMapChange() {
-        this._pageBlockProgressSubject$.next(this.pageBlockProgressMap);
+        this._pageBlockProgressMapSubject$.next(this.pageBlockProgressMap);
+    }
+
+    private getProducerFiltersByConsumerFilter(producerFilters: IBlockFilter[], consumerFilter: PageFilter): IBlockFilter[] {
+        // Get the match filters by the resource and fields.
+        let consumerFilters = [];
+
+        producerFilters.forEach(producerFilter => {
+            // Search for exact match
+            if (producerFilter.resource === consumerFilter.Resource && consumerFilter.Fields.some((apiName) => apiName === producerFilter.filter.ApiName)) {
+                consumerFilters.push(producerFilter);
+            } else {
+                // Check if there is a match by the mapping.
+                if (this._mappingsResourcesFields.has(producerFilter.resource)) {
+                    let mappingResource = this._mappingsResourcesFields.get(producerFilter.resource);
+                    
+                    // If the consumer resource is in the mappingResource.SearchIn then look for match.
+                    if (mappingResource.SearchIn.some((resourceToSearch) => resourceToSearch === consumerFilter.Resource)) {
+                        // Go for all the resources.
+                        for (let index = 0; index < mappingResource.ResourceApiNames.length; index++) {
+                            // Declare the complex api name
+                            const complexApiName = `${mappingResource.ResourceApiNames[index]}.${producerFilter.filter.ApiName}`;
+                            
+                            // If the complex api name exist in the consumerFilter.Fields (even a part of it).
+                            if (consumerFilter.Fields.some((apiName) => apiName.indexOf(complexApiName) >= 0)) {
+                                consumerFilters.push(producerFilter);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        return consumerFilters;
+    }
+
+    private getHostObjectFilter(filters: IBlockFilter[]): any {
+        let res = {};
+
+        if (filters.length === 1) {
+            res = filters.pop();
+        } else if (filters.length >= 2) {
+            const rightFilter = filters.pop();
+            
+            res['Operation'] = 'AND';
+            res['RightNode'] = rightFilter;
+
+            // After pop (when we have exaclly 2 filters)
+            if (filters.length == 1) {
+                res['LeftNode'] = filters.pop();
+            } else {
+                res['LeftNode'] = this.getHostObjectFilter(filters);
+            }
+        } 
+
+        return res;
+    }
+
+    private canProducerRaiseFilter(produceFilters: PageFilter[], blockFilter: IBlockFilter): boolean {
+        // Get the match filters that blockFilter.resource is equals produceFilters Resource.
+        const matchProduceFilters = produceFilters.filter(filter => filter.Resource === blockFilter.resource);
+        
+        if (matchProduceFilters && matchProduceFilters.length > 0) {
+            // Check if the blockFilter.ApiName exist in the matchProduceFilters.Fields.
+            matchProduceFilters.forEach(filter => {
+                if (filter.Fields.some(field => field === blockFilter.filter.ApiName)) {
+                    return true;
+                }
+            });
+        }
+
+        return false;
     }
 
     private buildConsumersFilters() {
-        // TODO: Build consumers filters
-        // this._pageProducersFiltersMap
+        // Build consumers filters
+        let consumersFilters = new Map<string, any>();
 
-        // _pageConsumersFiltersSubject
+        // Run on all consumers.
+        this.pageBlockProgressMap.forEach((value: IBlockProgress, key: string) => {
+            const consume = value.block.PageConfiguration?.Consume || null;
+            if (consume && consume.Filter) {
+                let consumerFilters: IBlockFilter[] = [];
 
-        let value = null;
-        this._pageConsumersFiltersSubject$.next(value);
+                // Check if resource exist in the producers filters.
+                this._pageProducersFiltersMap.forEach((value: IBlockFilter[], key: string) => {
+                    let filtersByConsumerResource = this.getProducerFiltersByConsumerFilter(value, consume.Filter);
+                    
+                    if (filtersByConsumerResource) {
+                        consumerFilters.push(...filtersByConsumerResource);
+                    }
+                });
+
+                // Build host object filter from consumerFilters ("Operation": "AND", "RightNode": { etc..)
+                let hostObjectFilter = this.getHostObjectFilter(consumerFilters);
+                consumersFilters.set(value.block.Key, hostObjectFilter);
+            }
+        });
+
+        this._pageConsumersFiltersMapSubject.next(consumersFilters);
     }
 
     private loadDefaultEditor(page: Page) {
@@ -404,21 +514,18 @@ export class PagesService {
         return editor;
     }
 
-    private getHostObject(block: PageBlock): any {
+    private getEditorHostObject(block: PageBlock): any {
         
         let hostObject = {
             pageType: this.pageSubject?.value.Type,
             configuration: block.Configuration
         };
 
+        // Add pageConfiguration if exist.
         if (block.PageConfiguration) {
             hostObject['pageConfiguration'] = block.PageConfiguration
         }
         
-        // TODO: Add filter.
-        
-        // TODO: Add context.
-
         return hostObject;
     }
 
@@ -432,7 +539,7 @@ export class PagesService {
             editorRelationOptions.exposedModule = './' + block.Relation.EditorModuleName;
             editorRelationOptions.componentName = block.Relation.EditorComponentName;
 
-            const hostObject = this.getHostObject(block);
+            const hostObject = this.getEditorHostObject(block);
 
             return {
                 id: blockId,
@@ -528,6 +635,18 @@ export class PagesService {
             const baseUrl = this.sessionService.getPapiBaseUrl();
             return `${baseUrl}/addons/api/${addonUUID}/api`;
         }
+    }
+
+    getBlockHostObject(block: PageBlock): any {
+        
+        let hostObject = this.getEditorHostObject(block);
+        
+        // Add filter.
+        hostObject['filter'] = this._pageConsumersFiltersMapSubject.value.get(block.Key) || null;
+        
+        // TODO: Add context.
+
+        return hostObject;
     }
 
     getScreenType(size: PepScreenSizeType): DataViewScreenSize {
@@ -755,6 +874,7 @@ export class PagesService {
     
     updateBlockFilters(blockKey: string, blockFilters: IBlockFilter[]) {
         const pageBlock = this.pageBlockProgressMap.get(blockKey);
+
         // Only if this block is declared as produce.
         if (pageBlock?.block?.PageConfiguration?.Produce) {
             // Check if this block can raise those filters.
@@ -762,9 +882,12 @@ export class PagesService {
             let canRasieFilters = true;
 
             for (let index = 0; index < blockFilters.length; index++) {
-                const bf = blockFilters[index];
-                if (!produceFilters.some(filter => filter.Resource === bf.resource)) {
-                    canRasieFilters = false;
+                const blockFilter = blockFilters[index];
+                canRasieFilters = this.canProducerRaiseFilter(produceFilters, blockFilter);
+
+                if (!canRasieFilters) {
+                    // Write error to the console "You cannot raise this filter (not declared)."
+                    console.error('One or more from the raised filters are not declared in PageConfiguration object.');
                     break;
                 }
             }
