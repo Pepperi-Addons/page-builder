@@ -515,17 +515,20 @@ export class PagesService {
     }
 
     private getEditorHostObject(block: PageBlock): any {
-        
         let hostObject = {
-            pageType: this.pageSubject?.value.Type,
             configuration: block.Configuration
         };
 
         // Add pageConfiguration if exist.
         if (block.PageConfiguration) {
-            hostObject['pageConfiguration'] = block.PageConfiguration
+            hostObject['pageConfiguration'] = block.PageConfiguration;
         }
         
+        // Add pageType if exist.
+        if (this.pageSubject?.value.Type) {
+            hostObject['pageType'] = this.pageSubject?.value.Type;
+        }
+
         return hostObject;
     }
 
@@ -642,7 +645,7 @@ export class PagesService {
         let hostObject = this.getEditorHostObject(block);
         
         // Add filter.
-        hostObject['filter'] = this._pageConsumersFiltersMapSubject.value.get(block.Key) || null;
+        hostObject['filter'] = this._pageConsumersFiltersMapSubject.value?.get(block.Key) || null;
         
         // TODO: Add context.
 

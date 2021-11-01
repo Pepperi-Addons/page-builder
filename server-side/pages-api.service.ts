@@ -456,6 +456,10 @@ export class PagesApiService {
         return await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_TABLE_NAME).find(options) as Page[];
     }
 
+    async getByKey(pagekey: string): Promise<any> {
+        return await this.getPage(pagekey, PAGES_TABLE_NAME);
+    }
+
     // Upsert page object if key not exist create new one.
     upsertPage(page: Page, tableName = PAGES_TABLE_NAME): Promise<Page> {
         return this.upsertPageInternal(page, tableName);
