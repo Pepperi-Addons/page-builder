@@ -34,7 +34,7 @@ import {config } from './addon.config';
             }, isolate: false
         }),
         // PepNgxLibModule,
-        // PepButtonModule,
+        PepButtonModule,
         // PepSelectModule,
         // PepTopBarModule,
         // PepListModule,

@@ -89,9 +89,19 @@ export class SectionBlockComponent implements OnInit {
         });
 
         this.pageBuilderService.pageConsumersFiltersMapChange$.subscribe((map: Map<string, any>) => {
-            // Only if this block is consumer and he's in the map than set hostObject (cause some filter was change).
+            // Only if this block is consumer and he's in the map than set hostObject filter (cause some filter was change).
             if (this.pageBlock.PageConfiguration?.Consume && map.has(this.pageBlock.Key)) {
-                this.setHostObject();
+                
+                const currentFilter = map.get(this.pageBlock.Key);
+
+                // Check that the updated filter is not equals to the old one.
+                const oldFilterAsString = JSON.stringify(this.hostObject.filter || {});
+                const newFilterAsString = JSON.stringify(currentFilter || {});
+
+                if (newFilterAsString !== oldFilterAsString) {
+                    // Set the whole host object cause if we want that the hostObject will update we need to change the reference.
+                    this.setHostObject();
+                }
             }
         });
     }

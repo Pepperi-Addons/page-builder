@@ -149,7 +149,7 @@ export class PageManagerComponent implements OnInit {
                 this.pageBuilderService.updateBlockConfiguration(this.currentEditor.id, event.configuration);
                 break;
             case 'set-page-configuration':
-                // TODO:
+                this.pageBuilderService.updateBlockPageConfiguration(this.currentEditor.id, event.pageConfiguration);
                 break;
         }
     }

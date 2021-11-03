@@ -20,7 +20,9 @@
         "Description": "Page Builder"
       }
     ],
-    "Dependencies": {}
+    "Dependencies": {
+      "webapp": "16.65.12"
+    }
   },
   "CPISide": [
     "addon-cpi.ts"

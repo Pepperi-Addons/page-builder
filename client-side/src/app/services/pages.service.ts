@@ -423,19 +423,24 @@ export class PagesService {
     }
 
     private canProducerRaiseFilter(produceFilters: PageFilter[], blockFilter: IBlockFilter): boolean {
+        let res = false;
+
         // Get the match filters that blockFilter.resource is equals produceFilters Resource.
         const matchProduceFilters = produceFilters.filter(filter => filter.Resource === blockFilter.resource);
         
         if (matchProduceFilters && matchProduceFilters.length > 0) {
             // Check if the blockFilter.ApiName exist in the matchProduceFilters.Fields.
-            matchProduceFilters.forEach(filter => {
+            for (let index = 0; index < matchProduceFilters.length; index++) {
+                const filter = matchProduceFilters[index];
+                
                 if (filter.Fields.some(field => field === blockFilter.filter.ApiName)) {
-                    return true;
+                    res = true;
+                    break;
                 }
-            });
+            }
         }
 
-        return false;
+        return res;
     }
 
     private buildConsumersFilters() {
@@ -608,10 +613,8 @@ export class PagesService {
             case "NgComponent":
                 // For devBlocks gets the remote entry from the query params.
                 const devBlocks = this.navigationService.devBlocks;
-                if(devBlocks.size > 1) {
-                    if (devBlocks.has(relation?.ComponentName)) {
-                        return devBlocks.get(relation?.ComponentName);
-                    }
+                if (devBlocks.has(relation?.ComponentName)) {
+                    return devBlocks.get(relation?.ComponentName);
                 } else {
                     return `${remoteBasePath}${remoteName}.js`;
                 }
@@ -872,6 +875,18 @@ export class PagesService {
         if (pageBlock) {
             pageBlock.block.Configuration = configuration;
             this._pageBlockSubject.next(pageBlock.block);
+        }
+    }
+    
+    updateBlockPageConfiguration(blockKey: string, pageConfiguration: any) {
+        const pageBlock = this.pageBlockProgressMap.get(blockKey);
+        
+        if (pageBlock) {
+            pageBlock.block.PageConfiguration = pageConfiguration;
+            this._pageBlockSubject.next(pageBlock.block);
+
+            // Calculate all filters by the updated page configuration.
+            this.buildConsumersFilters();
         }
     }
     
