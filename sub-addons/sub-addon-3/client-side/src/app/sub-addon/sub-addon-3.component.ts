@@ -19,14 +19,14 @@ export class SubAddon3Component implements OnInit {
 
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
 
-    countTest = 0;
+    clickCount = 0;
 
     constructor(private translate: TranslateService) { }
 
     private handleHostObjectChange() {
-        if (this.hostObject?.filter) {
-            alert(`Filter change in SubAddon3 with value ${JSON.stringify(this.hostObject?.filter)}`);
-        }
+        // if (this.hostObject?.filter) {
+        //     alert(`Filter change in SubAddon3 with value ${JSON.stringify(this.hostObject?.filter)}`);
+        // }
     }
 
     ngOnInit(): void {
@@ -39,7 +39,7 @@ export class SubAddon3Component implements OnInit {
             filters: [
                 {
                     // a unique key to later update this filter with
-                    key: this.countTest < 2 ? '123' : (this.countTest < 8 ? '456' : '789'),
+                    key: this.clickCount < 2 ? '123' : (this.clickCount < 8 ? '456' : '789'),
                     // what resource the filter field is.
                     resource: 'accounts',
                     // a JSON filter. One layer, complex (AND OR) operations not allowed
@@ -52,6 +52,6 @@ export class SubAddon3Component implements OnInit {
                 }
             ]});
 
-        this.countTest++;
+        this.clickCount++;
     }
 }

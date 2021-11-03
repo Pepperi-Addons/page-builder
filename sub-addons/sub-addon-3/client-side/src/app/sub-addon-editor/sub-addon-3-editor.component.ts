@@ -28,7 +28,7 @@ export class SubAddon3EditorComponent implements OnInit {
             Produce: {
                 Filters: [{
                     Resource: "transactions",
-                    Fields:  ["UnitsQuantity", "Item.TSABrand", "Transaction.Account.Type", "Transaction.Status"],
+                    Fields:  ["UnitsQuantity", "Item.TSABrand", "Account.Type", "Status"],
                 },
                 {
                     Resource: "accounts",

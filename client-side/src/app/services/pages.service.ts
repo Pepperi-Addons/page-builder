@@ -168,7 +168,7 @@ export class PagesService {
     // This subject is for consumers filters change.
     private _pageConsumersFiltersMapSubject = new BehaviorSubject<Map<string, any>>(null);
     get pageConsumersFiltersMapChange$(): Observable<ReadonlyMap<string, any>> {
-        return this._pageConsumersFiltersMapSubject.asObservable();
+        return this._pageConsumersFiltersMapSubject.asObservable().pipe(distinctUntilChanged());
     }
 
     private _mappingsResourcesFields = new Map<string, IMappingResource>();
