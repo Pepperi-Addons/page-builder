@@ -152,11 +152,15 @@ export class PagesManagerComponent implements OnInit {
         }
     }
 
-    ngOnInit() {
+    async ngOnInit() {
+
+        const importTran = await this.translate.get('ACTIONS.IMPORT').toPromise();
+        
         this.mainMenuItems = new Array<PepMenuItem>();
         this.mainMenuItems.push({
             key: 'import',
-            text: this.translate.instant('ACTIONS.IMPORT')
+            text: importTran
+            //text: this.translate.instant('ACTIONS.IMPORT')
             // ,disabled: this.selectedPageID == ''
         }
         );
