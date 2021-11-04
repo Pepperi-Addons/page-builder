@@ -400,22 +400,24 @@ export class PagesService {
         return consumerFilters;
     }
 
-    private getHostObjectFilter(filters: IBlockFilter[]): any {
+    private getHostObjectFilter(blockFilters: IBlockFilter[]): any {
         let res = {};
 
-        if (filters.length === 1) {
-            res = filters.pop();
-        } else if (filters.length >= 2) {
-            const rightFilter = filters.pop();
+        if (blockFilters.length === 1) {
+            const blockFilter = blockFilters.pop();
+            res = blockFilter.filter;
+        } else if (blockFilters.length >= 2) {
+            const rightFilter = blockFilters.pop();
             
             res['Operation'] = 'AND';
-            res['RightNode'] = rightFilter;
+            res['RightNode'] = rightFilter.filter;
 
             // After pop (when we have exaclly 2 filters)
-            if (filters.length == 1) {
-                res['LeftNode'] = filters.pop();
+            if (blockFilters.length == 1) {
+                const leftFilter = blockFilters.pop();
+                res['LeftNode'] = leftFilter.filter;
             } else {
-                res['LeftNode'] = this.getHostObjectFilter(filters);
+                res['LeftNode'] = this.getHostObjectFilter(blockFilters);
             }
         } 
 
@@ -463,7 +465,7 @@ export class PagesService {
                 });
 
                 // Build host object filter from consumerFilters ("Operation": "AND", "RightNode": { etc..)
-                let hostObjectFilter = this.getHostObjectFilter(consumerFilters);
+                let hostObjectFilter = consumerFilters.length > 0 ? this.getHostObjectFilter(consumerFilters) : null;
                 consumersFilters.set(value.block.Key, hostObjectFilter);
             }
         });

@@ -35,7 +35,7 @@ export class SubAddon2Component implements OnInit, OnChanges {
         if (this.hostObject?.filter) {
             // alert(`Filter change in SubAddon2 with value ${JSON.stringify(this.hostObject?.filter)}`);
 
-            this.inputTitle = this.hostObject?.filter.key;
+            this.inputTitle = JSON.stringify(this.hostObject?.filter);
         }
     }
 

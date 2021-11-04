@@ -1,6 +1,5 @@
-<p>Producer with filter - {{hostObject?.filter?.key ?? 'None'}}</p>
-
+<p>Producer with filter - {{hostObject?.filter ? '' : 'None'}}</p>
+<span>click num: {{clickCount}}</span>
 <pep-button value="raise filters" sizeType="sm" styleType="regular" classNames="pep-spacing-element" (click)="onBtnClick($event);" style="width: 100px;">
 </pep-button>
-
-<span>click num: {{clickCount}}</span>
+<p>{{ jsonFilter }}</p>
