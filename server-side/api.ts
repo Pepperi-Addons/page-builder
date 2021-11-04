@@ -20,6 +20,16 @@ export async function pages(client: Client, request: Request): Promise<any> {
     }
 }
 
+export async function get_page(client: Client, request: Request): Promise<any> {
+    try {
+        const service = new PagesApiService(client);
+        const pageKey = request?.query['key'] || '';
+        return service.getByKey(pageKey);
+    } catch(err) {
+        throw new Error(`Failed to get page. error - ${err}`);
+    }
+}
+
 export async function create_page(client: Client, request: Request): Promise<any> {
     try {
         const service = new PagesApiService(client);

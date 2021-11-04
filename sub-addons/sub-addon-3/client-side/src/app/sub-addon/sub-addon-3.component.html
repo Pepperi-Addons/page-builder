@@ -1,9 +1,6 @@
-<p>{{'Title_Sub_Addon_3' | translate}}</p>
-<p>{{'Title_Sub_Addon_3' | translate}}</p>
-<p>{{'Title_Sub_Addon_3' | translate}}</p>
-<p>{{'Title_Sub_Addon_3' | translate}}</p>
-<p>{{'Title_Sub_Addon_3' | translate}}</p>
-<p>{{ inputTitle }}</p>
-<!-- <pep-rich-html-textarea [showTitle]="false" [key]="'richText1'" [label]="'Pepperi Rich Html Textarea'" [value]="richHtml"
-[rowSpan]="4" [maxFieldCharacters]="300" [xAlignment]="'left'" >
-</pep-rich-html-textarea> -->
+<p>Producer with filter - {{hostObject?.filter?.key ?? 'None'}}</p>
+
+<pep-button value="raise filters" sizeType="sm" styleType="regular" classNames="pep-spacing-element" (click)="onBtnClick($event);" style="width: 100px;">
+</pep-button>
+
+<span>click num: {{clickCount}}</span>

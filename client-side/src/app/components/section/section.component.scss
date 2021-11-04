@@ -41,8 +41,7 @@
         .columns-wrapper {
             .section-column {
                 z-index: $z-index-min + 1;
-                position: relative;
-
+                
                 &.active-column {
                     z-index: $z-index-min + 12;
                     position: relative;
@@ -59,7 +58,7 @@
         @include gap-sizes();
         
         .section-column {
-            overflow: hidden;
+            position: relative;
         }
     }
 }

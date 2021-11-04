@@ -386,6 +386,13 @@ export class PagesApiService {
         } 
 
         // Add Layout specific properties.
+        this.addOptionalPropertyIfExist(page.Layout, res.Layout, 'SectionsGap');
+        this.addOptionalPropertyIfExist(page.Layout, res.Layout, 'ColumnsGap');
+        this.addOptionalPropertyIfExist(page.Layout, res.Layout, 'HorizontalSpacing');
+        this.addOptionalPropertyIfExist(page.Layout, res.Layout, 'VerticalSpacing');
+        this.addOptionalPropertyIfExist(page.Layout, res.Layout, 'MaxWidth');
+
+        // Add Layout sections specific properties.
         for (let sectionIndex = 0; sectionIndex < page.Layout.Sections.length; sectionIndex++) {
             const currentSection = page.Layout.Sections[sectionIndex];
             const sectionToAdd: PageSection = {
@@ -456,6 +463,10 @@ export class PagesApiService {
         return await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_TABLE_NAME).find(options) as Page[];
     }
 
+    async getByKey(pagekey: string): Promise<any> {
+        return await this.getPage(pagekey, PAGES_TABLE_NAME);
+    }
+
     // Upsert page object if key not exist create new one.
     upsertPage(page: Page, tableName = PAGES_TABLE_NAME): Promise<Page> {
         return this.upsertPageInternal(page, tableName);
@@ -472,8 +483,19 @@ export class PagesApiService {
     async removePage(query: any): Promise<boolean> {
         const pagekey = query['key'] || '';
         
-        let draftRes = await this.hidePage(pagekey, DRAFT_PAGES_TABLE_NAME);
-        let res = await this.hidePage(pagekey, PAGES_TABLE_NAME);
+        let draftRes = false;
+        try {
+            draftRes = await this.hidePage(pagekey, DRAFT_PAGES_TABLE_NAME);
+        } catch (e) {
+
+        }
+
+        let res = false;
+        try {
+            res = await this.hidePage(pagekey, PAGES_TABLE_NAME);
+        } catch (e) {
+            
+        }
 
         return Promise.resolve(draftRes || res);
     }

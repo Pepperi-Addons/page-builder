@@ -15,8 +15,39 @@ export class SubAddon2EditorComponent implements OnInit {
     
     constructor(private translate: TranslateService) { }
 
+    private getDefaultPageConfiguration() {
+        const pageConfiguration = {
+            Consume: {
+                Filter: {
+                    Resource: "transaction_lines",
+                    Fields:  ["UnitsQuantity", "Item.TSABrand", "Transaction.Account.Type", "Transaction.Status"],
+                },
+                Context: {
+                    Resource: "transactions"
+                }
+            },
+            Produce: {
+                Filters: [{
+                    Resource: "transactions",
+                    Fields:  ["Account.Type", "Status"],
+                }],
+                Context: {
+                    Resource: "transaction_lines"
+                }
+            }
+        };
+
+        return pageConfiguration;
+    }
+
     ngOnInit(): void {
-        this.hostEvents.emit({action: 'addon-loaded'});
+        // Raise default event for set-page-configuration (if pageConfiguration not exist on host object).
+        if (!this.hostObject || !this.hostObject.pageConfiguration) {
+            this.hostEvents.emit({
+                action: 'set-page-configuration',
+                pageConfiguration: this.getDefaultPageConfiguration()
+            });
+        }
     }
 
     ngOnChanges(e: any): void { 

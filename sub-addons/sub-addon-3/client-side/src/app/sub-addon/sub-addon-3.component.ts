@@ -7,29 +7,51 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
     styleUrls: ['./sub-addon-3.component.css']
 })
 export class SubAddon3Component implements OnInit {
-  
-    richHtml;
-    inputTitle;
-    @Input() hostObject: any;
+    private _hostObject: any;
+    @Input()
+    set hostObject(value: any) {
+        this._hostObject = value;
+        this.handleHostObjectChange();
+    }
+    get hostObject(): any {
+        return this._hostObject;
+    }
+
     @Output() hostEvents: EventEmitter<any> = new EventEmitter<any>();
-    constructor(
-        private translate: TranslateService
-        ) { }
+
+    clickCount = 0;
+
+    constructor(private translate: TranslateService) { }
+
+    private handleHostObjectChange() {
+        // if (this.hostObject?.filter) {
+        //     alert(`Filter change in SubAddon3 with value ${JSON.stringify(this.hostObject?.filter)}`);
+        // }
+    }
 
     ngOnInit(): void {
-        this.richHtml = "<h1><u>Rich Text Value Example</u></h1><h2><em style=' color: rgb(147, 200, 14);'>Pepperi Rich Text Value </em><u style='color: rgb(0, 102, 204);'>Example</u></h2><ol><li><strong><u>Pepperi Rich Text Value Example</u></strong></li><li>Pepperi Rich text [value] example</li></ol>";
         this.hostEvents.emit({action: 'block-loaded'});
     }
 
-    ngOnChanges(e: any): void {
-        if (e?.message){
-            this.inputTitle = e?.message;
+    onBtnClick(event) {
+        this.hostEvents.emit({
+            action: 'set-filters',
+            filters: [
+                {
+                    // a unique key to later update this filter with
+                    key: this.clickCount < 2 ? '123' : (this.clickCount < 8 ? '456' : '789'),
+                    // what resource the filter field is.
+                    resource: 'accounts',
+                    // a JSON filter. One layer, complex (AND OR) operations not allowed
+                    filter: {
+                        FieldType: "String",
+                        ApiName: "Type",
+                        Operation: "IsEqual",
+                        Values: ["Customer"]
+                    }
+                }
+            ]});
 
-        }
-      
-        //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
-        //Add '${implements OnChanges}' to the class.
+        this.clickCount++;
     }
-
-
 }
