@@ -262,9 +262,9 @@ export class PagesService {
     private setBlockAsLoadedAndCalculateCurrentPriority(blockKey: string) {
         const bpToUpdate = this._pageBlockProgressMap.get(blockKey);
 
-        if (bpToUpdate) {
+        if (bpToUpdate && !bpToUpdate.loaded) {
             // Load editor only for the first time if openEditorOnLoaded is true.
-            if (!bpToUpdate.loaded && bpToUpdate.openEditorOnLoaded) {
+            if (bpToUpdate.openEditorOnLoaded) {
                 // setTimeout 0 for navigate on the UI thread.
                 setTimeout(() => {
                     this.navigateToEditor('block', bpToUpdate.block.Key);

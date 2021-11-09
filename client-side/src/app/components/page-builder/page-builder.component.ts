@@ -107,7 +107,7 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
 
         this.pageBuilderService.pageBlockProgressMapChange$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
             // Clear the blocks map and set it again.
-            this._pageBlocksMap.clear();
+            this._pageBlocksMap = new Map<string, PageBlock>();
             const pbRelationsNames = new Map<string, boolean>();
 
             blocksProgress.forEach(bp => {
