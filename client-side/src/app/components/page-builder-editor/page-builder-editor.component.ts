@@ -1,3 +1,4 @@
+import { coerceNumberProperty } from '@angular/cdk/coercion';
 import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -115,7 +116,7 @@ export class PageBuilderEditorComponent implements OnInit {
     }
 
     onMaxWidthChange(maxWidth: number) {
-        this.maxWidth = maxWidth;
+        this.maxWidth = coerceNumberProperty(maxWidth, this.maxWidth);
         this.updateHostObject();
     }
     

@@ -17,6 +17,8 @@
         "BLOCKS_TITLE": "Blocks",
         "FULL_WIDTH_TITLE": "Full Width",
         "MAX_WIDTH_TITLE": "Max Width",
+        "AUTO_HEIGHT_TITLE": "Auto height",
+        "MAX_HEIGHT_TITLE": "Max height",
         "SPACING_TITLE": "Spacing",
         "SPACING_HORIZONTAL_TITLE": "Slides - Left & Right",
         "SPACING_VERTICAL_TITLE": "Slides - Top & Button",

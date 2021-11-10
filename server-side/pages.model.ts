@@ -11,15 +11,15 @@ export interface PageRowProjection {
 
 export const TempBlankPageData: Page = {
     // Regular ADAL fields
-    "Hidden": false,
-    "CreationDateTime": "2021-07-22T13:00:11.360Z",
-    "ModificationDateTime": "2021-07-22T13:00:11.360Z",
+    // "Hidden": false,
+    // "CreationDateTime": "2021-07-22T13:00:11.360Z",
+    // "ModificationDateTime": "2021-07-22T13:00:11.360Z",
 
     // Unique key - mandatory
-    "Name": "MyTempPage",
+    "Name": "My page",
     
     //  optional
-    "Description": "My temp page",
+    "Description": "Description of my page",
 
     // A list of the blocks on the page
     // We might want to move the actual data of each block to a seperate internal resource
