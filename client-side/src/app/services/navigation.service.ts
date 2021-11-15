@@ -26,7 +26,7 @@ export class NavigationService {
     constructor(
         private router: Router,
         private route: ActivatedRoute,
-        private location: Location
+        // private location: Location
     ) {
         // TODO: Need to get the addonUUID from the root config.
         this._addonUUID = config.AddonUUID;
