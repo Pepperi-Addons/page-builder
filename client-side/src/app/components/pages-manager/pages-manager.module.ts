@@ -39,7 +39,7 @@ const routes: Routes = [
       path: '',
       component: PagesManagerComponent
     }
-  ];
+];
 
 @NgModule({
     declarations: [
@@ -75,14 +75,14 @@ const routes: Routes = [
         RouterModule.forChild(routes)
     ],
     exports:[PagesManagerComponent],
-    providers: [
-        HttpClient,
-        TranslateStore,
-        PepHttpService,
-        PepAddonService,
-        PepFileService,
-        PepCustomizationService
-    ]
+    // providers: [
+    //     HttpClient,
+    //     TranslateStore,
+    //     // PepHttpService,
+    //     // PepAddonService,
+    //     // PepFileService,
+    //     // PepCustomizationService
+    // ]
 })
 export class PagesManagerModule {
     constructor(

@@ -9,6 +9,22 @@ import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } fr
 
 import { SectionModule } from '../section/section.module'
 import { PepSizeDetectorModule } from '@pepperi-addons/ngx-lib/size-detector';
+import { RouterModule, Routes } from '@angular/router';
+
+export const routes: Routes = [
+    // {
+    //     path: '',
+    //     redirectTo: 'block'
+    // },
+    // {
+    //     path: 'block',
+    //     component: BlockComponent
+    // },
+    {
+        path: ':page_key',
+        component: PageBuilderComponent
+    }
+];
 
 @NgModule({
     declarations: [
@@ -29,16 +45,17 @@ import { PepSizeDetectorModule } from '@pepperi-addons/ngx-lib/size-detector';
                 deps: [HttpClient, PepFileService, PepAddonService]
             }, isolate: false
         }),
+        RouterModule.forChild(routes)
     ],
     exports:[PageBuilderComponent],
-    providers: [
-        HttpClient,
-        TranslateStore,
-        PepHttpService,
-        PepAddonService,
-        PepFileService,
-        PepCustomizationService
-    ]
+    // providers: [
+    //     HttpClient,
+    //     TranslateStore,
+    //     PepHttpService,
+    //     PepAddonService,
+    //     PepFileService,
+    //     PepCustomizationService
+    // ]
 })
 export class PageBuilderModule {
     constructor(

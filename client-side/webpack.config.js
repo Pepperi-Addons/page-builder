@@ -1,8 +1,11 @@
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 const singleSpaAngularWebpack = require('single-spa-angular/lib/webpack').default;
-const webpack = require('webpack');
 const { merge } = require('webpack-merge');
+// const webpack = require('webpack');
 // const deps = require('./package.json').dependencies;
+
+// const mf = require("@angular-architects/module-federation/webpack");
+// const shareAll = mf.shareAll;
 
 module.exports = (config, options, env) => {
     const mfConfig = {
@@ -11,7 +14,6 @@ module.exports = (config, options, env) => {
             publicPath: "http://localhost:4400/"
         },
         optimization: {
-            // Only needed to bypass a temporary bug
             runtimeChunk: false
         },
         plugins: [
@@ -20,7 +22,11 @@ module.exports = (config, options, env) => {
                 name: "addon",
                 filename: "addon.js",
                 exposes: {
-                    './AppModule': './src/app/app.module.ts'
+                    // './AppModule': './src/app/app.module.ts',
+                    './PageBuilderModule': './src/app/components/page-builder/page-builder.module.ts',
+                    // './PageBuilderComponent': './src/app/components/page-builder/page-builder.component.ts',
+                    // './PageManagerModule': './src/app/components/page-manager/page-manager.module.ts',
+                    
                 },
                 shared: {
                     // ...deps,
@@ -29,7 +35,8 @@ module.exports = (config, options, env) => {
                     "@angular/common/http": { eager: true, singleton: true, strictVersion: false },
                     "rxjs": { eager: true, singleton: true, strictVersion: false },
                     "@ngx-translate/core": { eager: true, singleton: true, strictVersion: false },
-                    "@angular/router": { eager: true, singleton: true,  strictVersion: false }
+                    "@angular/router": { eager: true, singleton: true,  strictVersion: false },
+                    // "@pepperi-addons/ngx-lib": { eager: true, singleton: true,  strictVersion: false }
                 }
             })
         ],

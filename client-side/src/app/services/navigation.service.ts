@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { Location } from '@angular/common'
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router'
 import { filter } from 'rxjs/operators';
-// import { config } from '../components/addon.config';
+import { config } from '../components/addon.config';
 
 @Injectable({ providedIn: 'root' })
 export class NavigationService {
@@ -28,13 +28,15 @@ export class NavigationService {
         private route: ActivatedRoute,
         private location: Location
     ) {
+        // TODO: Need to get the addonUUID from the root config.
+        this._addonUUID = config.AddonUUID;
+        this._devServer = this.route.snapshot.queryParamMap.get('devServer') === 'true';
+        
         this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((event: NavigationEnd) => {
             this.history.push(event.urlAfterRedirects);
         });
 
         this.loadDevBlocks();
-        this._devServer = this.route.snapshot.queryParamMap.get('devServer') === 'true';
-        this._addonUUID = this.route.snapshot.firstChild.paramMap.get('addonUUID'); // || config.AddonUUID; 
     }
 
     private loadDevBlocks() {

@@ -26,12 +26,12 @@ import { PepAddonService, PepFileService, PepHttpService } from '@pepperi-addons
         }),
     ],
     exports: [SectionEditorComponent],
-    providers: [
-        HttpClient,
-        TranslateStore,
-        PepHttpService,
-        PepAddonService,
-        PepFileService,
-    ]
+    // providers: [
+    //     HttpClient,
+    //     TranslateStore,
+    //     // PepHttpService,
+    //     // PepAddonService,
+    //     // PepFileService,
+    // ]
 })
 export class SectionEditorModule { }

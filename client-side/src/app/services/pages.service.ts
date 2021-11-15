@@ -990,13 +990,21 @@ export class PagesService {
         return this.httpService.getHttpCall(`${baseUrl}/remove_page?key=${pageKey}`);
     }
 
-    loadPageBuilder(addonUUID: string, pageKey: string, editMode: boolean): void {
+    loadPageBuilder(addonUUID: string, pageKey: string, editable: boolean): void {
         //  If is't not edit mode get the page from the CPI side.
-        if (!editMode) {
+        const baseUrl = this.getBaseUrl(addonUUID);
+        if (!editable) {
             // TODO: Get from CPI side.
-            
+            // Get the page (sections and the blocks data) from the server.
+            this.httpService.getHttpCall(`${baseUrl}/get_page?key=${pageKey}`)
+                .subscribe((res: Page) => {
+                    if (res) {
+                        // Load the page.
+                        this.pageSubject.next(res);
+                    }
+            });
+
         } else { // If is't edit mode get the data of the page and the relations from the Server side.
-            const baseUrl = this.getBaseUrl(addonUUID);
             // Get the page (sections and the blocks data) from the server.
             this.httpService.getHttpCall(`${baseUrl}/get_page_builder_data?key=${pageKey}`)
                 .subscribe((res: IPageBuilderDataForEditMode) => {
