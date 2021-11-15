@@ -10,9 +10,7 @@ if (environment.production) {
     enableProdMode();
 }
 
-let lifecycles = null;
-
-lifecycles = singleSpaAngular({
+let lifecycles = singleSpaAngular({
     bootstrapFunction: singleSpaProps => {
         singleSpaPropsSubject.next(singleSpaProps);
         return platformBrowserDynamic(getSingleSpaExtraProviders()).bootstrapModule(AppModule);

@@ -1,3 +1,4 @@
+import { coerceNumberProperty } from '@angular/cdk/coercion';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { IPepOption, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
 import { SplitType } from '@pepperi-addons/papi-sdk';
@@ -26,16 +27,15 @@ export class SectionEditorComponent implements OnInit {
         this.sectionName = value.sectionName;
         this.split = value.split;
         this.height = value.height;
+        this.isAutoHeight = !value.height || value.height === 0;
     }
     get hostObject(): ISectionEditor {
         return this._hostObject;
     }
 
-    // @Input()
     sectionName: string = '';
     
     private _split: SplitType | undefined;
-    // @Input() 
     set split(value: SplitType | undefined) {
         this._split = value;
         
@@ -55,7 +55,7 @@ export class SectionEditorComponent implements OnInit {
         return this._split;
     }
     
-    // @Input() 
+    isAutoHeight: boolean = true;
     height: number = 0;
 
     @Output() hostObjectChange: EventEmitter<ISectionEditor> = new EventEmitter<ISectionEditor>();
@@ -113,7 +113,7 @@ export class SectionEditorComponent implements OnInit {
     private updateHostObject() {
         this._hostObject.sectionName = this.sectionName;
         this._hostObject.split = this.subSections ? this.split : undefined;
-        this._hostObject.height = this.height;
+        this._hostObject.height = this.isAutoHeight ? 0 : this.height;
 
         this.hostObjectChange.emit(this.hostObject);
     }
@@ -121,7 +121,17 @@ export class SectionEditorComponent implements OnInit {
     ngOnInit(): void {
         this.loadSplitOptions();
     }
+    
+    isAutoHeightChange(isChecked: boolean) {
+        this.isAutoHeight = isChecked;
+        this.updateHostObject();
+    }
 
+    onHeightChange(height: number) {
+        this.height = coerceNumberProperty(height, this.height);
+        this.updateHostObject();
+    }
+    
     onSectionNameChange(value: string) {
         this.sectionName = value;
         this.updateHostObject();

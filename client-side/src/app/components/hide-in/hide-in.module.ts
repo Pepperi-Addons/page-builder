@@ -34,12 +34,12 @@ import { HttpClient } from '@angular/common/http';
         }),
     ],
     exports: [HideInComponent],
-    providers: [
-        HttpClient,
-        TranslateStore,
-        PepHttpService,
-        PepAddonService,
-        PepFileService,
-    ]
+    // providers: [
+    //     HttpClient,
+    //     TranslateStore,
+    //     // PepHttpService,
+    //     // PepAddonService,
+    //     // PepFileService,
+    // ]
 })
 export class HideInModule { }

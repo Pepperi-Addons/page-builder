@@ -1,6 +1,10 @@
 <div class="section-editor-container">
     <pep-textbox [value]="sectionName" [label]="'PAGE_MANAGER.SECTION_NAME_TITLE' | translate" (valueChange)="onSectionNameChange($event)"></pep-textbox>
 
+    <!-- TODO: Add height if needed.
+    <pep-checkbox [value]="isAutoHeight" [label]="'PAGE_MANAGER.AUTO_HEIGHT_TITLE' | translate" [renderTitle]="false" (valueChange)="isAutoHeightChange($event)"></pep-checkbox>
+    <pep-textbox [label]="'PAGE_MANAGER.MAX_HEIGHT_TITLE' | translate" type="int" [disabled]="isAutoHeight" [value]="height" (valueChange)="onHeightChange($event)"></pep-textbox> -->
+
     <pep-checkbox [value]="subSections" [label]="'PAGE_MANAGER.SUB_SECTION_TITLE' | translate" [renderTitle]="false" (valueChange)="onSubSectionsChange($event)"></pep-checkbox>
 
     <div class="split-area">

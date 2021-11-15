@@ -64,13 +64,13 @@ import { MatSliderModule } from '@angular/material/slider'
         }),
     ],
     exports:[PageBuilderEditorComponent],
-    providers: [
-        HttpClient,
-        TranslateStore,
-        PepHttpService,
-        PepAddonService,
-        PepFileService,
-    ]
+    // providers: [
+    //     HttpClient,
+    //     TranslateStore,
+    //     // PepHttpService,
+    //     // PepAddonService,
+    //     // PepFileService,
+    // ]
 })
 export class PageBuilderEditorModule {
     constructor(

@@ -70,7 +70,16 @@ export class SectionComponent implements OnInit {
 
     @Input() columnsGap: PageSizeType | 'NONE';
     @Input() sectionsColumnsDropList = [];
-    @Input() pageBlocksMap = new Map<string, PageBlock>();
+    
+    private _pageBlocksMap = new Map<string, PageBlock>();
+    @Input()
+    set pageBlocksMap(value: Map<string, PageBlock>) {
+        this._pageBlocksMap = value || new Map<string, PageBlock>();
+        this.calculateIfSectionContainsBlocks();
+    }
+    get pageBlocksMap(): Map<string, PageBlock> {
+        return this._pageBlocksMap;
+    }
 
     PepScreenSizeType = PepScreenSizeType;
     sectionColumnKeyPrefix = '';

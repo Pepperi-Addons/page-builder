@@ -52,7 +52,7 @@ const routes: Routes = [
       path: '',
       component: PageManagerComponent
     }
-  ];
+];
 
 @NgModule({
     declarations: [
@@ -92,14 +92,14 @@ const routes: Routes = [
         RouterModule.forChild(routes)
     ],
     exports:[PageManagerComponent],
-    providers: [
-        HttpClient,
-        TranslateStore,
-        PepHttpService,
-        PepAddonService,
-        PepFileService,
-        PepCustomizationService
-    ]
+    // providers: [
+    //     HttpClient,
+    //     TranslateStore,
+    //     // PepHttpService,
+    //     // PepAddonService,
+    //     // PepFileService,
+    //     // PepCustomizationService
+    // ]
 })
 export class PageManagerModule {
     constructor(
