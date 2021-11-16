@@ -10,6 +10,8 @@ import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } fr
 import { SectionModule } from '../section/section.module'
 import { PepSizeDetectorModule } from '@pepperi-addons/ngx-lib/size-detector';
 import { RouterModule, Routes } from '@angular/router';
+import { PagesService } from 'src/app/services/pages.service';
+import { NavigationService } from 'src/app/services/navigation.service';
 
 export const routes: Routes = [
     // {
@@ -21,7 +23,7 @@ export const routes: Routes = [
     //     component: BlockComponent
     // },
     {
-        path: ':page_key',
+        path: '',
         component: PageBuilderComponent
     }
 ];
@@ -48,20 +50,17 @@ export const routes: Routes = [
         RouterModule.forChild(routes)
     ],
     exports:[PageBuilderComponent],
-    // providers: [
-    //     HttpClient,
-    //     TranslateStore,
-    //     PepHttpService,
-    //     PepAddonService,
-    //     PepFileService,
-    //     PepCustomizationService
-    // ]
+    providers: [
+        TranslateStore,
+        // When loading this module from route we need to add this here (because only this module is loading).
+        NavigationService,
+        PagesService 
+    ]
 })
 export class PageBuilderModule {
     constructor(
         translate: TranslateService,
         private pepAddonService: PepAddonService
-
     ) {
         this.pepAddonService.setDefaultTranslateLang(translate);
     }

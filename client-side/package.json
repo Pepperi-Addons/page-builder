@@ -3,17 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --live-reload=false --sourceMap=true",
-    "single-spa": "ng serve  --configuration SingleSpa --sourceMap=false --live-reload=false",
-    "standalone": "ng serve --configuration Standalone --sourceMap=false --live-reload=false",
+    "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "build:single-spa": "ng build client-side --sourceMap=false",
-    "build:single-spa:client-side": "ng build client-side",
-    "serve:single-spa:client-side": "ng s --project client-side --disable-host-check --port 4400 --deploy-url http://localhost:4400/ --live-reload false",
-    "assets-server": "http-server ./src/ -p 4300 -d --cors"
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {

@@ -23,5 +23,3 @@ let lifecycles = singleSpaAngular({
 export const bootstrap = lifecycles.bootstrap;
 export const mount = lifecycles.mount;
 export const unmount = lifecycles.unmount;
-
-// import('./bootstrap').catch(err => console.error(err));

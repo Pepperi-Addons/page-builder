@@ -93,42 +93,46 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     ngOnInit() {
         // TODO: Need to get the addonUUID not from the navigationService.
         const addonUUID = this.navigationService.addonUUID;
-        const pageKey = this.route?.snapshot?.params['page_key'];
+        const pageKey = this.route.snapshot.data['page_key'] || this.route?.snapshot?.params['page_key'] || '';
 
-        this.pageBuilderService.loadPageBuilder(addonUUID, pageKey, this.editMode);
+        if (pageKey.length > 0) {
+            this.pageBuilderService.loadPageBuilder(addonUUID, pageKey, this.editMode);
 
-        this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
-            this.screenSize = size;
-        });
-
-        this.pageBuilderService.onSectionsChange$.subscribe(res => {
-            this._sectionsSubject.next(res);
-        });
-
-        this.pageBuilderService.pageBlockProgressMapChange$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
-            // Clear the blocks map and set it again.
-            this._pageBlocksMap = new Map<string, PageBlock>();
-            const pbRelationsNames = new Map<string, boolean>();
-
-            blocksProgress.forEach(bp => {
-                if (bp.priority >= this.pageBuilderService.currentBlocksPriority) {
-                    // Check that there is no other block with the same relation name that need to load.
-                    if (bp.loaded || !pbRelationsNames.has(bp.block.Relation.Name)) {
-                        
-                        // Add to the map only relations that not added yet.
-                        if (!bp.loaded) {
-                            pbRelationsNames.set(bp.block.Relation.Name, true);
-                        }
-
-                        this._pageBlocksMap.set(bp.block.Key, bp.block);
-                    }
-                }
+            this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
+                this.screenSize = size;
             });
-        });
 
-        this.pageBuilderService.pageDataChange$.subscribe((page: Page) => {
-            this.setPageDataProperties(page);
-        });
+            this.pageBuilderService.onSectionsChange$.subscribe(res => {
+                this._sectionsSubject.next(res);
+            });
+
+            this.pageBuilderService.pageBlockProgressMapChange$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
+                // Clear the blocks map and set it again.
+                this._pageBlocksMap = new Map<string, PageBlock>();
+                const pbRelationsNames = new Map<string, boolean>();
+
+                blocksProgress.forEach(bp => {
+                    if (bp.priority >= this.pageBuilderService.currentBlocksPriority) {
+                        // Check that there is no other block with the same relation name that need to load.
+                        if (bp.loaded || !pbRelationsNames.has(bp.block.Relation.Name)) {
+                            
+                            // Add to the map only relations that not added yet.
+                            if (!bp.loaded) {
+                                pbRelationsNames.set(bp.block.Relation.Name, true);
+                            }
+
+                            this._pageBlocksMap.set(bp.block.Key, bp.block);
+                        }
+                    }
+                });
+            });
+
+            this.pageBuilderService.pageDataChange$.subscribe((page: Page) => {
+                this.setPageDataProperties(page);
+            });
+        } else {
+            // TODO: Show error message key isn't supply.
+        }
     }
 
     ngOnDestroy() {

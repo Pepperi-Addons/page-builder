@@ -96,10 +96,6 @@
             "browserTarget": "client-side:build"
           },
           "configurations": {
-            "Standalone": {
-            },
-            "SingleSpa": {
-            },
             "production": {
               "browserTarget": "client-side:build:production"
             },
