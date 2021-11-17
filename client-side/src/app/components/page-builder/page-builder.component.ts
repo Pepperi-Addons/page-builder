@@ -52,11 +52,10 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     constructor(
         private route: ActivatedRoute,
         private renderer: Renderer2,
-        private translate: TranslateService,
         private navigationService: NavigationService,
         private utilitiesService: PepUtilitiesService,
         private layoutService: PepLayoutService,
-        public pageBuilderService: PagesService
+        private pageBuilderService: PagesService
     ) {
     }
 

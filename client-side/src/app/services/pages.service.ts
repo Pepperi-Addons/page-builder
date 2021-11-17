@@ -645,7 +645,7 @@ export class PagesService {
         }
     }
 
-    getBlockHostObject(block: PageBlock): any {
+    getBlockHostObject(block: PageBlock, screenType: DataViewScreenSize): any {
         
         let hostObject = this.getEditorHostObject(block);
         
@@ -653,6 +653,9 @@ export class PagesService {
         hostObject['filter'] = this._pageConsumersFiltersMapSubject.value?.get(block.Key) || null;
         
         // TODO: Add context.
+
+
+        hostObject['screenType'] = screenType;
 
         return hostObject;
     }

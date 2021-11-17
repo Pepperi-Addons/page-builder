@@ -75,7 +75,6 @@ const pepIcons = [
             }
         })
     ],
-    // providers: [],
     bootstrap: [AppComponent]
 })
 export class AppModule {

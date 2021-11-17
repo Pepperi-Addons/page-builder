@@ -49,6 +49,7 @@ export class SectionBlockComponent implements OnInit {
     set screenType(value: DataViewScreenSize) {
         this._screenType = value;
         this.setIfHideForCurrentScreenType();
+        this.setHostObject();
     }
     get screenType(): DataViewScreenSize {
         return this._screenType;
@@ -62,13 +63,11 @@ export class SectionBlockComponent implements OnInit {
     }
 
     constructor(
-        private renderer: Renderer2,
-        private translate: TranslateService,
-        public pageBuilderService: PagesService
+        private pageBuilderService: PagesService
     ) { }
     
     private setHostObject(): void {
-        this._hostObject = this.pageBuilderService.getBlockHostObject(this.pageBlock);
+        this._hostObject = this.pageBuilderService.getBlockHostObject(this.pageBlock, this.screenType);
     }
 
     private setIfHideForCurrentScreenType(): void {

@@ -33,13 +33,6 @@ import { HttpClient } from '@angular/common/http';
             }, isolate: false
         }),
     ],
-    exports: [HideInComponent],
-    // providers: [
-    //     HttpClient,
-    //     TranslateStore,
-    //     // PepHttpService,
-    //     // PepAddonService,
-    //     // PepFileService,
-    // ]
+    exports: [HideInComponent]
 })
 export class HideInModule { }

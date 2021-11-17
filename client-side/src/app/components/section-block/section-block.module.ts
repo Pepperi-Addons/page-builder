@@ -25,13 +25,6 @@ import { PepAddonService, PepFileService, PepHttpService } from '@pepperi-addons
             }, isolate: false
         }),
     ],
-    exports: [SectionBlockComponent],
-    // providers: [
-    //     HttpClient,
-    //     TranslateStore,
-    //     // PepHttpService,
-    //     // PepAddonService,
-    //     // PepFileService,
-    // ]
+    exports: [SectionBlockComponent]
 })
 export class SectionBlockModule { }

@@ -74,15 +74,7 @@ const routes: Routes = [
         }),
         RouterModule.forChild(routes)
     ],
-    exports:[PagesManagerComponent],
-    // providers: [
-    //     HttpClient,
-    //     TranslateStore,
-    //     // PepHttpService,
-    //     // PepAddonService,
-    //     // PepFileService,
-    //     // PepCustomizationService
-    // ]
+    exports:[PagesManagerComponent]
 })
 export class PagesManagerModule {
     constructor(
