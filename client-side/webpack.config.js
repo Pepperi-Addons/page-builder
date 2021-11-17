@@ -61,7 +61,6 @@ sharedMappings.register(
     path.join(__dirname, './tsconfig.json'),
     [
         /* mapped paths to share */
-        "ngx-lib"
     ]);
 
 module.exports = (config, options, env) => {
@@ -72,6 +71,7 @@ module.exports = (config, options, env) => {
             // libraryTarget: "umd"
         },
         optimization: {
+            // Only needed to bypass a temporary bug
             runtimeChunk: false
         },   
         resolve: {
@@ -84,22 +84,17 @@ module.exports = (config, options, env) => {
                 name: "addon",
                 filename: "addon.js",
                 exposes: {
-                    // './AppModule': './src/app/app.module.ts',
-                    './PageBuilderModule': './src/app/components/page-builder/page-builder.module.ts',
-                    // './PageBuilderComponent': './src/app/components/page-builder/page-builder.component.ts',
-                    // './PageManagerModule': './src/app/components/page-manager/page-manager.module.ts',
-                    
+                    './PageBuilderModule': './src/app/components/page-builder/page-builder.module.ts'
                 },
                 shared: share({
-                "@angular/core": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
-                "@angular/common": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
-                "@angular/common/http": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
-                "@angular/router": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },
-                // "@pepperi-addons/ngx-lib": {eager: true,  singleton: true, strictVersion: true, requiredVersion: 'auto' },
-                
-                ...sharedMappings.getDescriptors()
+                    "@angular/core": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
+                    "@angular/common": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
+                    "@angular/common/http": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
+                    "@angular/router": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },
+                    "@pepperi-addons/ngx-lib": { eager: true,  singleton: true, strictVersion: true, requiredVersion: 'auto' },
+                    
+                    ...sharedMappings.getDescriptors()
                 })
-                
             }),
             sharedMappings.getPlugin()
         ],

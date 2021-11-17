@@ -1,5 +1,6 @@
 import { TranslateService } from '@ngx-translate/core';
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 
 @Component({
     selector: 'sub-addon-2',
@@ -27,6 +28,7 @@ export class SubAddon2Component implements OnInit, OnChanges {
     currIndex = 0;
     
     constructor(
+        private layoutService: PepLayoutService,
         private translate: TranslateService,
         private cd: ChangeDetectorRef) { }
 
@@ -40,6 +42,10 @@ export class SubAddon2Component implements OnInit, OnChanges {
     }
 
     ngOnInit(): void {
+        // this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
+        //     debugger;
+        // });
+
         this.options.push({key:'OPEN_DIALOG', value: 'Text 1' });
         this.options.push({key:'OPEN_DIALOG', value: 'Text 2' });
         this.images +=  ';' +this.hostObject?.configuration?.imageURL;

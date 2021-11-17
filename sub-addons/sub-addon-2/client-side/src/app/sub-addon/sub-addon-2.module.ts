@@ -31,7 +31,7 @@ import { config } from './addon.config';
                 deps: [HttpClient, PepFileService, PepAddonService],
             }, isolate: false
         }),
-        // PepNgxLibModule,
+        PepNgxLibModule,
         PepButtonModule,
         // PepSelectModule,
         // PepTopBarModule,
