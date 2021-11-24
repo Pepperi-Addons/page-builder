@@ -24,6 +24,11 @@
             "tsConfig": "tsconfig.json",
             "sourceMap": true,
             "aot": true,
+            "customWebpackConfig": {
+              "path": "webpack.config.js",
+              "libraryName": "client-side",
+              "libraryTarget": "umd"
+            },
             "stylePreprocessorOptions": {
                 "includePaths": [
                     "node_modules/@pepperi-addons",
@@ -44,12 +49,7 @@
                 "src/theme.scss"
             ],
             "scripts": [
-            ],
-            "customWebpackConfig": {
-              "path": "webpack.config.js",
-              "libraryName": "client-side",
-              "libraryTarget": "umd"
-            }
+            ]
           },
           "configurations": {
             "production": {

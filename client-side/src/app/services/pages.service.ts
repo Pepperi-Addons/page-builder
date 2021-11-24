@@ -18,14 +18,15 @@ export interface IPageRowModel {
     Status: PageRowStatusType,
 }
 
-interface IPageBuilderDataForEditMode {
+interface IPageBuilderData {
     page: Page, 
-    availableBlocks: IAvailableBlockDataForEditMode[]
+    availableBlocks: IAvailableBlockData[]
 }
 
-interface IAvailableBlockDataForEditMode {
+interface IAvailableBlockData {
     relation: NgComponentRelation, 
-    addon: InstalledAddon 
+    addonPublicBaseURL: string
+    // addon: InstalledAddon 
 }
 
 export type EditorType = 'page-builder' | 'section' | 'block';
@@ -59,11 +60,6 @@ export interface ISectionEditor {
 export interface IBlockEditor {
     id: string,
     configuration?: any,
-}
-
-export interface IAvailableBlock {
-    options: PepRemoteLoaderOptions,
-    relation: NgComponentRelation
 }
 
 export interface IBlockProgress {
@@ -120,9 +116,14 @@ export class PagesService {
     }
 
     // This subject is for load available blocks on the main editor (Usage only in edit mode).
-    private _availableBlocksSubject: BehaviorSubject<IAvailableBlock[]> = new BehaviorSubject<IAvailableBlock[]>([]);
-    get availableBlocksLoadedSubject$(): Observable<IAvailableBlock[]> {
+    private _availableBlocksSubject: BehaviorSubject<NgComponentRelation[]> = new BehaviorSubject<NgComponentRelation[]>([]);
+    get availableBlocksLoadedSubject$(): Observable<NgComponentRelation[]> {
         return this._availableBlocksSubject.asObservable().pipe(distinctUntilChanged());
+    }
+
+    private _blocksRemoteLoaderOptionsMap = new Map<string, PepRemoteLoaderOptions>();
+    get blocksRemoteLoaderOptionsMap(): ReadonlyMap<string, PepRemoteLoaderOptions> {
+        return this._blocksRemoteLoaderOptionsMap;
     }
 
     // This is the sections subject (a pare from the page object)
@@ -388,8 +389,12 @@ export class PagesService {
                             const complexApiName = `${mappingResource.ResourceApiNames[index]}.${producerFilter.filter.ApiName}`;
                             
                             // If the complex api name exist in the consumerFilter.Fields (even a part of it).
-                            if (consumerFilter.Fields.some((apiName) => apiName.indexOf(complexApiName) >= 0)) {
-                                consumerFilters.push(producerFilter);
+                            const filterFieldApiName = consumerFilter.Fields.find((apiName) => apiName.indexOf(complexApiName) >= 0);
+                            if (filterFieldApiName) {
+                                // Copy the producer filter (by value) and change the API name to be like the consumer need to get.
+                                const tmpFilterToAdd = JSON.parse(JSON.stringify(producerFilter));
+                                tmpFilterToAdd.filter.ApiName = filterFieldApiName;
+                                consumerFilters.push(tmpFilterToAdd);
                             }
                         }
                     }
@@ -542,10 +547,11 @@ export class PagesService {
     private getBlockEditor(blockId: string): IEditor {
         // Get the current block.
         let block: PageBlock = this.pageSubject?.value?.Blocks.find(block => block.Key === blockId);
-        
+        const remoteLoaderOptions = this.blocksRemoteLoaderOptionsMap.get(block.Relation.AddonUUID);
+
         if (block) {
             // Change the RemoteLoaderOptions of the block for loading the block editor.
-            let editorRelationOptions: PepRemoteLoaderOptions = JSON.parse(JSON.stringify(block.Relation.Options));
+            let editorRelationOptions: PepRemoteLoaderOptions = JSON.parse(JSON.stringify(remoteLoaderOptions));
             editorRelationOptions.exposedModule = './' + block.Relation.EditorModuleName;
             editorRelationOptions.componentName = block.Relation.EditorComponentName;
 
@@ -610,25 +616,22 @@ export class PagesService {
         return currentColumn;
     }
 
-    private getRemoteEntryByType(relation: NgComponentRelation, remoteBasePath: string, remoteName: string) {
-        switch (relation.Type){
-            case "NgComponent":
-                // For devBlocks gets the remote entry from the query params.
-                const devBlocks = this.navigationService.devBlocks;
-                if (devBlocks.has(relation?.ComponentName)) {
-                    return devBlocks.get(relation?.ComponentName);
-                } else {
-                    return `${remoteBasePath}${remoteName}.js`;
-                }
-            default:
-                return relation?.AddonRelativeURL;
+    private getRemoteEntryByType(relation: NgComponentRelation, remoteBasePath: string) {
+        // For devBlocks gets the remote entry from the query params.
+        const devBlocks = this.navigationService.devBlocks;
+        if (devBlocks.has(relation?.ModuleName)) {
+            return devBlocks.get(relation.ModuleName);
+        } else if (devBlocks.has(relation?.ComponentName)) {
+            return devBlocks.get(relation.ComponentName);
+        } else {
+            return `${remoteBasePath}${relation?.AddonRelativeURL}.js`;
         }
     }
 
     private getRemoteLoaderOptions(relation: NgComponentRelation, remoteBasePath: string) {
         return {
             addonId: relation?.AddonUUID,
-            remoteEntry: this.getRemoteEntryByType(relation, remoteBasePath, relation.AddonRelativeURL),
+            remoteEntry: this.getRemoteEntryByType(relation, remoteBasePath),
             remoteName: relation.AddonRelativeURL,
             exposedModule: './' + relation?.ModuleName,
             componentName: relation?.ComponentName,
@@ -645,7 +648,10 @@ export class PagesService {
         }
     }
 
-    getBlockHostObject(block: PageBlock, screenType: DataViewScreenSize): any {
+    getBlockHostObject(
+        block: PageBlock, 
+        // screenType: DataViewScreenSize
+        ): any {
         
         let hostObject = this.getEditorHostObject(block);
         
@@ -655,7 +661,7 @@ export class PagesService {
         // TODO: Add context.
 
 
-        hostObject['screenType'] = screenType;
+        // hostObject['screenType'] = screenType;
 
         return hostObject;
     }
@@ -836,8 +842,7 @@ export class PagesService {
     onBlockDropped(event: CdkDragDrop<any[]>, sectionId: string) {
         if (event.previousContainer.id == 'availableBlocks') {
             // Create new block from the relation (previousContainer.data is AvailableBlock object).
-            const relation = event.previousContainer.data[event.previousIndex].relation;
-            relation["Options"] = event.previousContainer.data[event.previousIndex].options;
+            const relation = event.previousContainer.data[event.previousIndex];
             
             let block: PageBlock = {
                 Key: PepGuid.newGuid(),
@@ -993,55 +998,53 @@ export class PagesService {
         return this.httpService.getHttpCall(`${baseUrl}/remove_page?key=${pageKey}`);
     }
 
+    private loadBlocksRemoteLoaderOptionsMap(availableBlocks: IAvailableBlockData[]) {
+        this._blocksRemoteLoaderOptionsMap.clear();
+
+        availableBlocks.forEach(data => {
+            const relation: NgComponentRelation = data?.relation;
+            const addonPublicBaseURL = data?.addonPublicBaseURL;
+            
+            if (relation && addonPublicBaseURL) {
+                this._blocksRemoteLoaderOptionsMap.set(relation.AddonUUID, this.getRemoteLoaderOptions(relation, addonPublicBaseURL));
+            }
+        });
+    }
+
     loadPageBuilder(addonUUID: string, pageKey: string, editable: boolean): void {
         //  If is't not edit mode get the page from the CPI side.
         const baseUrl = this.getBaseUrl(addonUUID);
+        
         if (!editable) {
             // TODO: Get from CPI side.
             // Get the page (sections and the blocks data) from the server.
-            this.httpService.getHttpCall(`${baseUrl}/get_page?key=${pageKey}`)
-                .subscribe((res: Page) => {
-                    if (res) {
+            this.httpService.getHttpCall(`${baseUrl}/get_page_data?key=${pageKey}`)
+                .subscribe((res: IPageBuilderData) => {
+                    if (res && res.page && res.availableBlocks) {
+                        // Load the blocks remote loader options.
+                        this.loadBlocksRemoteLoaderOptionsMap(res.availableBlocks);
+
                         // Load the page.
-                        this.pageSubject.next(res);
+                        this.pageSubject.next(res.page);
                     }
             });
-
         } else { // If is't edit mode get the data of the page and the relations from the Server side.
             // Get the page (sections and the blocks data) from the server.
             this.httpService.getHttpCall(`${baseUrl}/get_page_builder_data?key=${pageKey}`)
-                .subscribe((res: IPageBuilderDataForEditMode) => {
+                .subscribe((res: IPageBuilderData) => {
                     if (res && res.page && res.availableBlocks) {
                         // Load the available blocks.
-                        const availableBlocks: IAvailableBlock[] = [];
+                        const availableBlocks: NgComponentRelation[] = [];
+                        
                         res.availableBlocks.forEach(data => {
-                            const relation: NgComponentRelation = data?.relation;
-                            const addon: InstalledAddon = data?.addon;
-                            
-                            if (relation && addon) {
-                                availableBlocks.push({
-                                    relation: relation,
-                                    options: this.getRemoteLoaderOptions(relation, addon?.PublicBaseURL)
-                                });
-                            }
+                            availableBlocks.push(data?.relation);
                         });
                             
                         this._availableBlocksSubject.next(availableBlocks);
 
-                        // Update the relation options of the save blocks.
-                        // if exist in the available blocks take the relation options, 
-                        // else take it from the save data (if there is devBlocks parameter handled in getRemoteLoaderOptions function).
-                        res.page.Blocks?.forEach(block => {
-                            const availableBlock = availableBlocks.find(ab => ab.relation.AddonUUID === block.Relation.AddonUUID && ab.relation.Name === block.Relation.Name);
+                        // Load the blocks remote loader options.
+                        this.loadBlocksRemoteLoaderOptionsMap(res.availableBlocks);
 
-                            if (availableBlock) {
-                                block.Relation.Options = availableBlock.options;
-                            } else {
-                                const remoteBasePath = block.Relation.Options.remoteEntry.replace(`${block.Relation.Options.remoteName}.js`, '');
-                                block.Relation.Options = this.getRemoteLoaderOptions(block.Relation, remoteBasePath);
-                            }
-                        });
-                        
                         // Load the page.
                         this.pageSubject.next(res.page);
                     }
@@ -1064,7 +1067,7 @@ export class PagesService {
         const page: Page = this.pageSubject.value;
         const body = JSON.stringify(page);
         const baseUrl = this.getBaseUrl(addonUUID);
-        return this.httpService.postHttpCall(`${baseUrl}/save_page`, body);
+        return this.httpService.postHttpCall(`${baseUrl}/save_draft_page`, body);
     }
 
     // Publish the current page.

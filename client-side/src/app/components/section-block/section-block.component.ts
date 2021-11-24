@@ -1,9 +1,8 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, Renderer2, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
-import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragStart, CdkDropList } from '@angular/cdk/drag-drop';
-import { IEditor, PagesService } from 'src/app/services/pages.service';
-import { DataViewScreenSize, PageBlock, PageConfiguration, PageSectionBlock, PageSectionColumn, PageSizeType, SplitType } from '@pepperi-addons/papi-sdk';
-import { TranslateService } from '@ngx-translate/core';
-import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
+import { Component, Input, OnInit } from '@angular/core';
+import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
+import { PagesService } from 'src/app/services/pages.service';
+import { DataViewScreenSize, PageBlock, PageConfiguration, PageSectionBlock } from '@pepperi-addons/papi-sdk';
+import { PepRemoteLoaderOptions } from '@pepperi-addons/ngx-remote-loader';
 
 interface IHostObject {
     configuration: any;
@@ -28,6 +27,7 @@ export class SectionBlockComponent implements OnInit {
     @Input()
     set pageBlock(value: PageBlock) {
         this._pageBlock = value;
+        this.setRemotePathOptions();
         this.setHostObject();
     }
     get pageBlock(): PageBlock {
@@ -62,12 +62,20 @@ export class SectionBlockComponent implements OnInit {
         return this._hostObject;
     }
 
+    remotePathOptions: PepRemoteLoaderOptions;
+
     constructor(
         private pageBuilderService: PagesService
     ) { }
     
+    private setRemotePathOptions() {
+        this.remotePathOptions = this.pageBuilderService.blocksRemoteLoaderOptionsMap.get(this.pageBlock.Relation.AddonUUID);
+    }
+
     private setHostObject(): void {
-        this._hostObject = this.pageBuilderService.getBlockHostObject(this.pageBlock, this.screenType);
+        this._hostObject = this.pageBuilderService.getBlockHostObject(this.pageBlock
+            // , this.screenType
+            );
     }
 
     private setIfHideForCurrentScreenType(): void {

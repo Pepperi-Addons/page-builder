@@ -7,7 +7,7 @@ export async function pages(client: Client, request: Request): Promise<any> {
         let res;
 
         if (request.method === 'POST') {
-            res = service.upsertPage(request.body);
+            res = service.savePage(request.body);
         } else if (request.method === 'GET') {
             res = service.getPages(request.query);
         } else {
@@ -20,11 +20,11 @@ export async function pages(client: Client, request: Request): Promise<any> {
     }
 }
 
-export async function get_page(client: Client, request: Request): Promise<any> {
+export async function get_page_data(client: Client, request: Request): Promise<any> {
     try {
         const service = new PagesApiService(client);
         const pageKey = request?.query['key'] || '';
-        return service.getByKey(pageKey);
+        return service.getPageData(pageKey);
     } catch(err) {
         throw new Error(`Failed to get page. error - ${err}`);
     }
@@ -48,10 +48,10 @@ export async function remove_page(client: Client, request: Request): Promise<any
     }
 }
 
-export async function save_page(client: Client, request: Request): Promise<any> {
+export async function save_draft_page(client: Client, request: Request): Promise<any> {
     try {
         const service = new PagesApiService(client);
-        return service.savePage(request.body);
+        return service.saveDraftPage(request.body);
     } catch(err) {
         throw new Error(`Failed to save page. error - ${err}`);
     }
@@ -69,7 +69,8 @@ export async function get_pages_data(client: Client, request: Request): Promise<
 export async function get_page_builder_data(client: Client, request: Request): Promise<any> {
     try {
         const service = new PagesApiService(client);
-        return service.getPageBuilderData(request.query);
+        const pageKey = request?.query['key'] || '';
+        return service.getPageData(pageKey, true);
     } catch(err) {
         throw new Error(`Failed to get page builder data. error - ${err}`);
     }

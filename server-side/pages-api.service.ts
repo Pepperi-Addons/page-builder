@@ -1,10 +1,21 @@
-import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, PageSection, SplitTypes, DataViewScreenSizes, PageBlock, PageSectionColumn, PageSizeTypes } from '@pepperi-addons/papi-sdk'
+import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, PageSection, SplitTypes, DataViewScreenSizes, PageBlock, PageSectionColumn, PageSizeTypes, PageLayout } from '@pepperi-addons/papi-sdk'
 import { Client } from '@pepperi-addons/debug-server';
 import { v4 as uuid } from 'uuid';
 import { PageRowProjection, TempBlankPageData } from './pages.model';
 
 const PAGES_TABLE_NAME = 'Pages';
 const DRAFT_PAGES_TABLE_NAME = 'PagesDrafts';
+
+interface IPageBuilderData {
+    page: Page, 
+    availableBlocks: IAvailableBlockData[]
+}
+
+interface IAvailableBlockData {
+    relation: NgComponentRelation, 
+    addonPublicBaseURL: string
+    // addon: InstalledAddon 
+}
 
 export class PagesApiService {
     papiClient: PapiClient;
@@ -30,27 +41,33 @@ export class PagesApiService {
         return this.papiClient.addons.installedAddons.addonUUID(uuid).get();
     }
 
-    private async getAvailableBlocks(pageType: string) {
+    private async getAvailableBlocks(pageType: string): Promise<IAvailableBlockData[]> {
         // Get the PageBlock relations 
         const pageBlockRelations: NgComponentRelation[] = await this.getRelations('PageBlock');
                 
         // Distinct the addons uuid's and filter by pageType
         const distinctAddonsUuids = [...new Set(pageBlockRelations.filter(row => (
-                row.AllowedPageTypes === undefined || row.AllowedPageTypes.lenth === 0 || pageType.length === 0 || (row.AllowedPageTypes.lenth > 0 && row.AllowedPageTypes.includes(pageType))
-            )).map(obj => obj.AddonUUID))];
+            row.AllowedPageTypes === undefined || 
+            row.AllowedPageTypes.lenth === 0 || 
+            pageType.length === 0 || 
+            (row.AllowedPageTypes.lenth > 0 && row.AllowedPageTypes.includes(pageType))
+        )).map(obj => obj.AddonUUID))];
 
-        // Get the data of those installed addons
+        // Get the installed addons (for the relative path and the current version)
         const addonsPromises: Promise<any>[] = [];
-        distinctAddonsUuids.forEach( (uuid: any) => addonsPromises.push(this.getInstalledAddon(uuid))); 
+        distinctAddonsUuids.forEach((uuid: any) => {
+            addonsPromises.push(this.getInstalledAddon(uuid))
+        });
+
         const addons: InstalledAddon[] = await Promise.all(addonsPromises).then(res => res);
 
-        const availableBlocks: any[] = [];
+        const availableBlocks: IAvailableBlockData[] = [];
         pageBlockRelations.forEach((relation: NgComponentRelation) => {
             const installedAddon: InstalledAddon | undefined = addons.find((ia: InstalledAddon) => ia?.Addon?.UUID === relation?.AddonUUID);
             if (installedAddon) {
                 availableBlocks.push({
                     relation: relation,
-                    addon: installedAddon
+                    addonPublicBaseURL: installedAddon.PublicBaseURL
                 });
             }
         });
@@ -86,10 +103,26 @@ export class PagesApiService {
         }
 
         // Validate page object before upsert.
-        this.validatePage(page);
+        this.validatePageProperties(page);
+
+        // Validate page blocks (check that the blocks are installed and that thay are by the page type).
+        this.validatePageBlocks(page);
+
         page = this.getPageAccordingInterface(page);
 
         return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page) as Page;
+    }
+
+    private async validatePageBlocks(page: Page) {
+        const availableBlocks = await this.getAvailableBlocks(page.Type || '');
+
+        for (let index = 0; index < page.Blocks?.length; index++) {
+            const block = page.Blocks[index];
+
+            if (availableBlocks.findIndex(ab => ab.relation.AddonUUID === block.Relation?.AddonUUID) === -1) {
+                throw new Error(`Block with AddonUUID ${block.Relation.AddonUUID} isn't exist as available page block for this type - ${page.Type}.`);
+            }
+        }
     }
 
     private getNotExistError(objectBreadcrumb: string, propertyName: string): string {
@@ -100,68 +133,38 @@ export class PagesApiService {
         return `${objectBreadcrumb} -> ${propertyName} should be ${typeName}.`;
     }
 
-    private validatePageBlock(pagePropertyBreadcrumb: string, block: PageBlock, blockIndex: number): void {
-        const blocksPropertyBreadcrumb = `${pagePropertyBreadcrumb} -> Blocks at index ${blockIndex}`;
-
-        // Validate Key
-        if (!block.hasOwnProperty('Key')) {
-            throw new Error(this.getNotExistError(blocksPropertyBreadcrumb, 'Key'));
-        } else if (typeof block.Key !== 'string') {
-            throw new Error(this.getWrongTypeError(blocksPropertyBreadcrumb, 'Key', 'string'));
-        }
-
-        // Validate Relation
-        if (!block.hasOwnProperty('Relation')) {
-            throw new Error(this.getNotExistError(blocksPropertyBreadcrumb, 'Relation'));
-        } else if (typeof block.Relation !== 'object') {
-            throw new Error(this.getWrongTypeError(blocksPropertyBreadcrumb, 'Relation', 'NgComponentRelation object'));
-        } else {
-            // TODO: Validate Relation properties.
-        }
-        
-        // Validate Configuration if exist (Optional)
-        if (block.hasOwnProperty('Configuration')) {
-            if (typeof block.Configuration !== 'object') {
-                throw new Error(this.getWrongTypeError(blocksPropertyBreadcrumb, 'Configuration', 'object'));
+    private validateObjectProperty(objectToValidate: any, propName: string, propertyBreadcrumb: string, optional: boolean = false, objectType: string = 'string') {
+        if (!optional) {
+            if (!objectToValidate.hasOwnProperty(propName)) {
+                throw new Error(this.getNotExistError(propertyBreadcrumb, propName));
+            } else if (typeof objectToValidate[propName] !== objectType) {
+                throw new Error(this.getWrongTypeError(propertyBreadcrumb, propName, objectType));
             }
-        }
-        
-        // Validate PageConfiguration if exist (Optional)
-        if (block.hasOwnProperty('PageConfiguration')) {
-            if (typeof block.PageConfiguration !== 'object') {
-                throw new Error(this.getWrongTypeError(blocksPropertyBreadcrumb, 'PageConfiguration', 'PageConfiguration object'));
-            } else {
-                // TODO: Validate PageConfiguration properties.
-
+        } else {
+            if (objectToValidate.hasOwnProperty(propName)) {
+                if (typeof objectToValidate[propName] !== objectType) {
+                    throw new Error(this.getWrongTypeError(propertyBreadcrumb, 'Configuration', objectType));
+                }
             }
         }
     }
 
-    private validatePageSectionColumnBlock(sectionsPropertyBreadcrumb: string, sectionColumn: PageSectionColumn): void {
-        const blockPropertyBreadcrumb = `${sectionsPropertyBreadcrumb} -> Block`;
-        
-        // Validate Block if exist (Optional)
-        if (sectionColumn.hasOwnProperty('Block')) {
-            if (!sectionColumn.Block) {
-                throw new Error(this.getWrongTypeError(sectionsPropertyBreadcrumb, 'Block', 'PageSectionBlock object'));
-            } else {
-                // Validate BlockKey in Block
-                if (!sectionColumn.Block.hasOwnProperty('BlockKey')) {
-                    throw new Error(this.getNotExistError(blockPropertyBreadcrumb, 'BlockKey'));
-                } else if (typeof sectionColumn.Block.BlockKey !== 'string') {
-                    throw new Error(this.getWrongTypeError(blockPropertyBreadcrumb, 'BlockKey', 'string'));
-                }
-    
-                // Validate Hide in Block if exist (Optional)
-                if (sectionColumn.Block.hasOwnProperty('Hide')) {
-                    if (!Array.isArray(sectionColumn.Block.Hide)) {
-                        throw new Error(this.getWrongTypeError(blockPropertyBreadcrumb, 'Hide', 'DataViewScreenSize array'));
-                    } else {
-                        for (let index = 0; index < sectionColumn.Block.Hide.length; index++) {
-                            const hide = sectionColumn.Block.Hide[index];
-                            if (!DataViewScreenSizes.some(dvss => dvss === hide)) {
-                                throw new Error(this.getWrongTypeError(blockPropertyBreadcrumb, 'Hide', `value from [${DataViewScreenSizes}]`));
-                            }
+    private validateArrayProperty(objectToValidate: any, propName: string, propertyBreadcrumb: string, optional: boolean = false, arrayType: readonly any[] = []) {
+        if (!optional) {
+            if (!objectToValidate.hasOwnProperty(propName)) {
+                throw new Error(this.getNotExistError(propertyBreadcrumb, propName));
+            } else if (!Array.isArray(objectToValidate[propName])) {
+                throw new Error(this.getWrongTypeError(propertyBreadcrumb, propName, 'array'));
+            }
+        } else {
+            if (objectToValidate.hasOwnProperty(propName)) {
+                if (!Array.isArray(objectToValidate[propName])) {
+                    throw new Error(this.getWrongTypeError(propertyBreadcrumb, propName, 'array'));
+                } else {
+                    for (let index = 0; index < objectToValidate[propName].length; index++) {
+                        const value = objectToValidate[propName][index];
+                        if (!arrayType.some(atv => atv === value)) {
+                            throw new Error(this.getWrongTypeError(propertyBreadcrumb, propName, `value from [${arrayType}]`));
                         }
                     }
                 }
@@ -169,36 +172,75 @@ export class PagesApiService {
         }
     }
 
-    private validatePageSection(pagePropertyBreadcrumb: string, section: PageSection, sectionIndex: number): void {
-        const sectionsPropertyBreadcrumb = `${pagePropertyBreadcrumb} -> Layout -> Sections at index ${sectionIndex}`;
+    private validatePageBlockProperties(pagePropertyBreadcrumb: string, block: PageBlock, blockIndex: number): void {
+        const blocksPropertyBreadcrumb = `${pagePropertyBreadcrumb} -> Blocks at index ${blockIndex}`;
 
         // Validate Key
-        if (!section.hasOwnProperty('Key')) {
-            throw new Error(this.getNotExistError(sectionsPropertyBreadcrumb, 'Key'));
-        } else if (typeof section.Key !== 'string') {
-            throw new Error(this.getWrongTypeError(sectionsPropertyBreadcrumb, 'Key', 'string'));
+        this.validateObjectProperty(block, 'Key', blocksPropertyBreadcrumb);
+
+        // Validate Relation
+        this.validateObjectProperty(block, 'Relation', blocksPropertyBreadcrumb, false, 'object');
+        this.validatePageBlockRelationProperties(blocksPropertyBreadcrumb, block.Relation);
+        
+        // Validate Configuration if exist (Optional)
+        this.validateObjectProperty(block, 'Configuration', blocksPropertyBreadcrumb, true, 'object');
+        
+        // Validate PageConfiguration if exist (Optional)
+        this.validateObjectProperty(block, 'PageConfiguration', blocksPropertyBreadcrumb, true, 'object');
+        // TODO: Validate PageConfiguration properties.
+    }
+
+    private validatePageBlockRelationProperties(blockPropertyBreadcrumb: string, relation: NgComponentRelation): void {
+        const relationPropertyBreadcrumb = `${blockPropertyBreadcrumb} -> Relation`;
+
+        // Validate Name
+        this.validateObjectProperty(relation, 'Name', relationPropertyBreadcrumb);
+        
+        // Validate SubType
+        this.validateObjectProperty(relation, 'SubType', relationPropertyBreadcrumb);
+
+        // Validate AddonUUID
+        this.validateObjectProperty(relation, 'AddonUUID', relationPropertyBreadcrumb);
+
+        // Validate AddonRelativeURL
+        this.validateObjectProperty(relation, 'AddonRelativeURL', relationPropertyBreadcrumb);
+
+        // Validate ModuleName
+        this.validateObjectProperty(relation, 'ModuleName', relationPropertyBreadcrumb);
+
+        // Validate ComponentName
+        this.validateObjectProperty(relation, 'ComponentName', relationPropertyBreadcrumb);
+    }
+
+    private validatePageSectionColumnBlockProperties(sectionsPropertyBreadcrumb: string, sectionColumn: PageSectionColumn): void {
+        const blockPropertyBreadcrumb = `${sectionsPropertyBreadcrumb} -> Block`;
+        
+        // Validate Block if exist (Optional)
+        this.validateObjectProperty(sectionColumn, 'Block', blockPropertyBreadcrumb, true, 'object');
+
+        if (sectionColumn.Block) {
+            // Validate BlockKey in Block
+            this.validateObjectProperty(sectionColumn.Block, 'BlockKey', blockPropertyBreadcrumb);
+
+            // Validate Hide in Block if exist (Optional)
+            this.validateArrayProperty(sectionColumn.Block, 'Hide', blockPropertyBreadcrumb, true, DataViewScreenSizes);
         }
+    }
+
+    private validatePageSectionProperties(pagePropertyBreadcrumb: string, section: PageSection, sectionIndex: number): void {
+        const sectionsPropertyBreadcrumb = `${pagePropertyBreadcrumb} -> Sections at index ${sectionIndex}`;
+
+        // Validate Key
+        this.validateObjectProperty(section, 'Key', sectionsPropertyBreadcrumb);
 
         // Validate Name if exist (Optional)
-        if (section.hasOwnProperty('Name')) {
-            if (typeof section.Name !== 'string') {
-                throw new Error(this.getWrongTypeError(sectionsPropertyBreadcrumb, 'Name', 'string'));
-            }
-        }
+        this.validateObjectProperty(section, 'Name', sectionsPropertyBreadcrumb, true);
         
         // Validate Height if exist (Optional)
-        if (section.hasOwnProperty('Height')) {
-            if (typeof section.Height !== 'number') {
-                throw new Error(this.getWrongTypeError(sectionsPropertyBreadcrumb, 'Height', 'number'));
-            }
-        }
+        this.validateObjectProperty(section, 'Height', sectionsPropertyBreadcrumb, true, 'number');
 
         // Validate Min Height if exist (Optional)
-        if (section.hasOwnProperty('MinHeight')) {
-            if (typeof section.MinHeight !== 'number') {
-                throw new Error(this.getWrongTypeError(sectionsPropertyBreadcrumb, 'MinHeight', 'number'));
-            }
-        }
+        this.validateObjectProperty(section, 'MinHeight', sectionsPropertyBreadcrumb, true, 'number');
 
         // Validate Split if exist (Optional)
         if (section.hasOwnProperty('Split')) {
@@ -210,143 +252,93 @@ export class PagesApiService {
         }
         
         // Validate Columns
-        if (!section.hasOwnProperty('Columns')) {
-            throw new Error(this.getNotExistError(sectionsPropertyBreadcrumb, 'Columns'));
-        } else if (!Array.isArray(section.Columns)) {
-            throw new Error(this.getWrongTypeError(sectionsPropertyBreadcrumb, 'Columns', 'PageSectionColumn array'));
-        } else {
-            for (let index = 0; index < section.Columns.length; index++) {
-                const column = section.Columns[index];
-                this.validatePageSectionColumnBlock(`${sectionsPropertyBreadcrumb} -> Columns at index ${index}`, column);
-            }
+        this.validateArrayProperty(section, 'Columns', sectionsPropertyBreadcrumb);
+        for (let index = 0; index < section.Columns.length; index++) {
+            const column = section.Columns[index];
+            this.validatePageSectionColumnBlockProperties(`${sectionsPropertyBreadcrumb} -> Columns at index ${index}`, column);
         }
         
         // Validate Hide if exist (Optional)
-        if (section.hasOwnProperty('Hide')) {
-            if (!Array.isArray(section.Hide)) {
-                throw new Error(this.getWrongTypeError(sectionsPropertyBreadcrumb, 'Hide', 'DataViewScreenSize array'));
-            } else {
-                for (let index = 0; index < section.Hide.length; index++) {
-                    const hide = section.Hide[index];
-                    if (!DataViewScreenSizes.some(dvss => dvss === hide)) {
-                        throw new Error(this.getWrongTypeError(sectionsPropertyBreadcrumb, 'Hide', `value from [${DataViewScreenSizes}]`));
-                    }
-                }
+        this.validateArrayProperty(section, 'Hide', sectionsPropertyBreadcrumb, true, DataViewScreenSizes);
+    }
+
+    private validatePageLayoutProperties(layout: PageLayout, pagePropertyBreadcrumb: string): void {
+        const layoutPropertyBreadcrumb = `${pagePropertyBreadcrumb} -> Layout`;
+
+        // Validate Sections
+        this.validateArrayProperty(layout, 'Sections', layoutPropertyBreadcrumb);
+        for (let index = 0; index < layout.Sections.length; index++) {
+            this.validatePageSectionProperties(layoutPropertyBreadcrumb, layout.Sections[index], index);
+        }
+
+        // Validate SectionsGap if exist (Optional)
+        if (layout.hasOwnProperty('SectionsGap')) {
+            if (typeof layout.SectionsGap !== 'string') {
+                throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'SectionsGap', 'string'));
+            } else if (!PageSizeTypes.some(pst => pst === layout.SectionsGap)) {
+                throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'SectionsGap', `value from [${PageSizeTypes}]`));
             }
         }
+
+        // Validate ColumnsGap if exist (Optional)
+        if (layout.hasOwnProperty('ColumnsGap')) {
+            if (typeof layout.ColumnsGap !== 'string') {
+                throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'ColumnsGap', 'string'));
+            } else if (!PageSizeTypes.some(pst => pst === layout.ColumnsGap)) {
+                throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'ColumnsGap', `value from [${PageSizeTypes}]`));
+            }
+        }
+
+        // Validate HorizontalSpacing if exist (Optional)
+        if (layout.hasOwnProperty('HorizontalSpacing')) {
+            if (typeof layout.HorizontalSpacing !== 'string') {
+                throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'HorizontalSpacing', 'string'));
+            } else if (!PageSizeTypes.some(pst => pst === layout.HorizontalSpacing)) {
+                throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'HorizontalSpacing', `value from [${PageSizeTypes}]`));
+            }
+        }
+
+        // Validate VerticalSpacing if exist (Optional)
+        if (layout.hasOwnProperty('VerticalSpacing')) {
+            if (typeof layout.VerticalSpacing !== 'string') {
+                throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'VerticalSpacing', 'string'));
+            } else if (!PageSizeTypes.some(pst => pst === layout.VerticalSpacing)) {
+                throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'VerticalSpacing', `value from [${PageSizeTypes}]`));
+            }
+        }
+        
+        // Validate MaxWidth if exist (Optional)
+        this.validateObjectProperty(layout, 'MaxWidth', layoutPropertyBreadcrumb, true, 'number');
     }
 
     // Validate the page and throw error if not valid.
-    private validatePage(page: Page): void {
+    private validatePageProperties(page: Page): void {
         const pagePropertyBreadcrumb = 'Page';
         
         // Validate Key if exist (Optional)
-        if (page.hasOwnProperty('Key')) {
-            if (typeof page.Key !== 'string') {
-                throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Key', 'string'));
-            }
-        }
+        this.validateObjectProperty(page, 'Key', pagePropertyBreadcrumb, true);
 
         // Validate Hidden if exist (Optional)
-        if (page.hasOwnProperty('Hidden')) {
-            if (typeof page.Hidden !== 'boolean') {
-                throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Hidden', 'string'));
-            }
-        }
+        this.validateObjectProperty(page, 'Hidden', pagePropertyBreadcrumb, true, 'boolean');
 
         // Validate Name if exist (Optional)
-        if (page.hasOwnProperty('Name')) {
-            if (typeof page.Name !== 'string') {
-                throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Name', 'string'));
-            }
-        }
+        this.validateObjectProperty(page, 'Name', pagePropertyBreadcrumb, true);
         
         // Validate Description if exist (Optional)
-        if (page.hasOwnProperty('Description')) {
-            if (typeof page.Description !== 'string') {
-                throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Description', 'string'));
-            }
-        }
-
+        this.validateObjectProperty(page, 'Description', pagePropertyBreadcrumb, true);
+        
         // Validate Type if exist (Optional)
-        if (page.hasOwnProperty('Type')) {
-            if (typeof page.Type !== 'string') {
-                throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Type', 'string'));
-            }
-        }
+        this.validateObjectProperty(page, 'Type', pagePropertyBreadcrumb, true);
 
         // Validate Blocks
-        if (!page.hasOwnProperty('Blocks')) {
-            throw new Error(this.getNotExistError(pagePropertyBreadcrumb, 'Blocks'));
-        } else if (!Array.isArray(page.Blocks)) {
-            throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Blocks', 'PageBlock array'));
-        } else {
-            for (let index = 0; index < page.Blocks.length; index++) {
-                this.validatePageBlock(pagePropertyBreadcrumb, page.Blocks[index], index);
-            }
+        this.validateArrayProperty(page, 'Blocks', pagePropertyBreadcrumb);
+        for (let index = 0; index < page.Blocks.length; index++) {
+            this.validatePageBlockProperties(pagePropertyBreadcrumb, page.Blocks[index], index);
         }
-
+        
         // Validate Layout
-        if (!page.hasOwnProperty('Layout')) {
-            throw new Error(this.getNotExistError(pagePropertyBreadcrumb, 'Layout'));
-        } else if (typeof page.Layout !== 'object') {
-            throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Layout', 'PageLayout object'));
-        } else {
-            // Validate Layout -> Sections
-            if (!page.Layout.hasOwnProperty('Sections')) {
-                throw new Error(this.getNotExistError(pagePropertyBreadcrumb, 'Layout -> Sections'));
-            } else if (!Array.isArray(page.Layout.Sections)) {
-                throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Layout -> Sections', 'PageSection array'));
-            } else {
-                for (let index = 0; index < page.Layout.Sections.length; index++) {
-                    this.validatePageSection(pagePropertyBreadcrumb, page.Layout.Sections[index], index);
-                }
-            }
-
-            // Validate Layout -> SectionsGap if exist (Optional)
-            if (page.Layout.hasOwnProperty('SectionsGap')) {
-                if (typeof page.Layout.SectionsGap !== 'string') {
-                    throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Layout -> SectionsGap', 'string'));
-                } else if (!PageSizeTypes.some(pst => pst === page.Layout.SectionsGap)) {
-                    throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Layout -> SectionsGap', `value from [${PageSizeTypes}]`));
-                }
-            }
-
-            // Validate Layout -> ColumnsGap if exist (Optional)
-            if (page.Layout.hasOwnProperty('ColumnsGap')) {
-                if (typeof page.Layout.ColumnsGap !== 'string') {
-                    throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Layout -> ColumnsGap', 'string'));
-                } else if (!PageSizeTypes.some(pst => pst === page.Layout.ColumnsGap)) {
-                    throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Layout -> ColumnsGap', `value from [${PageSizeTypes}]`));
-                }
-            }
-
-            // Validate Layout -> HorizontalSpacing if exist (Optional)
-            if (page.Layout.hasOwnProperty('HorizontalSpacing')) {
-                if (typeof page.Layout.HorizontalSpacing !== 'string') {
-                    throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Layout -> HorizontalSpacing', 'string'));
-                } else if (!PageSizeTypes.some(pst => pst === page.Layout.HorizontalSpacing)) {
-                    throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Layout -> HorizontalSpacing', `value from [${PageSizeTypes}]`));
-                }
-            }
-
-            // Validate Layout -> VerticalSpacing if exist (Optional)
-            if (page.Layout.hasOwnProperty('VerticalSpacing')) {
-                if (typeof page.Layout.VerticalSpacing !== 'string') {
-                    throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Layout -> VerticalSpacing', 'string'));
-                } else if (!PageSizeTypes.some(pst => pst === page.Layout.VerticalSpacing)) {
-                    throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Layout -> VerticalSpacing', `value from [${PageSizeTypes}]`));
-                }
-            }
-            
-            // Validate Layout -> MaxWidth if exist (Optional)
-            if (page.Layout.hasOwnProperty('MaxWidth')) {
-                if (typeof page.Layout.MaxWidth !== 'number') {
-                    throw new Error(this.getWrongTypeError(pagePropertyBreadcrumb, 'Layout -> MaxWidth', 'number'));
-                }
-            }
-
-        }
+        this.validateObjectProperty(page, 'Layout', pagePropertyBreadcrumb, false, 'object');
+        this.validatePageLayoutProperties(page.Layout, pagePropertyBreadcrumb)
     }
 
     private addOptionalPropertyIfExist(source: any, target: any, propertyName: string): void {
@@ -376,7 +368,16 @@ export class PagesApiService {
             const currentBlock = page.Blocks[blockIndex];
             const blockToAdd: PageBlock = {
                 Key: currentBlock.Key,
-                Relation: currentBlock.Relation,
+                Relation: {
+                    RelationName: currentBlock.Relation.RelationName,
+                    Type: currentBlock.Relation.Type,
+                    Name: currentBlock.Relation.Name,
+                    AddonUUID: currentBlock.Relation.AddonUUID,
+                    SubType: currentBlock.Relation.SubType,
+                    AddonRelativeURL: currentBlock.Relation.AddonRelativeURL,
+                    ModuleName: currentBlock.Relation.ModuleName,
+                    ComponentName: currentBlock.Relation.ComponentName
+                },
             };
 
             this.addOptionalPropertyIfExist(currentBlock, blockToAdd, 'Configuration');
@@ -463,13 +464,13 @@ export class PagesApiService {
         return await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_TABLE_NAME).find(options) as Page[];
     }
 
-    async getByKey(pagekey: string): Promise<any> {
-        return await this.getPage(pagekey, PAGES_TABLE_NAME);
+    // Upsert page object if key not exist create new one.
+    savePage(page: Page): Promise<Page> {
+        return this.upsertPageInternal(page, PAGES_TABLE_NAME);
     }
 
-    // Upsert page object if key not exist create new one.
-    upsertPage(page: Page, tableName = PAGES_TABLE_NAME): Promise<Page> {
-        return this.upsertPageInternal(page, tableName);
+    async saveDraftPage(page: Page): Promise<Page>  {
+        return this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
     }
 
     createTemplatePage(query: any): Promise<Page> {
@@ -500,13 +501,7 @@ export class PagesApiService {
         return Promise.resolve(draftRes || res);
     }
 
-    async savePage(page: Page): Promise<Page>  {
-        return this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
-    }
-
     async getPagesData(options): Promise<PageRowProjection[]> {
-        // TODO: Change to pages endpoint after added in NGINX.
-        // return this.papiClient.pages.find
         let pages: Page[] = await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_TABLE_NAME).find(options) as Page[];
         let draftPages: Page[] = await this.papiClient.addons.data.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).find(options) as Page[];
 
@@ -547,22 +542,25 @@ export class PagesApiService {
         return promise;
     }
 
-    async getPageBuilderData(query: any) {
+    async getPageData(pagekey: string, lookForDraft = false): Promise<IPageBuilderData> {
         let res: any;
-        const pagekey = query['key'] || '';
         
         if (pagekey) {
-            // Get the page from the drafts.
-            let page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
+            let page;
+            
+            // If lookForDraft try to get the page from the draft first.
+            if (lookForDraft) {
+                // Get the page from the drafts.
+                page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
+            }
 
             // If there is no page in the drafts
-            if (!page) {
+            if (!page || page.Hidden) {
                 page = await this.getPage(pagekey, PAGES_TABLE_NAME);
             }
 
             // If page found get the available blocks by page type and return combined object.
             if (page) {
-                page.Hidden = false;
                 const pageType = page.Type || '';
                 const availableBlocks = await this.getAvailableBlocks(pageType) || [];
                 
@@ -573,7 +571,7 @@ export class PagesApiService {
             }
         }
 
-        const promise = new Promise<any[]>((resolve, reject): void => {
+        const promise = new Promise<IPageBuilderData>((resolve, reject): void => {
             resolve(res);
         });
 

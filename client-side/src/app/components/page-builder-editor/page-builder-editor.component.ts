@@ -3,8 +3,8 @@ import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { IPepButtonClickEvent } from '@pepperi-addons/ngx-lib/button';
-import { PageSizeType } from '@pepperi-addons/papi-sdk';
-import { IAvailableBlock, PagesService, IPageEditor } from '../../services/pages.service';
+import { NgComponentRelation, PageSizeType } from '@pepperi-addons/papi-sdk';
+import { PagesService, IPageEditor } from '../../services/pages.service';
 
 type UiPageSizeType = PageSizeType | 'NONE';
 
@@ -59,7 +59,7 @@ export class PageBuilderEditorComponent implements OnInit {
     isFullWidth: boolean;
     maxWidth: number;
 
-    availableBlocks: IAvailableBlock[] = [];
+    availableBlocks: NgComponentRelation[] = [];
     sizesGroupButtons = Array<ISpacingOption>();
     
     constructor(

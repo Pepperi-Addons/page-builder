@@ -11,7 +11,7 @@
     </toolbar-actions>
     <div [ngClass]="{'block-editable-state': editable }">
         <pep-remote-loader 
-            [options]="pageBlock.Relation?.Options"
+            [options]="remotePathOptions"
             [hostObject]="hostObject"
             (hostEvents)="onBlockHostEvents($event);">
         </pep-remote-loader>
