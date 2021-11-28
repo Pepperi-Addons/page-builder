@@ -10,17 +10,34 @@ The error Message is importent! it will be written in the audit log and help the
 import { Client, Request } from '@pepperi-addons/debug-server'
 import { PagesApiService } from './pages-api.service';
 
+const pnsKeyForPages = 'uninstall_blocks_subscription';
+const pnsKeyForDraftPages = 'uninstall_blocks_subscription_draft';
+const pnsFunctionPathForPages = '/api/on_uninstall_block';
+const pnsFunctionPathForDraftPages = '/internal_api/on_uninstall_block_draft';
+
 export async function install(client: Client, request: Request): Promise<any> {
-    const pageService = new PagesApiService(client);
-    const res = await pageService.createPagesTablesSchemes();
-    return { success:true, resultObject: {res} };
+    try {
+        const pageService = new PagesApiService(client);
+        await pageService.createPagesTablesSchemes();
+        await pageService.subscribeUninstallAddons(pnsKeyForPages, pnsFunctionPathForPages);
+        await pageService.subscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
+    } catch (err) {
+        throw new Error(`Failed to create ADAL Tables. error - ${err}`);
+    }
+
+    return { success: true, resultObject: {} };
 }
 
 export async function uninstall(client: Client, request: Request): Promise<any> {
-    // const pageService = new PagesApiService(client);
-    // const res = await pageService.dropPagesTables();
-    // return { success:true, resultObject: {res} }
-    return { success:true, resultObject: {} };
+    try {
+        const pageService = new PagesApiService(client);
+        await pageService.unsubscribeUninstallAddons(pnsKeyForPages, pnsFunctionPathForPages);
+        await pageService.unsubscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
+    } catch (err) {
+        throw new Error(`Failed to unsubscribe from PNS. error - ${err}`);
+    }
+    
+    return { success: true, resultObject: {} };
 }
 
 export async function upgrade(client: Client, request: Request): Promise<any> {

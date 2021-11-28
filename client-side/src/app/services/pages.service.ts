@@ -641,12 +641,29 @@ export class PagesService {
     private getBaseUrl(addonUUID: string): string {
         // For devServer run server on localhost.
         if(this.navigationService.devServer) {
-            return `http://localhost:4500/api`;
+            return `http://localhost:4500/internal_api`;
         } else {
             const baseUrl = this.sessionService.getPapiBaseUrl();
-            return `${baseUrl}/addons/api/${addonUUID}/api`;
+            return `${baseUrl}/addons/api/${addonUUID}/internal_api`;
         }
     }
+    
+    private loadBlocksRemoteLoaderOptionsMap(availableBlocks: IAvailableBlockData[]) {
+        this._blocksRemoteLoaderOptionsMap.clear();
+
+        availableBlocks.forEach(data => {
+            const relation: NgComponentRelation = data?.relation;
+            const addonPublicBaseURL = data?.addonPublicBaseURL;
+            
+            if (relation && addonPublicBaseURL) {
+                this._blocksRemoteLoaderOptionsMap.set(relation.AddonUUID, this.getRemoteLoaderOptions(relation, addonPublicBaseURL));
+            }
+        });
+    }
+
+    /***********************************************************************************************/
+    /*                                  Public functions
+    /***********************************************************************************************/
 
     getBlockHostObject(
         block: PageBlock, 
@@ -976,9 +993,9 @@ export class PagesService {
         }
     }
     
-    //**************************************************************************
-    // CPI & Server side calls.
-    //**************************************************************************
+    /**************************************************************************************/
+    /*                            CPI & Server side calls.
+    /**************************************************************************************/
     
     // Get the pages (distinct with the drafts)
     getPages(addonUUID: string, options: any): Observable<IPageRowModel[]> {
@@ -996,19 +1013,6 @@ export class PagesService {
     deletePage(addonUUID: string, pageKey: string): Observable<any> {
         const baseUrl = this.getBaseUrl(addonUUID);
         return this.httpService.getHttpCall(`${baseUrl}/remove_page?key=${pageKey}`);
-    }
-
-    private loadBlocksRemoteLoaderOptionsMap(availableBlocks: IAvailableBlockData[]) {
-        this._blocksRemoteLoaderOptionsMap.clear();
-
-        availableBlocks.forEach(data => {
-            const relation: NgComponentRelation = data?.relation;
-            const addonPublicBaseURL = data?.addonPublicBaseURL;
-            
-            if (relation && addonPublicBaseURL) {
-                this._blocksRemoteLoaderOptionsMap.set(relation.AddonUUID, this.getRemoteLoaderOptions(relation, addonPublicBaseURL));
-            }
-        });
     }
 
     loadPageBuilder(addonUUID: string, pageKey: string, editable: boolean): void {

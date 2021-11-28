@@ -1,4 +1,4 @@
-import { Page } from "@pepperi-addons/papi-sdk";
+import { NgComponentRelation, Page } from "@pepperi-addons/papi-sdk";
 
 export interface PageRowProjection {
     Key?: string,
@@ -7,6 +7,17 @@ export interface PageRowProjection {
     CreationDate?: string,
     ModificationDate?: string,
     Status: string
+}
+
+export interface IPageBuilderData {
+    page: Page, 
+    availableBlocks: IAvailableBlockData[]
+}
+
+export interface IAvailableBlockData {
+    relation: NgComponentRelation, 
+    addonPublicBaseURL: string
+    // addon: InstalledAddon 
 }
 
 export const TempBlankPageData: Page = {
