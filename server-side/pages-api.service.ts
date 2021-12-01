@@ -109,13 +109,17 @@ export class PagesApiService {
         return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page) as Page;
     }
 
-    private deleteBlockFromPage(page: Page, addonUUID: string) {
+    private deleteBlockFromPage(page: Page, addonUUID: string, tableName: string) {
         // Get the blocks to remove by the addon UUID
         const blocksToRemove = page.Blocks.filter(block => block.Relation.AddonUUID === addonUUID);
-                                
+
         if (blocksToRemove?.length > 0) {
+            console.log(`page blocks before - ${JSON.stringify(page.Blocks)}`);
+
             // Remove the page blocks with the addonUUID
             page.Blocks = page.Blocks.filter(block => block.Relation.AddonUUID !== addonUUID);
+
+            console.log(`page blocks after - ${JSON.stringify(page.Blocks)}`);
 
             // Remove the blocks from the columns.
             for (let sectioIndex = 0; sectioIndex < page.Layout.Sections.length; sectioIndex++) {
@@ -125,21 +129,43 @@ export class PagesApiService {
                     const column = section.Columns[columnIndex];
                     
                     if (column.Block && blocksToRemove.some(btr => btr.Key === column.Block?.BlockKey)) {
+                        console.log(`delete block with the key - ${JSON.stringify(column.Block.BlockKey)}`);
                         delete column.Block;
                     }
                 }
             }
+
+            // Update the page
+            try {
+                this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page);
+            } catch (err) {
+                console.log(`err - ${JSON.stringify(err)}`);
+
+                // Do nothing.
+            }
         }
+    }
+
+    private getAddonUUID(installedAddonUUID: string): Promise<string | undefined>  {
+        // need to use where clause b/c currently there is no endpoint for
+        // retrieving an installed addon by UUID
+        return this.papiClient.addons.installedAddons
+            .find({
+                where: `UUID = '${installedAddonUUID}'`,
+                include_deleted: true,
+            })
+            .then((res) => res[0]?.Addon.UUID || undefined);
     }
 
     /***********************************************************************************************/
     /*                                  Public functions
     /***********************************************************************************************/
-    async getAddonUUID(installedAddonUUID: string) : Promise<string | undefined> {
-        const installedAddon = await this.papiClient.addons.installedAddons.uuid(installedAddonUUID).get();
-        return installedAddon?.Addon.UUID || undefined;
-    }
+    // async getAddonUUID(installedAddonUUID: string) : Promise<string | undefined> {
+    //     const installedAddon = await this.papiClient.addons.installedAddons.uuid(installedAddonUUID).get();
+    //     return installedAddon?.Addon.UUID || undefined;
+    // }
 
+    
     async createPagesTablesSchemes(): Promise<AddonDataScheme[]> {
         const promises: AddonDataScheme[] = [];
         
@@ -250,8 +276,12 @@ export class PagesApiService {
             
             // If lookForDraft try to get the page from the draft first.
             if (lookForDraft) {
-                // Get the page from the drafts.
-                page = await this.getPage(pageKey, DRAFT_PAGES_TABLE_NAME);
+                try {
+                    // Get the page from the drafts.
+                    page = await this.getPage(pageKey, DRAFT_PAGES_TABLE_NAME);
+                } catch {
+                    // Do nothing
+                }
             }
 
             // If there is no page in the drafts
@@ -337,20 +367,33 @@ export class PagesApiService {
 
     async deleteBlockFromPages(body: any, draft = false): Promise<void> {
         const obj = body?.Message?.ModifiedObjects[0];
-
+        console.log(`obj - ${obj}`);
+        
         if (obj) {
             // If the field id is hidden AND the value is true (this block is uninstalled)
             if (obj.ModifiedFields?.filter(field => field.FieldID === 'Hidden' && field.NewValue === true)) {
+                console.log(`obj.ObjectKey - ${obj.ObjectKey}`);
                 const addonUUID = await this.getAddonUUID(obj.ObjectKey);
+
+                console.log(`addonUUID - ${addonUUID}`);
 
                 if (addonUUID) {
                     const tableName = draft ? DRAFT_PAGES_TABLE_NAME : PAGES_TABLE_NAME;
+                    console.log(`tableName - ${tableName}`);
+
                     let pages = await this.getPagesFrom(tableName);
                     
+                    console.log(`pages length - ${pages.length}`);
+
                     // Delete the blocks with this addonUUID from al the pages.
                     for (let index = 0; index < pages.length; index++) {
                         const page = pages[index];
-                        this.deleteBlockFromPage(page, addonUUID);
+                        console.log(`page before - ${JSON.stringify(page)}`);
+
+                        this.deleteBlockFromPage(page, addonUUID, tableName);
+
+                        console.log(`page after - ${JSON.stringify(page)}`);
+
                     }
                 }
             }

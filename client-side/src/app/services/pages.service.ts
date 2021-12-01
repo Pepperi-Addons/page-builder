@@ -549,7 +549,7 @@ export class PagesService {
         let block: PageBlock = this.pageSubject?.value?.Blocks.find(block => block.Key === blockId);
         const remoteLoaderOptions = this.blocksRemoteLoaderOptionsMap.get(block.Relation.AddonUUID);
 
-        if (block) {
+        if (block && remoteLoaderOptions) {
             // Change the RemoteLoaderOptions of the block for loading the block editor.
             let editorRelationOptions: PepRemoteLoaderOptions = JSON.parse(JSON.stringify(remoteLoaderOptions));
             editorRelationOptions.exposedModule = './' + block.Relation.EditorModuleName;
@@ -711,9 +711,14 @@ export class PagesService {
                 }
 
                 let editor = this.getEditor(editorType, id);
-                this._editorsBreadCrumb.push(editor);
-                this.changeCurrentEditor();
-                success = true;
+
+                if (editor) {
+                    this._editorsBreadCrumb.push(editor);
+                    this.changeCurrentEditor();
+                    success = true;
+                } else {
+                    success = false;
+                }
             }
         }
         

@@ -5,7 +5,7 @@
     (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)"
     >
     <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
-        class="block-toolbar" [title]="pageBlock.Relation?.Description" [isDraggable]="true"
+        class="block-toolbar" [title]="pageBlock.Relation?.Name" [isDraggable]="true"
         (editClick)="onEditBlockClick();" (removeClick)="onRemoveBlockClick()"
         [hideIn]="columnBlock.Hide" (hideInChange)="onHideBlockChange($event)">
     </toolbar-actions>

@@ -15,7 +15,7 @@
                 [cdkDropListConnectedTo]="sectionsColumnsDropList">
 
                 <toolbar-actions *ngFor="let availableBlock of availableBlocks;" class="available-block"
-                    [title]="availableBlock.Description" [showActions]="false" [isDraggable]="true"
+                    [title]="availableBlock.Name" [showActions]="false" [isDraggable]="true"
                     cdkDrag style="cursor: grab;" [cdkDragData]="availableBlock" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" 
                     >
                 </toolbar-actions>
