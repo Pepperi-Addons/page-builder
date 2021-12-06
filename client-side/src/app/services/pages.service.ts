@@ -550,17 +550,21 @@ export class PagesService {
         const remoteLoaderOptions = this.blocksRemoteLoaderOptionsMap.get(block.Relation.AddonUUID);
 
         if (block && remoteLoaderOptions) {
+            const availableBlock = this._availableBlocksSubject.value.find(ab => ab.AddonUUID === block.Relation.AddonUUID)
+
             // Change the RemoteLoaderOptions of the block for loading the block editor.
             let editorRelationOptions: PepRemoteLoaderOptions = JSON.parse(JSON.stringify(remoteLoaderOptions));
-            editorRelationOptions.exposedModule = './' + block.Relation.EditorModuleName;
-            editorRelationOptions.componentName = block.Relation.EditorComponentName;
+
+            // If the editor not exist take it from the available block.
+            editorRelationOptions.exposedModule = './' + (block.Relation.EditorModuleName || availableBlock.EditorModuleName);
+            editorRelationOptions.componentName = block.Relation.EditorComponentName || availableBlock.EditorComponentName;
 
             const hostObject = this.getEditorHostObject(block);
 
             return {
                 id: blockId,
                 type: 'block',
-                title: block.Relation.Description,
+                title: block.Relation.Name,
                 remoteModuleOptions: editorRelationOptions,
                 hostObject: hostObject
             }
