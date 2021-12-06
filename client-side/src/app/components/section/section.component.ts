@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnChanges, OnInit, QueryList, Renderer2, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, HostBinding, Input, OnChanges, OnInit, QueryList, Renderer2, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragStart, CdkDropList } from '@angular/cdk/drag-drop';
 import { IEditor, PagesService } from 'src/app/services/pages.service';
 import { DataViewScreenSize, PageBlock, PageSectionColumn, PageSizeType, SplitType } from '@pepperi-addons/papi-sdk';
@@ -48,6 +48,21 @@ export class SectionComponent implements OnInit {
         return this._split;
     }
 
+    private _height: number = null;
+    @Input()
+    set height(value: number) {
+        this._height = value;
+
+        if (value > 0) {
+            this.maxHeight = `${value}px`;
+        } else {
+            this.maxHeight = 'unset';
+        }
+    }
+    get height(): number {
+        return this._height;
+    }
+
     private _columns = [];
     @Input()
     set columns(value: Array<PageSectionColumn>) {
@@ -80,6 +95,9 @@ export class SectionComponent implements OnInit {
     get pageBlocksMap(): Map<string, PageBlock> {
         return this._pageBlocksMap;
     }
+
+    @HostBinding('style.max-height')
+    maxHeight = 'unset';
 
     PepScreenSizeType = PepScreenSizeType;
     sectionColumnKeyPrefix = '';

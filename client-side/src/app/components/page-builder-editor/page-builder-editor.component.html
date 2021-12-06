@@ -24,7 +24,7 @@
     </mat-tab>
     <mat-tab label="{{'PAGE_MANAGER.DESIGN' | translate}}">
         <div class="tab-container">
-            <pep-checkbox [value]="isFullWidth" [label]="'PAGE_MANAGER.FULL_WIDTH_TITLE' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
+            <pep-checkbox class="checkbox-as-title" [value]="isFullWidth" [label]="'PAGE_MANAGER.FULL_WIDTH_TITLE' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
             <pep-textbox [label]="'PAGE_MANAGER.MAX_WIDTH_TITLE' | translate" type="int" [disabled]="isFullWidth" [value]="maxWidth" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
             
             <!-- Spacing -->

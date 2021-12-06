@@ -6,10 +6,11 @@
     position: relative;
     display: grid;
     border-radius: $border-radius-md;
-    
+    max-height: inherit;
+
     // This css is only for edit mode!!!
     &.editable-state {
-        min-height: 250px; // $toolbar-height;
+        min-height: $toolbar-height;
 
         &.active-section {
             z-index: $z-index-min + 11;
@@ -54,11 +55,14 @@
     .columns-wrapper {
         display: grid;
         grid-auto-flow: column;
-
+        max-height: inherit;
+        
         @include gap-sizes();
         
         .section-column {
             position: relative;
+            max-height: inherit;
+            overflow: auto;
         }
     }
 }

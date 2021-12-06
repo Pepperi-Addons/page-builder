@@ -24,14 +24,14 @@ body {
 }
 
 // set mat tab as fixed tab just on the editors
-.editor-tabs{
-    .mat-tab-header{
+.editor-tabs {
+    .mat-tab-header {
         display: block;
         width: 224px;
         height: $tabs-labels-height;
         z-index: 2;
         
-        .mat-tab-label-container{
+        .mat-tab-label-container {
             position: fixed;
             width: inherit;
             opacity: 1;
