@@ -121,11 +121,11 @@ export class PagesService {
         return this._availableBlocksSubject.asObservable().pipe(distinctUntilChanged());
     }
 
+    // For load the blocks
     private _blocksRemoteLoaderOptionsMap = new Map<string, PepRemoteLoaderOptions>();
-    get blocksRemoteLoaderOptionsMap(): ReadonlyMap<string, PepRemoteLoaderOptions> {
-        return this._blocksRemoteLoaderOptionsMap;
-    }
-
+    // For load the blocks editors
+    private _blocksEditorsRemoteLoaderOptionsMap = new Map<string, PepRemoteLoaderOptions>();
+    
     // This is the sections subject (a pare from the page object)
     private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
     get onSectionsChange$(): Observable<PageSection[]> {
@@ -547,25 +547,17 @@ export class PagesService {
     private getBlockEditor(blockId: string): IEditor {
         // Get the current block.
         let block: PageBlock = this.pageSubject?.value?.Blocks.find(block => block.Key === blockId);
-        const remoteLoaderOptions = this.blocksRemoteLoaderOptionsMap.get(block.Relation.AddonUUID);
+        const key = this.getRemoteLoaderMapKey(block.Relation);
+        const remoteLoaderOptions = this._blocksEditorsRemoteLoaderOptionsMap.get(key);
 
         if (block && remoteLoaderOptions) {
-            const availableBlock = this._availableBlocksSubject.value.find(ab => ab.AddonUUID === block.Relation.AddonUUID)
-
-            // Change the RemoteLoaderOptions of the block for loading the block editor.
-            let editorRelationOptions: PepRemoteLoaderOptions = JSON.parse(JSON.stringify(remoteLoaderOptions));
-
-            // If the editor not exist take it from the available block.
-            editorRelationOptions.exposedModule = './' + (block.Relation.EditorModuleName || availableBlock.EditorModuleName);
-            editorRelationOptions.componentName = block.Relation.EditorComponentName || availableBlock.EditorComponentName;
-
             const hostObject = this.getEditorHostObject(block);
 
             return {
                 id: blockId,
                 type: 'block',
                 title: block.Relation.Name,
-                remoteModuleOptions: editorRelationOptions,
+                remoteModuleOptions: remoteLoaderOptions,
                 hostObject: hostObject
             }
         } else {
@@ -623,22 +615,23 @@ export class PagesService {
     private getRemoteEntryByType(relation: NgComponentRelation, remoteBasePath: string) {
         // For devBlocks gets the remote entry from the query params.
         const devBlocks = this.navigationService.devBlocks;
-        if (devBlocks.has(relation?.ModuleName)) {
+        if (devBlocks.has(relation.ModuleName)) {
             return devBlocks.get(relation.ModuleName);
-        } else if (devBlocks.has(relation?.ComponentName)) {
+        } else if (devBlocks.has(relation.ComponentName)) {
             return devBlocks.get(relation.ComponentName);
         } else {
-            return `${remoteBasePath}${relation?.AddonRelativeURL}.js`;
+            return `${remoteBasePath}${relation.AddonRelativeURL}.js`;
         }
     }
 
-    private getRemoteLoaderOptions(relation: NgComponentRelation, remoteBasePath: string) {
+    private getRemoteLoaderOptions(relation: NgComponentRelation, remoteBasePath: string, editor = false) {
         return {
-            addonId: relation?.AddonUUID,
+            key: relation.Key,
+            addonId: relation.AddonUUID,
             remoteEntry: this.getRemoteEntryByType(relation, remoteBasePath),
             remoteName: relation.AddonRelativeURL,
-            exposedModule: './' + relation?.ModuleName,
-            componentName: relation?.ComponentName,
+            exposedModule: './' + (editor ? relation.EditorModuleName : relation.ModuleName),
+            componentName: (editor ? relation.EditorComponentName : relation.ComponentName),
         }
     }
 
@@ -660,14 +653,38 @@ export class PagesService {
             const addonPublicBaseURL = data?.addonPublicBaseURL;
             
             if (relation && addonPublicBaseURL) {
-                this._blocksRemoteLoaderOptionsMap.set(relation.AddonUUID, this.getRemoteLoaderOptions(relation, addonPublicBaseURL));
+                const key = this.getRemoteLoaderMapKey(relation);
+                this._blocksRemoteLoaderOptionsMap.set(key, this.getRemoteLoaderOptions(relation, addonPublicBaseURL));
             }
         });
+    }
+
+    private loadBlocksEditorsRemoteLoaderOptionsMap(availableBlocks: IAvailableBlockData[]) {
+        this._blocksEditorsRemoteLoaderOptionsMap.clear();
+
+        availableBlocks.forEach(data => {
+            const relation: NgComponentRelation = data?.relation;
+            const addonPublicBaseURL = data?.addonPublicBaseURL;
+            
+            if (relation && addonPublicBaseURL) {
+                const key = this.getRemoteLoaderMapKey(relation);
+                this._blocksEditorsRemoteLoaderOptionsMap.set(key, this.getRemoteLoaderOptions(relation, addonPublicBaseURL, true));
+            }
+        });
+    }
+
+    private getRemoteLoaderMapKey(relation: NgComponentRelation): string {
+        return `${relation.Name}_${relation.AddonUUID}`;
     }
 
     /***********************************************************************************************/
     /*                                  Public functions
     /***********************************************************************************************/
+
+    getBlocksRemoteLoaderOptions(relation: NgComponentRelation) {
+        const key = this.getRemoteLoaderMapKey(relation);
+        return this._blocksRemoteLoaderOptionsMap.get(key);
+    }
 
     getBlockHostObject(
         block: PageBlock, 
@@ -1057,6 +1074,9 @@ export class PagesService {
 
                         // Load the blocks remote loader options.
                         this.loadBlocksRemoteLoaderOptionsMap(res.availableBlocks);
+                        
+                        // Load the blocks editors remote loader options.
+                        this.loadBlocksEditorsRemoteLoaderOptionsMap(res.availableBlocks);
 
                         // Load the page.
                         this.pageSubject.next(res.page);

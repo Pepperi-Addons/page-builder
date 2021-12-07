@@ -69,7 +69,7 @@ export class SectionBlockComponent implements OnInit {
     ) { }
     
     private setRemotePathOptions() {
-        this.remotePathOptions = this.pageBuilderService.blocksRemoteLoaderOptionsMap.get(this.pageBlock.Relation.AddonUUID);
+        this.remotePathOptions = this.pageBuilderService.getBlocksRemoteLoaderOptions(this.pageBlock.Relation);
     }
 
     private setHostObject(): void {
