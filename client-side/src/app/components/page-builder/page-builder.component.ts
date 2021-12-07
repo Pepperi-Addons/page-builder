@@ -5,7 +5,7 @@ import { CdkDragDrop  } from '@angular/cdk/drag-drop';
 import { IBlockProgress, PagesService } from '../../services/pages.service';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
-import { Page, PageBlock, PageSection, PageSizeType } from '@pepperi-addons/papi-sdk';
+import { DataViewScreenSize, Page, PageBlock, PageSection, PageSizeType } from '@pepperi-addons/papi-sdk';
 import { NavigationService } from 'src/app/services/navigation.service';
 
 @Component({
@@ -28,6 +28,20 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
         return this._screenSize;
     }
 
+    private _selectedScreenType: DataViewScreenSize;
+    @Input()
+    set selectedScreenType(value: DataViewScreenSize) {
+        // This is HACK for reload the sections when selected screen changed.
+        if (this._selectedScreenType !== value) {
+            this._selectedScreenType = value;
+            const tmp = this._sectionsSubject.value;
+            this._sectionsSubject.next(null);
+            setTimeout(() => {
+                this._sectionsSubject.next(tmp);
+            }, 0);
+        }
+    }
+    
     @HostBinding('style.padding-inline')
     paddingInline = '0';
 

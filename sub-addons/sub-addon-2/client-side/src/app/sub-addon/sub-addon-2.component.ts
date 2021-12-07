@@ -50,6 +50,8 @@ export class SubAddon2Component implements OnInit, OnChanges {
         this.options.push({key:'OPEN_DIALOG', value: 'Text 2' });
         this.images +=  ';' +this.hostObject?.configuration?.imageURL;
         this.hostEvents.emit({action: 'block-loaded'});
+
+        // console.log('currIndex - ' + this.currIndex++);
     }
 
     ngOnChanges(e: any): void { 
