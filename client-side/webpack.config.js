@@ -22,7 +22,7 @@ module.exports = (config, options, env) => {
         optimization: {
             // Only needed to bypass a temporary bug
             runtimeChunk: false
-        },   
+        },
         resolve: {
             alias: {
             ...sharedMappings.getAliases(),
@@ -35,21 +35,11 @@ module.exports = (config, options, env) => {
                 exposes: {
                     './PageBuilderModule': './src/app/components/page-builder/page-builder.module.ts'
                 },
-                // shared: {
-                //     ...shareAll({
-                //         eager: true,
-                //         singleton: true, 
-                //         strictVersion: true, 
-                //         requiredVersion: 'auto' 
-                //     }),
-                //     ...sharedMappings.getDescriptors()
-                // }
                 shared: share({
                     "@angular/core": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },
                     "@angular/common": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
                     "@angular/common/http": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
                     "@angular/router": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },
-                    // "@pepperi-addons/ngx-lib": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },
                     
                     ...sharedMappings.getDescriptors()
                 })
