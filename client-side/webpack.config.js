@@ -53,6 +53,7 @@ const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPl
 const mf = require("@angular-architects/module-federation/webpack");
 const path = require("path");
 const share = mf.share;
+const shareAll = mf.shareAll;
 const singleSpaAngularWebpack = require('single-spa-angular/lib/webpack').default;
 const { merge } = require('webpack-merge');
 
@@ -86,12 +87,21 @@ module.exports = (config, options, env) => {
                 exposes: {
                     './PageBuilderModule': './src/app/components/page-builder/page-builder.module.ts'
                 },
+                // shared: {
+                //     ...shareAll({
+                //         eager: true,
+                //         singleton: true, 
+                //         strictVersion: true, 
+                //         requiredVersion: 'auto' 
+                //     }),
+                //     ...sharedMappings.getDescriptors()
+                // }
                 shared: share({
                     "@angular/core": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },
                     "@angular/common": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
                     "@angular/common/http": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
                     "@angular/router": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },
-                    // "@pepperi-addons/ngx-lib": { eager: true,  singleton: true, strictVersion: true, requiredVersion: 'auto' },
+                    // "@pepperi-addons/ngx-lib": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },
                     
                     ...sharedMappings.getDescriptors()
                 })
