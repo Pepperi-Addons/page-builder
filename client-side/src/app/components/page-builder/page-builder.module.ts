@@ -14,14 +14,6 @@ import { PagesService } from 'src/app/services/pages.service';
 import { NavigationService } from 'src/app/services/navigation.service';
 
 export const routes: Routes = [
-    // {
-    //     path: '',
-    //     redirectTo: 'block'
-    // },
-    // {
-    //     path: 'block',
-    //     component: BlockComponent
-    // },
     {
         path: '',
         component: PageBuilderComponent
