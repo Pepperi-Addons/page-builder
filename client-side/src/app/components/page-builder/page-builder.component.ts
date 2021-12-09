@@ -28,19 +28,19 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
         return this._screenSize;
     }
 
-    private _selectedScreenType: DataViewScreenSize;
-    @Input()
-    set selectedScreenType(value: DataViewScreenSize) {
-        // This is HACK for reload the sections when selected screen changed.
-        if (this._selectedScreenType !== value) {
-            this._selectedScreenType = value;
-            const tmp = this._sectionsSubject.value;
-            this._sectionsSubject.next(null);
-            setTimeout(() => {
-                this._sectionsSubject.next(tmp);
-            }, 0);
-        }
-    }
+    // private _selectedScreenType: DataViewScreenSize;
+    // @Input()
+    // set selectedScreenType(value: DataViewScreenSize) {
+    //     // This is HACK for reload the sections when selected screen changed.
+    //     if (this._selectedScreenType !== value) {
+    //         this._selectedScreenType = value;
+    //         const tmp = this._sectionsSubject.value;
+    //         this._sectionsSubject.next(null);
+    //         setTimeout(() => {
+    //             this._sectionsSubject.next(tmp);
+    //         }, 0);
+    //     }
+    // }
     
     @HostBinding('style.padding-inline')
     paddingInline = '0';
