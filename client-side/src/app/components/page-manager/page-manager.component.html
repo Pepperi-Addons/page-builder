@@ -37,6 +37,7 @@
                 </div>
             </div>
             <div #pageBuilderWrapper class="page-builder-wrapper" [ngClass]="{'limit-min-width': selectedScreenType === 'Landscape' }">
+                <!-- [selectedScreenType]="selectedScreenType"  -->
                 <page-builder [editMode]="showEditor" [screenSize]="screenSize" [sectionsColumnsDropList]="sectionsColumnsDropList"></page-builder>
                 <div *ngIf="showEditor" class="backdrop" [ngClass]="{'show-backdrop': currentEditor?.type === 'section' || currentEditor?.type === 'block'}"></div>
             </div>

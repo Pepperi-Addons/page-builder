@@ -52,12 +52,7 @@ export class SectionComponent implements OnInit {
     @Input()
     set height(value: number) {
         this._height = value;
-
-        if (value > 0) {
-            this.maxHeight = `${value}px`;
-        } else {
-            this.maxHeight = 'unset';
-        }
+        this.setMaxHeight();
     }
     get height(): number {
         return this._height;
@@ -124,6 +119,7 @@ export class SectionComponent implements OnInit {
     private setScreenType() {
         this.screenType = this.pageBuilderService.getScreenType(this.screenSize);
         this.setIfHideForCurrentScreenType();
+        this.setMaxHeight();
     }
 
     private setIfHideForCurrentScreenType(): void {
@@ -199,6 +195,14 @@ export class SectionComponent implements OnInit {
                 });
             }
         }, 0);
+    }
+
+    private setMaxHeight() {
+        if (this.height > 0 && this.screenType !== 'Phablet') {
+            this.maxHeight = `${this.height}px`;
+        } else {
+            this.maxHeight = 'unset';
+        }
     }
 
     ngOnInit(): void {
