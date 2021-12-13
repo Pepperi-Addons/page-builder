@@ -19,7 +19,7 @@
     </div>
     <ng-container pep-main-area>
         <div class="main-area-container">
-            <div class="header-container">
+            <div *ngIf="showEditor" class="header-container">
                 <div class="header-content ">
                     <span class="header-title body-xs">{{('PAGE_MANAGER.VIEWPORT_WIDTH' | translate)}}:&nbsp;</span>
                     <span class="body-xs"><b>{{viewportWidth}}</b></span>
@@ -34,6 +34,12 @@
                     <pep-button [value]="'ACTIONS.SAVE' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="onSaveClick()"></pep-button>
                     <pep-button [value]="'ACTIONS.PUBLISH' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="onPublishClick();">
                     </pep-button>
+                </div>
+            </div>
+            <div *ngIf="!showEditor" class="header-container-preview">
+                <div class="preview-title body-sm">
+                    <span>{{('PAGE_MANAGER.PREVIEW_TITLE' | translate)}}&nbsp;-&nbsp;</span>
+                    <a class="color-link" (click)="togglePreviewMode()" href="javascript:void(0)">{{('PAGE_MANAGER.PREVIEW_CLICK_HERE' | translate)}}</a>
                 </div>
             </div>
             <div #pageBuilderWrapper class="page-builder-wrapper" [ngClass]="{'limit-min-width': selectedScreenType === 'Landscape' }">

@@ -41,6 +41,20 @@
         }
     }
 
+    .header-container-preview {
+        height: 2rem;
+        position: sticky;
+        top: 0;
+        z-index: $z-index-medium;
+
+        .preview-title {
+            display: flex;
+            height: inherit;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
     .page-builder-wrapper {
         width: 100%;
         margin: 0 auto;

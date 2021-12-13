@@ -40,6 +40,10 @@ export const TempBlankPageData: Page = {
     // A list of sections in the page
     "Layout": {
         "Sections": [
+            {
+                "Key": "99dfdff5-d042-4f4b-94ec-1d4fb238adba",
+                "Columns": [{}],
+            }
         ],
     }
 }

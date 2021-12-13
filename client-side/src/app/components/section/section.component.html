@@ -13,6 +13,7 @@
             *ngFor="let column of columns; let i=index;"
             class="section-column {{screenSize <= pepScreenSizeToFlipToVertical ? 'horizontal' : 'vertical'}}"
             [ngClass]="{ 'active-column': selectedBlockId === column.Block?.BlockKey }"
+            [ngStyle]="{ 'overflow': maxHeight === 'unset' ? 'unset' : 'auto' }"
             cdkDropList
             [cdkDropListData]="column"
             [cdkDropListOrientation]="screenSize <= pepScreenSizeToFlipToVertical ? 'horizontal' : 'vertical'" 

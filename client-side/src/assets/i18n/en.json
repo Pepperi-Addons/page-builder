@@ -1,6 +1,8 @@
 {
     "PAGE_MANAGER": {
         "VIEWPORT_WIDTH": "View port width",
+        "PREVIEW_TITLE": "Preview Mode",
+        "PREVIEW_CLICK_HERE": "Click here to edit",
         "DESKTOP": "Desktop",
         "TABLET": "Tablet",
         "MOBILE": "Mobile",
