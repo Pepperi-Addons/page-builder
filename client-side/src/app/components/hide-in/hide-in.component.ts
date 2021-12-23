@@ -17,6 +17,8 @@ export class HideInComponent implements OnInit {
     @Input() hideIn: DataViewScreenSize[] = [];
 
     @Output() hideInChange: EventEmitter<DataViewScreenSize[]> = new EventEmitter();
+    @Output() menuOpened: EventEmitter<void> = new EventEmitter();
+    @Output() menuClosed: EventEmitter<void> = new EventEmitter();
 
     menuItems: Array<hideInItem>;
 
@@ -35,7 +37,7 @@ export class HideInComponent implements OnInit {
         ];
     }
 
-    onItemClick(event, menuItem: hideInItem) {
+    onItemClick(event: any, menuItem: hideInItem) {
         menuItem.selected = !menuItem.selected;
 
         const hideIn = this.menuItems.filter(item => item.selected).map(item => item.key);
@@ -46,4 +48,11 @@ export class HideInComponent implements OnInit {
         return false;
     }
 
+    onMenuOpened() {
+        this.menuOpened.emit();
+    }
+
+    onMenuClosed() {
+        this.menuClosed.emit();
+    }
 }

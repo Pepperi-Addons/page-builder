@@ -1,10 +1,13 @@
-<div #sectionContainer *ngIf="editable || (containsBlocks && !hideForCurrentScreenType)" class="section-container " 
-    [ngClass]="{ 'editable-state': editable, 'active-section': selected, 'section-hidden-state': hideForCurrentScreenType }" 
-    cdkDrag [cdkDragDisabled]="!editable || selected || selectedBlockId.length > 0" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" >
-    <toolbar-actions *ngIf="editable && canDrag" cdkDragHandle style="cursor: grab;"
-        class="section-toolbar" [title]="name" [isDraggable]="true"
+<div #sectionContainer *ngIf="editable || (containsBlocks && !hideForCurrentScreenType)" class="section-container "
+    [ngClass]="{ 
+        'editable-state': editable, 'main-editor-state': isMainEditorState, 'default-height': !containsBlocks, 'active-section': isEditing,
+        'section-hidden-state': hideForCurrentScreenType, 'section-is-dragging': draggingSectionKey !== '', 'show-hover-state': hoverState }" 
+    cdkDrag [cdkDragData]="key" [cdkDragDisabled]="!editable || isEditing || selectedBlockKey?.length > 0" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" 
+    >
+    <toolbar-actions *ngIf="editable && isMainEditorState && draggingSectionKey === ''" cdkDragHandle style="cursor: grab;"
+        class="section-toolbar" [ngClass]="{ 'hide-toolbar': !hoverState }" [title]="name" [isDraggable]="true"
         (editClick)="onEditSectionClick();" (removeClick)="onRemoveSectionClick()"
-        [hideIn]="hideIn" (hideInChange)="onHideSectionChange($event)"></toolbar-actions>
+        [hideIn]="hideIn" (hideInChange)="onHideSectionChange($event)" (hideInMenuClosed)="onHideInMenuClosed()" (hideInMenuOpened)="onHideInMenuOpened()"></toolbar-actions>
     <div *ngIf="editable" class="section-background">
         <div class="back-template" *ngFor="let number of [0,1,2,3,4,5,6,7,8,9,10,11]"></div>
     </div>
@@ -12,8 +15,8 @@
         <div [id]="sectionColumnKeyPrefix + i" 
             *ngFor="let column of columns; let i=index;"
             class="section-column {{screenSize <= pepScreenSizeToFlipToVertical ? 'horizontal' : 'vertical'}}"
-            [ngClass]="{ 'active-column': selectedBlockId === column.Block?.BlockKey }"
-            [ngStyle]="{ 'overflow': maxHeight === 'unset' ? 'unset' : 'auto' }"
+            [ngClass]="{ 'active-column': selectedBlockKey === column.Block?.BlockKey, 
+                'already-contains-block': editable && column.Block?.BlockKey?.length > 0 && draggingBlockKey?.length > 0 && column.Block?.BlockKey !== draggingBlockKey }"
             cdkDropList
             [cdkDropListData]="column"
             [cdkDropListOrientation]="screenSize <= pepScreenSizeToFlipToVertical ? 'horizontal' : 'vertical'" 
@@ -21,9 +24,11 @@
             (cdkDropListDropped)="onBlockDropped($event)"
             [cdkDropListEnterPredicate]="canDropPredicate(i)"
         >
-            <section-block *ngIf="column.Block && pageBlocksMap.has(column.Block.BlockKey)" [sectionId]="id" [pageBlock]="pageBlocksMap.get(column.Block.BlockKey)"
-                [columnBlock]="column.Block" [editable]="editable" [canDrag]="canDrag"
-                [active]="selectedBlockId === column.Block?.BlockKey" [screenType]="screenType"></section-block>
+            <section-block *ngIf="column.Block && pageBlocksMap.has(column.Block.BlockKey)" class="section-block" 
+                [sectionKey]="key" [pageBlock]="pageBlocksMap.get(column.Block.BlockKey)"
+                [columnBlock]="column.Block" [editable]="editable" [isMainEditorState]="isMainEditorState" [sectionHeight]="styleHeight"
+                [active]="selectedBlockKey === column.Block?.BlockKey" [screenType]="screenType"
+                (dragExited)="onSectionBlockDragExited($event)" (dragEntered)="onSectionBlockDragEntered($event)"></section-block>
         </div>
     </div>
 </div>

@@ -1,5 +1,4 @@
 @import '../../../mixins.scss';
-$dash-border-color: #000;
 
 @mixin section-component-theme($pepperi-theme) {
     .section-container {
@@ -7,6 +6,9 @@ $dash-border-color: #000;
         
         // This css is only for edit mode.
         &.editable-state {
+            $color-caution: get-pep-color($pepperi-theme, color-text, color-caution);
+            $color-system-primary: get-pep-color($pepperi-theme, color-system-primary, color-base);
+            
             &.active-section {
                 @include focus($pepperi-theme);
             }
@@ -14,29 +16,66 @@ $dash-border-color: #000;
             // For section hidden state
             &.section-hidden-state {
                 // If the current section is not active (his editor after edit click)
-                &:not(&.active-section) {
+                &:not(.active-section) {
                     @include pep-cross-hatch($pepperi-theme);
+                }
+            }
+            
+            // Only in main editor state show focus colors.
+            &.main-editor-state {
+                &.cdk-drag-preview {
+                    @include focus($pepperi-theme, false, $color-caution, $border-width);
+                }
+                
+                &.cdk-drag-placeholder {
+                    @include focus($pepperi-theme);
+
+                    &:hover,
+                    &.show-hover-state {
+                        @include focus($pepperi-theme, true);
+                    }
+                }
+
+                &:hover,
+                &.show-hover-state {
+                    &:not(.section-is-dragging) {
+                        @include focus($pepperi-theme, false, $color-caution, $border-width);
+                    }
+                }
+
+                .section-toolbar {
+                    .toolbar-actions-container {
+                        @include focus($pepperi-theme, false, $color-caution, $border-width);
+                    }
                 }
             }
             
             .section-background {
                 .back-template {
                     background-color: #BEC3E5;
-                    @include dash-border(border-right, 2px, $dash-border-color);
+                    @include dash-border(border-right, $border-width, $color-system-primary);
                 }
             }
 
             .columns-wrapper {
                 .section-column {
-                    @include dash-border(border, 2px, $dash-border-color);
+                    @include dash-border(border, $border-width, $color-system-primary);
 
                     &.active-column {
                         background: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
                     }
 
+                    // &.cdk-drop-list-receivin - can recive block
+                    // &.cdk-drop-list-dragging - the block is dragging on this area.
                     &.cdk-drop-list-dragging {
                         @include focus($pepperi-theme);
-                        @include dash-border(border, 3px, $dash-border-color); // important is for override the none side for no dupplicate.
+                    }
+                 
+                    // When section column already contains block show on hover caution focus.
+                    &.already-contains-block {
+                        &:hover {
+                            @include focus($pepperi-theme, false, $color-caution);
+                        }
                     }
                 }
     
@@ -49,7 +88,7 @@ $dash-border-color: #000;
                                 border-left: unset;
                                 
                                 &.cdk-drop-list-dragging {
-                                    @include dash-border(border-left, 2px, $dash-border-color);
+                                    @include dash-border(border-left, $border-width, $color-system-primary);
                                 }
                             }
 
@@ -57,7 +96,7 @@ $dash-border-color: #000;
                                 border-top: unset;
                                 
                                 &.cdk-drop-list-dragging {
-                                    @include dash-border(border-top, 2px, $dash-border-color);
+                                    @include dash-border(border-top, $border-width, $color-system-primary);
                                 }
                             }
                         }

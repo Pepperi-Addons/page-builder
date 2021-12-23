@@ -8,6 +8,10 @@ import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@peppe
 import { DataViewScreenSize, Page, PageBlock, PageSection, PageSizeType } from '@pepperi-addons/papi-sdk';
 import { NavigationService } from 'src/app/services/navigation.service';
 
+export interface IHostObject {
+    pageKey: string;
+}
+
 @Component({
     selector: 'page-builder',
     templateUrl: './page-builder.component.html',
@@ -19,6 +23,16 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     @Input() editMode: boolean = false;
     @Input() sectionsColumnsDropList = [];
     
+    // For loading the page from the client apps.
+    private _hostObject: IHostObject;
+    @Input()
+    set hostObject(value: IHostObject) {
+        this._hostObject = value;
+    }
+    get hostObject(): IHostObject {
+        return this._hostObject;
+    }
+
     private _screenSize: PepScreenSizeType;
     @Input()
     set screenSize(value: PepScreenSizeType) {
@@ -106,7 +120,7 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     ngOnInit() {
         // TODO: Need to get the addonUUID not from the navigationService.
         const addonUUID = this.navigationService.addonUUID;
-        const pageKey = this.route.snapshot.data['page_key'] || this.route?.snapshot?.params['page_key'] || '';
+        const pageKey = this.route.snapshot.data['page_key'] || this.route?.snapshot?.params['page_key'] || this.hostObject?.pageKey || '';
 
         if (pageKey.length > 0) {
             this.pageBuilderService.loadPageBuilder(addonUUID, pageKey, this.editMode);

@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { CdkDragEnd, CdkDragEnter, CdkDragExit, CdkDragStart } from '@angular/cdk/drag-drop';
 import { PagesService } from 'src/app/services/pages.service';
 import { DataViewScreenSize, PageBlock, PageConfiguration, PageSectionBlock } from '@pepperi-addons/papi-sdk';
 import { PepRemoteLoaderOptions } from '@pepperi-addons/ngx-remote-loader';
@@ -18,8 +18,9 @@ interface IHostObject {
 })
 export class SectionBlockComponent implements OnInit {
     
-    @Input() sectionId: string;
-    @Input() canDrag = false;
+    @Input() sectionKey: string;
+    @Input() sectionHeight: string;
+    @Input() isMainEditorState = false;
     @Input() editable = false;
     @Input() active = false;
     
@@ -55,6 +56,9 @@ export class SectionBlockComponent implements OnInit {
         return this._screenType;
     }
     
+    @Output() dragExited: EventEmitter<CdkDragExit> = new EventEmitter();
+    @Output() dragEntered: EventEmitter<CdkDragEnter> = new EventEmitter();
+
     hideForCurrentScreenType = false;
     
     private _hostObject: IHostObject;
@@ -117,11 +121,11 @@ export class SectionBlockComponent implements OnInit {
     }
 
     onRemoveBlockClick() {
-        this.pageBuilderService.onRemoveBlock(this.sectionId, this.pageBlock.Key);
+        this.pageBuilderService.onRemoveBlock(this.sectionKey, this.pageBlock.Key);
     }
 
     onHideBlockChange(hideIn: DataViewScreenSize[]) {
-        this.pageBuilderService.hideBlock(this.sectionId, this.pageBlock.Key, hideIn);
+        this.pageBuilderService.hideBlock(this.sectionKey, this.pageBlock.Key, hideIn);
         this.setIfHideForCurrentScreenType();
     }
 
@@ -136,14 +140,24 @@ export class SectionBlockComponent implements OnInit {
                 break;
             case 'set-context':
                 break;
+            case 'emit-event':
+                break;
         }
     }
 
     onDragStart(event: CdkDragStart) {
-        this.pageBuilderService.changeCursorOnDragStart();
+        this.pageBuilderService.onBlockDragStart(event);
     }
 
     onDragEnd(event: CdkDragEnd) {
-        this.pageBuilderService.changeCursorOnDragEnd();
+        this.pageBuilderService.onBlockDragEnd(event);
+    }
+
+    onDragExited(event: CdkDragExit) {
+        this.dragExited.emit(event);
+    }
+
+    onDragEntered(event: CdkDragEnter) {
+        this.dragEntered.emit(event);
     }
 }

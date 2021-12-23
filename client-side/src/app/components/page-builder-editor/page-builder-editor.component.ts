@@ -146,10 +146,10 @@ export class PageBuilderEditorComponent implements OnInit {
     }
 
     onDragStart(event: CdkDragStart) {
-        this.pageBuilderService.changeCursorOnDragStart();
+        this.pageBuilderService.onBlockDragStart(event);
     }
 
     onDragEnd(event: CdkDragEnd) {
-        this.pageBuilderService.changeCursorOnDragEnd();
+        this.pageBuilderService.onBlockDragEnd(event);
     }
 }

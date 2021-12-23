@@ -1,4 +1,4 @@
-import { CdkDragDrop, copyArrayItem, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
+import { CdkDragDrop, CdkDragEnd, CdkDragStart, copyArrayItem, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
 import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
@@ -173,6 +173,18 @@ export class PagesService {
     }
 
     private _mappingsResourcesFields = new Map<string, IMappingResource>();
+
+    // This subject is for edit mode when block is dragging now or not.
+    private _draggingBlockKey: BehaviorSubject<string> = new BehaviorSubject('');
+    get draggingBlockKey(): Observable<string> {
+        return this._draggingBlockKey.asObservable().pipe(distinctUntilChanged());
+    }
+
+    // This subject is for edit mode when section is dragging now or not.
+    private _draggingSectionKey: BehaviorSubject<string> = new BehaviorSubject('');
+    get draggingSectionKey(): Observable<string> {
+        return this._draggingSectionKey.asObservable().pipe(distinctUntilChanged());
+    }
 
     constructor(
         private utilitiesService: PepUtilitiesService,
@@ -677,6 +689,16 @@ export class PagesService {
         return `${relation.Name}_${relation.AddonUUID}`;
     }
 
+    private changeCursorOnDragStart() {
+        document.body.classList.add('inheritCursors');
+        document.body.style.cursor = 'grabbing';
+    }
+
+    private changeCursorOnDragEnd() {
+        document.body.classList.remove('inheritCursors');
+        document.body.style.cursor = 'unset';
+    }
+
     /***********************************************************************************************/
     /*                                  Public functions
     /***********************************************************************************************/
@@ -858,6 +880,16 @@ export class PagesService {
         moveItemInArray(this._sectionsSubject.value, event.previousIndex, event.currentIndex);
     }
 
+    onSectionDragStart(event: CdkDragStart) {
+        this.changeCursorOnDragStart();
+        this._draggingSectionKey.next(event.source.data);
+    }
+
+    onSectionDragEnd(event: CdkDragEnd) {
+        this.changeCursorOnDragEnd();
+        this._draggingSectionKey.next('');
+    }
+
     onRemoveBlock(sectionId: string, blockId: string) {
         const index = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
         if (index > -1) {
@@ -905,7 +937,7 @@ export class PagesService {
                 this.addPageBlock(block, true);
             }
         } else {
-            // If the block moved between columns the same section or between different sections but not in the same column.
+            // If the block moved between columns in the same section or between different sections but not in the same column.
             if (event.container.id !== event.previousContainer.id) {
                 // Get the column.
                 const currentColumn = this.getSectionColumnById(event.container.id);
@@ -914,10 +946,25 @@ export class PagesService {
 
                 currentColumn.Block = previuosColumn.Block;
                 delete previuosColumn.Block;
+
+                // Raise block progress change to update the subject.
+                this.notifyBlockProgressMapChange();
             }
         }
     }
     
+    onBlockDragStart(event: CdkDragStart) {
+        this.changeCursorOnDragStart();
+        // Take the block key if exist, else take the available block key (relation key).
+        const blockKey = event.source.data?.BlockKey || event.source.data?.Key;
+        this._draggingBlockKey.next(blockKey);
+    }
+
+    onBlockDragEnd(event: CdkDragEnd) {
+        this.changeCursorOnDragEnd();
+        this._draggingBlockKey.next('');
+    }
+
     updateBlockLoaded(blockKey: string) {
         this.setBlockAsLoadedAndCalculateCurrentPriority(blockKey);
     }
@@ -973,16 +1020,6 @@ export class PagesService {
                 }
             }
         }
-    }
-
-    changeCursorOnDragStart() {
-        document.body.classList.add('inheritCursors');
-        document.body.style.cursor = 'grabbing';
-    }
-
-    changeCursorOnDragEnd() {
-        document.body.classList.remove('inheritCursors');
-        document.body.style.cursor = 'unset';
     }
 
     doesColumnContainBlock(sectionId: string, columnIndex: number): boolean {

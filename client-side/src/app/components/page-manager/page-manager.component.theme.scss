@@ -12,14 +12,13 @@
         }
 
         .header-container-preview {
+            background: unset;
+            // box-shadow: unset;
             background-color: get-pep-color($pepperi-theme, color-text, color-caution);
-        
-            .preview-title {
+            
+            .preview-title,
+            .color-link {
                 color: get-pep-color($pepperi-theme, color-text, color-invert);
-
-                .color-link {
-                    color: get-pep-color($pepperi-theme, color-text, color-invert);
-                }
             }
         }
 

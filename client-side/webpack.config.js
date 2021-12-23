@@ -17,7 +17,7 @@ module.exports = (config, options, env) => {
     const mfConfig = {
         output: {
             uniqueName: "addon",
-            publicPath: "http://localhost:4400/",
+            publicPath: "auto",
         },
         optimization: {
             // Only needed to bypass a temporary bug
@@ -33,7 +33,7 @@ module.exports = (config, options, env) => {
                 name: "addon",
                 filename: "addon.js",
                 exposes: {
-                    './PageBuilderModule': './src/app/components/page-builder/page-builder.module.ts'
+                    './PageBuilderModule': './src/app/components/page-builder/index.ts'
                 },
                 shared: share({
                     "@angular/core": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },

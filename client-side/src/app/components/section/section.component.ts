@@ -1,5 +1,5 @@
-import { Component, ElementRef, HostBinding, Input, OnChanges, OnInit, QueryList, Renderer2, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
-import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragStart, CdkDropList } from '@angular/cdk/drag-drop';
+import { Component, ElementRef, HostBinding, HostListener, Input, OnChanges, OnInit, QueryList, Renderer2, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
+import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragEnter, CdkDragExit, CdkDragStart, CdkDropList } from '@angular/cdk/drag-drop';
 import { IEditor, PagesService } from 'src/app/services/pages.service';
 import { DataViewScreenSize, PageBlock, PageSectionColumn, PageSizeType, SplitType } from '@pepperi-addons/papi-sdk';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,7 +14,7 @@ export class SectionComponent implements OnInit {
     @ViewChild('sectionContainer') sectionContainerRef: ElementRef;
     @ViewChildren('columnsWrapper') columnsElementRef: QueryList<ElementRef>;
 
-    @Input() id: string;
+    @Input() key: string;
     @Input() name: string;
 
     private _editable = false;
@@ -52,7 +52,7 @@ export class SectionComponent implements OnInit {
     @Input()
     set height(value: number) {
         this._height = value;
-        this.setMaxHeight();
+        this.setStyleHeight();
     }
     get height(): number {
         return this._height;
@@ -92,20 +92,26 @@ export class SectionComponent implements OnInit {
     }
 
     @HostBinding('style.max-height')
-    maxHeight = 'unset';
+    styleMaxHeight = 'unset';
 
+    @HostBinding('style.height')
+    styleHeight = 'unset';
+    
     PepScreenSizeType = PepScreenSizeType;
     sectionColumnKeyPrefix = '';
     
-    canDrag = false;
-    selected = false;
-    selectedBlockId = '';
+    isMainEditorState = false;
+    isEditing = false;
+    selectedBlockKey = '';
     
     containsBlocks = false;
     pepScreenSizeToFlipToVertical = PepScreenSizeType.SM;
     screenType: DataViewScreenSize;
     hideForCurrentScreenType = false;
-    
+    draggingBlockKey: string = '';
+    draggingSectionKey: string = '';
+    hoverState = false;
+
     constructor(
         private renderer: Renderer2,
         private translate: TranslateService,
@@ -119,7 +125,7 @@ export class SectionComponent implements OnInit {
     private setScreenType() {
         this.screenType = this.pageBuilderService.getScreenType(this.screenSize);
         this.setIfHideForCurrentScreenType();
-        this.setMaxHeight();
+        this.setStyleHeight();
     }
 
     private setIfHideForCurrentScreenType(): void {
@@ -197,11 +203,11 @@ export class SectionComponent implements OnInit {
         }, 0);
     }
 
-    private setMaxHeight() {
+    private setStyleHeight() {
         if (this.height > 0 && this.screenType !== 'Phablet') {
-            this.maxHeight = `${this.height}px`;
+            this.styleHeight = this.styleMaxHeight = `${this.height}px`;
         } else {
-            this.maxHeight = 'unset';
+            this.styleHeight = this.styleMaxHeight = 'unset';
         }
     }
 
@@ -210,43 +216,79 @@ export class SectionComponent implements OnInit {
 
         if (this.editable) {
             this.pageBuilderService.onEditorChange$.subscribe((editor: IEditor) => {
-                this.canDrag = editor && editor.type === 'page-builder';
-                this.selected = editor && editor.type === 'section' && editor.id === this.id;
-                this.selectedBlockId = editor && editor.type === 'block' ? editor.id : '';
+                this.isMainEditorState = editor && editor.type === 'page-builder';
+                this.isEditing = editor && editor.type === 'section' && editor.id === this.key;
+                this.selectedBlockKey = editor && editor.type === 'block' ? editor.id : '';
+            });
+
+            this.pageBuilderService.draggingBlockKey.subscribe((draggingBlockKey) => {
+                this.draggingBlockKey = draggingBlockKey;
+            });
+
+            this.pageBuilderService.draggingSectionKey.subscribe((draggingSectionKey) => {
+                this.draggingSectionKey = draggingSectionKey;
             });
         }
 
-        this.sectionColumnKeyPrefix = this.pageBuilderService.getSectionColumnKey(this.id);
+        this.sectionColumnKeyPrefix = this.pageBuilderService.getSectionColumnKey(this.key);
     }
 
     onEditSectionClick() {
-        this.pageBuilderService.navigateToEditor('section', this.id);
+        this.pageBuilderService.navigateToEditor('section', this.key);
     }
 
     onRemoveSectionClick() {
-        this.pageBuilderService.removeSection(this.id);
+        this.pageBuilderService.removeSection(this.key);
     }
 
     onHideSectionChange(hideIn: DataViewScreenSize[]) {
-        this.pageBuilderService.hideSection(this.id, hideIn);
+        this.pageBuilderService.hideSection(this.key, hideIn);
+    }
+
+    onHideInMenuOpened() {
+        this.hoverState = true;
+    }
+
+    onHideInMenuClosed() {
+        this.hoverState = false;
     }
 
     onBlockDropped(event: CdkDragDrop<any[]>) {
-        this.pageBuilderService.onBlockDropped(event, this.id);
+        this.pageBuilderService.onBlockDropped(event, this.key);
     }
 
     canDropPredicate(columnIndex: number) {
         return (drag: CdkDrag, drop: CdkDropList) => {
-            const res = !this.pageBuilderService.doesColumnContainBlock(this.id, columnIndex);
+            const res = !this.pageBuilderService.doesColumnContainBlock(this.key, columnIndex);
             return res;
         };
     }
 
     onDragStart(event: CdkDragStart) {
-        this.pageBuilderService.changeCursorOnDragStart();
+        this.pageBuilderService.onSectionDragStart(event);
     }
 
     onDragEnd(event: CdkDragEnd) {
-        this.pageBuilderService.changeCursorOnDragEnd();
+        this.pageBuilderService.onSectionDragEnd(event);
+    }
+
+    onSectionBlockDragExited(event: CdkDragExit) {
+        // If the block is exit from his container and it's the only block in this section.
+        if (this.containsBlocks) {
+            const blocksLength = this.columns.filter(column => column.Block).length;
+
+            if (blocksLength === 1) {
+                this.containsBlocks = false;
+            }
+        }
+    }
+
+    onSectionBlockDragEntered(event: CdkDragEnter) {
+        // Only in case that the block entered back to his container and it's the only block in this section.
+        if (event.container.id === event.item.dropContainer.id) {
+            if (!this.containsBlocks) {
+                this.containsBlocks = true;
+            }
+        }
     }
 }

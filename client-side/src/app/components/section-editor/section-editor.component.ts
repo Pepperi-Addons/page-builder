@@ -19,6 +19,8 @@ export interface IAllSplitOption {
     styleUrls: ['./section-editor.component.scss']
 })
 export class SectionEditorComponent implements OnInit {
+    readonly MIN_HEIGHT = 40;
+    
     private _hostObject: ISectionEditor;
     @Input()
     set hostObject(value: ISectionEditor) {
@@ -26,8 +28,8 @@ export class SectionEditorComponent implements OnInit {
 
         this.sectionName = value.sectionName;
         this.split = value.split;
-        this.height = value.height;
         this.isAutoHeight = !value.height || value.height === 0;
+        this.height = this.isAutoHeight ? this.MIN_HEIGHT : value.height;
     }
     get hostObject(): ISectionEditor {
         return this._hostObject;
@@ -56,7 +58,7 @@ export class SectionEditorComponent implements OnInit {
     }
     
     isAutoHeight: boolean = true;
-    height: number = 0;
+    height: number = this.MIN_HEIGHT;
 
     @Output() hostObjectChange: EventEmitter<ISectionEditor> = new EventEmitter<ISectionEditor>();
     
@@ -128,8 +130,10 @@ export class SectionEditorComponent implements OnInit {
     }
 
     onHeightChange(height: number) {
-        this.height = coerceNumberProperty(height, this.height);
-        this.updateHostObject();
+        if (height >= this.MIN_HEIGHT) {
+            this.height = coerceNumberProperty(height, this.height);
+            this.updateHostObject();
+        }
     }
     
     onSectionNameChange(value: string) {

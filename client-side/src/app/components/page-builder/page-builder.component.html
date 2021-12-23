@@ -2,7 +2,7 @@
 <div #sectionsCont cdkDropListGroup class="sections-container gap-{{ sectionsGap }}" cdkDropList (cdkDropListDropped)="onSectionDropped($event)" >
     <section *ngFor="let section of sections$ | async; let i=index;" 
         class="draggable-section" [sectionsColumnsDropList]="sectionsColumnsDropList" [pageBlocksMap]="pageBlocksMap"
-        [id]="section.Key" [name]="section.Name || ('PAGE_MANAGER.SECTION' | translate) + ' ' + (i+1)" [split]="section.Split" [height]="section.Height"
+        [key]="section.Key" [name]="section.Name || ('PAGE_MANAGER.SECTION' | translate) + ' ' + (i+1)" [split]="section.Split" [height]="section.Height"
         [columns]="section.Columns" [hideIn]="section.Hide" [columnsGap]="columnsGap" [screenSize]="screenSize" [editable]="editMode">
     </section>
 </div>

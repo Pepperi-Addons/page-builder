@@ -5,23 +5,53 @@
 .section-container {
     position: relative;
     display: grid;
-    border-radius: $border-radius-md;
+    height: inherit;
     max-height: inherit;
+    min-height: $toolbar-height;
 
     // This css is only for edit mode!!!
     &.editable-state {
-        min-height: 150px; // $toolbar-height;
+        &.default-height {
+            height: 20rem;
+        }
 
         &.active-section {
             z-index: $z-index-min + 11;
         }
-
-        .section-toolbar {
-            position: absolute;
-            width: 100%;
-            z-index: $z-index-toolbar;
+        
+        // The placeholder of the drop area when dragging a section.
+        &.cdk-drag-placeholder {
+            opacity: 0.5;
         }
 
+        // When hovering on section show the tool bar except from the placeholder of the drop area.
+        &:not(.cdk-drag-placeholder) {
+            &:hover,
+            &.show-hover-state {
+                .section-toolbar {
+                    display: block !important;
+                }
+            }
+        }
+        
+        // (.cdk-drag-preview) is the current dragging section so hide the tool bar except for the current dragging section.
+        &:not(.cdk-drag-preview) {
+            .hide-toolbar {
+                display: none;
+            }
+        }
+        
+        .section-toolbar {
+            position: absolute;
+            top: calc(#{$toolbar-height} * -1 + #{$border-width} * -1);
+            height: calc(#{$toolbar-height} + #{$border-width});
+            z-index: $z-index-medium;
+
+            ::ng-deep.toolbar-actions-container {
+                border-radius: $border-radius-md $border-radius-md 0 0;
+            }
+        }
+            
         .section-background {
             position: absolute;
             width: 100%;
@@ -55,20 +85,20 @@
     .columns-wrapper {
         display: grid;
         grid-auto-flow: column;
+        height: inherit;
         max-height: inherit;
         
         @include gap-sizes();
         
         .section-column {
             position: relative;
+            height: inherit;
             max-height: inherit;
-        }
-    }
-}
 
-// The placeholder of the sections and the blocks in the section.
-.cdk-drag-placeholder {
-    &.section-container {
-        opacity: 0.5;
+            .section-block {
+                height: inherit;
+                max-height: inherit;
+            }
+        }
     }
 }

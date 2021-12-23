@@ -30,6 +30,8 @@ export class ToolbarComponent implements OnInit {
     @Output() removeClick: EventEmitter<void> = new EventEmitter();
     @Output() editClick: EventEmitter<void> = new EventEmitter();
     @Output() hideInChange: EventEmitter<DataViewScreenSize[]> = new EventEmitter();
+    @Output() hideInMenuOpened: EventEmitter<void> = new EventEmitter();
+    @Output() hideInMenuClosed: EventEmitter<void> = new EventEmitter();
 
     constructor() { }
 
@@ -48,4 +50,11 @@ export class ToolbarComponent implements OnInit {
         this.hideInChange.emit(event);
     }
 
+    onHideInMenuOpened() {
+        this.hideInMenuOpened.emit();
+    }
+
+    onHideInMenuClosed() {
+        this.hideInMenuClosed.emit();
+    }
 }

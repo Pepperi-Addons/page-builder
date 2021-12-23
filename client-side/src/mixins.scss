@@ -6,6 +6,7 @@ $z-index-min: 0;
 
 $toolbar-height: 2.5rem;
 $z-index-toolbar: $z-index-min + 2;
+$border-width: 0.125rem;
 
 @mixin block-toolbar() {
     @include block-editor-toolbar();
@@ -37,6 +38,10 @@ $z-index-toolbar: $z-index-min + 2;
     &.gap-LG {
         gap: 2rem;
     }
+}
+
+@mixin solid-border($property, $border-width, $color) {
+    #{$property}: $border-width solid $color;
 }
 
 @mixin dash-border($property, $border-width, $color) {
