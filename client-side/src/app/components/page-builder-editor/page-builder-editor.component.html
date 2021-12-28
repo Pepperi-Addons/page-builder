@@ -15,7 +15,7 @@
                 [cdkDropListConnectedTo]="sectionsColumnsDropList">
 
                 <toolbar-actions *ngFor="let availableBlock of availableBlocks;" class="available-block"
-                    [title]="availableBlock.Name" [showActions]="false" [isDraggable]="true"
+                    [title]="availableBlock.relation?.Description" [showActions]="false" [isDraggable]="true"
                     cdkDrag style="cursor: grab;" [cdkDragData]="availableBlock" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" 
                     >
                 </toolbar-actions>
@@ -24,26 +24,34 @@
     </mat-tab>
     <mat-tab label="{{'PAGE_MANAGER.DESIGN' | translate}}">
         <div class="tab-container">
-            <pep-checkbox class="checkbox-as-title" [value]="isFullWidth" [label]="'PAGE_MANAGER.FULL_WIDTH_TITLE' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
+            <pep-checkbox [value]="isFullWidth" [label]="'PAGE_MANAGER.FULL_WIDTH_TITLE' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
             <pep-textbox [label]="'PAGE_MANAGER.MAX_WIDTH_TITLE' | translate" type="int" [disabled]="isFullWidth" [value]="maxWidth" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
             
             <!-- Spacing -->
-            <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.SPACING_TITLE' | translate}}</label><br>
-            <label class="body-xs ellipsis">{{'PAGE_MANAGER.SPACING_HORIZONTAL_TITLE' | translate}}</label>
-            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="horizontalSpacing" buttonsClass="md regular" viewType="toggle" stretch="true" 
-                (buttonClick)="setColumnsHorizntalGap($event)"></pep-group-buttons>
-            <label class="body-xs ellipsis">{{'PAGE_MANAGER.SPACING_VERTICAL_TITLE' | translate}}</label>
-            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="verticalSpacing" buttonsClass="md regular" viewType="toggle" stretch="true" 
-                (buttonClick)="setColumnsVerticalGap($event)"></pep-group-buttons>
+            <pep-group-buttons-settings [groupType]="'sizes'" 
+                                        [header]="'PAGE_MANAGER.SPACING_TITLE' | translate" [subHeader]="'PAGE_MANAGER.SPACING_HORIZONTAL_TITLE' | translate"
+                                        [btnKey]="horizontalSpacing.toLowerCase()" [excludeKeys]="['xs','xl']" [useNone]="true"
+                                        (btnkeyChange)="setColumnsHorizntalGap($event)">
+            </pep-group-buttons-settings>
+
+            <pep-group-buttons-settings [groupType]="'sizes'" 
+                                        [subHeader]="'PAGE_MANAGER.SPACING_VERTICAL_TITLE' | translate"
+                                        [btnKey]="verticalSpacing.toLowerCase()" [excludeKeys]="['xs','xl']" [useNone]="true"
+                                        (btnkeyChange)="setColumnsVerticalGap($event)">
+            </pep-group-buttons-settings>
             
             <!-- Gaps -->
-            <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.GAPS_TITLE' | translate}}</label><br>
-            <label class="body-xs ellipsis">{{'PAGE_MANAGER.SECTIONS_GAP_TITLE' | translate}}</label>
-            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="sectionsGap" buttonsClass="md regular" viewType="toggle" stretch="true" 
-                (buttonClick)="setSectionGap($event)"></pep-group-buttons>
-            <label class="body-xs ellipsis">{{'PAGE_MANAGER.COLUMNS_GAP_TITLE' | translate}}</label>
-            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="columnsGap" buttonsClass="md regular" viewType="toggle" stretch="true" 
-                (buttonClick)="setColumnsGap($event)"></pep-group-buttons>
+            <pep-group-buttons-settings [groupType]="'sizes'" 
+                                        [header]="'PAGE_MANAGER.GAPS_TITLE' | translate" [subHeader]="'PAGE_MANAGER.SECTIONS_GAP_TITLE' | translate"
+                                        [btnKey]="sectionsGap.toLowerCase()" [excludeKeys]="['xs','xl']" [useNone]="true"
+                                        (btnkeyChange)="setSectionGap($event)">
+            </pep-group-buttons-settings>
+
+            <pep-group-buttons-settings [groupType]="'sizes'" 
+                                        [subHeader]="'PAGE_MANAGER.COLUMNS_GAP_TITLE' | translate"
+                                        [btnKey]="columnsGap.toLowerCase()" [excludeKeys]="['xs','xl']" [useNone]="true"
+                                        (btnkeyChange)="setColumnsGap($event)">
+            </pep-group-buttons-settings>
 
             <!-- Rounded Corners -->
             <!-- <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.ROUNDED_CORNERS_TITLE' | translate}}</label><br>

@@ -120,28 +120,28 @@ export class PageBuilderEditorComponent implements OnInit {
         this.updateHostObject();
     }
     
-    setColumnsHorizntalGap(event: IPepButtonClickEvent) {
-        this.horizontalSpacing = event.source.key as UiPageSizeType;
+    setColumnsHorizntalGap(key: string ){
+        this.horizontalSpacing = key.toUpperCase() as UiPageSizeType; 
         this.updateHostObject();
     }
     
-    setColumnsVerticalGap(event: IPepButtonClickEvent) {
-        this.verticalSpacing = event.source.key as UiPageSizeType;
+    setColumnsVerticalGap(key: string) {
+        this.verticalSpacing = key.toUpperCase() as UiPageSizeType; 
         this.updateHostObject();
     }
     
-    setSectionGap(event: IPepButtonClickEvent) {
-        this.sectionsGap = event.source.key as UiPageSizeType;
+    setSectionGap(key: string) {
+        this.sectionsGap = key.toUpperCase() as UiPageSizeType; 
         this.updateHostObject();
     }
 
-    setColumnsGap(event: IPepButtonClickEvent) {
-        this.columnsGap = event.source.key as UiPageSizeType;
+    setColumnsGap(key: string) {
+        this.columnsGap = key.toUpperCase() as UiPageSizeType; 
         this.updateHostObject();
     }
 
-    setRoundedCorners(event: IPepButtonClickEvent) {
-        this.roundedCorners = event.source.key as UiPageSizeType;
+    setRoundedCorners(key: string) {
+        this.roundedCorners = key.toUpperCase() as UiPageSizeType; 
         this.updateHostObject();
     }
 

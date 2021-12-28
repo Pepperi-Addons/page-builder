@@ -21,6 +21,7 @@ import { ToolbarModule } from '../toolbar/toolbar.module'
 import { TranslateModule, TranslateLoader, TranslateStore } from '@ngx-translate/core';
 import { PepColorModule } from '@pepperi-addons/ngx-lib/color';
 import { PepImageModule } from '@pepperi-addons/ngx-lib/image';
+import { PepGroupButtonsSettingsModule } from '@pepperi-addons/ngx-composite-lib/group-buttons-settings';
 import { MatSliderModule } from '@angular/material/slider'
 // const pepIcons = [
 //     pepIconSystemClose,
@@ -51,6 +52,7 @@ import { MatSliderModule } from '@angular/material/slider'
         PepGroupButtonsModule,
         PepColorModule,
         PepImageModule,
+        PepGroupButtonsSettingsModule,
         MatSliderModule,
         PepTextareaModule,
         SectionEditorModule,
