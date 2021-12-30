@@ -4,13 +4,11 @@ $z-index-min: 0;
 // This file contains all mixins.
 //**************************************************************************
 
-$toolbar-height: 2.5rem;
-$z-index-toolbar: $z-index-min + 2;
 $border-width: 0.125rem;
 
 @mixin block-toolbar() {
     @include block-editor-toolbar();
-    z-index: $z-index-toolbar;
+    z-index: $z-index-min + 2;
 }
 
 @mixin block-editor-toolbar() {

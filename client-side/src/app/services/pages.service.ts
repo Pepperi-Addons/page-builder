@@ -1106,7 +1106,7 @@ export class PagesService {
                         res.availableBlocks.forEach(data => {
                             availableBlocks.push(data?.relation);
                         });
-                            
+
                         this._availableBlocksSubject.next(availableBlocks);
 
                         // Load the blocks remote loader options.

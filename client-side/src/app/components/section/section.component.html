@@ -4,10 +4,15 @@
         'section-hidden-state': hideForCurrentScreenType, 'section-is-dragging': draggingSectionKey !== '', 'show-hover-state': hoverState }" 
     cdkDrag [cdkDragData]="key" [cdkDragDisabled]="!editable || isEditing || selectedBlockKey?.length > 0" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" 
     >
-    <toolbar-actions *ngIf="editable && isMainEditorState && draggingSectionKey === ''" cdkDragHandle style="cursor: grab;"
-        class="section-toolbar" [ngClass]="{ 'hide-toolbar': !hoverState }" [title]="name" [isDraggable]="true"
-        (editClick)="onEditSectionClick();" (removeClick)="onRemoveSectionClick()"
-        [hideIn]="hideIn" (hideInChange)="onHideSectionChange($event)" (hideInMenuClosed)="onHideInMenuClosed()" (hideInMenuOpened)="onHideInMenuOpened()"></toolbar-actions>
+    <pep-draggable-item *ngIf="editable && isMainEditorState && draggingSectionKey === ''" cdkDragHandle style="cursor: grab;"
+        class="section-toolbar" [ngClass]="{ 'hide-toolbar': !hoverState }" [title]="name">
+        <ng-container pep-actions>
+            <pep-button classNames="caution" sizeType="xs" iconName="system_bin" (buttonClick)="onRemoveSectionClick();"></pep-button>
+            <hide-in [hideIn]="hideIn" (hideInChange)="onHideSectionChange($event)" (menuClosed)="onHideInMenuClosed()" (menuOpened)="onHideInMenuOpened()"></hide-in>
+            <pep-button sizeType="xs" iconName="system_edit" (buttonClick)="onEditSectionClick();"></pep-button>
+        </ng-container>
+    </pep-draggable-item>
+
     <div *ngIf="editable" class="section-background">
         <div class="back-template" *ngFor="let number of [0,1,2,3,4,5,6,7,8,9,10,11]"></div>
     </div>

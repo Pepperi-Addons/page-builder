@@ -1,6 +1,6 @@
 // Define pepperi lib theme and include theme styles for pepperi components.
-// @import '~@pepperi-addons/ngx-lib/theming';
-@import 'ngx-lib/theming';
+@import '~@pepperi-addons/ngx-lib/theming';
+// @import 'ngx-lib/theming';
 @include pepperi-theme();
 
 // Get the theme object.
@@ -10,7 +10,7 @@ $pepperi-theme: get-pepperi-theme();
 @import './app/components/page-manager/page-manager.component.theme.scss';
 @import './app/components/section/section.component.theme.scss';
 @import './app/components/section-block/section-block.component.theme.scss';
-@import './app/components/toolbar/toolbar.component.theme.scss';
+// @import './app/components/toolbar/toolbar.component.theme.scss';
 @import './app/components/hide-in/hide-in.component.theme.scss';
 
 body {
@@ -19,7 +19,7 @@ body {
     @include page-manager-component-theme($pepperi-theme);
     @include section-component-theme($pepperi-theme);
     @include section-block-component-theme($pepperi-theme);
-    @include toolbar-component-theme($pepperi-theme);
+    // @include toolbar-component-theme($pepperi-theme);
     @include hide-in-component-theme($pepperi-theme);
 }
 

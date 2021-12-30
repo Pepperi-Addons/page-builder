@@ -44,7 +44,7 @@
                 }
 
                 .section-toolbar {
-                    .toolbar-actions-container {
+                    .draggable-item-container {
                         @include focus($pepperi-theme, false, $color-caution, $border-width);
                     }
                 }

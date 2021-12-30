@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { GenericListComponent } from './generic-list.component'
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
-import { ToolbarModule } from '../toolbar/toolbar.module';
+// import { ToolbarModule } from '../toolbar/toolbar.module';
 import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
 import { PepListModule } from '@pepperi-addons/ngx-lib/list';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -17,15 +17,16 @@ import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
         CommonModule,
         DragDropModule,
         PepButtonModule,
-        ToolbarModule,
+        // ToolbarModule,
         PepAddonLoaderModule,
         PepListModule,
         PepTopBarModule,
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
-                useFactory: PepAddonService.createDefaultMultiTranslateLoader,
-                deps: [HttpClient, PepFileService, PepAddonService]
+                useFactory: (addonService: PepAddonService) => 
+                    PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib']),
+                deps: [PepAddonService]
             }, isolate: false
         })
     ],
