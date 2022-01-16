@@ -14,7 +14,7 @@ import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog'
 @Component({
     selector: 'page-manager',
     templateUrl: './page-manager.component.html',
-    styleUrls: ['./page-manager.component.scss']
+    styleUrls: ['./page-manager.component.scss', './page-manager.component.theme.scss']
 })
 export class PageManagerComponent implements OnInit {
     @ViewChild('pageBuilderWrapper', { static: true }) pageBuilderWrapper: ElementRef;

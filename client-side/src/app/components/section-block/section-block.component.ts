@@ -14,7 +14,7 @@ interface IHostObject {
 @Component({
     selector: 'section-block',
     templateUrl: './section-block.component.html',
-    styleUrls: ['./section-block.component.scss']
+    styleUrls: ['./section-block.component.scss', './section-block.component.theme.scss']
 })
 export class SectionBlockComponent implements OnInit {
     

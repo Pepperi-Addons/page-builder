@@ -1,38 +1,28 @@
-import { GenericListModule } from './../generic-list/generic-list.module';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { RouterModule, Routes } from '@angular/router';
+import { OverlayModule} from '@angular/cdk/overlay';
+
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-// import { PepIconModule, pepIconNumberPlus, PepIconRegistry,
-//     pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit,
-// pepIconSystemMove, pepIconSystemBin, pepIconViewCardMd } from '@pepperi-addons/ngx-lib/icon';
-import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { MatCardModule } from '@angular/material/card';
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { PepNgxLibModule, PepAddonService, PepCustomizationService, PepFileService, PepHttpService } from '@pepperi-addons/ngx-lib';
+
+import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
+import { PepNgxLibModule, PepAddonService } from '@pepperi-addons/ngx-lib';
 import { PagesManagerComponent} from './pages-manager.component';
 import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
-import { OverlayModule} from '@angular/cdk/overlay';
 import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
-import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
-import { RouterModule, Routes } from '@angular/router';
-
 import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
 
-// const pepIcons = [
-//     pepIconSystemClose,
-//     pepIconNumberPlus,
-//     pepIconSystemBolt,
-//     pepIconSystemEdit,
-//     pepIconSystemMove,
-//     pepIconSystemBin,
-//     pepIconViewCardMd
-// ];
+import { PepGenericListModule } from '@pepperi-addons/ngx-composite-lib/generic-list';
+
+import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 
 const routes: Routes = [
     {
@@ -59,7 +49,7 @@ const routes: Routes = [
         PepSelectModule,
         PepTextboxModule,
         PepMenuModule,
-        GenericListModule,
+        PepGenericListModule,
         OverlayModule,
         PepButtonModule,
         PepCheckboxModule,

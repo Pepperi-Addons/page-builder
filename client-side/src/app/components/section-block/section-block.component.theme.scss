@@ -1,14 +1,12 @@
-@import '../../../mixins.scss';
+@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/mixins';
 
-@mixin section-block-component-theme($pepperi-theme) {
-    .section-block-container {
-        &.editable-state {
+.section-block-container {
+    &.editable-state {
 
-            // If the current block is not active (his editor after edit click)
-            &.block-hidden-state {
-                &:not(.active-block) {
-                    @include pep-cross-hatch($pepperi-theme);
-                }
+        // If the current block is not active (his editor after edit click)
+        &.block-hidden-state {
+            &:not(.active-block) {
+                @include mixins.pep-cross-hatch();
             }
         }
     }

@@ -1,34 +1,34 @@
-@mixin page-manager-component-theme($pepperi-theme) {
-    .main-area-container {
-        background: get-pep-color($pepperi-theme, color-system-primary, color-tran-10);
+@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/functions';
 
-        .header-container {
-            background: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
-            box-shadow: get-pep-shadow($pepperi-theme, shadow-sm, regular);
+.main-area-container {
+    background: functions.get-pep-color(color-system-primary, color-tran-10);
 
-            .header-title {
-                color: get-pep-color($pepperi-theme, color-text, color-dimmed);
-            }
+    .header-container {
+        background: functions.get-pep-color(color-system-primary-invert, color-base);
+        box-shadow: functions.get-pep-shadow(shadow-sm, regular);
+
+        .header-title {
+            color: functions.get-pep-color(color-text, color-dimmed);
         }
+    }
 
-        .header-container-preview {
-            background: unset;
-            // box-shadow: unset;
-            background-color: get-pep-color($pepperi-theme, color-text, color-caution);
-            
-            .preview-title,
-            .color-link {
-                color: get-pep-color($pepperi-theme, color-text, color-invert);
-            }
+    .header-container-preview {
+        background: unset;
+        // box-shadow: unset;
+        background-color: functions.get-pep-color(color-text, color-caution);
+        
+        .preview-title,
+        .color-link {
+            color: functions.get-pep-color(color-text, color-invert);
         }
+    }
 
-        .page-builder-wrapper {
-            background: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
-            box-shadow: get-pep-shadow($pepperi-theme, shadow-md, regular);
+    .page-builder-wrapper {
+        background: functions.get-pep-color(color-system-primary-invert, color-base);
+        box-shadow: functions.get-pep-shadow(shadow-md, regular);
 
-            .backdrop {
-                background: get-pep-color($pepperi-theme, color-system-primary, color-tran-70);
-            }
+        .backdrop {
+            background: functions.get-pep-color(color-system-primary, color-tran-70);
         }
     }
 }

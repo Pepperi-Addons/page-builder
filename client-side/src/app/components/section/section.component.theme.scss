@@ -1,103 +1,103 @@
+@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/mixins';
+@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/functions';
 @import '../../../mixins.scss';
 
-@mixin section-component-theme($pepperi-theme) {
-    .section-container {
-        background: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
+.section-container {
+    background: functions.get-pep-color(color-system-primary-invert, color-base);
+    
+    // This css is only for edit mode.
+    &.editable-state {
+        $color-caution: functions.get-pep-color(color-text, color-caution);
+        $color-system-primary: functions.get-pep-color(color-system-primary, color-base);
         
-        // This css is only for edit mode.
-        &.editable-state {
-            $color-caution: get-pep-color($pepperi-theme, color-text, color-caution);
-            $color-system-primary: get-pep-color($pepperi-theme, color-system-primary, color-base);
-            
-            &.active-section {
-                @include focus($pepperi-theme);
-            }
+        &.active-section {
+            @include mixins.focus();
+        }
 
-            // For section hidden state
-            &.section-hidden-state {
-                // If the current section is not active (his editor after edit click)
-                &:not(.active-section) {
-                    @include pep-cross-hatch($pepperi-theme);
-                }
+        // For section hidden state
+        &.section-hidden-state {
+            // If the current section is not active (his editor after edit click)
+            &:not(.active-section) {
+                @include mixins.pep-cross-hatch();
+            }
+        }
+        
+        // Only in main editor state show focus colors.
+        &.main-editor-state {
+            &.cdk-drag-preview {
+                @include mixins.focus(false, $color-caution, $border-width);
             }
             
-            // Only in main editor state show focus colors.
-            &.main-editor-state {
-                &.cdk-drag-preview {
-                    @include focus($pepperi-theme, false, $color-caution, $border-width);
-                }
-                
-                &.cdk-drag-placeholder {
-                    @include focus($pepperi-theme);
-
-                    &:hover,
-                    &.show-hover-state {
-                        @include focus($pepperi-theme, true);
-                    }
-                }
+            &.cdk-drag-placeholder {
+                @include mixins.focus();
 
                 &:hover,
                 &.show-hover-state {
-                    &:not(.section-is-dragging) {
-                        @include focus($pepperi-theme, false, $color-caution, $border-width);
-                    }
-                }
-
-                .section-toolbar {
-                    .draggable-item-container {
-                        @include focus($pepperi-theme, false, $color-caution, $border-width);
-                    }
-                }
-            }
-            
-            .section-background {
-                .back-template {
-                    background-color: #BEC3E5;
-                    @include dash-border(border-right, $border-width, $color-system-primary);
+                    @include mixins.focus(true);
                 }
             }
 
-            .columns-wrapper {
+            &:hover,
+            &.show-hover-state {
+                &:not(.section-is-dragging) {
+                    @include mixins.focus(false, $color-caution, $border-width);
+                }
+            }
+
+            .section-toolbar {
+                ::ng-deep.draggable-item-container {
+                    @include mixins.focus(false, $color-caution, $border-width);
+                }
+            }
+        }
+        
+        .section-background {
+            .back-template {
+                background-color: #BEC3E5;
+                @include dash-border(border-right, $border-width, $color-system-primary);
+            }
+        }
+
+        .columns-wrapper {
+            .section-column {
+                @include dash-border(border, $border-width, $color-system-primary);
+
+                &.active-column {
+                    background: functions.get-pep-color(color-system-primary-invert, color-base);
+                }
+
+                // &.cdk-drop-list-receivin - can recive block
+                // &.cdk-drop-list-dragging - the block is dragging on this area.
+                &.cdk-drop-list-dragging {
+                    @include mixins.focus();
+                }
+                
+                // When section column already contains block show on hover caution focus.
+                &.already-contains-block {
+                    &:hover {
+                        @include mixins.focus(false, $color-caution);
+                    }
+                }
+            }
+
+            // Only if there is no gap remove the double border.
+            &.gap-NONE {
                 .section-column {
-                    @include dash-border(border, $border-width, $color-system-primary);
-
-                    &.active-column {
-                        background: get-pep-color($pepperi-theme, color-system-primary-invert, color-base);
-                    }
-
-                    // &.cdk-drop-list-receivin - can recive block
-                    // &.cdk-drop-list-dragging - the block is dragging on this area.
-                    &.cdk-drop-list-dragging {
-                        @include focus($pepperi-theme);
-                    }
-                 
-                    // When section column already contains block show on hover caution focus.
-                    &.already-contains-block {
-                        &:hover {
-                            @include focus($pepperi-theme, false, $color-caution);
-                        }
-                    }
-                }
-    
-                // Only if there is no gap remove the double border.
-                &.gap-NONE {
-                    .section-column {
-                        // Remove the border for no dupplicate.
-                        &:not(&:first-of-type) {
-                            &.horizontal {
-                                border-left: unset;
-                                
-                                &.cdk-drop-list-dragging {
-                                    @include dash-border(border-left, $border-width, $color-system-primary);
-                                }
+                    // Remove the border for no dupplicate.
+                    &:not(&:first-of-type) {
+                        &.horizontal {
+                            border-left: unset;
+                            
+                            &.cdk-drop-list-dragging {
+                                @include dash-border(border-left, $border-width, $color-system-primary);
                             }
+                        }
 
-                            &.vertical {
-                                border-top: unset;
-                                
-                                &.cdk-drop-list-dragging {
-                                    @include dash-border(border-top, $border-width, $color-system-primary);
-                                }
+                        &.vertical {
+                            border-top: unset;
+                            
+                            &.cdk-drop-list-dragging {
+                                @include dash-border(border-top, $border-width, $color-system-primary);
                             }
                         }
                     }

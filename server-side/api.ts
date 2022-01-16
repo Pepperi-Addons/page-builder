@@ -1,6 +1,15 @@
 import { PagesApiService } from './pages-api.service'
 import { Client, Request } from '@pepperi-addons/debug-server'
 
+export async function get_page(client: Client, request: Request): Promise<any> {
+    try {
+        const service = new PagesApiService(client);
+        return service.getPage(request?.query['key']);
+    } catch(err) {
+        throw new Error(`Failed to get page. error - ${err}`);
+    }
+}
+
 export async function pages(client: Client, request: Request): Promise<any> {
     try {
         const service = new PagesApiService(client);

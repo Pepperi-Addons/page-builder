@@ -119,8 +119,8 @@ export class PagesValidatorService {
         // Validate Height if exist (Optional)
         this.validateObjectProperty(section, 'Height', sectionsPropertyBreadcrumb, true, 'number');
 
-        // Validate Min Height if exist (Optional)
-        this.validateObjectProperty(section, 'MinHeight', sectionsPropertyBreadcrumb, true, 'number');
+        // // Validate Min Height if exist (Optional)
+        // this.validateObjectProperty(section, 'MinHeight', sectionsPropertyBreadcrumb, true, 'number');
 
         // Validate Split if exist (Optional)
         if (section.hasOwnProperty('Split')) {
@@ -232,11 +232,45 @@ export class PagesValidatorService {
     }
 
     validatePageBlocks(page: Page, availableBlocks: IAvailableBlockData[]) {
+        const blockKeys = new Map<string, string>();
         for (let index = 0; index < page.Blocks?.length; index++) {
             const block = page.Blocks[index];
-
+            
+            // Validate if the block key is not already exist.
+            if (!blockKeys.has(block.Key)) {
+                blockKeys.set(block.Key, block.Key);
+            } else {
+                throw new Error(`Block with Key ${block.Key} is already exist.`);
+            }
+            
+            // Validate if the block is in the available blocks.
             if (availableBlocks.findIndex(ab => ab.relation.AddonUUID === block.Relation?.AddonUUID) === -1) {
                 throw new Error(`Block with AddonUUID ${block.Relation.AddonUUID} isn't exist as available page block for this type - ${page.Type}.`);
+            }
+        }
+
+        const sectionsBlockKeys = new Map<string, string>();
+
+        // Validate blocks in sections.
+        for (let sectionIndex = 0; sectionIndex < page.Layout?.Sections?.length; sectionIndex++) {
+            const section = page.Layout?.Sections[sectionIndex];
+
+            for (let columnIndex = 0; columnIndex < section?.Columns?.length; columnIndex++) {
+                const block = section?.Columns[columnIndex].Block;
+            
+                if (block) {
+                    // Validate if the block key is not already exist.
+                    if (!sectionsBlockKeys.has(block.BlockKey)) {
+                        sectionsBlockKeys.set(block.BlockKey, block.BlockKey);
+                    } else {
+                        throw new Error(`Block with Key ${block.BlockKey} in section index ${sectionIndex} is already exist in another section column.`);
+                    }
+
+                    // Validate if block key is in the blockKeys map.
+                    if (!blockKeys.has(block.BlockKey)) {
+                        throw new Error(`BlockKey ${block.BlockKey} in section index ${sectionIndex} isn't exist in Page.Blocks.`);
+                    }
+                }
             }
         }
     }
@@ -297,7 +331,7 @@ export class PagesValidatorService {
 
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Name');
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Height');
-            this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'MinHeight');
+            // this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'MinHeight');
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Split');
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Hide');
 

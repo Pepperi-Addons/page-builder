@@ -1,18 +1,14 @@
 import { NavigationService } from './../../services/navigation.service';
 import { IPageRowModel, PagesService } from '../../services/pages.service';
-import { GenericListModule } from './../generic-list/generic-list.module';
 import { Component, OnInit, Renderer2 } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
-import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
+import { PepGenericListDataSource } from '@pepperi-addons/ngx-composite-lib/generic-list';
 import { PepAddonService } from '@pepperi-addons/ngx-lib';
-import { from, Observable } from "rxjs";
-//simcha
-import { map } from 'rxjs/operators';
-import { GenericListDataSource } from '../generic-list/generic-list.component';
 import { GridDataViewField, Page } from '@pepperi-addons/papi-sdk';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { PepSelectionData } from '@pepperi-addons/ngx-lib/list';
 
 export enum Page_Type { "Homepage" = 1, "Dashbaord" = 2, "Item" = 3, "Generic" = 4, "None" = 5 };
 
@@ -80,7 +76,7 @@ export class PagesManagerComponent implements OnInit {
         }
     }
 
-    pagesDataSource: GenericListDataSource = {
+    pagesDataSource: PepGenericListDataSource = {
         getList: (options) => {
             const res: Promise<IPageRowModel[]> = this.pagesService.getPages(this.navigationService.addonUUID, options).toPromise().then((pages) => {
                 this.hasPages = !pages || pages.length < 1 ? false : true;
@@ -124,31 +120,31 @@ export class PagesManagerComponent implements OnInit {
                 MinimumColumnWidth: 0
             }
         },
-
-        getActions: async (objs) => {
-            this.selectedPageID = objs.length > 0 ? objs[0].Key : '';
-            return objs.length ? [
-                {
-                    title: this.translate.instant("ACTIONS.EDIT"),
-                    handler: async (objs) => {
-                        this.navigationService.navigateToPage([objs[0].Key].toString());
-                    }
-                },{
-                    title: this.translate.instant("ACTIONS.EXPORT"),
-                    handler: async (objs) => {
-                        // TODO - ADD EXPORT PAGES CALL
-                        //this.pagesService.exportPage([objs[0].Key].toString());
-                    }
-                },
-                {
-                    title: this.translate.instant("ACTIONS.DELETE"),
-                    handler: async (objs: IPageRowModel[]) => {
-                        if (objs.length > 0) {
-                            this.deletePage(objs[0].Key);
+        getActions: async (data: PepSelectionData) => {
+            if (data?.rows.length > 0 && data?.rows[0]) {
+                return [
+                    {
+                        title: this.translate.instant("ACTIONS.EDIT"),
+                        handler: async (data: PepSelectionData) => {
+                            this.navigationService.navigateToPage([data?.rows[0].Key].toString());
+                        }
+                    },{
+                        title: this.translate.instant("ACTIONS.EXPORT"),
+                        handler: async (data: PepSelectionData) => {
+                            // TODO - ADD EXPORT PAGES CALL
+                            //this.pagesService.exportPage([data?.rows[0].Key].toString());
+                        }
+                    },
+                    {
+                        title: this.translate.instant("ACTIONS.DELETE"),
+                        handler: async (data: PepSelectionData) => {
+                            if (data?.rows.length > 0) {
+                                this.deletePage(data?.rows[0].Key);
+                            }
                         }
                     }
-                }
-            ] : []
+                ]
+            } else return [];   
         }
     }
 

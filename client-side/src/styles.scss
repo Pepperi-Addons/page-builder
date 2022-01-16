@@ -1,16 +1,30 @@
-// @import 'ngx-lib/src/core/style/abstracts/mixins';
-// @import 'ngx-lib/src/core/style/abstracts/variables';
-
-@import '~@pepperi-addons/ngx-composite-lib/styling';
+@use '~@pepperi-addons/ngx-composite-lib/styling';
+@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
 
 @import './mixins.scss';
 
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css?family=Permanent+Marker:200,300,400,500,600,700,800');
 
-
 html {
     body.inheritCursors * {
         cursor: inherit !important;
+    }
+}
+
+// set mat tab as fixed tab just on the editors
+.editor-tabs {
+    .mat-tab-header {
+        display: block;
+        width: 224px;
+        height: variables.$tabs-labels-height;
+        z-index: 2;
+        
+        .mat-tab-label-container {
+            position: fixed;
+            width: inherit;
+            opacity: 1;
+            background: #fff;
+        }
     }
 }

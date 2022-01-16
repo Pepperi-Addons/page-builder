@@ -67,10 +67,6 @@ export class PagesApiService {
         return availableBlocks;
     }
     
-    private async getPage(pagekey: string, tableName: string): Promise<Page> {
-        return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).key(pagekey).get() as Page;
-    }
-
     private async getPagesFrom(tableName: string, options: FindOptions | undefined = undefined): Promise<Page[]> {
         return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).find(options) as Page[];
     }
@@ -164,8 +160,11 @@ export class PagesApiService {
     //     const installedAddon = await this.papiClient.addons.installedAddons.uuid(installedAddonUUID).get();
     //     return installedAddon?.Addon.UUID || undefined;
     // }
-
     
+    async getPage(pagekey: string, tableName: string = PAGES_TABLE_NAME): Promise<Page> {
+        return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).key(pagekey).get() as Page;
+    }
+
     async createPagesTablesSchemes(): Promise<AddonDataScheme[]> {
         const promises: AddonDataScheme[] = [];
         
@@ -173,6 +172,20 @@ export class PagesApiService {
         const createPagesTable = await this.papiClient.addons.data.schemes.post({
             Name: PAGES_TABLE_NAME,
             Type: 'cpi_meta_data',
+            Fields: {
+                Key: {
+                    Type: 'String'
+                },
+                Name: {
+                    Type: 'String'
+                },
+                Description: {
+                    Type: 'String'
+                },
+                Type: {
+                    Type: 'String'
+                }
+            }
         });
 
         // Create pages draft table

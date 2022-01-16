@@ -33,7 +33,7 @@ export async function get_page_data(client: Client, request: Request): Promise<a
         const service = new PagesApiService(client);
         return service.getPageData(request?.query);
     } catch(err) {
-        throw new Error(`Failed to get page. error - ${err}`);
+        throw new Error(`Failed to get page data. error - ${err}`);
     }
 }
 

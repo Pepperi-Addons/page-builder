@@ -26,11 +26,11 @@
         <div class="pageExplanation">
             <span class="body-md">{{ 'PAGES_MANAGER.MAIN_EXPLANATION' | translate }}</span>
         </div>
-        <generic-list *ngIf="hasPages" [dataSource]="pagesDataSource" [inline]="true" [title]="'PAGES_MANAGER.SECONDARY_HEADER' | translate">
+        <pep-generic-list *ngIf="hasPages" [dataSource]="pagesDataSource" [inline]="true" [title]="'PAGES_MANAGER.SECONDARY_HEADER' | translate">
             <ng-container right-buttons>
                 <ng-container *ngTemplateOutlet="topBarEnd"></ng-container>
             </ng-container>
-        </generic-list>
+        </pep-generic-list>
         <ng-container *ngIf="!hasPages">
             <pep-top-bar class="main-top-header" [inline]="true">
                 <div header-end-content>

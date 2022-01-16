@@ -8,7 +8,7 @@ import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 @Component({
     selector: 'section',
     templateUrl: './section.component.html',
-    styleUrls: ['./section.component.scss']
+    styleUrls: ['./section.component.scss', './section.component.theme.scss']
 })
 export class SectionComponent implements OnInit {
     @ViewChild('sectionContainer') sectionContainerRef: ElementRef;
