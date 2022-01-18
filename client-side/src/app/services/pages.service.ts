@@ -8,6 +8,8 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 import { NavigationService } from "./navigation.service";
 
+export type UiPageSizeType = PageSizeType | 'none';
+
 export type PageRowStatusType = 'draft' | 'published';
 export interface IPageRowModel {
     Key: string,
@@ -471,7 +473,7 @@ export class PagesService {
 
         // Run on all consumers.
         this.pageBlockProgressMap.forEach((value: IBlockProgress, key: string) => {
-            const consumeFilters = value.block.PageConfiguration.Parameters.filter(param => param.Consume && param.Type === 'Filter') as PageConfigurationParameterFilter[];
+            const consumeFilters = value.block.PageConfiguration?.Parameters.filter(param => param.Consume && param.Type === 'Filter') as PageConfigurationParameterFilter[];
             
             // TODO: Remove this
             // const consume = value.block.PageConfiguration?.Consume || null;

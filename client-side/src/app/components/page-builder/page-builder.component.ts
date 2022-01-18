@@ -64,8 +64,8 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     @HostBinding('style.padding-bottom')
     paddingBottom = '0';
 
-    sectionsGap: PageSizeType | 'NONE';
-    columnsGap: PageSizeType | 'NONE';
+    sectionsGap: PageSizeType | 'none';
+    columnsGap: PageSizeType | 'none';
 
     private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
     get sections$(): Observable<PageSection[]> {
@@ -87,7 +87,7 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     ) {
     }
 
-    private convertPageSizeType(size: PageSizeType | 'NONE') {
+    private convertPageSizeType(size: PageSizeType | 'none') {
         let res;
 
         if (size === 'lg') {
@@ -109,8 +109,8 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
             const maxWidthToSet = maxWidth === 0 ? 'unset' : `${maxWidth}px`;
             this.renderer.setStyle(this.sectionsContainer.nativeElement, 'max-width', maxWidthToSet);
 
-            this.sectionsGap = page.Layout.SectionsGap || 'NONE';
-            this.columnsGap = page.Layout.ColumnsGap || 'NONE';
+            this.sectionsGap = page.Layout.SectionsGap || 'none';
+            this.columnsGap = page.Layout.ColumnsGap || 'none';
 
             this.paddingInline = this.convertPageSizeType(page.Layout.HorizontalSpacing);
             this.paddingBottom = this.paddingTop = this.convertPageSizeType(page.Layout.VerticalSpacing);

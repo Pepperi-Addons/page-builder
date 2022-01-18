@@ -37,11 +37,28 @@ export class SubAddon3Component implements OnInit {
 
     onBtnClick(event) {
         this.hostEvents.emit({
-            action: 'set-filters',
-            filters: [
+            // action: 'set-filters',
+            // filters: [
+            //     {
+            //         // a unique key to later update this filter with
+            //         key: '123', // this.clickCount < 2 ? '123' : (this.clickCount < 8 ? '456' : '789'),
+            //         // what resource the filter field is.
+            //         resource: 'accounts',
+            //         // a JSON filter. One layer, complex (AND OR) operations not allowed
+            //         filter: {
+            //             FieldType: "String",
+            //             ApiName: "Type",
+            //             Operation: "IsEqual",
+            //             Values: this.clickCount < 2 ? ["Customer"] : (this.clickCount < 8 ? ["Customer123"] : ["Customer456"]) //["Customer"]
+            //         }
+            //     }
+            // ]
+            action: 'set-parameter',
+            key: 'MyFilter2',
+            value: [
                 {
                     // a unique key to later update this filter with
-                    key: '123', // this.clickCount < 2 ? '123' : (this.clickCount < 8 ? '456' : '789'),
+                    // key: '123', // this.clickCount < 2 ? '123' : (this.clickCount < 8 ? '456' : '789'),
                     // what resource the filter field is.
                     resource: 'accounts',
                     // a JSON filter. One layer, complex (AND OR) operations not allowed
@@ -52,7 +69,8 @@ export class SubAddon3Component implements OnInit {
                         Values: this.clickCount < 2 ? ["Customer"] : (this.clickCount < 8 ? ["Customer123"] : ["Customer456"]) //["Customer"]
                     }
                 }
-            ]});
+            ]
+        });
 
         this.clickCount++;
     }

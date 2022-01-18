@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostBinding, HostListener, Input, OnChanges, OnInit, QueryList, Renderer2, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragEnter, CdkDragExit, CdkDragStart, CdkDropList } from '@angular/cdk/drag-drop';
-import { IEditor, PagesService } from 'src/app/services/pages.service';
+import { IEditor, PagesService, UiPageSizeType } from 'src/app/services/pages.service';
 import { DataViewScreenSize, PageBlock, PageSectionColumn, PageSizeType, SplitType } from '@pepperi-addons/papi-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
@@ -78,7 +78,7 @@ export class SectionComponent implements OnInit {
         return this._hideIn;
     }
 
-    @Input() columnsGap: PageSizeType | 'NONE';
+    @Input() columnsGap: UiPageSizeType;
     @Input() sectionsColumnsDropList = [];
     
     private _pageBlocksMap = new Map<string, PageBlock>();

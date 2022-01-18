@@ -21,19 +21,19 @@ $border-width: 0.125rem;
 }
 
 @mixin gap-sizes() {
-    &.gap-NONE { 
+    &.gap-none { 
         gap: 0; /* none*/
     }
 
-    &.gap-SM {
+    &.gap-sm {
         gap: 0.5rem;
     }
 
-    &.gap-MD {
+    &.gap-md {
         gap: 1rem;
     }
 
-    &.gap-LG {
+    &.gap-lg {
         gap: 2rem;
     }
 }

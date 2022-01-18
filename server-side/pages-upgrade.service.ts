@@ -12,13 +12,15 @@ export class PagesUpgradeService extends PagesApiService {
     //**************************************************************************************
     private updateConfigurationProperty(page: Page) {
         page.Blocks.forEach(block => {
-            const configurationToSet: ResourceDataConfiguration = {
-                Resource: block.Relation.Name,
-                AddonUUID: block.Relation.AddonUUID,
-                Data: block.Configuration ? JSON.parse(JSON.stringify(block.Configuration)) : {}
-            };
+            if (block.Configuration === undefined || block.Configuration.Resource === undefined) {
+                const configurationToSet: ResourceDataConfiguration = {
+                    Resource: block.Relation.Name,
+                    AddonUUID: block.Relation.AddonUUID,
+                    Data: block.Configuration ? JSON.parse(JSON.stringify(block.Configuration)) : {}
+                };
 
-            block.Configuration = configurationToSet;
+                block.Configuration = configurationToSet;
+            }
         });
     }
 

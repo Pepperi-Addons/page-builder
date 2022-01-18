@@ -81,7 +81,7 @@
             }
 
             // Only if there is no gap remove the double border.
-            &.gap-NONE {
+            &.gap-none {
                 .section-column {
                     // Remove the border for no dupplicate.
                     &:not(&:first-of-type) {

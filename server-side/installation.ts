@@ -42,12 +42,12 @@ export async function uninstall(client: Client, request: Request): Promise<any> 
 }
 
 export async function upgrade(client: Client, request: Request): Promise<any> {
-    // try {
-    //     const pageUpgradeService = new PagesUpgradeService(client);
-    //     await pageUpgradeService.upgradeToVersion61(true);
-    // } catch (err) {
-    //     throw new Error(`Failed to upgrade to version 61. error - ${err}`);
-    // }
+    try {
+        const pageUpgradeService = new PagesUpgradeService(client);
+        await pageUpgradeService.upgradeToVersion61(true);
+    } catch (err) {
+        throw new Error(`Failed to upgrade to version 61. error - ${err}`);
+    }
 
     return { success:true, resultObject: {} };
 }

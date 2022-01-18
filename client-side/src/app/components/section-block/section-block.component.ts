@@ -101,7 +101,7 @@ export class SectionBlockComponent implements OnInit {
 
         this.pageBuilderService.pageConsumersFiltersMapChange$.subscribe((map: Map<string, any>) => {
             // Only if this block is consumer than set hostObject filter (cause some filter was change).
-            const blockIsConsumeFilters = this.pageBlock.PageConfiguration.Parameters.some(param => param.Consume && param.Type === 'Filter');
+            const blockIsConsumeFilters = this.pageBlock.PageConfiguration?.Parameters.some(param => param.Consume && param.Type === 'Filter');
             // TODO: Remove this
             // if (this.pageBlock.PageConfiguration?.Consume) {
             if (blockIsConsumeFilters) {
