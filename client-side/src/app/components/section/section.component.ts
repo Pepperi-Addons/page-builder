@@ -119,7 +119,7 @@ export class SectionComponent implements OnInit {
     ) { }
 
     private calculateIfSectionContainsBlocks() {
-        this.containsBlocks = this.columns.some(column => column.Block);
+        this.containsBlocks = this.columns.some(column => column.BlockContainer);
     }
 
     private setScreenType() {
@@ -190,7 +190,7 @@ export class SectionComponent implements OnInit {
                             
                             // If there are some hidden columns change the column width to 0 (for cut the spacing in the grid-template-rows).
                             this.columns.forEach((column, index) => {
-                                if (!column.Block) {
+                                if (!column.BlockContainer) {
                                     cssSplitArray[index] = '0';
                                 }
                             });
@@ -275,7 +275,7 @@ export class SectionComponent implements OnInit {
     onSectionBlockDragExited(event: CdkDragExit) {
         // If the block is exit from his container and it's the only block in this section.
         if (this.containsBlocks) {
-            const blocksLength = this.columns.filter(column => column.Block).length;
+            const blocksLength = this.columns.filter(column => column.BlockContainer).length;
 
             if (blocksLength === 1) {
                 this.containsBlocks = false;

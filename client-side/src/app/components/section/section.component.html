@@ -20,8 +20,8 @@
         <div [id]="sectionColumnKeyPrefix + i" 
             *ngFor="let column of columns; let i=index;"
             class="section-column {{screenSize <= pepScreenSizeToFlipToVertical ? 'horizontal' : 'vertical'}}"
-            [ngClass]="{ 'active-column': selectedBlockKey === column.Block?.BlockKey, 
-                'already-contains-block': editable && column.Block?.BlockKey?.length > 0 && draggingBlockKey?.length > 0 && column.Block?.BlockKey !== draggingBlockKey }"
+            [ngClass]="{ 'active-column': selectedBlockKey === column.BlockContainer?.BlockKey, 
+                'already-contains-block': editable && column.BlockContainer?.BlockKey?.length > 0 && draggingBlockKey?.length > 0 && column.BlockContainer?.BlockKey !== draggingBlockKey }"
             cdkDropList
             [cdkDropListData]="column"
             [cdkDropListOrientation]="screenSize <= pepScreenSizeToFlipToVertical ? 'horizontal' : 'vertical'" 
@@ -29,10 +29,10 @@
             (cdkDropListDropped)="onBlockDropped($event)"
             [cdkDropListEnterPredicate]="canDropPredicate(i)"
         >
-            <section-block *ngIf="column.Block && pageBlocksMap.has(column.Block.BlockKey)" class="section-block" 
-                [sectionKey]="key" [pageBlock]="pageBlocksMap.get(column.Block.BlockKey)"
-                [columnBlock]="column.Block" [editable]="editable" [isMainEditorState]="isMainEditorState" [sectionHeight]="styleHeight"
-                [active]="selectedBlockKey === column.Block?.BlockKey" [screenType]="screenType"
+            <section-block *ngIf="column.BlockContainer && pageBlocksMap.has(column.BlockContainer.BlockKey)" class="section-block" 
+                [sectionKey]="key" [pageBlock]="pageBlocksMap.get(column.BlockContainer.BlockKey)"
+                [blockContainer]="column.BlockContainer" [editable]="editable" [isMainEditorState]="isMainEditorState" [sectionHeight]="styleHeight"
+                [active]="selectedBlockKey === column.BlockContainer?.BlockKey" [screenType]="screenType"
                 (dragExited)="onSectionBlockDragExited($event)" (dragEntered)="onSectionBlockDragEntered($event)"></section-block>
         </div>
     </div>

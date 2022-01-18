@@ -86,9 +86,9 @@ export class PageBuilderEditorComponent implements OnInit {
 
         this.sizesGroupButtons = [
             { key: 'NONE', value: this.translate.instant('GROUP_SIZE.NONE') },
-            { key: 'SM', value: this.translate.instant('GROUP_SIZE.SM') },
-            { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') },
-            { key: 'LG', value: this.translate.instant('GROUP_SIZE.LG') }
+            { key: 'sm', value: this.translate.instant('GROUP_SIZE.SM') },
+            { key: 'md', value: this.translate.instant('GROUP_SIZE.MD') },
+            { key: 'lg', value: this.translate.instant('GROUP_SIZE.LG') }
         ];
         
         this.pageBuilderService.availableBlocksLoadedSubject$.subscribe(availableBlocks => {

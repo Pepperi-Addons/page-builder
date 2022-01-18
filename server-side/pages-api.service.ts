@@ -4,15 +4,15 @@ import { v4 as uuid } from 'uuid';
 import { PageRowProjection, TempBlankPageData, IAvailableBlockData, IPageBuilderData } from './pages.model';
 import { PagesValidatorService } from './pages-validator.service';
 
-const PAGES_TABLE_NAME = 'Pages';
-const DRAFT_PAGES_TABLE_NAME = 'PagesDrafts';
+export const PAGES_TABLE_NAME = 'Pages';
+export const DRAFT_PAGES_TABLE_NAME = 'PagesDrafts';
 
 export class PagesApiService {
     papiClient: PapiClient;
     addonUUID: string;
     pagesValidatorService: PagesValidatorService;
 
-    constructor(private client: Client) {
+    constructor(client: Client) {
         this.addonUUID = client.AddonUUID;
         this.pagesValidatorService = new PagesValidatorService();
 
@@ -33,17 +33,12 @@ export class PagesApiService {
         return this.papiClient.addons.installedAddons.addonUUID(uuid).get();
     }
 
-    private async getAvailableBlocks(pageType: string): Promise<IAvailableBlockData[]> {
+    private async getAvailableBlocks(): Promise<IAvailableBlockData[]> {
         // Get the PageBlock relations 
         const pageBlockRelations: NgComponentRelation[] = await this.getRelations('PageBlock');
                 
-        // Distinct the addons uuid's and filter by pageType
-        const distinctAddonsUuids = [...new Set(pageBlockRelations.filter(row => (
-            row.AllowedPageTypes === undefined || 
-            row.AllowedPageTypes.lenth === 0 || 
-            pageType.length === 0 || 
-            (row.AllowedPageTypes.lenth > 0 && row.AllowedPageTypes.includes(pageType))
-        )).map(obj => obj.AddonUUID))];
+        // Distinct the addons uuid's
+        const distinctAddonsUuids = [...new Set(pageBlockRelations.map(obj => obj.AddonUUID))];
 
         // Get the installed addons (for the relative path and the current version)
         const addonsPromises: Promise<any>[] = [];
@@ -67,10 +62,6 @@ export class PagesApiService {
         return availableBlocks;
     }
     
-    private async getPagesFrom(tableName: string, options: FindOptions | undefined = undefined): Promise<Page[]> {
-        return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).find(options) as Page[];
-    }
-
     private async hidePage(pagekey: string, tableName: string): Promise<boolean> {
         let page = await this.getPage(pagekey, tableName);
 
@@ -95,8 +86,8 @@ export class PagesApiService {
         // Validate page object before upsert.
         this.pagesValidatorService.validatePageProperties(page);
 
-        // Validate page blocks (check that the blocks are installed and that thay are by the page type).
-        const availableBlocks = await this.getAvailableBlocks(page.Type || '');
+        // Validate page blocks (check that the blocks are in the available blocks).
+        const availableBlocks = await this.getAvailableBlocks();
         this.pagesValidatorService.validatePageBlocks(page, availableBlocks);
 
         // Override the page according the interface.
@@ -124,9 +115,9 @@ export class PagesApiService {
                 for (let columnIndex = 0; columnIndex < section.Columns.length; columnIndex++) {
                     const column = section.Columns[columnIndex];
                     
-                    if (column.Block && blocksToRemove.some(btr => btr.Key === column.Block?.BlockKey)) {
-                        console.log(`delete block with the key - ${JSON.stringify(column.Block.BlockKey)}`);
-                        delete column.Block;
+                    if (column.BlockContainer && blocksToRemove.some(btr => btr.Key === column.BlockContainer?.BlockKey)) {
+                        console.log(`delete block with the key - ${JSON.stringify(column.BlockContainer.BlockKey)}`);
+                        delete column.BlockContainer;
                     }
                 }
             }
@@ -153,6 +144,15 @@ export class PagesApiService {
             .then((res) => res[0]?.Addon.UUID || undefined);
     }
 
+    
+    /***********************************************************************************************/
+    /*                                  Protected functions
+    /***********************************************************************************************/
+
+    protected async getPagesFrom(tableName: string, options: FindOptions | undefined = undefined): Promise<Page[]> {
+        return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).find(options) as Page[];
+    }
+
     /***********************************************************************************************/
     /*                                  Public functions
     /***********************************************************************************************/
@@ -172,20 +172,18 @@ export class PagesApiService {
         const createPagesTable = await this.papiClient.addons.data.schemes.post({
             Name: PAGES_TABLE_NAME,
             Type: 'cpi_meta_data',
-            Fields: {
-                Key: {
-                    Type: 'String'
-                },
-                Name: {
-                    Type: 'String'
-                },
-                Description: {
-                    Type: 'String'
-                },
-                Type: {
-                    Type: 'String'
-                }
-            }
+            // TODO: This property has no support yet. 
+            // Fields: {
+            //     Key: {
+            //         Type: 'String'
+            //     },
+            //     Name: {
+            //         Type: 'String'
+            //     },
+            //     Description: {
+            //         Type: 'String'
+            //     }
+            // }
         });
 
         // Create pages draft table
@@ -302,10 +300,9 @@ export class PagesApiService {
                 page = await this.getPage(pageKey, PAGES_TABLE_NAME);
             }
 
-            // If page found get the available blocks by page type and return combined object.
+            // If page found get the available blocks return combined object.
             if (page) {
-                const pageType = page.Type || '';
-                const availableBlocks = await this.getAvailableBlocks(pageType) || [];
+                const availableBlocks = await this.getAvailableBlocks() || [];
                  
                 res = {
                     page, 
@@ -412,4 +409,6 @@ export class PagesApiService {
             }
         }
     }
+
+    
 }

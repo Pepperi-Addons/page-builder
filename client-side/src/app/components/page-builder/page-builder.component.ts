@@ -90,11 +90,11 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     private convertPageSizeType(size: PageSizeType | 'NONE') {
         let res;
 
-        if (size === 'LG') {
+        if (size === 'lg') {
             res = '2rem';
-        } else if (size === 'MD') {
+        } else if (size === 'md') {
             res = '1rem';
-        } else if (size === 'SM') {
+        } else if (size === 'sm') {
             res = '0.5rem';
         } else {
             res = '0';
