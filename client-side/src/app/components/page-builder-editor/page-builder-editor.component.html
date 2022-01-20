@@ -14,17 +14,15 @@
                 [cdkDropListData]="availableBlocks"
                 [cdkDropListConnectedTo]="sectionsColumnsDropList">
 
-                <toolbar-actions *ngFor="let availableBlock of availableBlocks;" class="available-block"
-                    [title]="availableBlock.relation?.Description" [showActions]="false" [isDraggable]="true"
-                    cdkDrag style="cursor: grab;" [cdkDragData]="availableBlock" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" 
-                    >
-                </toolbar-actions>
+                <pep-draggable-item *ngFor="let availableBlock of availableBlocks;" class="available-block" [title]="availableBlock.Name"
+                    cdkDrag style="cursor: grab;" [cdkDragData]="availableBlock" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" >
+                </pep-draggable-item>
             </div>
         </div>
     </mat-tab>
     <mat-tab label="{{'PAGE_MANAGER.DESIGN' | translate}}">
         <div class="tab-container">
-            <pep-checkbox [value]="isFullWidth" [label]="'PAGE_MANAGER.FULL_WIDTH_TITLE' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
+            <pep-checkbox class="checkbox-as-title" [value]="isFullWidth" [label]="'PAGE_MANAGER.FULL_WIDTH_TITLE' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
             <pep-textbox [label]="'PAGE_MANAGER.MAX_WIDTH_TITLE' | translate" type="int" [disabled]="isFullWidth" [value]="maxWidth" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
             
             <!-- Spacing -->

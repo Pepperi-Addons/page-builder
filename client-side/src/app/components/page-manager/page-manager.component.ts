@@ -14,7 +14,7 @@ import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog'
 @Component({
     selector: 'page-manager',
     templateUrl: './page-manager.component.html',
-    styleUrls: ['./page-manager.component.scss']
+    styleUrls: ['./page-manager.component.scss', './page-manager.component.theme.scss']
 })
 export class PageManagerComponent implements OnInit {
     @ViewChild('pageBuilderWrapper', { static: true }) pageBuilderWrapper: ElementRef;
@@ -148,6 +148,12 @@ export class PageManagerComponent implements OnInit {
             case 'set-configuration':
                 this.pageBuilderService.updateBlockConfiguration(this.currentEditor.id, event.configuration);
                 break;
+
+            // TODO:
+            case 'set-configuration-field':
+                // this.pageBuilderService.updateBlockConfiguration(this.currentEditor.id, event.configuration);
+                break;
+
             case 'set-page-configuration':
                 this.pageBuilderService.updateBlockPageConfiguration(this.currentEditor.id, event.pageConfiguration);
                 break;

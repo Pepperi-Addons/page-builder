@@ -16,25 +16,48 @@ export class SubAddon2EditorComponent implements OnInit {
     constructor(private translate: TranslateService) { }
 
     private getDefaultPageConfiguration() {
+        // const pageConfiguration = {
+        //     Consume: {
+        //         Filter: {
+        //             Resource: "transaction_lines",
+        //             Fields:  ["UnitsQuantity", "Item.TSABrand", "Transaction.Account.Type", "Transaction.Status"],
+        //         },
+        //         Context: {
+        //             Resource: "transactions"
+        //         }
+        //     },
+        //     Produce: {
+        //         Filters: [{
+        //             Resource: "transactions",
+        //             Fields:  ["Account.Type", "Status"],
+        //         }],
+        //         Context: {
+        //             Resource: "transaction_lines"
+        //         }
+        //     }
+        // };
+
         const pageConfiguration = {
-            Consume: {
-                Filter: {
-                    Resource: "transaction_lines",
-                    Fields:  ["UnitsQuantity", "Item.TSABrand", "Transaction.Account.Type", "Transaction.Status"],
+            Parameters: [
+                {
+                    "Key": "MyFilter1",
+                    "Type": "Filter",
+                    "Mandatory": false,
+                    "Consume": true,
+                    "Produce": false,
+                    "Resource": "transaction_lines",
+                    "Fields":  ["UnitsQuantity", "Item.TSABrand", "Transaction.Account.Type", "Transaction.Status"]
                 },
-                Context: {
-                    Resource: "transactions"
+                {
+                    "Key": "MyFilter2",
+                    "Type": "Filter",
+                    "Mandatory": false,
+                    "Consume": false,
+                    "Produce": true,
+                    "Resource": "accounts",
+                    Fields:  ["Name", "Type", "Status"],
                 }
-            },
-            Produce: {
-                Filters: [{
-                    Resource: "transactions",
-                    Fields:  ["Account.Type", "Status"],
-                }],
-                Context: {
-                    Resource: "transaction_lines"
-                }
-            }
+            ]
         };
 
         return pageConfiguration;

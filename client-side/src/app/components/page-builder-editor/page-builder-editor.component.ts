@@ -4,9 +4,7 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
 import { TranslateService } from '@ngx-translate/core';
 import { IPepButtonClickEvent } from '@pepperi-addons/ngx-lib/button';
 import { NgComponentRelation, PageSizeType } from '@pepperi-addons/papi-sdk';
-import { PagesService, IPageEditor } from '../../services/pages.service';
-
-type UiPageSizeType = PageSizeType | 'NONE';
+import { PagesService, IPageEditor, UiPageSizeType } from '../../services/pages.service';
 
 export interface ISpacingOption {
     key?: UiPageSizeType; 
@@ -33,11 +31,11 @@ export class PageBuilderEditorComponent implements OnInit {
 
         this.isFullWidth = !value.maxWidth || value.maxWidth === 0;
         this.maxWidth = value.maxWidth;
-        this.horizontalSpacing = this._hostObject.horizontalSpacing || 'NONE';
-        this.verticalSpacing = this._hostObject.verticalSpacing || 'NONE';
-        this.sectionsGap = this._hostObject.sectionsGap || 'NONE';
-        this.columnsGap = this._hostObject.columnsGap || 'NONE';
-        this.roundedCorners = this._hostObject.roundedCorners || 'NONE';
+        this.horizontalSpacing = this._hostObject.horizontalSpacing || 'none';
+        this.verticalSpacing = this._hostObject.verticalSpacing || 'none';
+        this.sectionsGap = this._hostObject.sectionsGap || 'none';
+        this.columnsGap = this._hostObject.columnsGap || 'none';
+        this.roundedCorners = this._hostObject.roundedCorners || 'none';
     }
     get hostObject(): IPageEditor {
         return this._hostObject;
@@ -50,11 +48,11 @@ export class PageBuilderEditorComponent implements OnInit {
     // @Input()
     pageDescription: string = '';
 
-    horizontalSpacing: UiPageSizeType = 'NONE'
-    verticalSpacing: UiPageSizeType = 'NONE'
-    sectionsGap: UiPageSizeType = 'NONE';
-    columnsGap: UiPageSizeType = 'NONE';
-    roundedCorners: UiPageSizeType = 'NONE';
+    horizontalSpacing: UiPageSizeType = 'none'
+    verticalSpacing: UiPageSizeType = 'none'
+    sectionsGap: UiPageSizeType = 'none';
+    columnsGap: UiPageSizeType = 'none';
+    roundedCorners: UiPageSizeType = 'none';
 
     isFullWidth: boolean;
     maxWidth: number;
@@ -73,11 +71,11 @@ export class PageBuilderEditorComponent implements OnInit {
         this._hostObject.pageName = this.pageName;
         this._hostObject.pageDescription = this.pageDescription;
         this._hostObject.maxWidth = this.isFullWidth ? 0 : this.maxWidth;
-        this._hostObject.horizontalSpacing = this.horizontalSpacing === 'NONE' ? undefined : this.horizontalSpacing;
-        this._hostObject.verticalSpacing = this.verticalSpacing === 'NONE' ? undefined : this.verticalSpacing;
-        this._hostObject.sectionsGap = this.sectionsGap === 'NONE' ? undefined : this.sectionsGap;
-        this._hostObject.columnsGap = this.columnsGap === 'NONE' ? undefined : this.columnsGap;
-        this._hostObject.roundedCorners = this.roundedCorners === 'NONE' ? undefined : this.roundedCorners;
+        this._hostObject.horizontalSpacing = this.horizontalSpacing === 'none' ? undefined : this.horizontalSpacing;
+        this._hostObject.verticalSpacing = this.verticalSpacing === 'none' ? undefined : this.verticalSpacing;
+        this._hostObject.sectionsGap = this.sectionsGap === 'none' ? undefined : this.sectionsGap;
+        this._hostObject.columnsGap = this.columnsGap === 'none' ? undefined : this.columnsGap;
+        this._hostObject.roundedCorners = this.roundedCorners === 'none' ? undefined : this.roundedCorners;
 
         this.hostObjectChange.emit(this.hostObject);
     }
@@ -85,10 +83,10 @@ export class PageBuilderEditorComponent implements OnInit {
     ngOnInit(): void {
 
         this.sizesGroupButtons = [
-            { key: 'NONE', value: this.translate.instant('GROUP_SIZE.NONE') },
-            { key: 'SM', value: this.translate.instant('GROUP_SIZE.SM') },
-            { key: 'MD', value: this.translate.instant('GROUP_SIZE.MD') },
-            { key: 'LG', value: this.translate.instant('GROUP_SIZE.LG') }
+            { key: 'none', value: this.translate.instant('GROUP_SIZE.NONE') },
+            { key: 'sm', value: this.translate.instant('GROUP_SIZE.SM') },
+            { key: 'md', value: this.translate.instant('GROUP_SIZE.MD') },
+            { key: 'lg', value: this.translate.instant('GROUP_SIZE.LG') }
         ];
         
         this.pageBuilderService.availableBlocksLoadedSubject$.subscribe(availableBlocks => {
@@ -121,27 +119,27 @@ export class PageBuilderEditorComponent implements OnInit {
     }
     
     setColumnsHorizntalGap(key: string ){
-        this.horizontalSpacing = key.toUpperCase() as UiPageSizeType; 
+        this.horizontalSpacing = key as UiPageSizeType; 
         this.updateHostObject();
     }
     
     setColumnsVerticalGap(key: string) {
-        this.verticalSpacing = key.toUpperCase() as UiPageSizeType; 
+        this.verticalSpacing = key as UiPageSizeType; 
         this.updateHostObject();
     }
     
     setSectionGap(key: string) {
-        this.sectionsGap = key.toUpperCase() as UiPageSizeType; 
+        this.sectionsGap = key as UiPageSizeType; 
         this.updateHostObject();
     }
 
     setColumnsGap(key: string) {
-        this.columnsGap = key.toUpperCase() as UiPageSizeType; 
+        this.columnsGap = key as UiPageSizeType; 
         this.updateHostObject();
     }
 
     setRoundedCorners(key: string) {
-        this.roundedCorners = key.toUpperCase() as UiPageSizeType; 
+        this.roundedCorners = key as UiPageSizeType; 
         this.updateHostObject();
     }
 

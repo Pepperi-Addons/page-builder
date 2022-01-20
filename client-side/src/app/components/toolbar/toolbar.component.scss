@@ -1,31 +1,33 @@
-@import 'ngx-lib/src/core/style/abstracts/variables';
-@import '../../../mixins.scss';
+// @import 'ngx-lib/src/core/style/abstracts/variables';
+// @import '../../../mixins.scss';
 
-:host {
-    display: block;
-}
+// :host {
+//     display: block;
+// }
 
-.toolbar-actions-container {
-    // opacity: 0.75;
-    height: $toolbar-height;
-    width: 100%;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    border-radius: $border-radius-md;
-    padding-inline: $spacing-sm;
-}
+// $toolbar-height: 2.5rem;
 
-.title-container {
-    overflow-x: hidden;
-    margin-inline: $spacing-sm;
+// .toolbar-actions-container {
+//     // opacity: 0.75;
+//     height: $toolbar-height;
+//     width: 100%;
+//     display: grid;
+//     grid-template-columns: auto 1fr auto;
+//     align-items: center;
+//     border-radius: $border-radius-md;
+//     padding-inline: $spacing-sm;
+// }
 
-    .title {
-        display: block;
-    }
-}
+// .title-container {
+//     overflow-x: hidden;
+//     margin-inline: $spacing-sm;
 
-.actions {
-    display: inline-flex;
-    gap: $spacing-xs;
-}
+//     .title {
+//         display: block;
+//     }
+// }
+
+// .actions {
+//     display: inline-flex;
+//     gap: $spacing-xs;
+// }

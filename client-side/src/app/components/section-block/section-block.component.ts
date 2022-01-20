@@ -1,20 +1,20 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CdkDragEnd, CdkDragEnter, CdkDragExit, CdkDragStart } from '@angular/cdk/drag-drop';
 import { PagesService } from 'src/app/services/pages.service';
-import { DataViewScreenSize, PageBlock, PageConfiguration, PageSectionBlock } from '@pepperi-addons/papi-sdk';
+import { DataViewScreenSize, PageBlock, PageConfiguration, PageBlockContainer } from '@pepperi-addons/papi-sdk';
 import { PepRemoteLoaderOptions } from '@pepperi-addons/ngx-remote-loader';
 
 interface IHostObject {
     configuration: any;
     pageConfiguration?: PageConfiguration;
-    pageType?: any;
+    // pageType?: any;
     context?: any;
     filter?: any;
 }
 @Component({
     selector: 'section-block',
     templateUrl: './section-block.component.html',
-    styleUrls: ['./section-block.component.scss']
+    styleUrls: ['./section-block.component.scss', './section-block.component.theme.scss']
 })
 export class SectionBlockComponent implements OnInit {
     
@@ -35,14 +35,14 @@ export class SectionBlockComponent implements OnInit {
         return this._pageBlock;
     }
 
-    private _columnBlock: PageSectionBlock;
+    private _blockContainer: PageBlockContainer;
     @Input()
-    set columnBlock(value: PageSectionBlock) {
-        this._columnBlock = value;
+    set blockContainer(value: PageBlockContainer) {
+        this._blockContainer = value;
         this.setIfHideForCurrentScreenType();
     }
-    get columnBlock(): PageSectionBlock {
-        return this._columnBlock;
+    get blockContainer(): PageBlockContainer {
+        return this._blockContainer;
     }
 
     private _screenType: DataViewScreenSize;
@@ -85,8 +85,8 @@ export class SectionBlockComponent implements OnInit {
     private setIfHideForCurrentScreenType(): void {
         let isHidden = false;
 
-        if (this.columnBlock.Hide) {
-            isHidden = this.columnBlock.Hide.some(hideIn => hideIn === this.screenType);
+        if (this.blockContainer.Hide) {
+            isHidden = this.blockContainer.Hide.some(hideIn => hideIn === this.screenType);
         }
 
         this.hideForCurrentScreenType = isHidden;
@@ -101,7 +101,10 @@ export class SectionBlockComponent implements OnInit {
 
         this.pageBuilderService.pageConsumersFiltersMapChange$.subscribe((map: Map<string, any>) => {
             // Only if this block is consumer than set hostObject filter (cause some filter was change).
-            if (this.pageBlock.PageConfiguration?.Consume) {
+            const blockIsConsumeFilters = this.pageBlock.PageConfiguration?.Parameters.some(param => param.Consume && param.Type === 'Filter');
+            // TODO: Remove this
+            // if (this.pageBlock.PageConfiguration?.Consume) {
+            if (blockIsConsumeFilters) {
                 const currentFilter = map?.get(this.pageBlock.Key);
 
                 // Check that the updated filter is not equals to the old one.
@@ -135,13 +138,15 @@ export class SectionBlockComponent implements OnInit {
             case 'block-loaded':
                 this.pageBuilderService.updateBlockLoaded(this.pageBlock.Key);
                 break;
-            case 'set-filters':
-                this.pageBuilderService.updateBlockFilters(this.pageBlock.Key, event.filters);
+            // case 'set-filters':
+            //     this.pageBuilderService.updateBlockFilters(this.pageBlock.Key, event.filters);
+            //     break;
+            case 'set-parameter':
+                this.pageBuilderService.setBlockParameter(this.pageBlock.Key, event);
+
                 break;
-            case 'set-context':
-                break;
-            case 'emit-event':
-                break;
+            // case 'emit-event':
+            //     break;
         }
     }
 

@@ -1,5 +1,5 @@
-@import 'ngx-lib/src/core/style/abstracts/mixins';
-@import 'ngx-lib/src/core/style/abstracts/variables';
+@use '~@pepperi-addons/ngx-composite-lib/styling';
+@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
 
 @import './mixins.scss';
 
@@ -12,35 +12,19 @@ html {
     }
 }
 
-// This is for edit mode - for how will look like the available block in the section (have to be here).
-.section-column {
-    .available-block {
-        @include block-editor-toolbar();
-    }
-}
-
-.checkbox-as-title {
-    margin-bottom: 0 !important;
-    min-height: unset !important;
-
-    .pep-checkbox-container {
-        background: unset !important;
-        padding-left: unset !important;
-        padding-right: unset !important;
-
-        .mat-checkbox-inner-container {
-            margin-left: 0 !important;
-            margin-right: 0 !important;
-        }
-
-        .mat-checkbox-layout {
-            @include font-body($fs-xl, $lh-xl);
-            font-weight: $font-weight-bold !important;
-
-            .mat-checkbox-label span {
-                margin: 0 0.5rem;
-            }
+// set mat tab as fixed tab just on the editors
+.editor-tabs {
+    .mat-tab-header {
+        display: block;
+        width: 224px;
+        height: variables.$tabs-labels-height;
+        z-index: 2;
+        
+        .mat-tab-label-container {
+            position: fixed;
+            width: inherit;
+            opacity: 1;
+            background: #fff;
         }
     }
-
 }

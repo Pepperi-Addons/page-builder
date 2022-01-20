@@ -1,4 +1,4 @@
-import { DataViewScreenSizes, NgComponentRelation, Page, PageBlock, PageLayout, PageSection, PageSectionColumn, PageSizeTypes, SplitTypes } from "@pepperi-addons/papi-sdk";
+import { DataViewScreenSizes, NgComponentRelation, Page, PageBlock, PageLayout, PageSection, PageSectionColumn, PageSizeTypes, SplitTypes, ResourceDataConfiguration, ScreenSizeDataConfiguration, PageConfiguration } from "@pepperi-addons/papi-sdk";
 import { IAvailableBlockData } from "./pages.model";
 
 export class PagesValidatorService {
@@ -60,17 +60,26 @@ export class PagesValidatorService {
 
         // Validate Relation
         this.validateObjectProperty(block, 'Relation', blocksPropertyBreadcrumb, false, 'object');
-        this.validatePageBlockRelationProperties(blocksPropertyBreadcrumb, block.Relation);
+        this.validateBlockRelationProperties(blocksPropertyBreadcrumb, block.Relation);
         
-        // Validate Configuration if exist (Optional)
-        this.validateObjectProperty(block, 'Configuration', blocksPropertyBreadcrumb, true, 'object');
+        // Validate Configuration
+        this.validateObjectProperty(block, 'Configuration', blocksPropertyBreadcrumb, false, 'object');
+        this.validateBlockConfigurationProperties(blocksPropertyBreadcrumb, block.Configuration);
+        
+        // Validate ConfigurationPerScreenSize if exist (Optional)
+        this.validateObjectProperty(block, 'ConfigurationPerScreenSize', blocksPropertyBreadcrumb, true, 'object');
+        if (block.ConfigurationPerScreenSize) {
+            this.validateBlockConfigurationPerScreenSizeProperties(blocksPropertyBreadcrumb, block.ConfigurationPerScreenSize);
+        }
         
         // Validate PageConfiguration if exist (Optional)
         this.validateObjectProperty(block, 'PageConfiguration', blocksPropertyBreadcrumb, true, 'object');
-        // TODO: Validate PageConfiguration properties.
+        if (block.PageConfiguration) {
+            this.validateBlockPageConfigurationProperties(blocksPropertyBreadcrumb, block.PageConfiguration);
+        }
     }
 
-    private validatePageBlockRelationProperties(blockPropertyBreadcrumb: string, relation: NgComponentRelation): void {
+    private validateBlockRelationProperties(blockPropertyBreadcrumb: string, relation: NgComponentRelation): void {
         const relationPropertyBreadcrumb = `${blockPropertyBreadcrumb} -> Relation`;
 
         // Validate Name
@@ -92,18 +101,50 @@ export class PagesValidatorService {
         this.validateObjectProperty(relation, 'ComponentName', relationPropertyBreadcrumb);
     }
 
-    private validatePageSectionColumnBlockProperties(sectionsPropertyBreadcrumb: string, sectionColumn: PageSectionColumn): void {
-        const blockPropertyBreadcrumb = `${sectionsPropertyBreadcrumb} -> Block`;
-        
-        // Validate Block if exist (Optional)
-        this.validateObjectProperty(sectionColumn, 'Block', blockPropertyBreadcrumb, true, 'object');
+    private validateBlockConfigurationProperties(blockPropertyBreadcrumb: string, configuration: ResourceDataConfiguration): void {
+        const configurationPropertyBreadcrumb = `${blockPropertyBreadcrumb} -> Configuration`;
 
-        if (sectionColumn.Block) {
-            // Validate BlockKey in Block
-            this.validateObjectProperty(sectionColumn.Block, 'BlockKey', blockPropertyBreadcrumb);
+        // Validate Resource
+        this.validateObjectProperty(configuration, 'Resource', configurationPropertyBreadcrumb);
+        
+        // Validate AddonUUID
+        this.validateObjectProperty(configuration, 'AddonUUID', configurationPropertyBreadcrumb);
+
+        // Validate Data
+        this.validateObjectProperty(configuration, 'Data', configurationPropertyBreadcrumb, true, 'object');
+    }
+    
+    private validateBlockConfigurationPerScreenSizeProperties(blockPropertyBreadcrumb: string, configuration: ScreenSizeDataConfiguration): void {
+        const screenSizeDataConfigurationPropertyBreadcrumb = `${blockPropertyBreadcrumb} -> ScreenSizeDataConfiguration`;
+
+        // Validate Tablet
+        this.validateObjectProperty(configuration, 'Tablet', screenSizeDataConfigurationPropertyBreadcrumb, true, 'object');
+        
+        // Validate Mobile
+        this.validateObjectProperty(configuration, 'Mobile', screenSizeDataConfigurationPropertyBreadcrumb, true, 'object');
+    }
+    
+    private validateBlockPageConfigurationProperties(blockPropertyBreadcrumb: string, configuration: PageConfiguration): void {
+        const pageConfigurationPropertyBreadcrumb = `${blockPropertyBreadcrumb} -> PageConfiguration`;
+        
+        // Validate Parameters
+        this.validateArrayProperty(configuration, 'Parameters', pageConfigurationPropertyBreadcrumb, false);
+        
+        // TODO: Validate PageConfiguration Parameters.
+    }
+
+    private validatePageSectionBlockContainerProperties(sectionsPropertyBreadcrumb: string, sectionColumn: PageSectionColumn): void {
+        const blockPropertyBreadcrumb = `${sectionsPropertyBreadcrumb} -> BlockContainer`;
+        
+        // Validate BlockContainer if exist (Optional)
+        this.validateObjectProperty(sectionColumn, 'BlockContainer', blockPropertyBreadcrumb, true, 'object');
+
+        if (sectionColumn.BlockContainer) {
+            // Validate BlockKey in BlockContainer
+            this.validateObjectProperty(sectionColumn.BlockContainer, 'BlockKey', blockPropertyBreadcrumb);
 
             // Validate Hide in Block if exist (Optional)
-            this.validateArrayProperty(sectionColumn.Block, 'Hide', blockPropertyBreadcrumb, true, DataViewScreenSizes);
+            this.validateArrayProperty(sectionColumn.BlockContainer, 'Hide', blockPropertyBreadcrumb, true, DataViewScreenSizes);
         }
     }
 
@@ -119,9 +160,6 @@ export class PagesValidatorService {
         // Validate Height if exist (Optional)
         this.validateObjectProperty(section, 'Height', sectionsPropertyBreadcrumb, true, 'number');
 
-        // Validate Min Height if exist (Optional)
-        this.validateObjectProperty(section, 'MinHeight', sectionsPropertyBreadcrumb, true, 'number');
-
         // Validate Split if exist (Optional)
         if (section.hasOwnProperty('Split')) {
             if (typeof section.Split !== 'string') {
@@ -135,7 +173,7 @@ export class PagesValidatorService {
         this.validateArrayProperty(section, 'Columns', sectionsPropertyBreadcrumb);
         for (let index = 0; index < section.Columns.length; index++) {
             const column = section.Columns[index];
-            this.validatePageSectionColumnBlockProperties(`${sectionsPropertyBreadcrumb} -> Columns at index ${index}`, column);
+            this.validatePageSectionBlockContainerProperties(`${sectionsPropertyBreadcrumb} -> Columns at index ${index}`, column);
         }
         
         // Validate Hide if exist (Optional)
@@ -217,9 +255,6 @@ export class PagesValidatorService {
         // Validate Description if exist (Optional)
         this.validateObjectProperty(page, 'Description', pagePropertyBreadcrumb, true);
         
-        // Validate Type if exist (Optional)
-        this.validateObjectProperty(page, 'Type', pagePropertyBreadcrumb, true);
-
         // Validate Blocks
         this.validateArrayProperty(page, 'Blocks', pagePropertyBreadcrumb);
         for (let index = 0; index < page.Blocks.length; index++) {
@@ -232,11 +267,56 @@ export class PagesValidatorService {
     }
 
     validatePageBlocks(page: Page, availableBlocks: IAvailableBlockData[]) {
+        // Validate blocks.
+        const blockKeys = new Map<string, string>();
         for (let index = 0; index < page.Blocks?.length; index++) {
             const block = page.Blocks[index];
-
+            
+            // Validate if the block key is not already exist.
+            if (!blockKeys.has(block.Key)) {
+                blockKeys.set(block.Key, block.Key);
+            } else {
+                throw new Error(`Block with Key ${block.Key} is already exist.`);
+            }
+            
+            // Validate if the block is in the available blocks.
             if (availableBlocks.findIndex(ab => ab.relation.AddonUUID === block.Relation?.AddonUUID) === -1) {
-                throw new Error(`Block with AddonUUID ${block.Relation.AddonUUID} isn't exist as available page block for this type - ${page.Type}.`);
+                throw new Error(`Block with AddonUUID ${block.Relation.AddonUUID} isn't exist as available page block.`);
+            }
+
+            // Validate that Configuration.Resource is the same as Relation.Name
+            if (block.Configuration.Resource !== block.Relation.Name) {
+                throw new Error(`Block -> Configuration -> Resource should be the same as Block -> Relation -> Name`);
+            }
+
+            // Validate that Configuration.AddonUUID is the same as Relation.AddonUUID
+            if (block.Configuration.AddonUUID !== block.Relation.AddonUUID) {
+                throw new Error(`Block -> Configuration -> AddonUUID should be the same as Block -> Relation -> AddonUUID`);
+            }
+        }
+
+        const sectionsBlockKeys = new Map<string, string>();
+
+        // Validate blocks in sections.
+        for (let sectionIndex = 0; sectionIndex < page.Layout?.Sections?.length; sectionIndex++) {
+            const section = page.Layout?.Sections[sectionIndex];
+
+            for (let columnIndex = 0; columnIndex < section?.Columns?.length; columnIndex++) {
+                const blockContainer = section?.Columns[columnIndex].BlockContainer;
+            
+                if (blockContainer) {
+                    // Validate if the block key is not already exist.
+                    if (!sectionsBlockKeys.has(blockContainer.BlockKey)) {
+                        sectionsBlockKeys.set(blockContainer.BlockKey, blockContainer.BlockKey);
+                    } else {
+                        throw new Error(`Block with Key ${blockContainer.BlockKey} in section index ${sectionIndex} is already exist in another section column.`);
+                    }
+
+                    // Validate if block key is in the blockKeys map.
+                    if (!blockKeys.has(blockContainer.BlockKey)) {
+                        throw new Error(`BlockKey ${blockContainer.BlockKey} in section index ${sectionIndex} isn't exist in Page.Blocks.`);
+                    }
+                }
             }
         }
     }
@@ -255,7 +335,6 @@ export class PagesValidatorService {
         this.addOptionalPropertyIfExist(page, res, 'Key');
         this.addOptionalPropertyIfExist(page, res, 'Name');
         this.addOptionalPropertyIfExist(page, res, 'Description');
-        this.addOptionalPropertyIfExist(page, res, 'Type');
         
         // Add Blocks specific properties.
         for (let blockIndex = 0; blockIndex < page.Blocks.length; blockIndex++) {
@@ -272,9 +351,14 @@ export class PagesValidatorService {
                     ModuleName: currentBlock.Relation.ModuleName,
                     ComponentName: currentBlock.Relation.ComponentName
                 },
+                Configuration: {
+                    Resource: currentBlock.Configuration.Resource,
+                    AddonUUID: currentBlock.Configuration.AddonUUID,
+                    Data: currentBlock.Configuration.Data
+                }
             };
 
-            this.addOptionalPropertyIfExist(currentBlock, blockToAdd, 'Configuration');
+            this.addOptionalPropertyIfExist(currentBlock, blockToAdd, 'ConfigurationPerScreenSize');
             this.addOptionalPropertyIfExist(currentBlock, blockToAdd, 'PageConfiguration');
 
             res.Blocks.push(blockToAdd);
@@ -297,7 +381,6 @@ export class PagesValidatorService {
 
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Name');
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Height');
-            this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'MinHeight');
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Split');
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Hide');
 
@@ -306,12 +389,12 @@ export class PagesValidatorService {
                 const currentColumn = currentSection.Columns[columnIndex];
                 const columnToAdd: PageSectionColumn = {};
 
-                if (currentColumn.Block) {
-                    columnToAdd.Block = {
-                        BlockKey: currentColumn.Block.BlockKey
+                if (currentColumn.BlockContainer) {
+                    columnToAdd.BlockContainer = {
+                        BlockKey: currentColumn.BlockContainer.BlockKey
                     };
 
-                    this.addOptionalPropertyIfExist(currentColumn.Block, columnToAdd.Block, 'Hide');
+                    this.addOptionalPropertyIfExist(currentColumn.BlockContainer, columnToAdd.BlockContainer, 'Hide');
                 }
 
                 sectionToAdd.Columns.push(columnToAdd);

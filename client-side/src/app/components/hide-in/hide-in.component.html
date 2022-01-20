@@ -1,13 +1,8 @@
-<!-- <ng-container *ngIf="hideIn?.length > 0; then badgeBlock; else noneBlock"></ng-container>
-<ng-template #badgeBlock> -->
-    <pep-button sizeType="xs" iconName="system_view" [matMenuTriggerFor]="menu" (menuClosed)="onMenuClosed()" (menuOpened)="onMenuOpened()"
-        class="badge-button" [ngClass]="{ 'none': !hideIn || hideIn.length === 0}"
-        matBadge="{{ hideIn?.length }}" matBadgePosition="after" matBadgeSize="small" 
-    ></pep-button>
-<!-- </ng-template>
-<ng-template #noneBlock>
-    <pep-button sizeType="xs" iconName="system_view" [matMenuTriggerFor]="menu"></pep-button>
-</ng-template> -->
+
+<pep-button sizeType="xs" iconName="system_view" [matMenuTriggerFor]="menu" (menuClosed)="onMenuClosed()" (menuOpened)="onMenuOpened()"
+    class="badge-button" [ngClass]="{ 'none': !hideIn || hideIn.length === 0}"
+    matBadge="{{ hideIn?.length }}" matBadgePosition="after" matBadgeSize="small" 
+></pep-button>
 
 <mat-menu #menu="matMenu" class="hide-in-menu">
     <div mat-menu-item class="title" disabled>

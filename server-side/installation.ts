@@ -9,6 +9,7 @@ The error Message is importent! it will be written in the audit log and help the
 */
 import { Client, Request } from '@pepperi-addons/debug-server'
 import { PagesApiService } from './pages-api.service';
+import { PagesUpgradeService } from './pages-upgrade.service';
 
 const pnsKeyForPages = 'uninstall_blocks_subscription';
 const pnsKeyForDraftPages = 'uninstall_blocks_subscription_draft';
@@ -41,6 +42,13 @@ export async function uninstall(client: Client, request: Request): Promise<any> 
 }
 
 export async function upgrade(client: Client, request: Request): Promise<any> {
+    try {
+        const pageUpgradeService = new PagesUpgradeService(client);
+        await pageUpgradeService.upgradeToVersion61(true);
+    } catch (err) {
+        throw new Error(`Failed to upgrade to version 61. error - ${err}`);
+    }
+
     return { success:true, resultObject: {} };
 }
 

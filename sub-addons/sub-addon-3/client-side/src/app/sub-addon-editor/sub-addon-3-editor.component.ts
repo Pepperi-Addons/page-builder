@@ -15,29 +15,61 @@ export class SubAddon3EditorComponent implements OnInit {
     constructor(private translate: TranslateService) { }
 
     private getDefaultPageConfiguration() {
+        // const pageConfiguration = {
+        //     Consume: {
+        //         Filter: {
+        //             Resource: "transaction_lines",
+        //             Fields:  ["UnitsQuantity", "Item.TSABrand", "Transaction.Account.Type", "Transaction.Status"],
+        //         },
+        //         Context: {
+        //             Resource: "transactions"
+        //         }
+        //     },
+        //     Produce: {
+        //         Filters: [{
+        //             Resource: "transactions",
+        //             Fields:  ["UnitsQuantity", "Item.TSABrand", "Account.Type", "Status"],
+        //         },
+        //         {
+        //             Resource: "accounts",
+        //             Fields:  ["Name", "Type", "Status"],
+        //         }],
+        //         Context: {
+        //             Resource: "transaction_lines"
+        //         }
+        //     }
+        // };
+
         const pageConfiguration = {
-            Consume: {
-                Filter: {
-                    Resource: "transaction_lines",
-                    Fields:  ["UnitsQuantity", "Item.TSABrand", "Transaction.Account.Type", "Transaction.Status"],
+            Parameters: [
+                {
+                    "Key": "MyFilter1",
+                    "Type": "Filter",
+                    "Mandatory": false,
+                    "Consume": true,
+                    "Produce": false,
+                    "Resource": "transaction_lines",
+                    "Fields":  ["UnitsQuantity", "Item.TSABrand", "Transaction.Account.Type", "Transaction.Status"]
                 },
-                Context: {
-                    Resource: "transactions"
-                }
-            },
-            Produce: {
-                Filters: [{
-                    Resource: "transactions",
+                {
+                    "Key": "MyFilter2",
+                    "Type": "Filter",
+                    "Mandatory": false,
+                    "Consume": false,
+                    "Produce": true,
+                    "Resource": "transactions",
                     Fields:  ["UnitsQuantity", "Item.TSABrand", "Account.Type", "Status"],
                 },
                 {
-                    Resource: "accounts",
+                    "Key": "MyFilter2",
+                    "Type": "Filter",
+                    "Mandatory": false,
+                    "Consume": false,
+                    "Produce": true,
+                    "Resource": "accounts",
                     Fields:  ["Name", "Type", "Status"],
-                }],
-                Context: {
-                    Resource: "transaction_lines"
                 }
-            }
+            ]
         };
 
         return pageConfiguration;

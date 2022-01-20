@@ -20,8 +20,9 @@ import { PepAddonService, PepFileService, PepHttpService } from '@pepperi-addons
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
-                useFactory: PepAddonService.createDefaultMultiTranslateLoader,
-                deps: [HttpClient, PepFileService, PepAddonService]
+                useFactory: (addonService: PepAddonService) => 
+                    PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib']),
+                deps: [PepAddonService]
             }, isolate: false
         }),
     ],

@@ -3,10 +3,12 @@ import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { PepRemoteLoaderOptions } from "@pepperi-addons/ngx-remote-loader";
-import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, ResourceType, PageFilter } from "@pepperi-addons/papi-sdk";
+import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, ResourceType, PageConfigurationParameterFilter } from "@pepperi-addons/papi-sdk";
 import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 import { NavigationService } from "./navigation.service";
+
+export type UiPageSizeType = PageSizeType | 'none';
 
 export type PageRowStatusType = 'draft' | 'published';
 export interface IPageRowModel {
@@ -77,7 +79,7 @@ export interface IBlockFilterData {
 }
 
 export interface IBlockFilter {
-    key: string;
+    // key: string;
     resource: ResourceType;
     filter: IBlockFilterData;
 }
@@ -261,10 +263,13 @@ export class PagesService {
         // first none or Produce only, second Consume & Produce, third Consume only
         let priority = this.PRODUCERS_PRIORITY;
 
-        if (block.PageConfiguration) {
-            if (block.PageConfiguration.Consume && block.PageConfiguration.Produce) {
+        if (block.PageConfiguration?.Parameters.length > 0) {
+            const isConsumeFilters = block.PageConfiguration.Parameters.some(param => param.Consume && param.Type === 'Filter');
+            const isProduceFilters = block.PageConfiguration.Parameters.some(param => param.Produce && param.Type === 'Filter');
+
+            if (isConsumeFilters && isProduceFilters) {
                 priority = this.PRODUCERS_AND_CONSUMERS_PRIORITY;
-            } else if (block.PageConfiguration.Consume) {
+            } else if (isConsumeFilters) {
                 priority = this.CONSUMERS_PRIORITY;
             }
         }
@@ -380,7 +385,7 @@ export class PagesService {
         this._pageBlockProgressMapSubject$.next(this.pageBlockProgressMap);
     }
 
-    private getProducerFiltersByConsumerFilter(producerFilters: IBlockFilter[], consumerFilter: PageFilter): IBlockFilter[] {
+    private getProducerFiltersByConsumerFilter(producerFilters: IBlockFilter[], consumerFilter: PageConfigurationParameterFilter): IBlockFilter[] {
         // Get the match filters by the resource and fields.
         let consumerFilters = [];
 
@@ -441,7 +446,7 @@ export class PagesService {
         return res;
     }
 
-    private canProducerRaiseFilter(produceFilters: PageFilter[], blockFilter: IBlockFilter): boolean {
+    private canProducerRaiseFilter(produceFilters: PageConfigurationParameterFilter[], blockFilter: IBlockFilter): boolean {
         let res = false;
 
         // Get the match filters that blockFilter.resource is equals produceFilters Resource.
@@ -468,16 +473,23 @@ export class PagesService {
 
         // Run on all consumers.
         this.pageBlockProgressMap.forEach((value: IBlockProgress, key: string) => {
-            const consume = value.block.PageConfiguration?.Consume || null;
-            if (consume && consume.Filter) {
+            const consumeFilters = value.block.PageConfiguration?.Parameters.filter(param => param.Consume && param.Type === 'Filter') as PageConfigurationParameterFilter[];
+            
+            // TODO: Remove this
+            // const consume = value.block.PageConfiguration?.Consume || null;
+            // if (consume && consume.Filter) {
+            if (consumeFilters?.length > 0) {
                 let consumerFilters: IBlockFilter[] = [];
 
                 // Check if resource exist in the producers filters.
                 this._pageProducersFiltersMap.forEach((value: IBlockFilter[], key: string) => {
-                    let filtersByConsumerResource = this.getProducerFiltersByConsumerFilter(value, consume.Filter);
-                    
-                    if (filtersByConsumerResource) {
-                        consumerFilters.push(...filtersByConsumerResource);
+                    for (let index = 0; index < consumeFilters.length; index++) {
+                        const consumeFilter = consumeFilters[index];
+                        let filtersByConsumerResource = this.getProducerFiltersByConsumerFilter(value, consumeFilter);
+                        
+                        if (filtersByConsumerResource) {
+                            consumerFilters.push(...filtersByConsumerResource);
+                        }
                     }
                 });
 
@@ -540,7 +552,7 @@ export class PagesService {
 
     private getEditorHostObject(block: PageBlock): any {
         let hostObject = {
-            configuration: block.Configuration
+            configuration: block.Configuration.Data
         };
 
         // Add pageConfiguration if exist.
@@ -548,10 +560,10 @@ export class PagesService {
             hostObject['pageConfiguration'] = block.PageConfiguration;
         }
         
-        // Add pageType if exist.
-        if (this.pageSubject?.value.Type) {
-            hostObject['pageType'] = this.pageSubject?.value.Type;
-        }
+        // // Add pageType if exist.
+        // if (this.pageSubject?.value.Type) {
+        //     hostObject['pageType'] = this.pageSubject?.value.Type;
+        // }
 
         return hostObject;
     }
@@ -821,8 +833,8 @@ export class PagesService {
                 while (newColumnsLength < currentSection.Columns.length) {
                     const colunm = currentSection.Columns.pop();
                     // If there is block in this column delete it.
-                    if (colunm.Block) {
-                        blocksIdsToRemove.push(colunm.Block.BlockKey);
+                    if (colunm.BlockContainer) {
+                        blocksIdsToRemove.push(colunm.BlockContainer.BlockKey);
                     }
                 }
                 
@@ -859,7 +871,7 @@ export class PagesService {
         const index = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
         if (index > -1) {
             // Get the blocks id's to remove.
-            const blocksIds = this._sectionsSubject.value[index].Columns.map(column => column?.Block?.BlockKey);
+            const blocksIds = this._sectionsSubject.value[index].Columns.map(column => column?.BlockContainer?.BlockKey);
             
             // Remove the blocks by ids.
             this.removeBlocks(blocksIds)
@@ -893,13 +905,13 @@ export class PagesService {
     onRemoveBlock(sectionId: string, blockId: string) {
         const index = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
         if (index > -1) {
-            const columnIndex = this._sectionsSubject.value[index].Columns.findIndex(column => column.Block?.BlockKey === blockId);
+            const columnIndex = this._sectionsSubject.value[index].Columns.findIndex(column => column.BlockContainer?.BlockKey === blockId);
             if (columnIndex > -1) {
                 // Remove the block.
                 this.removeBlocks([blockId]);
 
                 // Remove the block from section column.
-                delete this._sectionsSubject.value[index].Columns[columnIndex].Block;
+                delete this._sectionsSubject.value[index].Columns[columnIndex].BlockContainer;
             }
         }
     }
@@ -907,9 +919,9 @@ export class PagesService {
     hideBlock(sectionId: string, blockId: string, hideIn: DataViewScreenSize[]) {
         const index = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
         if (index > -1) {
-            const columnIndex = this._sectionsSubject.value[index].Columns.findIndex(column => column.Block?.BlockKey === blockId);
+            const columnIndex = this._sectionsSubject.value[index].Columns.findIndex(column => column.BlockContainer?.BlockKey === blockId);
             if (columnIndex > -1) {
-                this._sectionsSubject.value[index].Columns[columnIndex].Block.Hide = hideIn;
+                this._sectionsSubject.value[index].Columns[columnIndex].BlockContainer.Hide = hideIn;
             }
         }
     }
@@ -917,19 +929,24 @@ export class PagesService {
     onBlockDropped(event: CdkDragDrop<any[]>, sectionId: string) {
         if (event.previousContainer.id == 'availableBlocks') {
             // Create new block from the relation (previousContainer.data is AvailableBlock object).
-            const relation = event.previousContainer.data[event.previousIndex];
+            const relation: NgComponentRelation = event.previousContainer.data[event.previousIndex];
             
             let block: PageBlock = {
                 Key: PepGuid.newGuid(),
-                Relation: relation
+                Relation: relation,
+                Configuration: {
+                    Resource: relation.Name,
+                    AddonUUID: relation.AddonUUID,
+                    Data: {}
+                }
             }
 
             // Get the column.
             const currentColumn = this.getSectionColumnById(event.container.id);
             
             // Set the block key in the section block only if there is a blank column.
-            if (currentColumn && !currentColumn.Block) {
-                currentColumn.Block = { 
+            if (currentColumn && !currentColumn.BlockContainer) {
+                currentColumn.BlockContainer = { 
                     BlockKey: block.Key
                 };
                 
@@ -944,8 +961,8 @@ export class PagesService {
                 // Get the previous column.
                 const previuosColumn = this.getSectionColumnById(event.previousContainer.id);
 
-                currentColumn.Block = previuosColumn.Block;
-                delete previuosColumn.Block;
+                currentColumn.BlockContainer = previuosColumn.BlockContainer;
+                delete previuosColumn.BlockContainer;
 
                 // Raise block progress change to update the subject.
                 this.notifyBlockProgressMapChange();
@@ -973,7 +990,7 @@ export class PagesService {
         const pageBlock = this.pageBlockProgressMap.get(blockKey);
         
         if (pageBlock) {
-            pageBlock.block.Configuration = configuration;
+            pageBlock.block.Configuration.Data = configuration;
             this._pageBlockSubject.next(pageBlock.block);
         }
     }
@@ -990,33 +1007,78 @@ export class PagesService {
         }
     }
     
-    updateBlockFilters(blockKey: string, blockFilters: IBlockFilter[]) {
+    // TODO: Remove this
+    // updateBlockFilters(blockKey: string, blockFilters: IBlockFilter[]) {
+    //     const pageBlock = this.pageBlockProgressMap.get(blockKey);
+
+    //     // Only if this block is declared as produce.
+    //     if (pageBlock?.block?.PageConfiguration?.Produce) {
+    //         // Check if this block can raise those filters.
+    //         const produceFilters = pageBlock.block.PageConfiguration.Produce.Filters;
+    //         let canRasieFilters = true;
+
+    //         for (let index = 0; index < blockFilters.length; index++) {
+    //             const blockFilter = blockFilters[index];
+    //             canRasieFilters = this.canProducerRaiseFilter(produceFilters, blockFilter);
+
+    //             if (!canRasieFilters) {
+    //                 // Write error to the console "You cannot raise this filter (not declared)."
+    //                 console.error('One or more from the raised filters are not declared in PageConfiguration object.');
+    //                 break;
+    //             }
+    //         }
+
+    //         if (canRasieFilters) {
+    //             this._pageProducersFiltersMap.set(blockKey, blockFilters);
+    
+    //             // Raise the filters change only if this block has loaded AND the currentBlocksPriority is CONSUMERS_PRIORITY (consumers stage)
+    //             // because in case that the block isn't loaded we will raise the event once when all the blocks are ready.
+    //             if (pageBlock.loaded && this.currentBlocksPriority === this.CONSUMERS_PRIORITY) {
+    //                 this.buildConsumersFilters();
+    //             }
+    //         }
+    //     }
+    // }
+
+    setBlockParameter(blockKey: string, event: { key: string, value: any }) {
         const pageBlock = this.pageBlockProgressMap.get(blockKey);
 
-        // Only if this block is declared as produce.
-        if (pageBlock?.block?.PageConfiguration?.Produce) {
-            // Check if this block can raise those filters.
-            const produceFilters = pageBlock.block.PageConfiguration.Produce.Filters;
-            let canRasieFilters = true;
-
-            for (let index = 0; index < blockFilters.length; index++) {
-                const blockFilter = blockFilters[index];
-                canRasieFilters = this.canProducerRaiseFilter(produceFilters, blockFilter);
-
-                if (!canRasieFilters) {
-                    // Write error to the console "You cannot raise this filter (not declared)."
-                    console.error('One or more from the raised filters are not declared in PageConfiguration object.');
-                    break;
-                }
-            }
-
-            if (canRasieFilters) {
-                this._pageProducersFiltersMap.set(blockKey, blockFilters);
-    
-                // Raise the filters change only if this block has loaded AND the currentBlocksPriority is CONSUMERS_PRIORITY (consumers stage)
-                // because in case that the block isn't loaded we will raise the event once when all the blocks are ready.
-                if (pageBlock.loaded && this.currentBlocksPriority === this.CONSUMERS_PRIORITY) {
-                    this.buildConsumersFilters();
+        // Only if this block parameter is declared as produce.
+        if (pageBlock?.block?.PageConfiguration?.Parameters.length > 0) {
+            const params = pageBlock?.block?.PageConfiguration?.Parameters.filter(param => param.Key === event.key);
+        
+            // If the key exist in parameters.
+            if (params?.length > 0) {
+                if (params[0].Type === 'Filter') {
+                    // Get the filters as PageConfigurationParameterFilter
+                    const produceFilters = params as PageConfigurationParameterFilter[]; // params.filter(param => param.Type === 'Filter') as PageConfigurationParameterFilter[];
+                    
+                    // Check if this block can raise those filters.
+                    const blockFilters = event.value;
+                    let canRasieFilters = true;
+        
+                    for (let index = 0; index < blockFilters.length; index++) {
+                        const blockFilter = blockFilters[index];
+                        canRasieFilters = this.canProducerRaiseFilter(produceFilters, blockFilter);
+        
+                        if (!canRasieFilters) {
+                            // Write error to the console "You cannot raise this filter (not declared)."
+                            console.error('One or more from the raised filters are not declared in the block -> pageConfiguration -> parameters array.');
+                            break;
+                        }
+                    }
+        
+                    if (canRasieFilters) {
+                        this._pageProducersFiltersMap.set(blockKey, blockFilters);
+            
+                        // Raise the filters change only if this block has loaded AND the currentBlocksPriority is CONSUMERS_PRIORITY (consumers stage)
+                        // because in case that the block isn't loaded we will raise the event once when all the blocks are ready.
+                        if (pageBlock.loaded && this.currentBlocksPriority === this.CONSUMERS_PRIORITY) {
+                            this.buildConsumersFilters();
+                        }
+                    }
+                } else if (params[0].Type === 'String') {
+                    // TODO: Implement context
                 }
             }
         }
@@ -1027,7 +1089,7 @@ export class PagesService {
         const section = this._sectionsSubject.value.find(section => section.Key === sectionId);
 
         if (section && columnIndex >= 0 && section.Columns.length > columnIndex) {
-            res = !!section.Columns[columnIndex].Block;
+            res = !!section.Columns[columnIndex].BlockContainer;
         }
 
         return res;
@@ -1106,7 +1168,7 @@ export class PagesService {
                         res.availableBlocks.forEach(data => {
                             availableBlocks.push(data?.relation);
                         });
-                            
+
                         this._availableBlocksSubject.next(availableBlocks);
 
                         // Load the blocks remote loader options.

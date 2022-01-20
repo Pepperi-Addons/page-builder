@@ -11,7 +11,7 @@ interface hideInItem {
 @Component({
     selector: 'hide-in',
     templateUrl: './hide-in.component.html',
-    styleUrls: ['./hide-in.component.scss'],
+    styleUrls: ['./hide-in.component.scss', './hide-in.component.theme.scss'],
 })
 export class HideInComponent implements OnInit {
     @Input() hideIn: DataViewScreenSize[] = [];

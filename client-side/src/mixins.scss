@@ -4,13 +4,11 @@ $z-index-min: 0;
 // This file contains all mixins.
 //**************************************************************************
 
-$toolbar-height: 2.5rem;
-$z-index-toolbar: $z-index-min + 2;
 $border-width: 0.125rem;
 
 @mixin block-toolbar() {
     @include block-editor-toolbar();
-    z-index: $z-index-toolbar;
+    z-index: $z-index-min + 2;
 }
 
 @mixin block-editor-toolbar() {
@@ -23,19 +21,19 @@ $border-width: 0.125rem;
 }
 
 @mixin gap-sizes() {
-    &.gap-NONE { 
+    &.gap-none { 
         gap: 0; /* none*/
     }
 
-    &.gap-SM {
+    &.gap-sm {
         gap: 0.5rem;
     }
 
-    &.gap-MD {
+    &.gap-md {
         gap: 1rem;
     }
 
-    &.gap-LG {
+    &.gap-lg {
         gap: 2rem;
     }
 }

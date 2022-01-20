@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostBinding, HostListener, Input, OnChanges, OnInit, QueryList, Renderer2, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragEnter, CdkDragExit, CdkDragStart, CdkDropList } from '@angular/cdk/drag-drop';
-import { IEditor, PagesService } from 'src/app/services/pages.service';
+import { IEditor, PagesService, UiPageSizeType } from 'src/app/services/pages.service';
 import { DataViewScreenSize, PageBlock, PageSectionColumn, PageSizeType, SplitType } from '@pepperi-addons/papi-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
@@ -8,7 +8,7 @@ import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 @Component({
     selector: 'section',
     templateUrl: './section.component.html',
-    styleUrls: ['./section.component.scss']
+    styleUrls: ['./section.component.scss', './section.component.theme.scss']
 })
 export class SectionComponent implements OnInit {
     @ViewChild('sectionContainer') sectionContainerRef: ElementRef;
@@ -78,7 +78,7 @@ export class SectionComponent implements OnInit {
         return this._hideIn;
     }
 
-    @Input() columnsGap: PageSizeType | 'NONE';
+    @Input() columnsGap: UiPageSizeType;
     @Input() sectionsColumnsDropList = [];
     
     private _pageBlocksMap = new Map<string, PageBlock>();
@@ -119,7 +119,7 @@ export class SectionComponent implements OnInit {
     ) { }
 
     private calculateIfSectionContainsBlocks() {
-        this.containsBlocks = this.columns.some(column => column.Block);
+        this.containsBlocks = this.columns.some(column => column.BlockContainer);
     }
 
     private setScreenType() {
@@ -190,7 +190,7 @@ export class SectionComponent implements OnInit {
                             
                             // If there are some hidden columns change the column width to 0 (for cut the spacing in the grid-template-rows).
                             this.columns.forEach((column, index) => {
-                                if (!column.Block) {
+                                if (!column.BlockContainer) {
                                     cssSplitArray[index] = '0';
                                 }
                             });
@@ -275,7 +275,7 @@ export class SectionComponent implements OnInit {
     onSectionBlockDragExited(event: CdkDragExit) {
         // If the block is exit from his container and it's the only block in this section.
         if (this.containsBlocks) {
-            const blocksLength = this.columns.filter(column => column.Block).length;
+            const blocksLength = this.columns.filter(column => column.BlockContainer).length;
 
             if (blocksLength === 1) {
                 this.containsBlocks = false;
