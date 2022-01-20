@@ -1,7 +1,7 @@
 import { NavigationService } from './../../services/navigation.service';
 import { IPageRowModel, PagesService } from '../../services/pages.service';
 import { GenericListModule } from './../generic-list/generic-list.module';
-import { Component, OnInit, Renderer2 } from "@angular/core";
+import { Component, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
@@ -9,7 +9,7 @@ import { PepAddonService } from '@pepperi-addons/ngx-lib';
 import { from, Observable } from "rxjs";
 //simcha
 import { map } from 'rxjs/operators';
-import { GenericListDataSource } from '../generic-list/generic-list.component';
+import { GenericListComponent, GenericListDataSource } from '../generic-list/generic-list.component';
 import { GridDataViewField, Page } from '@pepperi-addons/papi-sdk';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
@@ -36,7 +36,9 @@ export class TempPage {
 })
 
 export class PagesManagerComponent implements OnInit {
-    
+
+    @ViewChild(GenericListComponent) pagesList: GenericListComponent;
+
     private selectedPageID = '';
     mainMenuItems: Array<PepMenuItem> = null;
     secondaryMenuItems: Array<PepMenuItem> = null;
@@ -203,6 +205,8 @@ export class PagesManagerComponent implements OnInit {
             if (isDeletePressed) {
                 this.pagesService.deletePage(this.navigationService.addonUUID, pageId).subscribe((res) => {
                     this.pagesDataSource.getList(null);
+                    this.pagesList.reload();
+                    
                 });
             }
         });
