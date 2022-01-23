@@ -12,6 +12,7 @@ import { PepSizeDetectorModule } from '@pepperi-addons/ngx-lib/size-detector';
 import { RouterModule, Routes } from '@angular/router';
 import { PagesService } from 'src/app/services/pages.service';
 import { NavigationService } from 'src/app/services/navigation.service';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 export const routes: Routes = [
     {
@@ -47,6 +48,7 @@ export const routes: Routes = [
         TranslateStore,
         // When loading this module from route we need to add this here (because only this module is loading).
         NavigationService,
+        UtilitiesService,
         PagesService
     ]
 })

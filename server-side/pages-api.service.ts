@@ -171,19 +171,7 @@ export class PagesApiService {
         // Create pages table
         const createPagesTable = await this.papiClient.addons.data.schemes.post({
             Name: PAGES_TABLE_NAME,
-            Type: 'cpi_meta_data',
-            // TODO: This property has no support yet. 
-            // Fields: {
-            //     Key: {
-            //         Type: 'String'
-            //     },
-            //     Name: {
-            //         Type: 'String'
-            //     },
-            //     Description: {
-            //         Type: 'String'
-            //     }
-            // }
+            Type: 'cpi_meta_data'
         });
 
         // Create pages draft table

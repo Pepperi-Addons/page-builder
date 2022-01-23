@@ -1,4 +1,4 @@
-import { DataViewScreenSizes, NgComponentRelation, Page, PageBlock, PageLayout, PageSection, PageSectionColumn, PageSizeTypes, SplitTypes, ResourceDataConfiguration, ScreenSizeDataConfiguration, PageConfiguration } from "@pepperi-addons/papi-sdk";
+import { DataViewScreenSizes, NgComponentRelation, Page, PageBlock, PageLayout, PageSection, PageSectionColumn, PageSizeTypes, SplitTypes, ResourceDataConfiguration, ScreenSizeDataConfiguration, PageConfiguration, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
 import { IAvailableBlockData } from "./pages.model";
 
 export class PagesValidatorService {
@@ -99,6 +99,9 @@ export class PagesValidatorService {
 
         // Validate ComponentName
         this.validateObjectProperty(relation, 'ComponentName', relationPropertyBreadcrumb);
+
+        // Validate Schema
+        this.validateObjectProperty(relation, 'Schema', relationPropertyBreadcrumb, true, 'object');
     }
 
     private validateBlockConfigurationProperties(blockPropertyBreadcrumb: string, configuration: ResourceDataConfiguration): void {
@@ -111,7 +114,7 @@ export class PagesValidatorService {
         this.validateObjectProperty(configuration, 'AddonUUID', configurationPropertyBreadcrumb);
 
         // Validate Data
-        this.validateObjectProperty(configuration, 'Data', configurationPropertyBreadcrumb, true, 'object');
+        this.validateObjectProperty(configuration, 'Data', configurationPropertyBreadcrumb, false, 'object');
     }
     
     private validateBlockConfigurationPerScreenSizeProperties(blockPropertyBreadcrumb: string, configuration: ScreenSizeDataConfiguration): void {
@@ -124,13 +127,42 @@ export class PagesValidatorService {
         this.validateObjectProperty(configuration, 'Mobile', screenSizeDataConfigurationPropertyBreadcrumb, true, 'object');
     }
     
+    private validatePageConfigurationParameterProperties(pagePropertyBreadcrumb: string, parameter: PageConfigurationParameter, parameterIndex: number) {
+        const parameterPropertyBreadcrumb = `${pagePropertyBreadcrumb} -> Parameters at index ${parameterIndex}`;
+
+        // Validate Key
+        this.validateObjectProperty(parameter, 'Key', parameterPropertyBreadcrumb);
+
+        // Validate Type
+        this.validateObjectProperty(parameter, 'Type', parameterPropertyBreadcrumb);
+
+        // Validate Mandatory if exist (Optional)
+        this.validateObjectProperty(parameter, 'Mandatory', parameterPropertyBreadcrumb, true, 'boolean');
+        
+        // Validate Produce if exist (Optional)
+        this.validateObjectProperty(parameter, 'Produce', parameterPropertyBreadcrumb, true, 'boolean');
+
+        // Validate Consume if exist (Optional)
+        this.validateObjectProperty(parameter, 'Consume', parameterPropertyBreadcrumb, true, 'boolean');
+
+        // If the type is filter check for more fields.
+        if (parameter.Type === 'Filter') {
+            // Validate Resource
+            this.validateObjectProperty(parameter, 'Resource', parameterPropertyBreadcrumb);
+
+            // Validate Fields
+            this.validateArrayProperty(parameter, 'Fields', parameterPropertyBreadcrumb, false);
+        }
+    }
+
     private validateBlockPageConfigurationProperties(blockPropertyBreadcrumb: string, configuration: PageConfiguration): void {
         const pageConfigurationPropertyBreadcrumb = `${blockPropertyBreadcrumb} -> PageConfiguration`;
         
         // Validate Parameters
         this.validateArrayProperty(configuration, 'Parameters', pageConfigurationPropertyBreadcrumb, false);
-        
-        // TODO: Validate PageConfiguration Parameters.
+        for (let index = 0; index < configuration.Parameters?.length; index++) {
+            this.validatePageConfigurationParameterProperties(pageConfigurationPropertyBreadcrumb, configuration.Parameters[index], index);
+        }
     }
 
     private validatePageSectionBlockContainerProperties(sectionsPropertyBreadcrumb: string, sectionColumn: PageSectionColumn): void {
@@ -276,12 +308,12 @@ export class PagesValidatorService {
             if (!blockKeys.has(block.Key)) {
                 blockKeys.set(block.Key, block.Key);
             } else {
-                throw new Error(`Block with Key ${block.Key} is already exist.`);
+                throw new Error(`Block with Key ${block.Key} already exists.`);
             }
             
             // Validate if the block is in the available blocks.
             if (availableBlocks.findIndex(ab => ab.relation.AddonUUID === block.Relation?.AddonUUID) === -1) {
-                throw new Error(`Block with AddonUUID ${block.Relation.AddonUUID} isn't exist as available page block.`);
+                throw new Error(`Block with AddonUUID ${block.Relation.AddonUUID} doesn't exist as available page block.`);
             }
 
             // Validate that Configuration.Resource is the same as Relation.Name
@@ -309,12 +341,12 @@ export class PagesValidatorService {
                     if (!sectionsBlockKeys.has(blockContainer.BlockKey)) {
                         sectionsBlockKeys.set(blockContainer.BlockKey, blockContainer.BlockKey);
                     } else {
-                        throw new Error(`Block with Key ${blockContainer.BlockKey} in section index ${sectionIndex} is already exist in another section column.`);
+                        throw new Error(`Block with Key ${blockContainer.BlockKey} in section index ${sectionIndex} already exists in another section column.`);
                     }
 
                     // Validate if block key is in the blockKeys map.
                     if (!blockKeys.has(blockContainer.BlockKey)) {
-                        throw new Error(`BlockKey ${blockContainer.BlockKey} in section index ${sectionIndex} isn't exist in Page.Blocks.`);
+                        throw new Error(`BlockKey ${blockContainer.BlockKey} in section index ${sectionIndex} doesn't exist in Page.Blocks.`);
                     }
                 }
             }
@@ -358,6 +390,9 @@ export class PagesValidatorService {
                 }
             };
 
+            // Add Schema to relation (optional)
+            this.addOptionalPropertyIfExist(currentBlock.Relation, blockToAdd.Relation, 'Schema');
+            
             this.addOptionalPropertyIfExist(currentBlock, blockToAdd, 'ConfigurationPerScreenSize');
             this.addOptionalPropertyIfExist(currentBlock, blockToAdd, 'PageConfiguration');
 

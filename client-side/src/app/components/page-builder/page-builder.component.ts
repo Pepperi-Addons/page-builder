@@ -8,7 +8,7 @@ import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@peppe
 import { DataViewScreenSize, Page, PageBlock, PageSection, PageSizeType } from '@pepperi-addons/papi-sdk';
 import { NavigationService } from 'src/app/services/navigation.service';
 
-export interface IHostObject {
+export interface IPageBuiolderHostObject {
     pageKey: string;
 }
 
@@ -24,12 +24,12 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     @Input() sectionsColumnsDropList = [];
     
     // For loading the page from the client apps.
-    private _hostObject: IHostObject;
+    private _hostObject: IPageBuiolderHostObject;
     @Input()
-    set hostObject(value: IHostObject) {
+    set hostObject(value: IPageBuiolderHostObject) {
         this._hostObject = value;
     }
-    get hostObject(): IHostObject {
+    get hostObject(): IPageBuiolderHostObject {
         return this._hostObject;
     }
 

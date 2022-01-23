@@ -3,10 +3,11 @@ import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { PepRemoteLoaderOptions } from "@pepperi-addons/ngx-remote-loader";
-import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, ResourceType, PageConfigurationParameterFilter } from "@pepperi-addons/papi-sdk";
+import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, ResourceType, PageConfigurationParameterFilter, PageConfiguration, PageConfigurationParameterBase, PageConfigurationParameterString } from "@pepperi-addons/papi-sdk";
 import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 import { NavigationService } from "./navigation.service";
+import { UtilitiesService } from "./utilities.service";
 
 export type UiPageSizeType = PageSizeType | 'none';
 
@@ -71,17 +72,28 @@ export interface IBlockProgress {
     priority: number;
 }
 
-export interface IBlockFilterData {
+interface IProducerFilterData {
     FieldType: string;
     ApiName: string
     Operation: string
     Values: string[]
 }
 
-export interface IBlockFilter {
+interface IProducerFilter {
     // key: string;
     resource: ResourceType;
-    filter: IBlockFilterData;
+    filter: IProducerFilterData;
+}
+
+interface IProducerParameters {
+    // key is the block key, value is string | IProduceFilter[]
+    producerParametersMap: Map<string, string | IProducerFilter[]>;
+}
+
+export interface IPageBlockHostObject {
+    configuration: any;
+    pageConfiguration?: PageConfiguration;
+    parameters?: any;
 }
 
 interface IMappingResource {
@@ -165,15 +177,15 @@ export class PagesService {
         return this.pageSubject.asObservable().pipe(filter(page => !!page));
     }
 
-    // This map is for producers filters.
-    private _pageProducersFiltersMap = new Map<string, IBlockFilter[]>();
+    // This map is for producers parameters by parameter key.
+    private _producerParameterKeysMap = new Map<string, IProducerParameters>();
     
-    // This subject is for consumers filters change.
-    private _pageConsumersFiltersMapSubject = new BehaviorSubject<Map<string, any>>(null);
-    get pageConsumersFiltersMapChange$(): Observable<ReadonlyMap<string, any>> {
-        return this._pageConsumersFiltersMapSubject.asObservable().pipe(distinctUntilChanged());
+    // This subject is for consumers parameters change.
+    private _consumerParametersMapSubject = new BehaviorSubject<Map<string, any>>(null);
+    get consumerParametersMapChange$(): Observable<ReadonlyMap<string, any>> {
+        return this._consumerParametersMapSubject.asObservable().pipe(distinctUntilChanged());
     }
-
+    
     private _mappingsResourcesFields = new Map<string, IMappingResource>();
 
     // This subject is for edit mode when block is dragging now or not.
@@ -189,7 +201,8 @@ export class PagesService {
     }
 
     constructor(
-        private utilitiesService: PepUtilitiesService,
+        private utilitiesService: UtilitiesService,
+        private pepUtilitiesService: PepUtilitiesService,
         private translate: TranslateService,
         private sessionService: PepSessionService,
         private httpService: PepHttpService,
@@ -205,15 +218,18 @@ export class PagesService {
             let needToRebuildFilters = false;
 
             // Check that all pageProducersFiltersMap blocks keys exist in blocksProgress (if some block is removed we need to clear his filter).
-            this._pageProducersFiltersMap.forEach((value: IBlockFilter[], key: string) => {
-                if (!blocksProgress.has(key)) {
-                    this._pageProducersFiltersMap.delete(key);
-                    needToRebuildFilters = true;
-                }
+            this._producerParameterKeysMap.forEach((value: IProducerParameters, parameterKey: string) => {
+                value?.producerParametersMap.forEach((parameterValue: any, producerBlockKey: string) => {
+                    if (!blocksProgress.has(producerBlockKey)) {
+                        // Delete the producer data in the current parameter.
+                        value.producerParametersMap.delete(producerBlockKey);
+                        needToRebuildFilters = true;
+                    }
+                });
             });
 
             if (needToRebuildFilters) {
-                this.buildConsumersFilters();
+                this.buildConsumersParameters();
             }
         });
 
@@ -317,7 +333,7 @@ export class PagesService {
     
                     // If we move to the consumers priority
                     if (this._currentBlocksPriority === this.CONSUMERS_PRIORITY) {
-                        this.buildConsumersFilters();
+                        this.buildConsumersParameters();
                     }
                 }
             }
@@ -385,7 +401,7 @@ export class PagesService {
         this._pageBlockProgressMapSubject$.next(this.pageBlockProgressMap);
     }
 
-    private getProducerFiltersByConsumerFilter(producerFilters: IBlockFilter[], consumerFilter: PageConfigurationParameterFilter): IBlockFilter[] {
+    private getProducerFiltersByConsumerFilter(producerFilters: IProducerFilter[], consumerFilter: PageConfigurationParameterFilter): IProducerFilter[] {
         // Get the match filters by the resource and fields.
         let consumerFilters = [];
 
@@ -409,7 +425,7 @@ export class PagesService {
                             const filterFieldApiName = consumerFilter.Fields.find((apiName) => apiName.indexOf(complexApiName) >= 0);
                             if (filterFieldApiName) {
                                 // Copy the producer filter (by value) and change the API name to be like the consumer need to get.
-                                const tmpFilterToAdd = JSON.parse(JSON.stringify(producerFilter));
+                                const tmpFilterToAdd = Object.assign({}, producerFilter);
                                 tmpFilterToAdd.filter.ApiName = filterFieldApiName;
                                 consumerFilters.push(tmpFilterToAdd);
                             }
@@ -422,42 +438,42 @@ export class PagesService {
         return consumerFilters;
     }
 
-    private getHostObjectFilter(blockFilters: IBlockFilter[]): any {
+    private getConsumerFilter(producerFilters: IProducerFilter[]): any {
         let res = {};
 
-        if (blockFilters.length === 1) {
-            const blockFilter = blockFilters.pop();
-            res = blockFilter.filter;
-        } else if (blockFilters.length >= 2) {
-            const rightFilter = blockFilters.pop();
+        if (producerFilters.length === 1) {
+            const produceFilter = producerFilters.pop();
+            res = produceFilter.filter;
+        } else if (producerFilters.length >= 2) {
+            const rightFilter = producerFilters.pop();
             
             res['Operation'] = 'AND';
             res['RightNode'] = rightFilter.filter;
 
             // After pop (when we have exaclly 2 filters)
-            if (blockFilters.length == 1) {
-                const leftFilter = blockFilters.pop();
+            if (producerFilters.length == 1) {
+                const leftFilter = producerFilters.pop();
                 res['LeftNode'] = leftFilter.filter;
             } else {
-                res['LeftNode'] = this.getHostObjectFilter(blockFilters);
+                res['LeftNode'] = this.getConsumerFilter(producerFilters);
             }
         } 
 
         return res;
     }
 
-    private canProducerRaiseFilter(produceFilters: PageConfigurationParameterFilter[], blockFilter: IBlockFilter): boolean {
+    private canProducerRaiseFilter(filtersParameters: PageConfigurationParameterFilter[], producerFilter: IProducerFilter): boolean {
         let res = false;
 
-        // Get the match filters that blockFilter.resource is equals produceFilters Resource.
-        const matchProduceFilters = produceFilters.filter(filter => filter.Resource === blockFilter.resource);
+        // Get the match filters that blockFilter.resource is equals producerFilters Resource.
+        const matchProducerFilters = filtersParameters.filter(filter => filter.Resource === producerFilter.resource);
         
-        if (matchProduceFilters && matchProduceFilters.length > 0) {
-            // Check if the blockFilter.ApiName exist in the matchProduceFilters.Fields.
-            for (let index = 0; index < matchProduceFilters.length; index++) {
-                const filter = matchProduceFilters[index];
+        if (matchProducerFilters && matchProducerFilters.length > 0) {
+            // Check if the blockFilter.ApiName exist in the matchProducerFilters.Fields.
+            for (let index = 0; index < matchProducerFilters.length; index++) {
+                const filter = matchProducerFilters[index];
                 
-                if (filter.Fields.some(field => field === blockFilter.filter.ApiName)) {
+                if (filter.Fields.some(field => field === producerFilter.filter.ApiName)) {
                     res = true;
                     break;
                 }
@@ -467,39 +483,57 @@ export class PagesService {
         return res;
     }
 
-    private buildConsumersFilters() {
-        // Build consumers filters
-        let consumersFilters = new Map<string, any>();
+    // Build the consumer parameters map by the parameters keys and the producers filters.
+    private buildConsumersParameters() {
+        let consumersParametersMap = new Map<string, any>();
 
         // Run on all consumers.
         this.pageBlockProgressMap.forEach((value: IBlockProgress, key: string) => {
-            const consumeFilters = value.block.PageConfiguration?.Parameters.filter(param => param.Consume && param.Type === 'Filter') as PageConfigurationParameterFilter[];
+            const consumerParameters = value.block.PageConfiguration?.Parameters.filter(param => param.Consume) as PageConfigurationParameterBase[];
             
-            // TODO: Remove this
-            // const consume = value.block.PageConfiguration?.Consume || null;
-            // if (consume && consume.Filter) {
-            if (consumeFilters?.length > 0) {
-                let consumerFilters: IBlockFilter[] = [];
+            if (consumerParameters?.length > 0) {
+                let consumerParametersObject = {};
+                
+                // Go for all the consumer parameters
+                for (let index = 0; index < consumerParameters.length; index++) {
+                    const consumerParameter = consumerParameters[index];
 
-                // Check if resource exist in the producers filters.
-                this._pageProducersFiltersMap.forEach((value: IBlockFilter[], key: string) => {
-                    for (let index = 0; index < consumeFilters.length; index++) {
-                        const consumeFilter = consumeFilters[index];
-                        let filtersByConsumerResource = this.getProducerFiltersByConsumerFilter(value, consumeFilter);
+                    if (consumerParameter.Type === 'String') {
+                        // Get the producer strings by the parameter key.
+                        const producerStringMap = this._producerParameterKeysMap.get(consumerParameter.Key)?.producerParametersMap;
                         
-                        if (filtersByConsumerResource) {
-                            consumerFilters.push(...filtersByConsumerResource);
+                        // The last value will override (can be only one value for parameter key of type string).
+                        producerStringMap?.forEach((value: string, key: string) => {
+                            consumerParametersObject[consumerParameter.Key] = value;
+                        });
+
+                    } else if (consumerParameter.Type === 'Filter') {
+                        let consumerFilters: IProducerFilter[] = [];
+                        // Get the producer filters by the parameter key.
+                        const producerFiltersMap = this._producerParameterKeysMap.get(consumerParameter.Key)?.producerParametersMap;
+
+                        // Check if resource exist in the producers filters.
+                        producerFiltersMap?.forEach((value: IProducerFilter[], key: string) => {
+                            let filtersByConsumerResource = this.getProducerFiltersByConsumerFilter(value, consumerParameter as PageConfigurationParameterFilter);
+                            
+                            if (filtersByConsumerResource) {
+                                consumerFilters.push(...filtersByConsumerResource);
+                            }
+                        });
+                    
+                        // Build host object filter from consumerFilters ("Operation": "AND", "RightNode": { etc..)
+                        if (consumerFilters.length > 0) {
+                            consumerParametersObject[consumerParameter.Key] = this.getConsumerFilter(consumerFilters);
                         }
                     }
-                });
+                }
 
-                // Build host object filter from consumerFilters ("Operation": "AND", "RightNode": { etc..)
-                let hostObjectFilter = consumerFilters.length > 0 ? this.getHostObjectFilter(consumerFilters) : null;
-                consumersFilters.set(value.block.Key, hostObjectFilter);
+                // Add the consumerParametersObject to the consumersParametersMap
+                consumersParametersMap.set(value.block.Key, consumerParametersObject);
             }
         });
 
-        this._pageConsumersFiltersMapSubject.next(consumersFilters);
+        this._consumerParametersMapSubject.next(consumersParametersMap);
     }
 
     private loadDefaultEditor(page: Page) {
@@ -550,21 +584,37 @@ export class PagesService {
         return editor;
     }
 
-    private getEditorHostObject(block: PageBlock): any {
-        let hostObject = {
-            configuration: block.Configuration.Data
+    private getMergedConfigurationData(block: PageBlock): any {
+        // Copy the object data.
+        let configurationData = Object.assign({}, block.Configuration.Data);
+        const currentScreenType = this.getScreenType(this._screenSizeSubject.value);
+        
+        // Get the configuration data by the current screen size (if exist then merge it up to Tablet and up to Landscape).
+        if (currentScreenType !== 'Landscape') {
+            // Merge from Tablet
+            if (block.ConfigurationPerScreenSize?.Tablet) {
+                configurationData = this.utilitiesService.mergeDeep(configurationData, block.ConfigurationPerScreenSize.Tablet);
+            }
+
+            // If currentScreenType === 'Phablet' merge from mobile
+            if (currentScreenType === 'Phablet' && block.ConfigurationPerScreenSize?.Mobile) {
+                configurationData = this.utilitiesService.mergeDeep(configurationData, block.ConfigurationPerScreenSize.Mobile);
+            }
+        }
+
+        return configurationData;
+    }
+
+    private getEditorHostObject(block: PageBlock): IPageBlockHostObject {
+        let hostObject: IPageBlockHostObject = {
+            configuration: this.getMergedConfigurationData(block)
         };
 
         // Add pageConfiguration if exist.
         if (block.PageConfiguration) {
-            hostObject['pageConfiguration'] = block.PageConfiguration;
+            hostObject.pageConfiguration = block.PageConfiguration;
         }
         
-        // // Add pageType if exist.
-        // if (this.pageSubject?.value.Type) {
-        //     hostObject['pageType'] = this.pageSubject?.value.Type;
-        // }
-
         return hostObject;
     }
 
@@ -720,21 +770,12 @@ export class PagesService {
         return this._blocksRemoteLoaderOptionsMap.get(key);
     }
 
-    getBlockHostObject(
-        block: PageBlock, 
-        // screenType: DataViewScreenSize
-        ): any {
-        
+    getBlockHostObject(block: PageBlock): IPageBlockHostObject {
         let hostObject = this.getEditorHostObject(block);
         
-        // Add filter.
-        hostObject['filter'] = this._pageConsumersFiltersMapSubject.value?.get(block.Key) || null;
+        // Add parameters.
+        hostObject.parameters = this._consumerParametersMapSubject.value?.get(block.Key) || null;
         
-        // TODO: Add context.
-
-
-        // hostObject['screenType'] = screenType;
-
         return hostObject;
     }
 
@@ -938,7 +979,7 @@ export class PagesService {
                     Resource: relation.Name,
                     AddonUUID: relation.AddonUUID,
                     Data: {}
-                }
+                },
             }
 
             // Get the column.
@@ -995,90 +1036,196 @@ export class PagesService {
         }
     }
     
-    updateBlockPageConfiguration(blockKey: string, pageConfiguration: any) {
+    // Update the block configuration data by the propertiesHierarchy and set the field value (deep set).
+    private updateConfigurationDataFieldValue(block: PageBlock, propertiesHierarchy: Array<string>, fieldValue: any) {
+        this.setObjectPropertyValueRoot(block, block.Configuration.Data, propertiesHierarchy, fieldValue);
+    }
+
+    // Update the block configuration per screen size according the current screen sizes and the saved values (deep set).
+    private updateConfigurationPerScreenSizeFieldValue(block: PageBlock, propertiesHierarchy: Array<string>, fieldValue: any, currentScreenType: DataViewScreenSize) {
+        if (block.ConfigurationPerScreenSize === undefined) {
+            block.ConfigurationPerScreenSize = {};
+        }
+        
+        let objectToUpdate;
+        if (currentScreenType === 'Tablet') {
+            if (block.ConfigurationPerScreenSize.Tablet === undefined) {
+                block.ConfigurationPerScreenSize.Tablet = {};
+            }
+            
+            objectToUpdate = block.ConfigurationPerScreenSize.Tablet;
+        } else { // Phablet
+            if (block.ConfigurationPerScreenSize.Mobile === undefined) {
+                block.ConfigurationPerScreenSize.Mobile = {};
+            }
+          
+            objectToUpdate = block.ConfigurationPerScreenSize.Mobile;
+        } 
+
+        // Update the block configuration data by the propertiesHierarchy and set the field value.
+        this.setObjectPropertyValueRoot(block, objectToUpdate, propertiesHierarchy, fieldValue);
+    }
+
+    private setObjectPropertyValueRoot(block: PageBlock, object: any, propertiesHierarchy: Array<string>, value: any): void {
+        if (propertiesHierarchy.length > 0) {
+            const propertyName = propertiesHierarchy[0];
+            propertiesHierarchy.shift();
+            this.setObjectPropertyValue(object, propertiesHierarchy, propertyName, value);
+            this._pageBlockSubject.next(block);
+        }
+    }
+
+    // Set the object field value by propertiesHierarchy (deep set)
+    private setObjectPropertyValue(object: any, propertiesHierarchy: Array<string>, propertyName: string, value: any): void {
+        if (propertiesHierarchy.length > 0) {
+            const propertyName = propertiesHierarchy[0];
+            propertiesHierarchy.shift();
+
+            if (!object.hasOwnProperty(propertyName)) {
+                object[propertyName] = {};
+            } 
+            
+            this.setObjectPropertyValue(object[propertyName], propertiesHierarchy, propertyName, value);
+        } else {
+            // If the value is not undefined set the property, else - delete it.
+            if (value !== undefined) {
+                object[propertyName] = value;
+            } else {
+                if (object.hasOwnProperty(propertyName)) {
+                    delete object[propertyName];
+                }
+            }
+        }
+    }
+
+    private searchFieldInSchemaFields(schemaFields: any, propertiesHierarchy: Array<string>): boolean {
+        let canConfigurePerScreenSize = false;
+
+        if (propertiesHierarchy.length > 0) {
+            const currentFieldKey = propertiesHierarchy[0];
+            const schemaField = schemaFields[currentFieldKey];
+
+            if (schemaField) {
+                const type = schemaField.Type;
+            
+                // If it's object
+                if (type === 'Object') {
+                    // If the field index is the last
+                    if (propertiesHierarchy.length === 1) {
+                        if (schemaField.ConfigurationPerScreenSize === true) {
+                            canConfigurePerScreenSize = true;
+                        }
+                    } else { // Check in fields.
+                        if (schemaField.Fields) {
+                            propertiesHierarchy.shift(); // Remove the first element.
+                            canConfigurePerScreenSize = this.searchFieldInSchemaFields(schemaField.Fields, propertiesHierarchy);
+                        } else {
+                            // Do nothing.
+                        }
+                    }
+                } else if (propertiesHierarchy.length === 1) {
+                    if (type === 'Resource') {
+                        // Do nothing.
+                    } else {
+                        if (schemaField.ConfigurationPerScreenSize === true) {
+                            canConfigurePerScreenSize = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return canConfigurePerScreenSize;
+    }
+
+    updateBlockConfigurationField(blockKey: string, fieldKey: string, fieldValue: any) {
         const pageBlock = this.pageBlockProgressMap.get(blockKey);
         
         if (pageBlock) {
-            pageBlock.block.PageConfiguration = pageConfiguration;
-            this._pageBlockSubject.next(pageBlock.block);
+            const currentScreenType = this.getScreenType(this._screenSizeSubject.value);
+            const propertiesHierarchy = fieldKey.split('.');
 
-            // Calculate all filters by the updated page configuration.
-            this.buildConsumersFilters();
+            // If it's Landscape mode then set the field to the regular (Configuration -> Data -> field hierarchy).
+            if (currentScreenType === 'Landscape') {
+                // Update confuguration data.
+                this.updateConfigurationDataFieldValue(pageBlock.block, propertiesHierarchy, fieldValue);
+            } else {
+                const schema = pageBlock.block.Relation.Schema;
+                let canConfigurePerScreenSize = false;
+
+                if (schema?.Fields) {
+                    canConfigurePerScreenSize = this.searchFieldInSchemaFields(schema?.Fields, propertiesHierarchy);
+                }
+
+                // Update
+                if (canConfigurePerScreenSize) {
+                    this.updateConfigurationPerScreenSizeFieldValue(pageBlock.block, propertiesHierarchy, fieldValue, currentScreenType);
+                } else {
+                    // Update confuguration data.
+                    this.updateConfigurationDataFieldValue(pageBlock.block, propertiesHierarchy, fieldValue);
+                }
+            }
         }
     }
     
-    // TODO: Remove this
-    // updateBlockFilters(blockKey: string, blockFilters: IBlockFilter[]) {
-    //     const pageBlock = this.pageBlockProgressMap.get(blockKey);
+    updateBlockPageConfiguration(blockKey: string, pageConfiguration: PageConfiguration) {
+        const blockProgress = this.pageBlockProgressMap.get(blockKey);
+        
+        if (blockProgress) {
+            blockProgress.block.PageConfiguration = pageConfiguration;
+            this._pageBlockSubject.next(blockProgress.block);
 
-    //     // Only if this block is declared as produce.
-    //     if (pageBlock?.block?.PageConfiguration?.Produce) {
-    //         // Check if this block can raise those filters.
-    //         const produceFilters = pageBlock.block.PageConfiguration.Produce.Filters;
-    //         let canRasieFilters = true;
-
-    //         for (let index = 0; index < blockFilters.length; index++) {
-    //             const blockFilter = blockFilters[index];
-    //             canRasieFilters = this.canProducerRaiseFilter(produceFilters, blockFilter);
-
-    //             if (!canRasieFilters) {
-    //                 // Write error to the console "You cannot raise this filter (not declared)."
-    //                 console.error('One or more from the raised filters are not declared in PageConfiguration object.');
-    //                 break;
-    //             }
-    //         }
-
-    //         if (canRasieFilters) {
-    //             this._pageProducersFiltersMap.set(blockKey, blockFilters);
+            // Calculate all filters by the updated page configuration.
+            this.buildConsumersParameters();
+        }
+    }
     
-    //             // Raise the filters change only if this block has loaded AND the currentBlocksPriority is CONSUMERS_PRIORITY (consumers stage)
-    //             // because in case that the block isn't loaded we will raise the event once when all the blocks are ready.
-    //             if (pageBlock.loaded && this.currentBlocksPriority === this.CONSUMERS_PRIORITY) {
-    //                 this.buildConsumersFilters();
-    //             }
-    //         }
-    //     }
-    // }
-
     setBlockParameter(blockKey: string, event: { key: string, value: any }) {
         const pageBlock = this.pageBlockProgressMap.get(blockKey);
 
-        // Only if this block parameter is declared as produce.
+        // Only if this block parameter is declared as producer.
         if (pageBlock?.block?.PageConfiguration?.Parameters.length > 0) {
-            const params = pageBlock?.block?.PageConfiguration?.Parameters.filter(param => param.Key === event.key);
+            const params = pageBlock?.block?.PageConfiguration?.Parameters.filter(param => param.Key === event.key && param.Produce === true);
         
             // If the key exist in parameters.
             if (params?.length > 0) {
+                let canUpdateParameter = true;
+
+                // Check if can raise this filter type parameter (for type 'String' there is no validation).
                 if (params[0].Type === 'Filter') {
                     // Get the filters as PageConfigurationParameterFilter
-                    const produceFilters = params as PageConfigurationParameterFilter[]; // params.filter(param => param.Type === 'Filter') as PageConfigurationParameterFilter[];
+                    const filtersParameters = params as PageConfigurationParameterFilter[];
                     
-                    // Check if this block can raise those filters.
-                    const blockFilters = event.value;
-                    let canRasieFilters = true;
+                    // Check if this producer can raise those filters.
+                    const producerFilters = event.value as IProducerFilter[];
+                    
+                    for (let index = 0; index < producerFilters.length; index++) {
+                        const producerFilter = producerFilters[index];
+                        canUpdateParameter = this.canProducerRaiseFilter(filtersParameters, producerFilter);
         
-                    for (let index = 0; index < blockFilters.length; index++) {
-                        const blockFilter = blockFilters[index];
-                        canRasieFilters = this.canProducerRaiseFilter(produceFilters, blockFilter);
-        
-                        if (!canRasieFilters) {
+                        if (!canUpdateParameter) {
                             // Write error to the console "You cannot raise this filter (not declared)."
                             console.error('One or more from the raised filters are not declared in the block -> pageConfiguration -> parameters array.');
                             break;
                         }
                     }
-        
-                    if (canRasieFilters) {
-                        this._pageProducersFiltersMap.set(blockKey, blockFilters);
-            
-                        // Raise the filters change only if this block has loaded AND the currentBlocksPriority is CONSUMERS_PRIORITY (consumers stage)
-                        // because in case that the block isn't loaded we will raise the event once when all the blocks are ready.
-                        if (pageBlock.loaded && this.currentBlocksPriority === this.CONSUMERS_PRIORITY) {
-                            this.buildConsumersFilters();
-                        }
+                }
+                
+                // Only if can update parameter
+                if (canUpdateParameter) {
+                    // Create new producerParameters map if key isn't exists.
+                    if (!this._producerParameterKeysMap.has(event.key)) {
+                        this._producerParameterKeysMap.set(event.key, { producerParametersMap: new Map<string, any>() });
                     }
-                } else if (params[0].Type === 'String') {
-                    // TODO: Implement context
+
+                    // Set the producer parameter value in _producerParameterKeysMap.
+                    this._producerParameterKeysMap.get(event.key).producerParametersMap.set(blockKey, event.value);
+                    
+                    // Raise the filters change only if this block has loaded AND the currentBlocksPriority is CONSUMERS_PRIORITY (consumers stage)
+                    // because in case that the block isn't loaded we will raise the event once when all the blocks are ready.
+                    if (pageBlock.loaded && this.currentBlocksPriority === this.CONSUMERS_PRIORITY) {
+                        this.buildConsumersParameters();
+                    }
                 }
             }
         }
@@ -1096,7 +1243,7 @@ export class PagesService {
     }
 
     setScreenWidth(value: string) {
-        let width = this.utilitiesService.coerceNumberProperty(value, 0);
+        let width = this.pepUtilitiesService.coerceNumberProperty(value, 0);
         if (width === 0) {
             this._screenWidthSubject.next('100%');
             this._screenSizeSubject.next(PepScreenSizeType.XL);

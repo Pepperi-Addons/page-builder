@@ -16,7 +16,7 @@ export class PagesUpgradeService extends PagesApiService {
                 const configurationToSet: ResourceDataConfiguration = {
                     Resource: block.Relation.Name,
                     AddonUUID: block.Relation.AddonUUID,
-                    Data: block.Configuration ? JSON.parse(JSON.stringify(block.Configuration)) : {}
+                    Data: Object.assign({}, block.Configuration || {})
                 };
 
                 block.Configuration = configurationToSet;
@@ -28,7 +28,7 @@ export class PagesUpgradeService extends PagesApiService {
         page.Layout.Sections.forEach(section => {
             section.Columns.forEach(column => {
                 if (column['Block'] && column.BlockContainer === undefined) {
-                    column.BlockContainer = JSON.parse(JSON.stringify(column['Block']));
+                    column.BlockContainer = Object.assign({}, column['Block']);
                     delete column['Block'];
                 }
             });

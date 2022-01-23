@@ -83,7 +83,6 @@ export class PageManagerComponent implements OnInit {
             { key: this.exportKey, text: this.translate.instant('ACTIONS.EXPORT') }
         ];
 
-        // TODO: Block Screen button if the screen width is not enough.
         this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
             this.screenSize = size;
             const screenType = this.pageBuilderService.getScreenType(this.screenSize);
@@ -144,16 +143,14 @@ export class PageManagerComponent implements OnInit {
     }
 
     onBlockEditorHostEvents(event: any) {
+        // Implement editors events.
         switch(event.action){
             case 'set-configuration':
                 this.pageBuilderService.updateBlockConfiguration(this.currentEditor.id, event.configuration);
                 break;
-
-            // TODO:
             case 'set-configuration-field':
-                // this.pageBuilderService.updateBlockConfiguration(this.currentEditor.id, event.configuration);
+                this.pageBuilderService.updateBlockConfigurationField(this.currentEditor.id, event.key, event.value);
                 break;
-
             case 'set-page-configuration':
                 this.pageBuilderService.updateBlockPageConfiguration(this.currentEditor.id, event.pageConfiguration);
                 break;
@@ -168,7 +165,7 @@ export class PageManagerComponent implements OnInit {
         }
     }
 
-    // TODO:
+    // TODO: Implement
     onMenuItemClick(action: IPepMenuItemClickEvent) {
         if (action.source.key === this.importKey) { // Import page
 
