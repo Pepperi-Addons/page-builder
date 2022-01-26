@@ -267,38 +267,7 @@ export class PagesValidatorService {
         }
     }
 
-    /***********************************************************************************************/
-    /*                                  Public functions
-    /***********************************************************************************************/
-
-    // Validate the page and throw error if not valid.
-    validatePageProperties(page: Page): void {
-        const pagePropertyBreadcrumb = 'Page';
-        
-        // Validate Key if exist (Optional)
-        this.validateObjectProperty(page, 'Key', pagePropertyBreadcrumb, true);
-
-        // Validate Hidden if exist (Optional)
-        this.validateObjectProperty(page, 'Hidden', pagePropertyBreadcrumb, true, 'boolean');
-
-        // Validate Name if exist (Optional)
-        this.validateObjectProperty(page, 'Name', pagePropertyBreadcrumb, true);
-        
-        // Validate Description if exist (Optional)
-        this.validateObjectProperty(page, 'Description', pagePropertyBreadcrumb, true);
-        
-        // Validate Blocks
-        this.validateArrayProperty(page, 'Blocks', pagePropertyBreadcrumb);
-        for (let index = 0; index < page.Blocks.length; index++) {
-            this.validatePageBlockProperties(pagePropertyBreadcrumb, page.Blocks[index], index);
-        }
-        
-        // Validate Layout
-        this.validateObjectProperty(page, 'Layout', pagePropertyBreadcrumb, false, 'object');
-        this.validatePageLayoutProperties(page.Layout, pagePropertyBreadcrumb)
-    }
-
-    validatePageBlocks(page: Page, availableBlocks: IAvailableBlockData[]) {
+    private validatePageBlocksData(page: Page, availableBlocks: IAvailableBlockData[]) {
         // Validate blocks.
         const blockKeys = new Map<string, string>();
         for (let index = 0; index < page.Blocks?.length; index++) {
@@ -353,6 +322,72 @@ export class PagesValidatorService {
         }
     }
 
+    private validatePageConfigurationData(page: Page) {
+        // Validate parameters.
+        const parameterKeys = new Map<string, PageConfigurationParameter>();
+        for (let blockIndex = 0; blockIndex < page.Blocks?.length; blockIndex++) {
+            const block = page.Blocks[blockIndex];
+            
+            if (block?.PageConfiguration) {
+                for (let parameterIndex = 0; parameterIndex < block.PageConfiguration.Parameters?.length; parameterIndex++) {
+                    const parameter = block.PageConfiguration.Parameters[parameterIndex];
+                    
+                    // If the parameter key isn't exist insert it to the map, else, check the type if isn't the same then throw error.
+                    if (!parameterKeys.has(parameter.Key)) {
+                        parameterKeys.set(parameter.Key, parameter);
+                    } else {
+                        if (parameter.Type !== parameterKeys.get(parameter.Key)?.Type) {
+                            throw new Error(`Parameters with key ${parameter.Key} should be with the same Type.`);
+                        }
+                    }
+
+                    if (!parameter.Produce && !parameter.Consume) {
+                        throw new Error(`The parameter (with key ${parameter.Key}) is not allowed, at least on of the properties Produce or Consume should be true.`);
+                    }
+                }
+            }
+        }
+    }
+
+    /***********************************************************************************************/
+    /*                                  Public functions
+    /***********************************************************************************************/
+
+    // Validate the page and throw error if not valid.
+    validatePageProperties(page: Page): void {
+        const pagePropertyBreadcrumb = 'Page';
+        
+        // Validate Key if exist (Optional)
+        this.validateObjectProperty(page, 'Key', pagePropertyBreadcrumb, true);
+
+        // Validate Hidden if exist (Optional)
+        this.validateObjectProperty(page, 'Hidden', pagePropertyBreadcrumb, true, 'boolean');
+
+        // Validate Name if exist (Optional)
+        this.validateObjectProperty(page, 'Name', pagePropertyBreadcrumb, true);
+        
+        // Validate Description if exist (Optional)
+        this.validateObjectProperty(page, 'Description', pagePropertyBreadcrumb, true);
+        
+        // Validate Blocks
+        this.validateArrayProperty(page, 'Blocks', pagePropertyBreadcrumb);
+        for (let index = 0; index < page.Blocks.length; index++) {
+            this.validatePageBlockProperties(pagePropertyBreadcrumb, page.Blocks[index], index);
+        }
+        
+        // Validate Layout
+        this.validateObjectProperty(page, 'Layout', pagePropertyBreadcrumb, false, 'object');
+        this.validatePageLayoutProperties(page.Layout, pagePropertyBreadcrumb)
+    }
+
+    validatePageData(page: Page, availableBlocks: IAvailableBlockData[]) {
+        // Validate page blocks data.
+        this.validatePageBlocksData(page, availableBlocks);
+        
+        // Validate page configuration data.
+        this.validatePageConfigurationData(page);
+    }
+    
     getPageCopyAccordingInterface(page: Page): Page {
         // Init with the mandatories properties.
         let res: Page = {

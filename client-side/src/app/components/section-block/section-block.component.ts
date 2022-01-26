@@ -114,7 +114,7 @@ export class SectionBlockComponent implements OnInit {
     }
 
     onRemoveBlockClick() {
-        this.pageBuilderService.onRemoveBlock(this.sectionKey, this.pageBlock.Key);
+        this.pageBuilderService.removeBlock(this.pageBlock.Key);
     }
 
     onHideBlockChange(hideIn: DataViewScreenSize[]) {

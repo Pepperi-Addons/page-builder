@@ -1,9 +1,14 @@
 import { Injectable } from '@angular/core'
+import { TranslateService } from '@ngx-translate/core';
+import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 
 @Injectable({ providedIn: 'root' })
 export class UtilitiesService {
     
-    constructor() {
+    constructor(
+        private translate: TranslateService,
+        private dialogService: PepDialogService,
+        ) {
         //
     }
 
@@ -30,5 +35,15 @@ export class UtilitiesService {
         }
       
         return this.mergeDeep(target, ...sources);
+    }
+
+    showDialogMsg(message: string, title: string = '') {
+        title = title.length > 0 ? title: this.translate.instant('MESSAGES.TITLE_NOTICE');
+
+        const data = new PepDialogData({
+            title: title,
+            content: message,
+        });
+        this.dialogService.openDefaultDialog(data);
     }
 }

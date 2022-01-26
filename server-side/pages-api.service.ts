@@ -1,8 +1,8 @@
 import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, PageSection, SplitTypes, DataViewScreenSizes, PageBlock, PageSectionColumn, PageSizeTypes, PageLayout, Subscription, FindOptions } from '@pepperi-addons/papi-sdk'
 import { Client } from '@pepperi-addons/debug-server';
-import { v4 as uuid } from 'uuid';
 import { PageRowProjection, TempBlankPageData, IAvailableBlockData, IPageBuilderData } from './pages.model';
 import { PagesValidatorService } from './pages-validator.service';
+import { v4 as uuidv4 } from 'uuid';
 
 export const PAGES_TABLE_NAME = 'Pages';
 export const DRAFT_PAGES_TABLE_NAME = 'PagesDrafts';
@@ -80,7 +80,7 @@ export class PagesApiService {
         }
 
         if (!page.Key) {
-            page.Key = uuid();
+            page.Key = uuidv4();
         }
 
         // Validate page object before upsert.
@@ -88,7 +88,7 @@ export class PagesApiService {
 
         // Validate page blocks (check that the blocks are in the available blocks).
         const availableBlocks = await this.getAvailableBlocks();
-        this.pagesValidatorService.validatePageBlocks(page, availableBlocks);
+        this.pagesValidatorService.validatePageData(page, availableBlocks);
 
         // Override the page according the interface.
         page = this.pagesValidatorService.getPageCopyAccordingInterface(page);

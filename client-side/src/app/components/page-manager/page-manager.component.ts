@@ -10,6 +10,7 @@ import { NavigationService } from '../../services/navigation.service';
 import { IPepSideBarStateChangeEvent } from '@pepperi-addons/ngx-lib/side-bar';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
     selector: 'page-manager',
@@ -35,11 +36,11 @@ export class PageManagerComponent implements OnInit {
     constructor(
         private renderer: Renderer2,
         private translate: TranslateService,
-        private utilitiesService: PepUtilitiesService,
+        private pepUtilitiesService: PepUtilitiesService,
         private layoutService: PepLayoutService,
-        private dialogService: PepDialogService,
         private pageBuilderService: PagesService,
         private navigationService: NavigationService,
+        private utilitiesService: UtilitiesService
     ) {
     }
 
@@ -95,7 +96,7 @@ export class PageManagerComponent implements OnInit {
 
         this.pageBuilderService.pageDataChange$.subscribe((page: Page) => {
             if (page && this.pageBuilderWrapper?.nativeElement) {
-                let maxWidth = this.utilitiesService.coerceNumberProperty(page.Layout.MaxWidth, 0);
+                let maxWidth = this.pepUtilitiesService.coerceNumberProperty(page.Layout.MaxWidth, 0);
                 const maxWidthToSet = maxWidth === 0 ? '100%' : `${maxWidth}px`;
                 this.renderer.setStyle(this.pageBuilderWrapper.nativeElement, 'max-width', maxWidthToSet);
                 this.updateViewportWidth();
@@ -174,24 +175,15 @@ export class PageManagerComponent implements OnInit {
         }
     }
 
-    private showDialogMsg(message: string) {
-        const title = this.translate.instant('MESSAGES.TITLE_NOTICE');
-        const data = new PepDialogData({
-            title,
-            content: message,
-        });
-        this.dialogService.openDefaultDialog(data);
-    }
-
     onSaveClick() {
         this.pageBuilderService.saveCurrentPage(this.navigationService.addonUUID).subscribe(res => {
-            this.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
+            this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
         });
     }
 
     onPublishClick() {
         this.pageBuilderService.publishCurrentPage(this.navigationService.addonUUID).subscribe(res => {
-            this.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
+            this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
         });
     }
 }

@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { PepRemoteLoaderOptions } from "@pepperi-addons/ngx-remote-loader";
-import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, ResourceType, PageConfigurationParameterFilter, PageConfiguration, PageConfigurationParameterBase, PageConfigurationParameterString } from "@pepperi-addons/papi-sdk";
+import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, ResourceType, PageConfigurationParameterFilter, PageConfiguration, PageConfigurationParameterBase, PageConfigurationParameterString, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
 import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 import { NavigationService } from "./navigation.service";
@@ -374,14 +374,16 @@ export class PagesService {
         }
     }
 
-    private removeBlocks(blockIds: string[]) {
+    private removePageBlocks(blockIds: string[]) {
         if (blockIds.length > 0) {
             blockIds.forEach(blockId => {
                 // Remove the block from the page blocks.
                 this.removePageBlock(blockId)
 
                 // Remove the block progress from the map.
-                this._pageBlockProgressMap.delete(blockId);
+                if (this._pageBlockProgressMap.has(blockId)) {
+                    this._pageBlockProgressMap.delete(blockId);
+                }
             });
             
             this.notifyBlockProgressMapChange();
@@ -751,6 +753,200 @@ export class PagesService {
         return `${relation.Name}_${relation.AddonUUID}`;
     }
 
+    // Update the block configuration data by the propertiesHierarchy and set the field value (deep set).
+    private updateConfigurationDataFieldValue(block: PageBlock, propertiesHierarchy: Array<string>, fieldValue: any) {
+        this.setObjectPropertyValueRoot(block, block.Configuration.Data, propertiesHierarchy, fieldValue);
+    }
+
+    // Update the block configuration per screen size according the current screen sizes and the saved values (deep set).
+    private updateConfigurationPerScreenSizeFieldValue(block: PageBlock, propertiesHierarchy: Array<string>, fieldValue: any, currentScreenType: DataViewScreenSize) {
+        if (block.ConfigurationPerScreenSize === undefined) {
+            block.ConfigurationPerScreenSize = {};
+        }
+        
+        let objectToUpdate;
+        if (currentScreenType === 'Tablet') {
+            if (block.ConfigurationPerScreenSize.Tablet === undefined) {
+                block.ConfigurationPerScreenSize.Tablet = {};
+            }
+            
+            objectToUpdate = block.ConfigurationPerScreenSize.Tablet;
+        } else { // Phablet
+            if (block.ConfigurationPerScreenSize.Mobile === undefined) {
+                block.ConfigurationPerScreenSize.Mobile = {};
+            }
+          
+            objectToUpdate = block.ConfigurationPerScreenSize.Mobile;
+        } 
+
+        // Update the block configuration data by the propertiesHierarchy and set the field value.
+        this.setObjectPropertyValueRoot(block, objectToUpdate, propertiesHierarchy, fieldValue);
+    }
+
+    private setObjectPropertyValueRoot(block: PageBlock, object: any, propertiesHierarchy: Array<string>, value: any): void {
+        if (propertiesHierarchy.length > 0) {
+            const propertyName = propertiesHierarchy[0];
+            propertiesHierarchy.shift();
+            this.setObjectPropertyValue(object, propertiesHierarchy, propertyName, value);
+            this._pageBlockSubject.next(block);
+        }
+    }
+
+    // Set the object field value by propertiesHierarchy (deep set)
+    private setObjectPropertyValue(object: any, propertiesHierarchy: Array<string>, propertyName: string, value: any): void {
+        if (propertiesHierarchy.length > 0) {
+            const propertyName = propertiesHierarchy[0];
+            propertiesHierarchy.shift();
+
+            if (!object.hasOwnProperty(propertyName)) {
+                object[propertyName] = {};
+            } 
+            
+            this.setObjectPropertyValue(object[propertyName], propertiesHierarchy, propertyName, value);
+        } else {
+            // If the value is not undefined set the property, else - delete it.
+            if (value !== undefined) {
+                object[propertyName] = value;
+            } else {
+                if (object.hasOwnProperty(propertyName)) {
+                    delete object[propertyName];
+                }
+            }
+        }
+    }
+
+    private searchFieldInSchemaFields(schemaFields: any, propertiesHierarchy: Array<string>): boolean {
+        let canConfigurePerScreenSize = false;
+
+        if (propertiesHierarchy.length > 0) {
+            const currentFieldKey = propertiesHierarchy[0];
+            const schemaField = schemaFields[currentFieldKey];
+
+            if (schemaField) {
+                const type = schemaField.Type;
+            
+                // If it's object
+                if (type === 'Object') {
+                    // If the field index is the last
+                    if (propertiesHierarchy.length === 1) {
+                        if (schemaField.ConfigurationPerScreenSize === true) {
+                            canConfigurePerScreenSize = true;
+                        }
+                    } else { // Check in fields.
+                        if (schemaField.Fields) {
+                            propertiesHierarchy.shift(); // Remove the first element.
+                            canConfigurePerScreenSize = this.searchFieldInSchemaFields(schemaField.Fields, propertiesHierarchy);
+                        } else {
+                            // Do nothing.
+                        }
+                    }
+                } else if (propertiesHierarchy.length === 1) {
+                    if (type === 'Resource') {
+                        // Do nothing.
+                    } else {
+                        if (schemaField.ConfigurationPerScreenSize === true) {
+                            canConfigurePerScreenSize = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return canConfigurePerScreenSize;
+    }
+
+    private validatePageConfigurationParametersOnCurrentBlock(parameterKeys: Map<string, PageConfigurationParameter>, parameter: PageConfigurationParameter) {
+        // If the parameter key isn't exist insert it to the map, else, check the type if isn't the same then throw error.
+        if (!parameterKeys.has(parameter.Key)) {
+            parameterKeys.set(parameter.Key, parameter);
+        } else {
+            if (parameter.Type !== parameterKeys.get(parameter.Key)?.Type) {
+                const msg = this.translate.instant('MESSAGES.PARAMETER_VALIDATION.TYPE_IS_DIFFERENT_FOR_THIS_KEY', { parameterKey: parameter.Key});
+                throw new Error(msg);
+            }
+        }
+
+        if (!parameter.Produce && !parameter.Consume) {
+            const msg = this.translate.instant('MESSAGES.PARAMETER_VALIDATION.CONSUME_AND_PRODUCE_ARE_FALSE', { parameterKey: parameter.Key});
+            throw new Error(msg);
+        }
+    }
+
+    private validatePageConfigurationParametersOnPageBlocks(blockParameterKeys: Map<string, { block: PageBlock, parameter: PageConfigurationParameter }[]>, parameter: PageConfigurationParameter) {
+        // If the parameter key isn't exist insert it to the map, else, check the type if isn't the same then throw error.
+        if (blockParameterKeys.has(parameter.Key)) {
+            const blockParameter = blockParameterKeys.get(parameter.Key)[0];
+            
+            if (parameter.Type !== blockParameter?.parameter?.Type) {
+                // Find section and column index of the block to show this details to the user.
+                let sectionName = '';
+                let sectionIndex = -1;
+                let columnIndex = -1;
+
+                // Find the section index.
+                for (sectionIndex = 0; sectionIndex < this._sectionsSubject.value.length; sectionIndex++) {
+                    const section = this._sectionsSubject.value[sectionIndex];
+                    
+                    // Find the column index.
+                    columnIndex = section.Columns.findIndex(column => column.BlockContainer?.BlockKey === blockParameter.block.Key);
+                    if (columnIndex > -1) {
+                        sectionName = section.Name;
+                        break;
+                    }
+                }
+                
+                const msg = this.translate.instant('MESSAGES.PARAMETER_VALIDATION.TYPE_IS_DIFFERENT_FOR_THIS_KEY_IN_OTHER_BLOCKS', { 
+                    section: sectionName || (sectionIndex + 1), 
+                    column: columnIndex + 1, 
+                    parameterKey: parameter.Key,
+                    parameterType: blockParameter?.parameter?.Type,
+                });
+
+                throw new Error(msg);
+            }
+        }
+    }
+
+    private validatePageConfigurationData(blockKey: string, pageConfiguration: PageConfiguration) {
+        // Take all blocks except the given one for check if the new data is valid.
+        const blocks = this.pageSubject.value.Blocks.filter(block => block.Key !== blockKey);
+
+        // go for all the existing parameters.
+        const blockParameterKeys = new Map<string, { block: PageBlock, parameter: PageConfigurationParameter }[]>();
+        for (let blockIndex = 0; blockIndex < blocks?.length; blockIndex++) {
+            const block = blocks[blockIndex];
+            
+            if (block?.PageConfiguration) {
+                for (let parameterIndex = 0; parameterIndex < block.PageConfiguration.Parameters?.length; parameterIndex++) {
+                    const parameter = block.PageConfiguration.Parameters[parameterIndex];
+                    
+                    // If the parameter key isn't exist insert it to the map, 
+                    // else, it's should be with the same Type so add the other blocks and parameters to the array in the map.
+                    if (!blockParameterKeys.has(parameter.Key)) {
+                        blockParameterKeys.set(parameter.Key, [{block, parameter}]);
+                    } else {
+                        const arr = blockParameterKeys.get(parameter.Key);
+                        arr.push({block, parameter});
+                        blockParameterKeys.set(parameter.Key, arr);
+                    }
+                }
+            }
+        }
+
+        const parameterKeys = new Map<string, PageConfigurationParameter>();
+
+        // Validate the pageConfiguration parameters.
+        for (let parameterIndex = 0; parameterIndex < pageConfiguration?.Parameters?.length; parameterIndex++) {
+            const parameter = pageConfiguration.Parameters[parameterIndex];
+            
+            // Validate the parameters on the pageConfiguration input.
+            this.validatePageConfigurationParametersOnCurrentBlock(parameterKeys, parameter);
+
+            // Validate the parameters from pageConfiguration input on the other page blocks.
+            this.validatePageConfigurationParametersOnPageBlocks(blockParameterKeys, parameter);
+        }
+    }
+    
     private changeCursorOnDragStart() {
         document.body.classList.add('inheritCursors');
         document.body.style.cursor = 'grabbing';
@@ -879,7 +1075,7 @@ export class PagesService {
                     }
                 }
                 
-                this.removeBlocks(blocksIdsToRemove);
+                this.removePageBlocks(blocksIdsToRemove);
             }
         
             // Update editor title 
@@ -915,7 +1111,7 @@ export class PagesService {
             const blocksIds = this._sectionsSubject.value[index].Columns.map(column => column?.BlockContainer?.BlockKey);
             
             // Remove the blocks by ids.
-            this.removeBlocks(blocksIds)
+            this.removePageBlocks(blocksIds)
 
             // Remove section.
             this._sectionsSubject.value.splice(index, 1);
@@ -943,16 +1139,19 @@ export class PagesService {
         this._draggingSectionKey.next('');
     }
 
-    onRemoveBlock(sectionId: string, blockId: string) {
-        const index = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
-        if (index > -1) {
-            const columnIndex = this._sectionsSubject.value[index].Columns.findIndex(column => column.BlockContainer?.BlockKey === blockId);
-            if (columnIndex > -1) {
-                // Remove the block.
-                this.removeBlocks([blockId]);
+    removeBlock(blockId: string) {
+        // Remove the block.
+        this.removePageBlocks([blockId]);
 
-                // Remove the block from section column.
-                delete this._sectionsSubject.value[index].Columns[columnIndex].BlockContainer;
+        // Remove the block from section column.
+        for (let sectionIndex = 0; sectionIndex < this._sectionsSubject.value.length; sectionIndex++) {
+            const section = this._sectionsSubject.value[sectionIndex];
+            
+            // Remove the block container.
+            const columnIndex = section.Columns.findIndex(column => column.BlockContainer?.BlockKey === blockId);
+            if (columnIndex > -1) {
+                delete section.Columns[columnIndex].BlockContainer;
+                return;
             }
         }
     }
@@ -1036,108 +1235,6 @@ export class PagesService {
         }
     }
     
-    // Update the block configuration data by the propertiesHierarchy and set the field value (deep set).
-    private updateConfigurationDataFieldValue(block: PageBlock, propertiesHierarchy: Array<string>, fieldValue: any) {
-        this.setObjectPropertyValueRoot(block, block.Configuration.Data, propertiesHierarchy, fieldValue);
-    }
-
-    // Update the block configuration per screen size according the current screen sizes and the saved values (deep set).
-    private updateConfigurationPerScreenSizeFieldValue(block: PageBlock, propertiesHierarchy: Array<string>, fieldValue: any, currentScreenType: DataViewScreenSize) {
-        if (block.ConfigurationPerScreenSize === undefined) {
-            block.ConfigurationPerScreenSize = {};
-        }
-        
-        let objectToUpdate;
-        if (currentScreenType === 'Tablet') {
-            if (block.ConfigurationPerScreenSize.Tablet === undefined) {
-                block.ConfigurationPerScreenSize.Tablet = {};
-            }
-            
-            objectToUpdate = block.ConfigurationPerScreenSize.Tablet;
-        } else { // Phablet
-            if (block.ConfigurationPerScreenSize.Mobile === undefined) {
-                block.ConfigurationPerScreenSize.Mobile = {};
-            }
-          
-            objectToUpdate = block.ConfigurationPerScreenSize.Mobile;
-        } 
-
-        // Update the block configuration data by the propertiesHierarchy and set the field value.
-        this.setObjectPropertyValueRoot(block, objectToUpdate, propertiesHierarchy, fieldValue);
-    }
-
-    private setObjectPropertyValueRoot(block: PageBlock, object: any, propertiesHierarchy: Array<string>, value: any): void {
-        if (propertiesHierarchy.length > 0) {
-            const propertyName = propertiesHierarchy[0];
-            propertiesHierarchy.shift();
-            this.setObjectPropertyValue(object, propertiesHierarchy, propertyName, value);
-            this._pageBlockSubject.next(block);
-        }
-    }
-
-    // Set the object field value by propertiesHierarchy (deep set)
-    private setObjectPropertyValue(object: any, propertiesHierarchy: Array<string>, propertyName: string, value: any): void {
-        if (propertiesHierarchy.length > 0) {
-            const propertyName = propertiesHierarchy[0];
-            propertiesHierarchy.shift();
-
-            if (!object.hasOwnProperty(propertyName)) {
-                object[propertyName] = {};
-            } 
-            
-            this.setObjectPropertyValue(object[propertyName], propertiesHierarchy, propertyName, value);
-        } else {
-            // If the value is not undefined set the property, else - delete it.
-            if (value !== undefined) {
-                object[propertyName] = value;
-            } else {
-                if (object.hasOwnProperty(propertyName)) {
-                    delete object[propertyName];
-                }
-            }
-        }
-    }
-
-    private searchFieldInSchemaFields(schemaFields: any, propertiesHierarchy: Array<string>): boolean {
-        let canConfigurePerScreenSize = false;
-
-        if (propertiesHierarchy.length > 0) {
-            const currentFieldKey = propertiesHierarchy[0];
-            const schemaField = schemaFields[currentFieldKey];
-
-            if (schemaField) {
-                const type = schemaField.Type;
-            
-                // If it's object
-                if (type === 'Object') {
-                    // If the field index is the last
-                    if (propertiesHierarchy.length === 1) {
-                        if (schemaField.ConfigurationPerScreenSize === true) {
-                            canConfigurePerScreenSize = true;
-                        }
-                    } else { // Check in fields.
-                        if (schemaField.Fields) {
-                            propertiesHierarchy.shift(); // Remove the first element.
-                            canConfigurePerScreenSize = this.searchFieldInSchemaFields(schemaField.Fields, propertiesHierarchy);
-                        } else {
-                            // Do nothing.
-                        }
-                    }
-                } else if (propertiesHierarchy.length === 1) {
-                    if (type === 'Resource') {
-                        // Do nothing.
-                    } else {
-                        if (schemaField.ConfigurationPerScreenSize === true) {
-                            canConfigurePerScreenSize = true;
-                        }
-                    }
-                }
-            }
-        }
-
-        return canConfigurePerScreenSize;
-    }
-
     updateBlockConfigurationField(blockKey: string, fieldKey: string, fieldValue: any) {
         const pageBlock = this.pageBlockProgressMap.get(blockKey);
         
@@ -1172,11 +1269,24 @@ export class PagesService {
         const blockProgress = this.pageBlockProgressMap.get(blockKey);
         
         if (blockProgress) {
-            blockProgress.block.PageConfiguration = pageConfiguration;
-            this._pageBlockSubject.next(blockProgress.block);
+            try {
+                // Validate the block page configuration data, if validation failed an error will be thrown.
+                this.validatePageConfigurationData(blockKey, pageConfiguration);
+                
+                blockProgress.block.PageConfiguration = pageConfiguration;
+                this._pageBlockSubject.next(blockProgress.block);
+    
+                // Calculate all filters by the updated page configuration.
+                this.buildConsumersParameters();
+            } catch (err) {
+                // Go back from block editor.
+                this.navigateBackFromEditor();
 
-            // Calculate all filters by the updated page configuration.
-            this.buildConsumersParameters();
+                // Remove the block and show message.
+                const title = this.translate.instant('MESSAGES.PARAMETER_VALIDATION.BLOCK_HAS_REMOVED');
+                this.utilitiesService.showDialogMsg(err.message, title);
+                this.removeBlock(blockProgress.block.Key);
+            }
         }
     }
     
