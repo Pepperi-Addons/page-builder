@@ -16,7 +16,7 @@ import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 
 import { SubAddon2Component } from './sub-addon-2.component';
 
-import { config } from './addon.config';
+import { config } from '../addon.config';
 @NgModule({
     declarations: [SubAddon2Component],
     imports: [
