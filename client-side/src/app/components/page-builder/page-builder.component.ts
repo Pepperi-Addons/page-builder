@@ -83,7 +83,7 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
         private navigationService: NavigationService,
         private utilitiesService: PepUtilitiesService,
         private layoutService: PepLayoutService,
-        private pageBuilderService: PagesService
+        private pagesService: PagesService
     ) {
     }
 
@@ -123,24 +123,24 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
         const pageKey = this.route.snapshot.data['page_key'] || this.route?.snapshot?.params['page_key'] || this.hostObject?.pageKey || '';
 
         if (pageKey.length > 0) {
-            this.pageBuilderService.loadPageBuilder(addonUUID, pageKey, this.editMode);
+            this.pagesService.loadPageBuilder(addonUUID, pageKey, this.editMode);
 
             this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
                 this.screenSize = size;
             });
 
-            this.pageBuilderService.onSectionsChange$.subscribe(res => {
+            this.pagesService.onSectionsChange$.subscribe(res => {
                 this._sectionsSubject.next(res);
             });
 
-            this.pageBuilderService.pageBlockProgressMapChange$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
+            this.pagesService.pageBlockProgressMapChange$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
                 // Clear the blocks map and set it again.
-                this._pageBlocksMap = new Map<string, PageBlock>();
+                const pageBlocksMap = new Map<string, PageBlock>();
                 // const remoteEntriesMap = new Map<string, boolean>();
                 const pbRelationsNames = new Map<string, boolean>();
 
                 blocksProgress.forEach(bp => {
-                    if (bp.priority >= this.pageBuilderService.currentBlocksPriority) {
+                    if (bp.priority >= this.pagesService.currentBlocksPriority) {
                         // Check that there is no other block with the same relation name that need to load.
                         // if (bp.loaded || !remoteEntriesMap.has(bp.block.Relation.Options?.remoteEntry)) {
                         if (bp.loaded || !pbRelationsNames.has(bp.block.Relation.Name)) {
@@ -151,13 +151,15 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
                                 pbRelationsNames.set(bp.block.Relation.Name, true);
                             }
 
-                            this._pageBlocksMap.set(bp.block.Key, bp.block);
+                            pageBlocksMap.set(bp.block.Key, bp.block);
                         }
                     }
                 });
+
+                this._pageBlocksMap = pageBlocksMap;
             });
 
-            this.pageBuilderService.pageDataChange$.subscribe((page: Page) => {
+            this.pagesService.pageDataChange$.subscribe((page: Page) => {
                 this.setPageDataProperties(page);
             });
         } else {
@@ -166,11 +168,11 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.pageBuilderService.unloadPageBuilder();
+        this.pagesService.unloadPageBuilder();
     }
 
     onSectionDropped(event: CdkDragDrop<any[]>) {
-        this.pageBuilderService.onSectionDropped(event);
+        this.pagesService.onSectionDropped(event);
     }
 
 }

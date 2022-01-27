@@ -259,12 +259,18 @@ export class PagesService {
             // Some logic to load the blocks by priority (first none or Produce only, second Consume & Produce, third Consume only).
             if (page.Blocks) {
                 page.Blocks.forEach(block => {
-                    const bp = this.addBlockProgress(block);
-                    
-                    // If the currentBlocksPriority is smaller then bp.priority set the bp.priority as the current.
-                    if (this.currentBlocksPriority < bp.priority) {
-                        // Set the current priority to start load all blocks by the current priority.
-                        this._currentBlocksPriority = bp.priority;
+                    const isUIBlock = this.doesBlockExistInUI(block.Key);
+
+                    if (isUIBlock) {
+                        const bp = this.addBlockProgress(block);
+                        
+                        // If the currentBlocksPriority is smaller then bp.priority set the bp.priority as the current.
+                        if (this.currentBlocksPriority < bp.priority) {
+                            // Set the current priority to start load all blocks by the current priority.
+                            this._currentBlocksPriority = bp.priority;
+                        }
+                    } else {
+                        // If this block is not declared on any section (not UI block) do nothing.
                     }
                 });
                 
@@ -342,6 +348,25 @@ export class PagesService {
         }
     }
 
+    // Check if the block key exist in layout -> sections -> columns (if shows in the UI).
+    private doesBlockExistInUI(blockKey: string) {
+        const page = this.pageSubject.getValue();
+
+        for (let sectionIndex = 0; sectionIndex < page.Layout.Sections.length; sectionIndex++) {
+            const section = page.Layout.Sections[sectionIndex];
+
+            for (let columnIndex = 0; columnIndex < section.Columns.length; columnIndex++) {
+                const column = section.Columns[columnIndex];
+                
+                if (column.BlockContainer?.BlockKey === blockKey) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private addBlockProgress(block: PageBlock, openEditorOnLoaded: boolean = false): IBlockProgress {
         const priority = this.getBlockPriority(block);
 
@@ -360,7 +385,9 @@ export class PagesService {
 
     private addPageBlock(block: PageBlock, openEditorOnLoaded: boolean) {
         // Add the block to the page blocks.
-        this.pageSubject.value.Blocks.push(block);
+        const page = this.pageSubject.getValue();
+        page.Blocks.push(block);
+        this.pageSubject.next(page);
 
         // Add the block progress.
         this.addBlockProgress(block, openEditorOnLoaded);
@@ -368,9 +395,12 @@ export class PagesService {
     }
 
     private removePageBlock(blockId: string) {
-        const index = this.pageSubject.value.Blocks.findIndex(block => block.Key === blockId);
+        const page = this.pageSubject.getValue();
+        const index = page.Blocks.findIndex(block => block.Key === blockId);
+        
         if (index > -1) {
-            this.pageSubject.value.Blocks.splice(index, 1);
+            page.Blocks.splice(index, 1);
+            this.pageSubject.next(page);
         }
     }
 
@@ -391,8 +421,11 @@ export class PagesService {
     }
 
     private removeAllBlocks() {
-        if (this.pageSubject.value) {
-            this.pageSubject.value.Blocks = [];
+        const page = this.pageSubject.getValue();
+        
+        if (page) {
+            page.Blocks = [];
+            this.pageSubject.next(page);
         }
 
         this._pageBlockProgressMap.clear();
@@ -589,7 +622,7 @@ export class PagesService {
     private getMergedConfigurationData(block: PageBlock): any {
         // Copy the object data.
         let configurationData = Object.assign({}, block.Configuration.Data);
-        const currentScreenType = this.getScreenType(this._screenSizeSubject.value);
+        const currentScreenType = this.getScreenType(this._screenSizeSubject.getValue());
         
         // Get the configuration data by the current screen size (if exist then merge it up to Tablet and up to Landscape).
         if (currentScreenType !== 'Landscape') {
@@ -622,7 +655,8 @@ export class PagesService {
 
     private getBlockEditor(blockId: string): IEditor {
         // Get the current block.
-        let block: PageBlock = this.pageSubject?.value?.Blocks.find(block => block.Key === blockId);
+        const page = this.pageSubject.getValue();
+        let block: PageBlock = page?.Blocks.find(block => block.Key === blockId);
         const key = this.getRemoteLoaderMapKey(block.Relation);
         const remoteLoaderOptions = this._blocksEditorsRemoteLoaderOptionsMap.get(key);
 
@@ -647,10 +681,11 @@ export class PagesService {
 
     private getSectionEditor(sectionId: string): IEditor {
         // Get the current block.
-        const sectionIndex = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
+        const sections = this._sectionsSubject.getValue();
+        const sectionIndex = sections.findIndex(section => section.Key === sectionId);
         
         if (sectionIndex >= 0) {
-            let section = this._sectionsSubject.value[sectionIndex];
+            let section = sections[sectionIndex];
             const sectionEditor: ISectionEditor = {
                 id: section.Key,
                 sectionName: section.Name || '',
@@ -677,12 +712,16 @@ export class PagesService {
         const sectionColumnArr = sectionColumnId.split(sectionColumnPatternSeparator);
 
         if (sectionColumnArr.length === 2) {
+            const sections = this._sectionsSubject.getValue();
+            
             // Get the section id to get the section index.
             const sectionId = sectionColumnArr[0];
-            const sectionIndex = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
+            const sectionIndex = sections.findIndex(section => section.Key === sectionId);
             // Get the column index.
-            const columnIndex = sectionColumnArr[1];
-            currentColumn = this._sectionsSubject.value[sectionIndex].Columns[columnIndex];
+            const columnIndex = this.pepUtilitiesService.coerceNumberProperty(sectionColumnArr[1], -1);
+            if (sectionIndex >= 0 && columnIndex >= 0) {
+                currentColumn = sections[sectionIndex].Columns[columnIndex];
+            }
         } 
         
         return currentColumn;
@@ -878,14 +917,16 @@ export class PagesService {
             const blockParameter = blockParameterKeys.get(parameter.Key)[0];
             
             if (parameter.Type !== blockParameter?.parameter?.Type) {
+                const sections = this._sectionsSubject.getValue();
+
                 // Find section and column index of the block to show this details to the user.
                 let sectionName = '';
                 let sectionIndex = -1;
                 let columnIndex = -1;
 
                 // Find the section index.
-                for (sectionIndex = 0; sectionIndex < this._sectionsSubject.value.length; sectionIndex++) {
-                    const section = this._sectionsSubject.value[sectionIndex];
+                for (sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
+                    const section = sections[sectionIndex];
                     
                     // Find the column index.
                     columnIndex = section.Columns.findIndex(column => column.BlockContainer?.BlockKey === blockParameter.block.Key);
@@ -909,7 +950,7 @@ export class PagesService {
 
     private validatePageConfigurationData(blockKey: string, pageConfiguration: PageConfiguration) {
         // Take all blocks except the given one for check if the new data is valid.
-        const blocks = this.pageSubject.value.Blocks.filter(block => block.Key !== blockKey);
+        const blocks = this.pageSubject.getValue().Blocks.filter(block => block.Key !== blockKey);
 
         // go for all the existing parameters.
         const blockParameterKeys = new Map<string, { block: PageBlock, parameter: PageConfigurationParameter }[]>();
@@ -970,7 +1011,7 @@ export class PagesService {
         let hostObject = this.getEditorHostObject(block);
         
         // Add parameters.
-        hostObject.parameters = this._consumerParametersMapSubject.value?.get(block.Key) || null;
+        hostObject.parameters = this._consumerParametersMapSubject.getValue()?.get(block.Key) || null;
         
         return hostObject;
     }
@@ -1028,12 +1069,13 @@ export class PagesService {
 
     updatePageFromEditor(pageData: IPageEditor) {
         // Update editor title 
-        const currentEditor = this._editorSubject.value;
+        const currentEditor = this._editorSubject.getValue();
         if (currentEditor.type === 'page-builder' && currentEditor.id === 'main') {
             currentEditor.title = pageData.pageName;
+            this._editorSubject.next(currentEditor);
         }
 
-        const currentPage = this.pageSubject.value;
+        const currentPage = this.pageSubject.getValue();
 
         if (currentPage) {
             currentPage.Name = pageData.pageName;
@@ -1050,11 +1092,12 @@ export class PagesService {
     }
 
     updateSectionFromEditor(sectionData: ISectionEditor) {
-        const sectionIndex = this._sectionsSubject.value.findIndex(section => section.Key === sectionData.id);
+        const sections = this._sectionsSubject.getValue();
+        const sectionIndex = sections.findIndex(section => section.Key === sectionData.id);
         
         // Update section details.
         if (sectionIndex >= 0) {
-            const currentSection = this._sectionsSubject.value[sectionIndex];
+            const currentSection = sections[sectionIndex];
             currentSection.Name = sectionData.sectionName;
             currentSection.Split = sectionData.split;
             currentSection.Height = sectionData.height;
@@ -1079,13 +1122,14 @@ export class PagesService {
             }
         
             // Update editor title 
-            const currentEditor = this._editorSubject.value;
+            const currentEditor = this._editorSubject.getValue();
             if (currentEditor.type === 'section' && currentEditor.id === currentSection.Key) {
                 currentEditor.title = this.getSectionEditorTitle(currentSection, sectionIndex);
+                this._editorSubject.next(currentEditor);
             }
 
             // Update sections change.
-            this._sectionsSubject.next(this._sectionsSubject.value);
+            this._sectionsSubject.next(sections);
         }
     }
 
@@ -1100,33 +1144,41 @@ export class PagesService {
         }
         
         // Add the new section to page layout.
-        this.pageSubject.value.Layout.Sections.push(section);
-        this._sectionsSubject.next(this.pageSubject.value.Layout.Sections);
+        const page = this.pageSubject.getValue();
+        page.Layout.Sections.push(section);
+        this.pageSubject.next(page);
+        this._sectionsSubject.next(page.Layout.Sections);
     }
 
     removeSection(sectionId: string) {
-        const index = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
+        const sections = this._sectionsSubject.getValue();
+        const index = sections.findIndex(section => section.Key === sectionId);
         if (index > -1) {
             // Get the blocks id's to remove.
-            const blocksIds = this._sectionsSubject.value[index].Columns.map(column => column?.BlockContainer?.BlockKey);
+            const blocksIds = sections[index].Columns.map(column => column?.BlockContainer?.BlockKey);
             
             // Remove the blocks by ids.
             this.removePageBlocks(blocksIds)
 
             // Remove section.
-            this._sectionsSubject.value.splice(index, 1);
+            sections.splice(index, 1);
+            this._sectionsSubject.next(sections);
         }
     }
 
     hideSection(sectionId: string, hideIn: DataViewScreenSize[]) {
-        const index = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
+        const sections = this._sectionsSubject.getValue();
+        const index = sections.findIndex(section => section.Key === sectionId);
         if (index > -1) {
-            this._sectionsSubject.value[index].Hide = hideIn;
+            sections[index].Hide = hideIn;
+            this._sectionsSubject.next(sections);
         }
     }
 
     onSectionDropped(event: CdkDragDrop<any[]>) {
-        moveItemInArray(this._sectionsSubject.value, event.previousIndex, event.currentIndex);
+        const sections = this._sectionsSubject.getValue();
+        moveItemInArray(sections, event.previousIndex, event.currentIndex);
+        this._sectionsSubject.next(sections);
     }
 
     onSectionDragStart(event: CdkDragStart) {
@@ -1144,24 +1196,31 @@ export class PagesService {
         this.removePageBlocks([blockId]);
 
         // Remove the block from section column.
-        for (let sectionIndex = 0; sectionIndex < this._sectionsSubject.value.length; sectionIndex++) {
-            const section = this._sectionsSubject.value[sectionIndex];
+        const sections = this._sectionsSubject.getValue();
+
+        for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
+            const section = sections[sectionIndex];
             
             // Remove the block container.
             const columnIndex = section.Columns.findIndex(column => column.BlockContainer?.BlockKey === blockId);
             if (columnIndex > -1) {
                 delete section.Columns[columnIndex].BlockContainer;
+                this._sectionsSubject.next(sections);
+
                 return;
             }
         }
     }
 
     hideBlock(sectionId: string, blockId: string, hideIn: DataViewScreenSize[]) {
-        const index = this._sectionsSubject.value.findIndex(section => section.Key === sectionId);
+        const sections = this._sectionsSubject.getValue();
+        
+        const index = sections.findIndex(section => section.Key === sectionId);
         if (index > -1) {
-            const columnIndex = this._sectionsSubject.value[index].Columns.findIndex(column => column.BlockContainer?.BlockKey === blockId);
+            const columnIndex = sections[index].Columns.findIndex(column => column.BlockContainer?.BlockKey === blockId);
             if (columnIndex > -1) {
-                this._sectionsSubject.value[index].Columns[columnIndex].BlockContainer.Hide = hideIn;
+                sections[index].Columns[columnIndex].BlockContainer.Hide = hideIn;
+                this._sectionsSubject.next(sections);
             }
         }
     }
@@ -1239,7 +1298,7 @@ export class PagesService {
         const pageBlock = this.pageBlockProgressMap.get(blockKey);
         
         if (pageBlock) {
-            const currentScreenType = this.getScreenType(this._screenSizeSubject.value);
+            const currentScreenType = this.getScreenType(this._screenSizeSubject.getValue());
             const propertiesHierarchy = fieldKey.split('.');
 
             // If it's Landscape mode then set the field to the regular (Configuration -> Data -> field hierarchy).
@@ -1343,7 +1402,7 @@ export class PagesService {
 
     doesColumnContainBlock(sectionId: string, columnIndex: number): boolean {
         let res = false;
-        const section = this._sectionsSubject.value.find(section => section.Key === sectionId);
+        const section = this._sectionsSubject.getValue().find(section => section.Key === sectionId);
 
         if (section && columnIndex >= 0 && section.Columns.length > columnIndex) {
             res = !!section.Columns[columnIndex].BlockContainer;
@@ -1453,7 +1512,7 @@ export class PagesService {
 
     // Save the current page in drafts.
     saveCurrentPage(addonUUID: string): Observable<Page> {
-        const page: Page = this.pageSubject.value;
+        const page: Page = this.pageSubject.getValue();
         const body = JSON.stringify(page);
         const baseUrl = this.getBaseUrl(addonUUID);
         return this.httpService.postHttpCall(`${baseUrl}/save_draft_page`, body);
@@ -1461,7 +1520,7 @@ export class PagesService {
 
     // Publish the current page.
     publishCurrentPage(addonUUID: string): Observable<Page> {
-        const page: Page = this.pageSubject.value;
+        const page: Page = this.pageSubject.getValue();
         const body = JSON.stringify(page);
         const baseUrl = this.getBaseUrl(addonUUID);
         return this.httpService.postHttpCall(`${baseUrl}/publish_page`, body);

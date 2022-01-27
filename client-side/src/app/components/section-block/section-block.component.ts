@@ -62,15 +62,15 @@ export class SectionBlockComponent implements OnInit {
     remotePathOptions: PepRemoteLoaderOptions;
 
     constructor(
-        private pageBuilderService: PagesService
+        private pagesService: PagesService
     ) { }
     
     private setRemotePathOptions() {
-        this.remotePathOptions = this.pageBuilderService.getBlocksRemoteLoaderOptions(this.pageBlock.Relation);
+        this.remotePathOptions = this.pagesService.getBlocksRemoteLoaderOptions(this.pageBlock.Relation);
     }
 
     private setHostObject(): void {
-        this._hostObject = this.pageBuilderService.getBlockHostObject(this.pageBlock);
+        this._hostObject = this.pagesService.getBlockHostObject(this.pageBlock);
     }
 
     private setIfHideForCurrentScreenType(): void {
@@ -84,13 +84,13 @@ export class SectionBlockComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.pageBuilderService.onPageBlockChange$.subscribe((pageBlock: PageBlock) => {
+        this.pagesService.onPageBlockChange$.subscribe((pageBlock: PageBlock) => {
             if (pageBlock && this.pageBlock.Key === pageBlock.Key) {
                 this.pageBlock = pageBlock;
             }
         });
 
-        this.pageBuilderService.consumerParametersMapChange$.subscribe((map: Map<string, any>) => {
+        this.pagesService.consumerParametersMapChange$.subscribe((map: Map<string, any>) => {
             // Only if this block is consumer than set hostObject (cause some parameter was change).
             const blockIsConsumeParameters = this.pageBlock.PageConfiguration?.Parameters.some(param => param.Consume);
             
@@ -110,39 +110,42 @@ export class SectionBlockComponent implements OnInit {
     }
 
     onEditBlockClick() {
-        this.pageBuilderService.navigateToEditor('block', this.pageBlock.Key);
+        this.pagesService.navigateToEditor('block', this.pageBlock.Key);
     }
 
     onRemoveBlockClick() {
-        this.pageBuilderService.removeBlock(this.pageBlock.Key);
+        this.pagesService.removeBlock(this.pageBlock.Key);
     }
 
     onHideBlockChange(hideIn: DataViewScreenSize[]) {
-        this.pageBuilderService.hideBlock(this.sectionKey, this.pageBlock.Key, hideIn);
+        this.pagesService.hideBlock(this.sectionKey, this.pageBlock.Key, hideIn);
         this.setIfHideForCurrentScreenType();
     }
 
-    onBlockHostEvents(event) {
+    onBlockHostEvents(event: any) {
         // Implement blocks events.
         switch(event.action){
             case 'block-loaded':
-                this.pageBuilderService.updateBlockLoaded(this.pageBlock.Key);
+                this.pagesService.updateBlockLoaded(this.pageBlock.Key);
                 break;
             case 'set-parameter':
-                this.pageBuilderService.setBlockParameter(this.pageBlock.Key, event);
-
+                this.pagesService.setBlockParameter(this.pageBlock.Key, event);
                 break;
             // case 'emit-event':
             //     break;
         }
     }
 
+    onBlockLoad(event: any) {
+        // this.pagesService.updateBlockLoaded(this.pageBlock.Key);
+    }
+
     onDragStart(event: CdkDragStart) {
-        this.pageBuilderService.onBlockDragStart(event);
+        this.pagesService.onBlockDragStart(event);
     }
 
     onDragEnd(event: CdkDragEnd) {
-        this.pageBuilderService.onBlockDragEnd(event);
+        this.pagesService.onBlockDragEnd(event);
     }
 
     onDragExited(event: CdkDragExit) {

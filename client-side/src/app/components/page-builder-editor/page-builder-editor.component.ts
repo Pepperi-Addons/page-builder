@@ -62,7 +62,7 @@ export class PageBuilderEditorComponent implements OnInit {
     
     constructor(
         private translate: TranslateService,
-        private pageBuilderService: PagesService,
+        private pagesService: PagesService,
     ) { 
         
     }
@@ -89,7 +89,7 @@ export class PageBuilderEditorComponent implements OnInit {
             { key: 'lg', value: this.translate.instant('GROUP_SIZE.LG') }
         ];
         
-        this.pageBuilderService.availableBlocksLoadedSubject$.subscribe(availableBlocks => {
+        this.pagesService.availableBlocksLoadedSubject$.subscribe(availableBlocks => {
             this.availableBlocks = availableBlocks;
         });
     }
@@ -105,7 +105,7 @@ export class PageBuilderEditorComponent implements OnInit {
     }
 
     onAddSectionClick(e) {
-        this.pageBuilderService.addSection();
+        this.pagesService.addSection();
     }
 
     isFullWidthChange(isChecked: boolean) {
@@ -144,10 +144,10 @@ export class PageBuilderEditorComponent implements OnInit {
     }
 
     onDragStart(event: CdkDragStart) {
-        this.pageBuilderService.onBlockDragStart(event);
+        this.pagesService.onBlockDragStart(event);
     }
 
     onDragEnd(event: CdkDragEnd) {
-        this.pageBuilderService.onBlockDragEnd(event);
+        this.pagesService.onBlockDragEnd(event);
     }
 }
