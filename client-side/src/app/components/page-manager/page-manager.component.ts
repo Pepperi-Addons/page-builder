@@ -27,14 +27,22 @@ export class PageManagerComponent implements OnInit {
     currentEditor: IEditor;
     sectionsColumnsDropList = [];
 
-    screenTypes: Array<PepButton>;
-    selectedScreenType: DataViewScreenSize;
     viewportWidth: number;
+    screenTypes: Array<PepButton>;
+
+    private _selectedScreenType: DataViewScreenSize;
+    set selectedScreenType(value: DataViewScreenSize) {
+        this._selectedScreenType = value;
+        this.setCurrentEditor();
+    }
+    get selectedScreenType(): DataViewScreenSize {
+        return this._selectedScreenType;
+    }
+
     screenSize: PepScreenSizeType;
     menuItems: Array<PepMenuItem>;
-    pageSize: number;
-    pageSizeString: string;
-
+    pageSize: number = 0;
+    
     constructor(
         private renderer: Renderer2,
         private translate: TranslateService,
@@ -46,6 +54,12 @@ export class PageManagerComponent implements OnInit {
     ) {
     }
 
+    private setCurrentEditor(): void {
+        if (this.currentEditor?.type === 'block') {
+            this.currentEditor = this.pagesService.getBlockEditor(this.currentEditor.id);
+        }
+    }
+
     private setScreenWidth(screenType: DataViewScreenSize) {
         let widthToSet = '100%';
 
@@ -55,7 +69,6 @@ export class PageManagerComponent implements OnInit {
             widthToSet = '360';
         }
 
-        this.selectedScreenType = screenType;
         this.pagesService.setScreenWidth(widthToSet);
     }
 
@@ -67,6 +80,10 @@ export class PageManagerComponent implements OnInit {
         }
     }
     
+    get pageSizeString(): string {
+        return `page is approximately ${this.pageSize.toFixed(2)} kb`;
+    }
+
     async ngOnInit() {
         this.pagesService.onEditorChange$.subscribe((editor) => {
             this.currentEditor = editor;
@@ -87,19 +104,20 @@ export class PageManagerComponent implements OnInit {
         ];
 
         this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
-            this.screenSize = size;
-            const screenType = this.pagesService.getScreenType(this.screenSize);
+            // this.screenSize = size;
+            const screenType = this.pagesService.getScreenType(size);
             this.setScreenWidth(screenType);
         });
 
         this.pagesService.onScreenSizeChange$.subscribe((size: PepScreenSizeType) => {
             this.screenSize = size;
+            const screenType = this.pagesService.getScreenType(this.screenSize);
+            this.selectedScreenType = screenType;
         });
 
         this.pagesService.pageDataChange$.subscribe((page: Page) => {
             if (page) {
                 this.pageSize = this.utilitiesService.getObjectSize(page, 'kb');
-                this.pageSizeString = `page is approximately ${this.pageSize.toFixed(2)} kb`;
             
                 if (this.pageBuilderWrapper?.nativeElement) {
                     let maxWidth = this.pepUtilitiesService.coerceNumberProperty(page.Layout.MaxWidth, 0);

@@ -70,13 +70,15 @@ export class SectionBlockComponent implements OnInit {
     }
 
     private setHostObject(): void {
-        this._hostObject = this.pagesService.getBlockHostObject(this.pageBlock);
+        if (this.pageBlock && this.screenType) {
+            this._hostObject = this.pagesService.getBlockHostObject(this.pageBlock);
+        }
     }
 
     private setIfHideForCurrentScreenType(): void {
         let isHidden = false;
 
-        if (this.blockContainer.Hide) {
+        if (this.screenType && this.blockContainer?.Hide) {
             isHidden = this.blockContainer.Hide.some(hideIn => hideIn === this.screenType);
         }
 
@@ -91,8 +93,10 @@ export class SectionBlockComponent implements OnInit {
         });
 
         this.pagesService.consumerParametersMapChange$.subscribe((map: Map<string, any>) => {
+            if (!map) return;
+
             // Only if this block is consumer than set hostObject (cause some parameter was change).
-            const blockIsConsumeParameters = this.pageBlock.PageConfiguration?.Parameters.some(param => param.Consume);
+            const blockIsConsumeParameters = this.pageBlock?.PageConfiguration?.Parameters.some(param => param.Consume);
             
             if (blockIsConsumeParameters) {
                 const currentParameters = map?.get(this.pageBlock.Key);
@@ -125,9 +129,9 @@ export class SectionBlockComponent implements OnInit {
     onBlockHostEvents(event: any) {
         // Implement blocks events.
         switch(event.action){
-            case 'block-loaded':
-                this.pagesService.updateBlockLoaded(this.pageBlock.Key);
-                break;
+            // case 'block-loaded':
+            //     this.pagesService.updateBlockLoaded(this.pageBlock.Key);
+            //     break;
             case 'set-parameter':
                 this.pagesService.setBlockParameter(this.pageBlock.Key, event);
                 break;
@@ -137,7 +141,7 @@ export class SectionBlockComponent implements OnInit {
     }
 
     onBlockLoad(event: any) {
-        // this.pagesService.updateBlockLoaded(this.pageBlock.Key);
+        this.pagesService.updateBlockLoaded(this.pageBlock.Key);
     }
 
     onDragStart(event: CdkDragStart) {

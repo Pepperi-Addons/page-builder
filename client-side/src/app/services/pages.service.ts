@@ -151,9 +151,9 @@ export class PagesService {
     get pageBlockProgressMap(): ReadonlyMap<string, IBlockProgress> {
         return this._pageBlockProgressMap;
     }
-    private _pageBlockProgressMapSubject$ = new BehaviorSubject<ReadonlyMap<string, IBlockProgress>>(this.pageBlockProgressMap);
+    private _pageBlockProgressMapSubject = new BehaviorSubject<ReadonlyMap<string, IBlockProgress>>(this.pageBlockProgressMap);
     get pageBlockProgressMapChange$(): Observable<ReadonlyMap<string, IBlockProgress>> {
-        return this._pageBlockProgressMapSubject$.asObservable();
+        return this._pageBlockProgressMapSubject.asObservable();
     }
 
     // This is for the current stage of the priority to know what to load in each step.
@@ -210,7 +210,7 @@ export class PagesService {
     ) {
         this.pageLoad$.subscribe((page: Page) => {
             this.loadDefaultEditor(page);
-            this._sectionsSubject.next(page?.Layout.Sections ?? []);
+            this.notifySectionsChange(page?.Layout.Sections ?? []);
             this.loadBlocks(page);
         });
 
@@ -387,7 +387,7 @@ export class PagesService {
         // Add the block to the page blocks.
         const page = this.pageSubject.getValue();
         page.Blocks.push(block);
-        this.pageSubject.next(page);
+        this.notifyPageChange(page);
 
         // Add the block progress.
         this.addBlockProgress(block, openEditorOnLoaded);
@@ -400,7 +400,7 @@ export class PagesService {
         
         if (index > -1) {
             page.Blocks.splice(index, 1);
-            this.pageSubject.next(page);
+            this.notifyPageChange(page);
         }
     }
 
@@ -425,15 +425,41 @@ export class PagesService {
         
         if (page) {
             page.Blocks = [];
-            this.pageSubject.next(page);
+            this.notifyPageChange(page);
         }
 
         this._pageBlockProgressMap.clear();
         this.notifyBlockProgressMapChange();
     }
     
+    private notifyPageChange(page: Page) {
+        this.pageSubject.next(page);
+    }
+
+    private notifySectionsChange(sections: PageSection[]) {
+        const page = this.pageSubject.getValue();
+
+        if (page) {
+            page.Layout.Sections = sections;
+            
+            this._sectionsSubject.next(page.Layout.Sections);
+            this.notifyPageChange(page);
+        }
+    }
+
+    private notifyBlockChange(block: PageBlock) {
+        // The blocks are saved by reference so we don't need to update the block property just notify that page is change (existing block in blocks).
+        this._pageBlockSubject.next(block);
+        const page = this.pageSubject.getValue();
+        this.notifyPageChange(page);
+    }
+
+    private notifyEditorChange(editor: IEditor) {
+        this._editorSubject.next(editor);
+    }
+
     private notifyBlockProgressMapChange() {
-        this._pageBlockProgressMapSubject$.next(this.pageBlockProgressMap);
+        this._pageBlockProgressMapSubject.next(this.pageBlockProgressMap);
     }
 
     private getProducerFiltersByConsumerFilter(producerFilters: IProducerFilter[], consumerFilter: PageConfigurationParameterFilter): IProducerFilter[] {
@@ -460,7 +486,7 @@ export class PagesService {
                             const filterFieldApiName = consumerFilter.Fields.find((apiName) => apiName.indexOf(complexApiName) >= 0);
                             if (filterFieldApiName) {
                                 // Copy the producer filter (by value) and change the API name to be like the consumer need to get.
-                                const tmpFilterToAdd = Object.assign({}, producerFilter);
+                                const tmpFilterToAdd = JSON.parse(JSON.stringify(producerFilter));
                                 tmpFilterToAdd.filter.ApiName = filterFieldApiName;
                                 consumerFilters.push(tmpFilterToAdd);
                             }
@@ -523,8 +549,8 @@ export class PagesService {
         let consumersParametersMap = new Map<string, any>();
 
         // Run on all consumers.
-        this.pageBlockProgressMap.forEach((value: IBlockProgress, key: string) => {
-            const consumerParameters = value.block.PageConfiguration?.Parameters.filter(param => param.Consume) as PageConfigurationParameterBase[];
+        this.pageBlockProgressMap.forEach((blockProgress: IBlockProgress, key: string) => {
+            const consumerParameters = blockProgress.block.PageConfiguration?.Parameters.filter(param => param.Consume) as PageConfigurationParameterBase[];
             
             if (consumerParameters?.length > 0) {
                 let consumerParametersObject = {};
@@ -564,7 +590,7 @@ export class PagesService {
                 }
 
                 // Add the consumerParametersObject to the consumersParametersMap
-                consumersParametersMap.set(value.block.Key, consumerParametersObject);
+                consumersParametersMap.set(blockProgress.block.Key, consumerParametersObject);
             }
         });
 
@@ -594,15 +620,15 @@ export class PagesService {
                 hostObject: pageEditor
             });
 
-            this._editorSubject.next(this._editorsBreadCrumb[0]);
+            this.notifyEditorChange(this._editorsBreadCrumb[0]);
         } else {
-            this._editorSubject.next(null);
+            this.notifyEditorChange(null);
         }
     }
 
     private changeCurrentEditor() {
         if (this._editorsBreadCrumb.length > 0) {
-            this._editorSubject.next(this._editorsBreadCrumb[this._editorsBreadCrumb.length - 1]);
+            this.notifyEditorChange(this._editorsBreadCrumb[this._editorsBreadCrumb.length - 1]);
         }
     }
 
@@ -621,7 +647,7 @@ export class PagesService {
 
     private getMergedConfigurationData(block: PageBlock): any {
         // Copy the object data.
-        let configurationData = Object.assign({}, block.Configuration.Data);
+        let configurationData = JSON.parse(JSON.stringify(block.Configuration.Data));
         const currentScreenType = this.getScreenType(this._screenSizeSubject.getValue());
         
         // Get the configuration data by the current screen size (if exist then merge it up to Tablet and up to Landscape).
@@ -651,28 +677,6 @@ export class PagesService {
         }
         
         return hostObject;
-    }
-
-    private getBlockEditor(blockId: string): IEditor {
-        // Get the current block.
-        const page = this.pageSubject.getValue();
-        let block: PageBlock = page?.Blocks.find(block => block.Key === blockId);
-        const key = this.getRemoteLoaderMapKey(block.Relation);
-        const remoteLoaderOptions = this._blocksEditorsRemoteLoaderOptionsMap.get(key);
-
-        if (block && remoteLoaderOptions) {
-            const hostObject = this.getEditorHostObject(block);
-
-            return {
-                id: blockId,
-                type: 'block',
-                title: block.Relation.Name,
-                remoteModuleOptions: remoteLoaderOptions,
-                hostObject: hostObject
-            }
-        } else {
-            return null;
-        }
     }
 
     private getSectionEditorTitle(section: PageSection, sectionIndex: number): string {
@@ -794,7 +798,7 @@ export class PagesService {
 
     // Update the block configuration data by the propertiesHierarchy and set the field value (deep set).
     private updateConfigurationDataFieldValue(block: PageBlock, propertiesHierarchy: Array<string>, fieldValue: any) {
-        this.setObjectPropertyValueRoot(block, block.Configuration.Data, propertiesHierarchy, fieldValue);
+        this.setObjectPropertyValue(block.Configuration.Data, propertiesHierarchy, fieldValue);
     }
 
     // Update the block configuration per screen size according the current screen sizes and the saved values (deep set).
@@ -819,36 +823,30 @@ export class PagesService {
         } 
 
         // Update the block configuration data by the propertiesHierarchy and set the field value.
-        this.setObjectPropertyValueRoot(block, objectToUpdate, propertiesHierarchy, fieldValue);
-    }
-
-    private setObjectPropertyValueRoot(block: PageBlock, object: any, propertiesHierarchy: Array<string>, value: any): void {
-        if (propertiesHierarchy.length > 0) {
-            const propertyName = propertiesHierarchy[0];
-            propertiesHierarchy.shift();
-            this.setObjectPropertyValue(object, propertiesHierarchy, propertyName, value);
-            this._pageBlockSubject.next(block);
-        }
+        this.setObjectPropertyValue(objectToUpdate, propertiesHierarchy, fieldValue);
     }
 
     // Set the object field value by propertiesHierarchy (deep set)
-    private setObjectPropertyValue(object: any, propertiesHierarchy: Array<string>, propertyName: string, value: any): void {
+    private setObjectPropertyValue(object: any, propertiesHierarchy: Array<string>, value: any): void {
         if (propertiesHierarchy.length > 0) {
             const propertyName = propertiesHierarchy[0];
-            propertiesHierarchy.shift();
-
-            if (!object.hasOwnProperty(propertyName)) {
-                object[propertyName] = {};
-            } 
             
-            this.setObjectPropertyValue(object[propertyName], propertiesHierarchy, propertyName, value);
-        } else {
-            // If the value is not undefined set the property, else - delete it.
-            if (value !== undefined) {
-                object[propertyName] = value;
+            if (propertiesHierarchy.length > 1) {
+                propertiesHierarchy.shift();
+                
+                if (!object.hasOwnProperty(propertyName)) {
+                    object[propertyName] = {};
+                }
+                
+                this.setObjectPropertyValue(object[propertyName], propertiesHierarchy, value);
             } else {
-                if (object.hasOwnProperty(propertyName)) {
-                    delete object[propertyName];
+                // If the value is not undefined set the property, else - delete it.
+                if (value !== undefined) {
+                    object[propertyName] = value;
+                } else {
+                    if (object.hasOwnProperty(propertyName)) {
+                        delete object[propertyName];
+                    }
                 }
             }
         }
@@ -1002,11 +1000,37 @@ export class PagesService {
     /*                                  Public functions
     /***********************************************************************************************/
 
+    getBlockEditor(blockId: string): IEditor {
+        let res = null;
+        const blockProgress = this._pageBlockProgressMap.get(blockId);
+        
+        if (blockProgress) {
+            const block = blockProgress?.block;
+    
+            const key = this.getRemoteLoaderMapKey(blockProgress?.block.Relation);
+            const remoteLoaderOptions = this._blocksEditorsRemoteLoaderOptionsMap.get(key);
+    
+            if (block && remoteLoaderOptions) {
+                const hostObject = this.getEditorHostObject(block);
+    
+                res = {
+                    id: blockId,
+                    type: 'block',
+                    title: block.Relation.Name,
+                    remoteModuleOptions: remoteLoaderOptions,
+                    hostObject: JSON.parse(JSON.stringify(hostObject))
+                }
+            }
+        }
+
+        return res;
+    }
+
     getBlocksRemoteLoaderOptions(relation: NgComponentRelation) {
         const key = this.getRemoteLoaderMapKey(relation);
         return this._blocksRemoteLoaderOptionsMap.get(key);
     }
-
+    
     getBlockHostObject(block: PageBlock): IPageBlockHostObject {
         let hostObject = this.getEditorHostObject(block);
         
@@ -1072,7 +1096,7 @@ export class PagesService {
         const currentEditor = this._editorSubject.getValue();
         if (currentEditor.type === 'page-builder' && currentEditor.id === 'main') {
             currentEditor.title = pageData.pageName;
-            this._editorSubject.next(currentEditor);
+            this.notifyEditorChange(currentEditor);
         }
 
         const currentPage = this.pageSubject.getValue();
@@ -1087,7 +1111,7 @@ export class PagesService {
             currentPage.Layout.ColumnsGap = pageData.columnsGap;
             // currentPage.Layout.RoundedCorners = pageData.roundedCorners;
 
-            this.pageSubject.next(currentPage);
+            this.notifyPageChange(currentPage);
         }
     }
 
@@ -1125,11 +1149,11 @@ export class PagesService {
             const currentEditor = this._editorSubject.getValue();
             if (currentEditor.type === 'section' && currentEditor.id === currentSection.Key) {
                 currentEditor.title = this.getSectionEditorTitle(currentSection, sectionIndex);
-                this._editorSubject.next(currentEditor);
+                this.notifyEditorChange(currentEditor);
             }
 
             // Update sections change.
-            this._sectionsSubject.next(sections);
+            this.notifySectionsChange(sections);
         }
     }
 
@@ -1144,10 +1168,9 @@ export class PagesService {
         }
         
         // Add the new section to page layout.
-        const page = this.pageSubject.getValue();
-        page.Layout.Sections.push(section);
-        this.pageSubject.next(page);
-        this._sectionsSubject.next(page.Layout.Sections);
+        const sections = this.pageSubject.getValue().Layout.Sections;
+        sections.push(section);
+        this.notifySectionsChange(sections);
     }
 
     removeSection(sectionId: string) {
@@ -1162,7 +1185,7 @@ export class PagesService {
 
             // Remove section.
             sections.splice(index, 1);
-            this._sectionsSubject.next(sections);
+            this.notifySectionsChange(sections);
         }
     }
 
@@ -1171,14 +1194,14 @@ export class PagesService {
         const index = sections.findIndex(section => section.Key === sectionId);
         if (index > -1) {
             sections[index].Hide = hideIn;
-            this._sectionsSubject.next(sections);
+            this.notifySectionsChange(sections);
         }
     }
 
     onSectionDropped(event: CdkDragDrop<any[]>) {
         const sections = this._sectionsSubject.getValue();
         moveItemInArray(sections, event.previousIndex, event.currentIndex);
-        this._sectionsSubject.next(sections);
+        this.notifySectionsChange(sections);
     }
 
     onSectionDragStart(event: CdkDragStart) {
@@ -1205,7 +1228,7 @@ export class PagesService {
             const columnIndex = section.Columns.findIndex(column => column.BlockContainer?.BlockKey === blockId);
             if (columnIndex > -1) {
                 delete section.Columns[columnIndex].BlockContainer;
-                this._sectionsSubject.next(sections);
+                this.notifySectionsChange(sections);
 
                 return;
             }
@@ -1220,7 +1243,7 @@ export class PagesService {
             const columnIndex = sections[index].Columns.findIndex(column => column.BlockContainer?.BlockKey === blockId);
             if (columnIndex > -1) {
                 sections[index].Columns[columnIndex].BlockContainer.Hide = hideIn;
-                this._sectionsSubject.next(sections);
+                this.notifySectionsChange(sections);
             }
         }
     }
@@ -1286,41 +1309,44 @@ export class PagesService {
     }
     
     updateBlockConfiguration(blockKey: string, configuration: any) {
-        const pageBlock = this.pageBlockProgressMap.get(blockKey);
+        const blockProgress = this.pageBlockProgressMap.get(blockKey);
         
-        if (pageBlock) {
-            pageBlock.block.Configuration.Data = configuration;
-            this._pageBlockSubject.next(pageBlock.block);
+        if (blockProgress) {
+            blockProgress.block.Configuration.Data = configuration;
+            this.notifyBlockChange(blockProgress.block);
         }
     }
     
     updateBlockConfigurationField(blockKey: string, fieldKey: string, fieldValue: any) {
-        const pageBlock = this.pageBlockProgressMap.get(blockKey);
+        const blockProgress = this.pageBlockProgressMap.get(blockKey);
         
-        if (pageBlock) {
+        if (blockProgress) {
             const currentScreenType = this.getScreenType(this._screenSizeSubject.getValue());
             const propertiesHierarchy = fieldKey.split('.');
 
             // If it's Landscape mode then set the field to the regular (Configuration -> Data -> field hierarchy).
             if (currentScreenType === 'Landscape') {
                 // Update confuguration data.
-                this.updateConfigurationDataFieldValue(pageBlock.block, propertiesHierarchy, fieldValue);
+                this.updateConfigurationDataFieldValue(blockProgress.block, propertiesHierarchy, fieldValue);
             } else {
-                const schema = pageBlock.block.Relation.Schema;
+                const schema = blockProgress.block.Relation.Schema;
                 let canConfigurePerScreenSize = false;
 
                 if (schema?.Fields) {
-                    canConfigurePerScreenSize = this.searchFieldInSchemaFields(schema?.Fields, propertiesHierarchy);
+                    // Send copy of the propertiesHierarchy to use it later for update.
+                    canConfigurePerScreenSize = this.searchFieldInSchemaFields(schema?.Fields, Object.assign([], propertiesHierarchy));
                 }
 
                 // Update
                 if (canConfigurePerScreenSize) {
-                    this.updateConfigurationPerScreenSizeFieldValue(pageBlock.block, propertiesHierarchy, fieldValue, currentScreenType);
+                    this.updateConfigurationPerScreenSizeFieldValue(blockProgress.block, propertiesHierarchy, fieldValue, currentScreenType);
                 } else {
                     // Update confuguration data.
-                    this.updateConfigurationDataFieldValue(pageBlock.block, propertiesHierarchy, fieldValue);
+                    this.updateConfigurationDataFieldValue(blockProgress.block, propertiesHierarchy, fieldValue);
                 }
             }
+            
+            this.notifyBlockChange(blockProgress.block);
         }
     }
     
@@ -1333,7 +1359,7 @@ export class PagesService {
                 this.validatePageConfigurationData(blockKey, pageConfiguration);
                 
                 blockProgress.block.PageConfiguration = pageConfiguration;
-                this._pageBlockSubject.next(blockProgress.block);
+                this.notifyBlockChange(blockProgress.block);
     
                 // Calculate all filters by the updated page configuration.
                 this.buildConsumersParameters();
@@ -1350,11 +1376,11 @@ export class PagesService {
     }
     
     setBlockParameter(blockKey: string, event: { key: string, value: any }) {
-        const pageBlock = this.pageBlockProgressMap.get(blockKey);
+        const blockProgress = this.pageBlockProgressMap.get(blockKey);
 
         // Only if this block parameter is declared as producer.
-        if (pageBlock?.block?.PageConfiguration?.Parameters.length > 0) {
-            const params = pageBlock?.block?.PageConfiguration?.Parameters.filter(param => param.Key === event.key && param.Produce === true);
+        if (blockProgress?.block?.PageConfiguration?.Parameters.length > 0) {
+            const params = blockProgress?.block?.PageConfiguration?.Parameters.filter(param => param.Key === event.key && param.Produce === true);
         
             // If the key exist in parameters.
             if (params?.length > 0) {
@@ -1392,7 +1418,7 @@ export class PagesService {
                     
                     // Raise the filters change only if this block has loaded AND the currentBlocksPriority is CONSUMERS_PRIORITY (consumers stage)
                     // because in case that the block isn't loaded we will raise the event once when all the blocks are ready.
-                    if (pageBlock.loaded && this.currentBlocksPriority === this.CONSUMERS_PRIORITY) {
+                    if (blockProgress.loaded && this.currentBlocksPriority === this.CONSUMERS_PRIORITY) {
                         this.buildConsumersParameters();
                     }
                 }
@@ -1470,7 +1496,7 @@ export class PagesService {
                         this.loadBlocksRemoteLoaderOptionsMap(res.availableBlocks);
 
                         // Load the page.
-                        this.pageSubject.next(res.page);
+                        this.notifyPageChange(res.page);
                     }
             });
         } else { // If is't edit mode get the data of the page and the relations from the Server side.
@@ -1494,14 +1520,14 @@ export class PagesService {
                         this.loadBlocksEditorsRemoteLoaderOptionsMap(res.availableBlocks);
 
                         // Load the page.
-                        this.pageSubject.next(res.page);
+                        this.notifyPageChange(res.page);
                     }
             });
         }
     }
 
     unloadPageBuilder() {
-        this.pageSubject.next(null);
+        this.notifyPageChange(null);
     }
 
     // Restore the page to tha last publish
