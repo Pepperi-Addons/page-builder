@@ -17,7 +17,8 @@
         <pep-remote-loader class="remote-loader"
             [options]="remotePathOptions"
             [hostObject]="hostObject"
-            (hostEvents)="onBlockHostEvents($event);">
+            (hostEvents)="onBlockHostEvents($event);"
+            (load)="onBlockLoad($event)">
         </pep-remote-loader>
     </div>
 </div>

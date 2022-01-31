@@ -10,6 +10,7 @@ import { NavigationService } from '../../services/navigation.service';
 import { IPepSideBarStateChangeEvent } from '@pepperi-addons/ngx-lib/side-bar';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
     selector: 'page-manager',
@@ -26,21 +27,37 @@ export class PageManagerComponent implements OnInit {
     currentEditor: IEditor;
     sectionsColumnsDropList = [];
 
-    screenTypes: Array<PepButton>;
-    selectedScreenType: DataViewScreenSize;
     viewportWidth: number;
+    screenTypes: Array<PepButton>;
+
+    private _selectedScreenType: DataViewScreenSize;
+    set selectedScreenType(value: DataViewScreenSize) {
+        this._selectedScreenType = value;
+        this.setCurrentEditor();
+    }
+    get selectedScreenType(): DataViewScreenSize {
+        return this._selectedScreenType;
+    }
+
     screenSize: PepScreenSizeType;
     menuItems: Array<PepMenuItem>;
+    pageSize: number = 0;
     
     constructor(
         private renderer: Renderer2,
         private translate: TranslateService,
-        private utilitiesService: PepUtilitiesService,
+        private pepUtilitiesService: PepUtilitiesService,
         private layoutService: PepLayoutService,
-        private dialogService: PepDialogService,
-        private pageBuilderService: PagesService,
+        private pagesService: PagesService,
         private navigationService: NavigationService,
+        private utilitiesService: UtilitiesService
     ) {
+    }
+
+    private setCurrentEditor(): void {
+        if (this.currentEditor?.type === 'block') {
+            this.currentEditor = this.pagesService.getBlockEditor(this.currentEditor.id);
+        }
     }
 
     private setScreenWidth(screenType: DataViewScreenSize) {
@@ -52,8 +69,7 @@ export class PageManagerComponent implements OnInit {
             widthToSet = '360';
         }
 
-        this.selectedScreenType = screenType;
-        this.pageBuilderService.setScreenWidth(widthToSet);
+        this.pagesService.setScreenWidth(widthToSet);
     }
 
     private updateViewportWidth() {
@@ -64,8 +80,12 @@ export class PageManagerComponent implements OnInit {
         }
     }
     
+    get pageSizeString(): string {
+        return `page is approximately ${this.pageSize.toFixed(2)} kb`;
+    }
+
     async ngOnInit() {
-        this.pageBuilderService.onEditorChange$.subscribe((editor) => {
+        this.pagesService.onEditorChange$.subscribe((editor) => {
             this.currentEditor = editor;
         });
 
@@ -83,27 +103,32 @@ export class PageManagerComponent implements OnInit {
             { key: this.exportKey, text: this.translate.instant('ACTIONS.EXPORT') }
         ];
 
-        // TODO: Block Screen button if the screen width is not enough.
         this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
-            this.screenSize = size;
-            const screenType = this.pageBuilderService.getScreenType(this.screenSize);
+            // this.screenSize = size;
+            const screenType = this.pagesService.getScreenType(size);
             this.setScreenWidth(screenType);
         });
 
-        this.pageBuilderService.onScreenSizeChange$.subscribe((size: PepScreenSizeType) => {
+        this.pagesService.onScreenSizeChange$.subscribe((size: PepScreenSizeType) => {
             this.screenSize = size;
+            const screenType = this.pagesService.getScreenType(this.screenSize);
+            this.selectedScreenType = screenType;
         });
 
-        this.pageBuilderService.pageDataChange$.subscribe((page: Page) => {
-            if (page && this.pageBuilderWrapper?.nativeElement) {
-                let maxWidth = this.utilitiesService.coerceNumberProperty(page.Layout.MaxWidth, 0);
-                const maxWidthToSet = maxWidth === 0 ? '100%' : `${maxWidth}px`;
-                this.renderer.setStyle(this.pageBuilderWrapper.nativeElement, 'max-width', maxWidthToSet);
-                this.updateViewportWidth();
+        this.pagesService.pageDataChange$.subscribe((page: Page) => {
+            if (page) {
+                this.pageSize = this.utilitiesService.getObjectSize(page, 'kb');
+            
+                if (this.pageBuilderWrapper?.nativeElement) {
+                    let maxWidth = this.pepUtilitiesService.coerceNumberProperty(page.Layout.MaxWidth, 0);
+                    const maxWidthToSet = maxWidth === 0 ? '100%' : `${maxWidth}px`;
+                    this.renderer.setStyle(this.pageBuilderWrapper.nativeElement, 'max-width', maxWidthToSet);
+                    this.updateViewportWidth();
+                }
             }
         });
 
-        this.pageBuilderService.onScreenWidthChange$.subscribe((width: string) => {
+        this.pagesService.onScreenWidthChange$.subscribe((width: string) => {
             if (this.pageBuilderWrapper?.nativeElement) {
                 this.renderer.setStyle(this.pageBuilderWrapper.nativeElement, 'width', width);
                 this.updateViewportWidth();
@@ -111,11 +136,11 @@ export class PageManagerComponent implements OnInit {
         });
 
        // Get the sections id's into sectionsColumnsDropList for the drag & drop.
-       this.pageBuilderService.onSectionsChange$.subscribe(res => {
+       this.pagesService.onSectionsChange$.subscribe(res => {
             // Concat all results into one array.
             this.sectionsColumnsDropList = [].concat(...res.map(section => {
                 return section.Columns.map((column, index) => 
-                    this.pageBuilderService.getSectionColumnKey(section.Key, index.toString())
+                    this.pagesService.getSectionColumnKey(section.Key, index.toString())
                 )
             }));
         });
@@ -136,26 +161,24 @@ export class PageManagerComponent implements OnInit {
     }
 
     onPageEditorObjectChange(pageEditor: IPageEditor) {
-        this.pageBuilderService.updatePageFromEditor(pageEditor);
+        this.pagesService.updatePageFromEditor(pageEditor);
     }
 
     onSectionEditorObjectChange(sectionEditor: ISectionEditor) {
-        this.pageBuilderService.updateSectionFromEditor(sectionEditor);
+        this.pagesService.updateSectionFromEditor(sectionEditor);
     }
 
     onBlockEditorHostEvents(event: any) {
+        // Implement editors events.
         switch(event.action){
             case 'set-configuration':
-                this.pageBuilderService.updateBlockConfiguration(this.currentEditor.id, event.configuration);
+                this.pagesService.updateBlockConfiguration(this.currentEditor.id, event.configuration);
                 break;
-
-            // TODO:
             case 'set-configuration-field':
-                // this.pageBuilderService.updateBlockConfiguration(this.currentEditor.id, event.configuration);
+                this.pagesService.updateBlockConfigurationField(this.currentEditor.id, event.key, event.value);
                 break;
-
             case 'set-page-configuration':
-                this.pageBuilderService.updateBlockPageConfiguration(this.currentEditor.id, event.pageConfiguration);
+                this.pagesService.updateBlockPageConfiguration(this.currentEditor.id, event.pageConfiguration);
                 break;
         }
     }
@@ -164,11 +187,11 @@ export class PageManagerComponent implements OnInit {
         if (!this.currentEditor || this.currentEditor?.type === 'page-builder') {
             this.navigationService.back();
         } else {
-            this.pageBuilderService.navigateBackFromEditor();
+            this.pagesService.navigateBackFromEditor();
         }
     }
 
-    // TODO:
+    // TODO: Implement
     onMenuItemClick(action: IPepMenuItemClickEvent) {
         if (action.source.key === this.importKey) { // Import page
 
@@ -177,24 +200,15 @@ export class PageManagerComponent implements OnInit {
         }
     }
 
-    private showDialogMsg(message: string) {
-        const title = this.translate.instant('MESSAGES.TITLE_NOTICE');
-        const data = new PepDialogData({
-            title,
-            content: message,
-        });
-        this.dialogService.openDefaultDialog(data);
-    }
-
     onSaveClick() {
-        this.pageBuilderService.saveCurrentPage(this.navigationService.addonUUID).subscribe(res => {
-            this.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
+        this.pagesService.saveCurrentPage(this.navigationService.addonUUID).subscribe(res => {
+            this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
         });
     }
 
     onPublishClick() {
-        this.pageBuilderService.publishCurrentPage(this.navigationService.addonUUID).subscribe(res => {
-            this.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
+        this.pagesService.publishCurrentPage(this.navigationService.addonUUID).subscribe(res => {
+            this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
         });
     }
 }

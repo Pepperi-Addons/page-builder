@@ -12,6 +12,8 @@ import { PepSizeDetectorModule } from '@pepperi-addons/ngx-lib/size-detector';
 import { RouterModule, Routes } from '@angular/router';
 import { PagesService } from 'src/app/services/pages.service';
 import { NavigationService } from 'src/app/services/navigation.service';
+import { UtilitiesService } from 'src/app/services/utilities.service';
+import { PepDialogModule } from '@pepperi-addons/ngx-lib/dialog';
 
 export const routes: Routes = [
     {
@@ -30,6 +32,7 @@ export const routes: Routes = [
         PepNgxLibModule,
         PepAddonLoaderModule,
         PepSizeDetectorModule,
+        PepDialogModule,
         DragDropModule,
         SectionModule,
         TranslateModule.forChild({
@@ -47,6 +50,7 @@ export const routes: Routes = [
         TranslateStore,
         // When loading this module from route we need to add this here (because only this module is loading).
         NavigationService,
+        UtilitiesService,
         PagesService
     ]
 })

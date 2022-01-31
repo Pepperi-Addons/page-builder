@@ -85,7 +85,13 @@
     },
     "MESSAGES": {
         "TITLE_NOTICE": "Notice",
-        "OPERATION_SUCCESS": "Operation success."
+        "OPERATION_SUCCESS": "Operation success.",
+        "PARAMETER_VALIDATION": {
+            "BLOCK_HAS_REMOVED": "Block has removed",
+            "TYPE_IS_DIFFERENT_FOR_THIS_KEY": "The page configuration object of this block has Parameters with different Type for the key '{{parameterKey}}'.",
+            "CONSUME_AND_PRODUCE_ARE_FALSE": "The page configuration object of this block has parameter (with key '{{parameterKey'}}) that is not allowed, at least on of the properties Produce or Consume should be true.",
+            "TYPE_IS_DIFFERENT_FOR_THIS_KEY_IN_OTHER_BLOCKS": "The data is conflict between the page configuration object of this block and the existing block in section {{section}} -> column {{column}}.<br/>The parameter with key '{{parameterKey}}' exist for Type {{parameterType}}."
+        }
     },
     "HIDE_IN": {
         "HIDE_IN_TITLE": "Hide on:"

@@ -44,7 +44,31 @@ async function runMigration(client){
             ComponentName: 'SubAddon2Component',
             ModuleName: 'SubAddon2Module',
             EditorComponentName: 'SubAddon2EditorComponent',
-            EditorModuleName: 'SubAddon2EditorModule'
+            EditorModuleName: 'SubAddon2EditorModule',
+            Schema: {
+                "Fields": {
+                    "Field1": {
+                        "Type": "String",
+                        "ConfigurationPerScreenSize": true
+                    },
+                    "Field2": {
+                        "Type": "Array",
+                        "Items": {
+                            "Type": "String",
+                        },
+                        "ConfigurationPerScreenSize": true
+                    },
+                    "Field3": {
+                        "Type": "Object",
+                        "Fields": {
+                            "Field1": {
+                                "Type": "Integer",
+                                "ConfigurationPerScreenSize": true,
+                            }
+                        }
+                    },
+                }
+            }
         };
 
         // pageComponentRelation.Key = `${pageComponentRelation.Name}_${pageComponentRelation.AddonUUID}_${pageComponentRelation.RelationName}`;

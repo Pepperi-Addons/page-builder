@@ -7,7 +7,7 @@ import { PepHttpService, PepAddonService, PepFileService, PepCustomizationServic
 import { PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 
-import { config } from './addon.config';
+import { config } from '../addon.config';
 
 @NgModule({
     declarations: [SubAddon2EditorComponent],

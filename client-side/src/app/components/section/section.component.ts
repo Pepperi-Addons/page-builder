@@ -115,7 +115,7 @@ export class SectionComponent implements OnInit {
     constructor(
         private renderer: Renderer2,
         private translate: TranslateService,
-        public pageBuilderService: PagesService
+        private pagesService: PagesService
     ) { }
 
     private calculateIfSectionContainsBlocks() {
@@ -123,7 +123,7 @@ export class SectionComponent implements OnInit {
     }
 
     private setScreenType() {
-        this.screenType = this.pageBuilderService.getScreenType(this.screenSize);
+        this.screenType = this.pagesService.getScreenType(this.screenSize);
         this.setIfHideForCurrentScreenType();
         this.setStyleHeight();
     }
@@ -215,34 +215,34 @@ export class SectionComponent implements OnInit {
         this.refreshSplit();
 
         if (this.editable) {
-            this.pageBuilderService.onEditorChange$.subscribe((editor: IEditor) => {
+            this.pagesService.onEditorChange$.subscribe((editor: IEditor) => {
                 this.isMainEditorState = editor && editor.type === 'page-builder';
                 this.isEditing = editor && editor.type === 'section' && editor.id === this.key;
                 this.selectedBlockKey = editor && editor.type === 'block' ? editor.id : '';
             });
 
-            this.pageBuilderService.draggingBlockKey.subscribe((draggingBlockKey) => {
+            this.pagesService.draggingBlockKey.subscribe((draggingBlockKey) => {
                 this.draggingBlockKey = draggingBlockKey;
             });
 
-            this.pageBuilderService.draggingSectionKey.subscribe((draggingSectionKey) => {
+            this.pagesService.draggingSectionKey.subscribe((draggingSectionKey) => {
                 this.draggingSectionKey = draggingSectionKey;
             });
         }
 
-        this.sectionColumnKeyPrefix = this.pageBuilderService.getSectionColumnKey(this.key);
+        this.sectionColumnKeyPrefix = this.pagesService.getSectionColumnKey(this.key);
     }
 
     onEditSectionClick() {
-        this.pageBuilderService.navigateToEditor('section', this.key);
+        this.pagesService.navigateToEditor('section', this.key);
     }
 
     onRemoveSectionClick() {
-        this.pageBuilderService.removeSection(this.key);
+        this.pagesService.removeSection(this.key);
     }
 
     onHideSectionChange(hideIn: DataViewScreenSize[]) {
-        this.pageBuilderService.hideSection(this.key, hideIn);
+        this.pagesService.hideSection(this.key, hideIn);
     }
 
     onHideInMenuOpened() {
@@ -254,22 +254,22 @@ export class SectionComponent implements OnInit {
     }
 
     onBlockDropped(event: CdkDragDrop<any[]>) {
-        this.pageBuilderService.onBlockDropped(event, this.key);
+        this.pagesService.onBlockDropped(event, this.key);
     }
 
     canDropPredicate(columnIndex: number) {
         return (drag: CdkDrag, drop: CdkDropList) => {
-            const res = !this.pageBuilderService.doesColumnContainBlock(this.key, columnIndex);
+            const res = !this.pagesService.doesColumnContainBlock(this.key, columnIndex);
             return res;
         };
     }
 
     onDragStart(event: CdkDragStart) {
-        this.pageBuilderService.onSectionDragStart(event);
+        this.pagesService.onSectionDragStart(event);
     }
 
     onDragEnd(event: CdkDragEnd) {
-        this.pageBuilderService.onSectionDragEnd(event);
+        this.pagesService.onSectionDragEnd(event);
     }
 
     onSectionBlockDragExited(event: CdkDragExit) {

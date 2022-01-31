@@ -1,16 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CdkDragEnd, CdkDragEnter, CdkDragExit, CdkDragStart } from '@angular/cdk/drag-drop';
-import { PagesService } from 'src/app/services/pages.service';
+import { IPageBlockHostObject, PagesService } from '../../services/pages.service';
 import { DataViewScreenSize, PageBlock, PageConfiguration, PageBlockContainer } from '@pepperi-addons/papi-sdk';
 import { PepRemoteLoaderOptions } from '@pepperi-addons/ngx-remote-loader';
 
-interface IHostObject {
-    configuration: any;
-    pageConfiguration?: PageConfiguration;
-    // pageType?: any;
-    context?: any;
-    filter?: any;
-}
 @Component({
     selector: 'section-block',
     templateUrl: './section-block.component.html',
@@ -61,7 +54,7 @@ export class SectionBlockComponent implements OnInit {
 
     hideForCurrentScreenType = false;
     
-    private _hostObject: IHostObject;
+    private _hostObject: IPageBlockHostObject;
     get hostObject() {
         return this._hostObject;
     }
@@ -69,23 +62,23 @@ export class SectionBlockComponent implements OnInit {
     remotePathOptions: PepRemoteLoaderOptions;
 
     constructor(
-        private pageBuilderService: PagesService
+        private pagesService: PagesService
     ) { }
     
     private setRemotePathOptions() {
-        this.remotePathOptions = this.pageBuilderService.getBlocksRemoteLoaderOptions(this.pageBlock.Relation);
+        this.remotePathOptions = this.pagesService.getBlocksRemoteLoaderOptions(this.pageBlock.Relation);
     }
 
     private setHostObject(): void {
-        this._hostObject = this.pageBuilderService.getBlockHostObject(this.pageBlock
-            // , this.screenType
-            );
+        if (this.pageBlock && this.screenType) {
+            this._hostObject = this.pagesService.getBlockHostObject(this.pageBlock);
+        }
     }
 
     private setIfHideForCurrentScreenType(): void {
         let isHidden = false;
 
-        if (this.blockContainer.Hide) {
+        if (this.screenType && this.blockContainer?.Hide) {
             isHidden = this.blockContainer.Hide.some(hideIn => hideIn === this.screenType);
         }
 
@@ -93,25 +86,26 @@ export class SectionBlockComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.pageBuilderService.onPageBlockChange$.subscribe((pageBlock: PageBlock) => {
+        this.pagesService.onPageBlockChange$.subscribe((pageBlock: PageBlock) => {
             if (pageBlock && this.pageBlock.Key === pageBlock.Key) {
                 this.pageBlock = pageBlock;
             }
         });
 
-        this.pageBuilderService.pageConsumersFiltersMapChange$.subscribe((map: Map<string, any>) => {
-            // Only if this block is consumer than set hostObject filter (cause some filter was change).
-            const blockIsConsumeFilters = this.pageBlock.PageConfiguration?.Parameters.some(param => param.Consume && param.Type === 'Filter');
-            // TODO: Remove this
-            // if (this.pageBlock.PageConfiguration?.Consume) {
-            if (blockIsConsumeFilters) {
-                const currentFilter = map?.get(this.pageBlock.Key);
+        this.pagesService.consumerParametersMapChange$.subscribe((map: Map<string, any>) => {
+            if (!map) return;
+
+            // Only if this block is consumer than set hostObject (cause some parameter was change).
+            const blockIsConsumeParameters = this.pageBlock?.PageConfiguration?.Parameters.some(param => param.Consume);
+            
+            if (blockIsConsumeParameters) {
+                const currentParameters = map?.get(this.pageBlock.Key);
 
                 // Check that the updated filter is not equals to the old one.
-                const oldFilterAsString = JSON.stringify(this.hostObject.filter || {});
-                const newFilterAsString = JSON.stringify(currentFilter || {});
+                const oldParametersAsString = JSON.stringify(this.hostObject.parameters || {});
+                const newParametersAsString = JSON.stringify(currentParameters || {});
 
-                if (newFilterAsString !== oldFilterAsString) {
+                if (newParametersAsString !== oldParametersAsString) {
                     // Set the whole host object cause if we want that the hostObject will update we need to change the reference.
                     this.setHostObject();
                 }
@@ -120,42 +114,42 @@ export class SectionBlockComponent implements OnInit {
     }
 
     onEditBlockClick() {
-        this.pageBuilderService.navigateToEditor('block', this.pageBlock.Key);
+        this.pagesService.navigateToEditor('block', this.pageBlock.Key);
     }
 
     onRemoveBlockClick() {
-        this.pageBuilderService.onRemoveBlock(this.sectionKey, this.pageBlock.Key);
+        this.pagesService.removeBlock(this.pageBlock.Key);
     }
 
     onHideBlockChange(hideIn: DataViewScreenSize[]) {
-        this.pageBuilderService.hideBlock(this.sectionKey, this.pageBlock.Key, hideIn);
+        this.pagesService.hideBlock(this.sectionKey, this.pageBlock.Key, hideIn);
         this.setIfHideForCurrentScreenType();
     }
 
-    onBlockHostEvents(event) {
-        // TODO: Implement all other events.
+    onBlockHostEvents(event: any) {
+        // Implement blocks events.
         switch(event.action){
-            case 'block-loaded':
-                this.pageBuilderService.updateBlockLoaded(this.pageBlock.Key);
-                break;
-            // case 'set-filters':
-            //     this.pageBuilderService.updateBlockFilters(this.pageBlock.Key, event.filters);
+            // case 'block-loaded':
+            //     this.pagesService.updateBlockLoaded(this.pageBlock.Key);
             //     break;
             case 'set-parameter':
-                this.pageBuilderService.setBlockParameter(this.pageBlock.Key, event);
-
+                this.pagesService.setBlockParameter(this.pageBlock.Key, event);
                 break;
             // case 'emit-event':
             //     break;
         }
     }
 
+    onBlockLoad(event: any) {
+        this.pagesService.updateBlockLoaded(this.pageBlock.Key);
+    }
+
     onDragStart(event: CdkDragStart) {
-        this.pageBuilderService.onBlockDragStart(event);
+        this.pagesService.onBlockDragStart(event);
     }
 
     onDragEnd(event: CdkDragEnd) {
-        this.pageBuilderService.onBlockDragEnd(event);
+        this.pagesService.onBlockDragEnd(event);
     }
 
     onDragExited(event: CdkDragExit) {

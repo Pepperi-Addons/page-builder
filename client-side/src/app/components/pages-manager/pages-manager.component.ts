@@ -43,12 +43,12 @@ export class PagesManagerComponent implements OnInit {
                                   {id: 3, name: 'PAGES_MANAGER.ADDNEW_SIMPLISTIC' , description: 'PAGES_MANAGER.ADDNEW_SIMPLISTIC_DESC', type: Page_Type.Homepage},
                                   {id: 4, name: 'PAGES_MANAGER.ADDNEW_BRANDED' , description: 'PAGES_MANAGER.ADDNEW_BRANDED_DESC', type: Page_Type.Homepage}];
 
-     pageGroups: Array<pageGroup> = [{ title: "PAGES_MANAGER.ADDNEW_HOMEPAGE", isExpanded: true, pages: this.tempPages}
+    pageGroups: Array<pageGroup> = [{ title: "PAGES_MANAGER.ADDNEW_HOMEPAGE", isExpanded: true, pages: this.tempPages}
     //                               ,{ title: "PAGES_MANAGER.ADDNEW_DASHBOARD", isExpanded: false, pages: this.tempPages},
     //                               { title: "PAGES_MANAGER.ADDNEW_ITEM", isExpanded: false, pages: this.tempPages},
     //                               { title: "PAGES_MANAGER.ADDNEW_GENERIC", isExpanded: false, pages: this.tempPages}
 
-];
+    ];
 
     public imagesPath = '';
     public hasPages = true;
@@ -166,7 +166,7 @@ export class PagesManagerComponent implements OnInit {
         this.isAddNewPage = true;
     }
 
-    onMenuItemClicked(event: IPepMenuItemClickEvent = null){
+    onMenuItemClicked(event: IPepMenuItemClickEvent = null) {
         const menuItem = event.source;
         switch(menuItem.key){
             case 'export': {
@@ -179,7 +179,7 @@ export class PagesManagerComponent implements OnInit {
         } 
     };
 
-    createTemplatePage(template: TempPage  ){
+    createTemplatePage(template: TempPage  ) {
         this.pagesService.createNewPage(this.navigationService.addonUUID, template.id).subscribe((page: Page) => {
             if (page) {
                 this.navigationService.navigateToPage(page.Key);
@@ -190,7 +190,7 @@ export class PagesManagerComponent implements OnInit {
         });
     }
 
-    deletePage(pageId: string){
+    deletePage(pageId: string) {
         const content = this.translate.instant('PAGES_MANAGER.DELETE_PAGE_MSG');
         const title = this.translate.instant('PAGES_MANAGER.DELETE_PAGE_DIALOG_TITLE');
         const dataMsg = new PepDialogData({title, actionsType: "cancel-delete", content});
@@ -202,9 +202,9 @@ export class PagesManagerComponent implements OnInit {
                 });
             }
         });
-
     }
-    navigateBackToMainPage(){
+
+    navigateBackToMainPage() {
         this.isAddNewPage = false;
     }
 
@@ -216,8 +216,5 @@ export class PagesManagerComponent implements OnInit {
                     break;
             }
         }
-
     }
-
-
 }
