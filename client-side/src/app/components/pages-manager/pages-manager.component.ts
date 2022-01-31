@@ -1,9 +1,9 @@
 import { NavigationService } from './../../services/navigation.service';
 import { IPageRowModel, PagesService } from '../../services/pages.service';
-import { Component, OnInit, Renderer2 } from "@angular/core";
+import { Component, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
-import { PepGenericListDataSource } from '@pepperi-addons/ngx-composite-lib/generic-list';
+import { GenericListComponent, PepGenericListDataSource } from '@pepperi-addons/ngx-composite-lib/generic-list';
 import { PepAddonService } from '@pepperi-addons/ngx-lib';
 import { GridDataViewField, Page } from '@pepperi-addons/papi-sdk';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
@@ -32,6 +32,8 @@ export class TempPage {
 })
 
 export class PagesManagerComponent implements OnInit {
+    
+    @ViewChild(GenericListComponent) pagesList: GenericListComponent;
     
     private selectedPageID = '';
     mainMenuItems: Array<PepMenuItem> = null;
@@ -198,7 +200,8 @@ export class PagesManagerComponent implements OnInit {
         this.dialog.openDefaultDialog(dataMsg).afterClosed().subscribe((isDeletePressed) => {
             if (isDeletePressed) {
                 this.pagesService.deletePage(this.navigationService.addonUUID, pageId).subscribe((res) => {
-                    this.pagesDataSource.getList(null);
+                    this.pagesList.reload();
+                    //this.pagesDataSource.getList(null);
                 });
             }
         });
