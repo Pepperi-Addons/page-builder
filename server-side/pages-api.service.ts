@@ -96,40 +96,39 @@ export class PagesApiService {
         return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page) as Page;
     }
 
-    private deleteBlockFromPage(page: Page, addonUUID: string, tableName: string) {
-        // Get the blocks to remove by the addon UUID
-        const blocksToRemove = page.Blocks.filter(block => block.Relation.AddonUUID === addonUUID);
+    private async deleteBlockFromPage(page: Page, addonUUID: string, tableName: string) {
+        try {
+            // Get the blocks to remove by the addon UUID
+            const blocksToRemove = page.Blocks.filter(block => block.Relation.AddonUUID === addonUUID);
 
-        if (blocksToRemove?.length > 0) {
-            console.log(`page blocks before - ${JSON.stringify(page.Blocks)}`);
+            if (blocksToRemove?.length > 0) {
+                    console.log(`page blocks before - ${JSON.stringify(page.Blocks)}`);
 
-            // Remove the page blocks with the addonUUID
-            page.Blocks = page.Blocks.filter(block => block.Relation.AddonUUID !== addonUUID);
+                    // Remove the page blocks with the addonUUID
+                    page.Blocks = page.Blocks.filter(block => block.Relation.AddonUUID !== addonUUID);
 
-            console.log(`page blocks after - ${JSON.stringify(page.Blocks)}`);
+                    console.log(`page blocks after - ${JSON.stringify(page.Blocks)}`);
 
-            // Remove the blocks from the columns.
-            for (let sectioIndex = 0; sectioIndex < page.Layout.Sections.length; sectioIndex++) {
-                const section = page.Layout.Sections[sectioIndex];
-                
-                for (let columnIndex = 0; columnIndex < section.Columns.length; columnIndex++) {
-                    const column = section.Columns[columnIndex];
-                    
-                    if (column.BlockContainer && blocksToRemove.some(btr => btr.Key === column.BlockContainer?.BlockKey)) {
-                        console.log(`delete block with the key - ${JSON.stringify(column.BlockContainer.BlockKey)}`);
-                        delete column.BlockContainer;
+                    // Remove the blocks from the columns.
+                    for (let sectioIndex = 0; sectioIndex < page.Layout.Sections.length; sectioIndex++) {
+                        const section = page.Layout.Sections[sectioIndex];
+                        
+                        for (let columnIndex = 0; columnIndex < section.Columns.length; columnIndex++) {
+                            const column = section.Columns[columnIndex];
+                            
+                            if (column.BlockContainer && blocksToRemove.some(btr => btr.Key === column.BlockContainer?.BlockKey)) {
+                                console.log(`delete block with the key - ${JSON.stringify(column.BlockContainer.BlockKey)}`);
+                                delete column.BlockContainer;
+                            }
+                        }
                     }
-                }
-            }
 
-            // Update the page
-            try {
-                this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page);
-            } catch (err) {
-                console.log(`err - ${JSON.stringify(err)}`);
-
-                // Do nothing.
+                    // Update the page
+                    await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page);
             }
+        } catch (err) {
+            console.log(`err - ${JSON.stringify(err)}`);
+            // Do nothing.
         }
     }
 
@@ -388,10 +387,9 @@ export class PagesApiService {
                         const page = pages[index];
                         console.log(`page before - ${JSON.stringify(page)}`);
 
-                        this.deleteBlockFromPage(page, addonUUID, tableName);
+                        await this.deleteBlockFromPage(page, addonUUID, tableName);
 
                         console.log(`page after - ${JSON.stringify(page)}`);
-
                     }
                 }
             }
