@@ -4,7 +4,7 @@ import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@peppe
 import { PepButton } from '@pepperi-addons/ngx-lib/button';
 import { pepIconDeviceDesktop, pepIconDeviceMobile, pepIconDeviceTablet } from '@pepperi-addons/ngx-lib/icon';
 import { TranslateService } from '@ngx-translate/core';
-import { DataViewScreenSize, Page } from '@pepperi-addons/papi-sdk';
+import { DataViewScreenSize, Page, PageBlock } from '@pepperi-addons/papi-sdk';
 import { IEditor, PagesService, IPageEditor, ISectionEditor } from '../../services/pages.service';
 import { NavigationService } from '../../services/navigation.service';
 import { IPepSideBarStateChangeEvent } from '@pepperi-addons/ngx-lib/side-bar';
@@ -85,8 +85,16 @@ export class PageManagerComponent implements OnInit {
     }
 
     async ngOnInit() {
+        // For update editor.
         this.pagesService.onEditorChange$.subscribe((editor) => {
             this.currentEditor = editor;
+        });
+
+        // For update editor data in case that the editor is block editor and the id is the updated block key.
+        this.pagesService.onPageBlockChange$.subscribe((pageBlock: PageBlock) => {
+            if (this.currentEditor?.type === 'block' && this.currentEditor.id === pageBlock.Key) {
+                this.setCurrentEditor();
+            }
         });
 
         // Get the first translation for load all translations.
@@ -115,6 +123,7 @@ export class PageManagerComponent implements OnInit {
             this.selectedScreenType = screenType;
         });
 
+        // For update the page data
         this.pagesService.pageDataChange$.subscribe((page: Page) => {
             if (page) {
                 this.pageSize = this.utilitiesService.getObjectSize(page, 'kb');
