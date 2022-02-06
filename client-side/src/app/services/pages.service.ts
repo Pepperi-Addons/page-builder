@@ -1328,8 +1328,11 @@ export class PagesService {
 
             // If it's Landscape mode then set the field to the regular (Configuration -> Data -> field hierarchy).
             if (currentScreenType === 'Landscape') {
-                // Update confuguration data.
-                this.updateConfigurationDataFieldValue(blockProgress.block, propertiesHierarchy, fieldValue);
+                // Update confuguration data only if the value is not undefined (cannot reset the root).
+                if (fieldValue !== undefined) {
+                    this.updateConfigurationDataFieldValue(blockProgress.block, propertiesHierarchy, fieldValue);
+                    this.notifyBlockChange(blockProgress.block);
+                }
             } else {
                 const schema = blockProgress.block.Relation.Schema;
                 let canConfigurePerScreenSize = false;
@@ -1346,9 +1349,9 @@ export class PagesService {
                     // Update confuguration data.
                     this.updateConfigurationDataFieldValue(blockProgress.block, propertiesHierarchy, fieldValue);
                 }
+                
+                this.notifyBlockChange(blockProgress.block);
             }
-            
-            this.notifyBlockChange(blockProgress.block);
         }
     }
     
