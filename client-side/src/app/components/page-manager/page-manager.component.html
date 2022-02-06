@@ -1,4 +1,4 @@
-<pep-page-layout [addPadding]="false" [showShadow]="showEditor && currentEditor">
+<pep-page-layout [showShadow]="showEditor && currentEditor">
     <div pep-side-area *ngIf="showEditor && currentEditor" style="padding-inline-start: 1rem; height: inherit;">
         <pep-side-bar #sideBar [ignoreResize]="true" (stateChange)="onSidebarStateChange($event)">
             <div header-content class="side-bar-title">
@@ -41,9 +41,9 @@
                 <ng-container *ngIf="showEditor; then editorButtonsTemplate; else previewButtonsTemplate"></ng-container>
                 <ng-template #editorButtonsTemplate>
                     <div class="header-end">
-                        <!-- <div>
+                        <div>
                             {{pageSizeString}}
-                        </div> -->
+                        </div>
                         <pep-menu sizeType="sm" classNames="pep-spacing-element" [items]="menuItems" (menuItemClick)="onMenuItemClick($event)"></pep-menu>
                         <pep-button [value]="'ACTIONS.PREVIEW' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="togglePreviewMode()"></pep-button>
                         <pep-button [value]="'ACTIONS.SAVE' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="onSaveClick()"></pep-button>
