@@ -466,35 +466,37 @@ export class PagesService {
         // Get the match filters by the resource and fields.
         let consumerFilters = [];
 
-        producerFilters.forEach(producerFilter => {
-            // Search for exact match
-            if (producerFilter.resource === consumerFilter.Resource && consumerFilter.Fields.some((apiName) => apiName === producerFilter.filter.ApiName)) {
-                consumerFilters.push(producerFilter);
-            } else {
-                // Check if there is a match by the mapping.
-                if (this._mappingsResourcesFields.has(producerFilter.resource)) {
-                    let mappingResource = this._mappingsResourcesFields.get(producerFilter.resource);
-                    
-                    // If the consumer resource is in the mappingResource.SearchIn then look for match.
-                    if (mappingResource.SearchIn.some((resourceToSearch) => resourceToSearch === consumerFilter.Resource)) {
-                        // Go for all the resources.
-                        for (let index = 0; index < mappingResource.ResourceApiNames.length; index++) {
-                            // Declare the complex api name
-                            const complexApiName = `${mappingResource.ResourceApiNames[index]}.${producerFilter.filter.ApiName}`;
-                            
-                            // If the complex api name exist in the consumerFilter.Fields (even a part of it).
-                            const filterFieldApiName = consumerFilter.Fields.find((apiName) => apiName.indexOf(complexApiName) >= 0);
-                            if (filterFieldApiName) {
-                                // Copy the producer filter (by value) and change the API name to be like the consumer need to get.
-                                const tmpFilterToAdd = JSON.parse(JSON.stringify(producerFilter));
-                                tmpFilterToAdd.filter.ApiName = filterFieldApiName;
-                                consumerFilters.push(tmpFilterToAdd);
+        if (producerFilters?.length > 0) {
+            producerFilters.forEach(producerFilter => {
+                // Search for exact match
+                if (producerFilter.resource === consumerFilter.Resource && consumerFilter.Fields.some((apiName) => apiName === producerFilter.filter.ApiName)) {
+                    consumerFilters.push(producerFilter);
+                } else {
+                    // Check if there is a match by the mapping.
+                    if (this._mappingsResourcesFields.has(producerFilter.resource)) {
+                        let mappingResource = this._mappingsResourcesFields.get(producerFilter.resource);
+                        
+                        // If the consumer resource is in the mappingResource.SearchIn then look for match.
+                        if (mappingResource.SearchIn.some((resourceToSearch) => resourceToSearch === consumerFilter.Resource)) {
+                            // Go for all the resources.
+                            for (let index = 0; index < mappingResource.ResourceApiNames.length; index++) {
+                                // Declare the complex api name
+                                const complexApiName = `${mappingResource.ResourceApiNames[index]}.${producerFilter.filter.ApiName}`;
+                                
+                                // If the complex api name exist in the consumerFilter.Fields (even a part of it).
+                                const filterFieldApiName = consumerFilter.Fields.find((apiName) => apiName.indexOf(complexApiName) >= 0);
+                                if (filterFieldApiName) {
+                                    // Copy the producer filter (by value) and change the API name to be like the consumer need to get.
+                                    const tmpFilterToAdd = JSON.parse(JSON.stringify(producerFilter));
+                                    tmpFilterToAdd.filter.ApiName = filterFieldApiName;
+                                    consumerFilters.push(tmpFilterToAdd);
+                                }
                             }
                         }
                     }
                 }
-            }
-        });
+            });
+        }
 
         return consumerFilters;
     }
@@ -1394,15 +1396,20 @@ export class PagesService {
                     // Check if this producer can raise those filters.
                     const producerFilters = event.value as IProducerFilter[];
                     
-                    for (let index = 0; index < producerFilters.length; index++) {
-                        const producerFilter = producerFilters[index];
-                        canUpdateParameter = this.canProducerRaiseFilter(filtersParameters, producerFilter);
-        
-                        if (!canUpdateParameter) {
-                            // Write error to the console "You cannot raise this filter (not declared)."
-                            console.error('One or more from the raised filters are not declared in the block -> pageConfiguration -> parameters array.');
-                            break;
+                    if (producerFilters?.length > 0) {
+                        for (let index = 0; index < producerFilters.length; index++) {
+                            const producerFilter = producerFilters[index];
+                            canUpdateParameter = this.canProducerRaiseFilter(filtersParameters, producerFilter);
+            
+                            if (!canUpdateParameter) {
+                                // Write error to the console "You cannot raise this filter (not declared)."
+                                console.error('One or more from the raised filters are not declared in the block -> pageConfiguration -> parameters array.');
+                                break;
+                            }
                         }
+                    } else {
+                        canUpdateParameter = false;
+                        console.error('The raised value is not valid, the value should be array of resource and filter objects.');
                     }
                 }
                 
