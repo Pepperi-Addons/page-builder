@@ -8,6 +8,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
 import { NavigationService } from "./navigation.service";
 import { UtilitiesService } from "./utilities.service";
+import * as _ from 'lodash';
 
 export type UiPageSizeType = PageSizeType | 'none';
 
@@ -525,6 +526,25 @@ export class PagesService {
         return res;
     }
 
+    private isFilterValid(producerFilter: IProducerFilter): boolean {
+        let res = true;
+
+        if (producerFilter.hasOwnProperty('resource') && 
+            producerFilter.hasOwnProperty('filter')) {
+
+            if (!producerFilter.filter.hasOwnProperty('ApiName') ||
+                !producerFilter.filter.hasOwnProperty('FieldType') ||
+                !producerFilter.filter.hasOwnProperty('Operation') ||
+                !producerFilter.filter.hasOwnProperty('Values')) {
+                res = false;
+            }
+        } else {
+            res = false;
+        }
+
+        return res;
+    }
+
     private canProducerRaiseFilter(filtersParameters: PageConfigurationParameterFilter[], producerFilter: IProducerFilter): boolean {
         let res = false;
 
@@ -798,13 +818,13 @@ export class PagesService {
         return `${relation.Name}_${relation.AddonUUID}`;
     }
 
-    // Update the block configuration data by the propertiesHierarchy and set the field value (deep set).
-    private updateConfigurationDataFieldValue(block: PageBlock, propertiesHierarchy: Array<string>, fieldValue: any) {
-        this.setObjectPropertyValue(block.Configuration.Data, propertiesHierarchy, fieldValue);
+    // Update the block configuration data by the propertyNamePath and set the field value (deep set).
+    private updateConfigurationDataFieldValue(block: PageBlock, propertyNamePath: string, fieldValue: any) {
+        this.setObjectPropertyValue(block.Configuration.Data, propertyNamePath, fieldValue);
     }
 
     // Update the block configuration per screen size according the current screen sizes and the saved values (deep set).
-    private updateConfigurationPerScreenSizeFieldValue(block: PageBlock, propertiesHierarchy: Array<string>, fieldValue: any, currentScreenType: DataViewScreenSize) {
+    private updateConfigurationPerScreenSizeFieldValue(block: PageBlock, propertyNamePath: string, fieldValue: any, currentScreenType: DataViewScreenSize) {
         if (block.ConfigurationPerScreenSize === undefined) {
             block.ConfigurationPerScreenSize = {};
         }
@@ -824,33 +844,50 @@ export class PagesService {
             objectToUpdate = block.ConfigurationPerScreenSize.Mobile;
         } 
 
-        // Update the block configuration data by the propertiesHierarchy and set the field value.
-        this.setObjectPropertyValue(objectToUpdate, propertiesHierarchy, fieldValue);
+        // Update the block configuration data by the propertyNamePath and set the field value.
+        this.setObjectPropertyValue(objectToUpdate, propertyNamePath, fieldValue);
     }
 
-    // Set the object field value by propertiesHierarchy (deep set)
-    private setObjectPropertyValue(object: any, propertiesHierarchy: Array<string>, value: any): void {
-        if (propertiesHierarchy.length > 0) {
-            const propertyName = propertiesHierarchy[0];
-            
-            if (propertiesHierarchy.length > 1) {
-                propertiesHierarchy.shift();
-                
-                if (!object.hasOwnProperty(propertyName)) {
-                    object[propertyName] = {};
-                }
-                
-                this.setObjectPropertyValue(object[propertyName], propertiesHierarchy, value);
-            } else {
-                // If the value is not undefined set the property, else - delete it.
-                if (value !== undefined) {
-                    object[propertyName] = value;
+    
+    private getPropertyPath(propertyKey: string) {
+        const propertyPath = [];
+        const arrayStartIndexChar = propertyKey.indexOf('[');
+        
+        if (arrayStartIndexChar >= 0) {
+            let itemIndex = -1;
+            // If the array property is valild.
+            if (propertyKey[propertyKey.length - 1] === ']') {
+                // Get the item index.
+                const indexNumberIndex = arrayStartIndexChar + 1;
+                itemIndex = this.pepUtilitiesService.coerceNumberProperty(propertyKey.slice(indexNumberIndex, propertyKey.length - 1 - indexNumberIndex), -1);
+    
+                if (itemIndex > -1) {
+                    propertyPath.push(propertyKey.slice(0, arrayStartIndexChar));
+                    propertyPath.push(itemIndex);
                 } else {
-                    if (object.hasOwnProperty(propertyName)) {
-                        delete object[propertyName];
-                    }
+                    // 'Key item index is not valid'
+                    const msg = this.translate.instant('MESSAGES.PARAMETER_VALIDATION.TYPE_IS_DIFFERENT_FOR_THIS_KEY', { propertyKey: propertyKey});
+                    throw new Error(msg);
                 }
+    
+            } else {
+                // 'Key as array is not valid '
+                const msg = this.translate.instant('MESSAGES.PARAMETER_VALIDATION.TYPE_IS_DIFFERENT_FOR_THIS_KEY', { propertyKey: propertyKey});
+                throw new Error(msg);
             }
+        } else {
+            propertyPath.push(propertyKey);
+        }
+
+        return propertyPath;
+    }
+
+    // Set the object field value by propertyNamePath (deep set).
+    private setObjectPropertyValue(object: any, propertyNamePath: string, value: any): void {
+        if (value !== undefined) {
+            _.set(object, propertyNamePath, value);
+        } else {
+            _.unset(object, propertyNamePath);
         }
     }
 
@@ -858,7 +895,10 @@ export class PagesService {
         let canConfigurePerScreenSize = false;
 
         if (propertiesHierarchy.length > 0) {
-            const currentFieldKey = propertiesHierarchy[0];
+            const startArrayCharIndex = propertiesHierarchy[0].indexOf('[');
+
+            // If it's array then cut the index from the key else use the whole key.
+            const currentFieldKey = (startArrayCharIndex === -1) ? propertiesHierarchy[0] : propertiesHierarchy[0].substring(0, startArrayCharIndex);
             const schemaField = schemaFields[currentFieldKey];
 
             if (schemaField) {
@@ -1321,37 +1361,41 @@ export class PagesService {
     
     updateBlockConfigurationField(blockKey: string, fieldKey: string, fieldValue: any) {
         const blockProgress = this.pageBlockProgressMap.get(blockKey);
-        
-        if (blockProgress) {
-            const currentScreenType = this.getScreenType(this._screenSizeSubject.getValue());
-            const propertiesHierarchy = fieldKey.split('.');
 
-            // If it's Landscape mode then set the field to the regular (Configuration -> Data -> field hierarchy).
-            if (currentScreenType === 'Landscape') {
-                // Update confuguration data only if the value is not undefined (cannot reset the root).
-                if (fieldValue !== undefined) {
-                    this.updateConfigurationDataFieldValue(blockProgress.block, propertiesHierarchy, fieldValue);
+        try {
+            if (blockProgress) {
+                const currentScreenType = this.getScreenType(this._screenSizeSubject.getValue());
+
+                // If it's Landscape mode then set the field to the regular (Configuration -> Data -> field hierarchy).
+                if (currentScreenType === 'Landscape') {
+                    // Update confuguration data only if the value is not undefined (cannot reset the root).
+                    if (fieldValue !== undefined) {
+                        this.updateConfigurationDataFieldValue(blockProgress.block, fieldKey, fieldValue);
+                        this.notifyBlockChange(blockProgress.block);
+                    }
+                } else {
+                    const schema = blockProgress.block.Relation.Schema;
+                    let canConfigurePerScreenSize = false;
+
+                    if (schema?.Fields) {
+                        const propertiesHierarchy = fieldKey.split('.');
+                        canConfigurePerScreenSize = this.searchFieldInSchemaFields(schema?.Fields, propertiesHierarchy);
+                    }
+
+                    // Update
+                    if (canConfigurePerScreenSize) {
+                        this.updateConfigurationPerScreenSizeFieldValue(blockProgress.block, fieldKey, fieldValue, currentScreenType);
+                    } else {
+                        // Update confuguration data.
+                        this.updateConfigurationDataFieldValue(blockProgress.block, fieldKey, fieldValue);
+                    }
+                    
                     this.notifyBlockChange(blockProgress.block);
                 }
-            } else {
-                const schema = blockProgress.block.Relation.Schema;
-                let canConfigurePerScreenSize = false;
-
-                if (schema?.Fields) {
-                    // Send copy of the propertiesHierarchy to use it later for update.
-                    canConfigurePerScreenSize = this.searchFieldInSchemaFields(schema?.Fields, Object.assign([], propertiesHierarchy));
-                }
-
-                // Update
-                if (canConfigurePerScreenSize) {
-                    this.updateConfigurationPerScreenSizeFieldValue(blockProgress.block, propertiesHierarchy, fieldValue, currentScreenType);
-                } else {
-                    // Update confuguration data.
-                    this.updateConfigurationDataFieldValue(blockProgress.block, propertiesHierarchy, fieldValue);
-                }
-                
-                this.notifyBlockChange(blockProgress.block);
             }
+        } catch (err) {
+            // TODO: Show msg
+            console.log(`set-configuration-field is failed with error: ${err}`);
         }
     }
     
@@ -1395,18 +1439,28 @@ export class PagesService {
                 if (params[0].Type === 'Filter') {
                     // Get the filters as PageConfigurationParameterFilter
                     const filtersParameters = params as PageConfigurationParameterFilter[];
-                    
+
                     // Check if this producer can raise those filters.
                     const producerFilters = event.value as IProducerFilter[];
-                    
+
                     if (producerFilters?.length > 0) {
                         for (let index = 0; index < producerFilters.length; index++) {
                             const producerFilter = producerFilters[index];
-                            canUpdateParameter = this.canProducerRaiseFilter(filtersParameters, producerFilter);
-            
-                            if (!canUpdateParameter) {
-                                // Write error to the console "You cannot raise this filter (not declared)."
-                                console.error('One or more from the raised filters are not declared in the block -> pageConfiguration -> parameters array.');
+
+                            // Validate filter properties.
+                            const isFilterValid = this.isFilterValid(producerFilter);
+
+                            if (isFilterValid) {
+                                canUpdateParameter = this.canProducerRaiseFilter(filtersParameters, producerFilter);
+                
+                                if (!canUpdateParameter) {
+                                    // Write error to the console "You cannot raise this filter (not declared)."
+                                    console.error('One or more from the raised filters are not declared in the block -> pageConfiguration -> parameters array.');
+                                    break;
+                                }
+                            } else {
+                                canUpdateParameter = false;
+                                console.error('One or more from the raised filters are not valid as pepperi filter object.');
                                 break;
                             }
                         }
