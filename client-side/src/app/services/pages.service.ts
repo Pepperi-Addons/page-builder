@@ -902,29 +902,31 @@ export class PagesService {
             const schemaField = schemaFields[currentFieldKey];
 
             if (schemaField) {
-                const type = schemaField.Type;
-            
-                // If it's object
-                if (type === 'Object') {
+                const isObject = schemaField.Type === 'Object';
+                const isArray = schemaField.Type === 'Array';
+
+                // If it's object || array
+                if (isObject || isArray) {
                     // If the field index is the last
                     if (propertiesHierarchy.length === 1) {
                         if (schemaField.ConfigurationPerScreenSize === true) {
                             canConfigurePerScreenSize = true;
                         }
-                    } else { // Check in fields.
-                        if (schemaField.Fields) {
+                    } else { // Check in deepPropertyName (fields || items).
+                        const deepPropertyName = isObject ? 'Fields' : 'Items';
+
+                        if (schemaField[deepPropertyName]) {
                             propertiesHierarchy.shift(); // Remove the first element.
-                            canConfigurePerScreenSize = this.searchFieldInSchemaFields(schemaField.Fields, propertiesHierarchy);
-                        } else {
-                            // Do nothing.
+                            canConfigurePerScreenSize = this.searchFieldInSchemaFields(schemaField[deepPropertyName], propertiesHierarchy);
                         }
                     }
-                } else if (propertiesHierarchy.length === 1) {
-                    if (type === 'Resource') {
-                        // Do nothing.
-                    } else {
-                        if (schemaField.ConfigurationPerScreenSize === true) {
-                            canConfigurePerScreenSize = true;
+                } else {
+                    if (propertiesHierarchy.length === 1) {
+                        // We don't support resource.
+                        if (schemaField.Type !== 'Resource') {
+                            if (schemaField.ConfigurationPerScreenSize === true) {
+                                canConfigurePerScreenSize = true;
+                            }
                         }
                     }
                 }
