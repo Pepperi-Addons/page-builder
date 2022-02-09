@@ -215,7 +215,7 @@ export class SectionComponent implements OnInit {
         this.refreshSplit();
 
         if (this.editable) {
-            this.pagesService.onEditorChange$.subscribe((editor: IEditor) => {
+            this.pagesService.editorChange$.subscribe((editor: IEditor) => {
                 this.isMainEditorState = editor && editor.type === 'page-builder';
                 this.isEditing = editor && editor.type === 'section' && editor.id === this.key;
                 this.selectedBlockKey = editor && editor.type === 'block' ? editor.id : '';

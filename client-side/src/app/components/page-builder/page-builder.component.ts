@@ -129,7 +129,7 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
                 this.screenSize = size;
             });
 
-            this.pagesService.onSectionsChange$.subscribe(res => {
+            this.pagesService.sectionsChange$.subscribe(res => {
                 this._sectionsSubject.next(res);
             });
 

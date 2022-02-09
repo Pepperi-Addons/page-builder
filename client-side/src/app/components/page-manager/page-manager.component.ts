@@ -23,6 +23,7 @@ export class PageManagerComponent implements OnInit {
     readonly importKey = 'import';
     readonly exportKey = 'export';
 
+    lockScreen = false;
     showEditor = true;
     currentEditor: IEditor;
     sectionsColumnsDropList = [];
@@ -85,13 +86,17 @@ export class PageManagerComponent implements OnInit {
     }
 
     async ngOnInit() {
+        this.pagesService.lockScreenChange$.subscribe((lockScreen) => {
+            this.lockScreen = lockScreen;
+        });
+
         // For update editor.
-        this.pagesService.onEditorChange$.subscribe((editor) => {
+        this.pagesService.editorChange$.subscribe((editor) => {
             this.currentEditor = editor;
         });
 
         // For update editor data in case that the editor is block editor and the id is the updated block key.
-        this.pagesService.onPageBlockChange$.subscribe((pageBlock: PageBlock) => {
+        this.pagesService.pageBlockChange$.subscribe((pageBlock: PageBlock) => {
             if (this.currentEditor?.type === 'block' && this.currentEditor.id === pageBlock.Key) {
                 this.setCurrentEditor();
             }
@@ -117,7 +122,7 @@ export class PageManagerComponent implements OnInit {
             this.setScreenWidth(screenType);
         });
 
-        this.pagesService.onScreenSizeChange$.subscribe((size: PepScreenSizeType) => {
+        this.pagesService.screenSizeChange$.subscribe((size: PepScreenSizeType) => {
             this.screenSize = size;
             const screenType = this.pagesService.getScreenType(this.screenSize);
             this.selectedScreenType = screenType;
@@ -137,7 +142,7 @@ export class PageManagerComponent implements OnInit {
             }
         });
 
-        this.pagesService.onScreenWidthChange$.subscribe((width: string) => {
+        this.pagesService.screenWidthChange$.subscribe((width: string) => {
             if (this.pageBuilderWrapper?.nativeElement) {
                 this.renderer.setStyle(this.pageBuilderWrapper.nativeElement, 'width', width);
                 this.updateViewportWidth();
@@ -145,7 +150,7 @@ export class PageManagerComponent implements OnInit {
         });
 
        // Get the sections id's into sectionsColumnsDropList for the drag & drop.
-       this.pagesService.onSectionsChange$.subscribe(res => {
+       this.pagesService.sectionsChange$.subscribe(res => {
             // Concat all results into one array.
             this.sectionsColumnsDropList = [].concat(...res.map(section => {
                 return section.Columns.map((column, index) => 

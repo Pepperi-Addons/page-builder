@@ -114,19 +114,19 @@ export class PagesService {
 
     // This subject is for the screen size change events.
     private _screenSizeSubject: BehaviorSubject<PepScreenSizeType> = new BehaviorSubject<PepScreenSizeType>(PepScreenSizeType.XL);
-    get onScreenSizeChange$(): Observable<PepScreenSizeType> {
+    get screenSizeChange$(): Observable<PepScreenSizeType> {
         return this._screenSizeSubject.asObservable().pipe(distinctUntilChanged());
     }
 
     // This subject is for demostrate the container size (Usage only in edit mode).
     private _screenWidthSubject: BehaviorSubject<string> = new BehaviorSubject<string>('100%');
-    get onScreenWidthChange$(): Observable<string> {
+    get screenWidthChange$(): Observable<string> {
         return this._screenWidthSubject.asObservable().pipe(distinctUntilChanged());
     }
 
     // This subject is for load the current editor (Usage only in edit mode).
     private _editorSubject: BehaviorSubject<IEditor> = new BehaviorSubject<IEditor>(null);
-    get onEditorChange$(): Observable<IEditor> {
+    get editorChange$(): Observable<IEditor> {
         return this._editorSubject.asObservable().pipe(distinctUntilChanged());
     }
 
@@ -143,7 +143,7 @@ export class PagesService {
     
     // This is the sections subject (a pare from the page object)
     private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
-    get onSectionsChange$(): Observable<PageSection[]> {
+    get sectionsChange$(): Observable<PageSection[]> {
         return this._sectionsSubject.asObservable();
     }
     
@@ -165,7 +165,7 @@ export class PagesService {
     
     // This subject is for page block change.
     private _pageBlockSubject: BehaviorSubject<PageBlock> = new BehaviorSubject<PageBlock>(null);
-    get onPageBlockChange$(): Observable<PageBlock> {
+    get pageBlockChange$(): Observable<PageBlock> {
         return this._pageBlockSubject.asObservable();
     }
 
@@ -199,6 +199,12 @@ export class PagesService {
     private _draggingSectionKey: BehaviorSubject<string> = new BehaviorSubject('');
     get draggingSectionKey(): Observable<string> {
         return this._draggingSectionKey.asObservable().pipe(distinctUntilChanged());
+    }
+
+    // This subject is for lock or unlock the screen (Usage only in edit mode).
+    private _lockScreenSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    get lockScreenChange$(): Observable<boolean> {
+        return this._lockScreenSubject.asObservable().pipe(distinctUntilChanged());
     }
 
     constructor(
@@ -309,6 +315,9 @@ export class PagesService {
                 // setTimeout 0 for navigate on the UI thread.
                 setTimeout(() => {
                     this.navigateToEditor('block', bpToUpdate.block.Key);
+                    
+                    // unlock the screen.
+                    this._lockScreenSubject.next(false);
                 }, 0);
             }
 
@@ -1293,7 +1302,10 @@ export class PagesService {
     }
 
     onBlockDropped(event: CdkDragDrop<any[]>, sectionId: string) {
-        if (event.previousContainer.id == 'availableBlocks') {
+        if (event.previousContainer.id === 'availableBlocks') {
+            // lock the screen untill the editor will be loaded.
+            this._lockScreenSubject.next(true);
+
             // Create new block from the relation (previousContainer.data is AvailableBlock object).
             const relation: NgComponentRelation = event.previousContainer.data[event.previousIndex];
             

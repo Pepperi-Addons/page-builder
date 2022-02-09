@@ -1,4 +1,7 @@
-<pep-page-layout [showShadow]="showEditor && currentEditor">
+
+<div *ngIf="lockScreen" class="cdk-overlay-backdrop cdk-overlay-dark-backdrop cdk-overlay-backdrop-showing"></div>
+
+<pep-page-layout [showShadow]="showEditor && currentEditor" >
     <div pep-side-area *ngIf="showEditor && currentEditor" style="padding-inline-start: 1rem; height: inherit;">
         <pep-side-bar #sideBar [ignoreResize]="true" (stateChange)="onSidebarStateChange($event)">
             <div header-content class="side-bar-title">
