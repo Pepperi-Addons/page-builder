@@ -9,6 +9,7 @@ import { GridDataViewField, Page } from '@pepperi-addons/papi-sdk';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { PepSelectionData } from '@pepperi-addons/ngx-lib/list';
+import { IPepFormFieldClickEvent } from '@pepperi-addons/ngx-lib/form';
 
 export enum Page_Type { "Homepage" = 1, "Dashbaord" = 2, "Item" = 3, "Generic" = 4, "None" = 5 };
 
@@ -82,7 +83,7 @@ export class PagesManagerComponent implements OnInit {
         getList: (options) => {
             const res: Promise<IPageRowModel[]> = this.pagesService.getPages(this.navigationService.addonUUID, options).toPromise().then((pages) => {
                 this.hasPages = !pages || pages.length < 1 ? false : true;
-                return pages.map(page => ({
+                return pages.map(page => ({ 
                     Key: page.Key,
                     Name: page.Name,
                     Description: page.Description,
@@ -219,5 +220,9 @@ export class PagesManagerComponent implements OnInit {
                     break;
             }
         }
+    }
+
+    onCustomizeFieldClick(fieldClickEvent: IPepFormFieldClickEvent){
+        debugger;
     }
 }
