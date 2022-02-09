@@ -913,11 +913,11 @@ export class PagesService {
                             canConfigurePerScreenSize = true;
                         }
                     } else { // Check in deepPropertyName (fields || items).
-                        const deepPropertyName = isObject ? 'Fields' : 'Items';
+                        const fieldsObject = (isArray ? schemaField.Items?.Fields : schemaField.Fields) || null;
 
-                        if (schemaField[deepPropertyName]) {
+                        if (fieldsObject) {
                             propertiesHierarchy.shift(); // Remove the first element.
-                            canConfigurePerScreenSize = this.searchFieldInSchemaFields(schemaField[deepPropertyName], propertiesHierarchy);
+                            canConfigurePerScreenSize = this.searchFieldInSchemaFields(fieldsObject, propertiesHierarchy);
                         }
                     }
                 } else {

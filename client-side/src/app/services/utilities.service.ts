@@ -66,10 +66,26 @@ export class UtilitiesService {
 
                     this.mergeDeep(target[key], source[key]);
                 } else {
-                    Object.assign(target, { [key]: source[key] });
+                    if (Array.isArray(target[key]) && Array.isArray(source[key])) {
+                        if (!target[key]) {
+                            Object.assign(target, { [key]: source[key] });
+                        } else {
+                            for (let index = 0; index < source[key].length; index++) {
+                                const srcElement = source[key][index];
+                                
+                                if (target[key].length > index) {
+                                    this.mergeDeep(target[key][index], srcElement);
+                                } else {
+                                    target[key][index].push(srcElement);
+                                }
+                            }
+                        }
+                    } else {
+                        Object.assign(target, { [key]: source[key] });
+                    }
                 }
             }
-        }
+        } 
       
         return this.mergeDeep(target, ...sources);
     }
