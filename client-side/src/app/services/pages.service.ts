@@ -93,6 +93,7 @@ interface IProducerParameters {
 
 export interface IPageBlockHostObject {
     configuration: any;
+    configurationSource?: any;
     pageConfiguration?: PageConfiguration;
     parameters?: any;
 }
@@ -676,31 +677,43 @@ export class PagesService {
         return editor;
     }
 
-    private getMergedConfigurationData(block: PageBlock): any {
+    private getMergedConfigurationData(block: PageBlock, configurationSource = false): any {
         // Copy the object data.
         let configurationData = JSON.parse(JSON.stringify(block.Configuration.Data));
         const currentScreenType = this.getScreenType(this._screenSizeSubject.getValue());
         
         // Get the configuration data by the current screen size (if exist then merge it up to Tablet and up to Landscape).
-        if (currentScreenType !== 'Landscape') {
-            // Merge from Tablet
-            if (block.ConfigurationPerScreenSize?.Tablet) {
+        if (currentScreenType !== 'Landscape' && block.ConfigurationPerScreenSize) {
+            if (configurationSource) {
+                if (currentScreenType === 'Phablet') {
+                    configurationData = this.utilitiesService.mergeDeep(configurationData, block.ConfigurationPerScreenSize.Tablet);
+                }
+            } else {
+                // Merge from Tablet
                 configurationData = this.utilitiesService.mergeDeep(configurationData, block.ConfigurationPerScreenSize.Tablet);
-            }
-
-            // If currentScreenType === 'Phablet' merge from mobile
-            if (currentScreenType === 'Phablet' && block.ConfigurationPerScreenSize?.Mobile) {
-                configurationData = this.utilitiesService.mergeDeep(configurationData, block.ConfigurationPerScreenSize.Mobile);
+                
+                // If currentScreenType === 'Phablet' merge from mobile
+                if (currentScreenType === 'Phablet') {
+                    configurationData = this.utilitiesService.mergeDeep(configurationData, block.ConfigurationPerScreenSize.Mobile);
+                }
             }
         }
 
         return configurationData;
     }
 
-    private getEditorHostObject(block: PageBlock): IPageBlockHostObject {
+    private getEditorHostObject(block: PageBlock, addconfigurationSource = false): IPageBlockHostObject {
+        
         let hostObject: IPageBlockHostObject = {
             configuration: this.getMergedConfigurationData(block)
         };
+        
+        // To let the block editor the option to know if to show reset (used for ConfigurationPerScreenSize).
+        // with this property the editor can show the reset button if configuration property isn't equal to configurationSource property.
+        if (addconfigurationSource) {
+            let configurationSource = this.getMergedConfigurationData(block, true)
+            hostObject.configurationSource = configurationSource;
+        }
 
         // Add pageConfiguration if exist.
         if (block.PageConfiguration) {
@@ -1062,9 +1075,9 @@ export class PagesService {
     
             const key = this.getRemoteLoaderMapKey(blockProgress?.block.Relation);
             const remoteLoaderOptions = this._blocksEditorsRemoteLoaderOptionsMap.get(key);
-    
             if (block && remoteLoaderOptions) {
-                const hostObject = this.getEditorHostObject(block);
+                // If there is schema then support ConfigurationPerScreenSize
+                const hostObject = this.getEditorHostObject(block, blockProgress.block.Relation.Schema !== null);
     
                 res = {
                     id: blockId,
