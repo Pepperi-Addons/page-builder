@@ -47,9 +47,9 @@ label {
                     flex-direction: column;
                     padding-inline: 0;
 
-                    .available-block {
-                        margin-bottom: .5rem;
-                    }
+                    // .available-block {
+                    //     margin-bottom: .5rem;
+                    // }
                 }
             }
         }
@@ -68,7 +68,7 @@ label {
     }
 }
 
-.cdk-drag-placeholder {
-    opacity: 0;
-}
+// .cdk-drag-placeholder {
+//     opacity: 0;
+// }
 

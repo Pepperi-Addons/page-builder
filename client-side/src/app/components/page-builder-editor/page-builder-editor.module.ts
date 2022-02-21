@@ -22,7 +22,7 @@ import { TranslateModule, TranslateLoader, TranslateStore } from '@ngx-translate
 import { PepColorModule } from '@pepperi-addons/ngx-lib/color';
 import { PepImageModule } from '@pepperi-addons/ngx-lib/image';
 import { PepGroupButtonsSettingsModule } from '@pepperi-addons/ngx-composite-lib/group-buttons-settings';
-import { PepDraggableItemModule } from '@pepperi-addons/ngx-composite-lib/draggable-item';
+import { PepDraggableItemsModule } from '@pepperi-addons/ngx-lib/draggable-items';
 import { MatSliderModule } from '@angular/material/slider'
 // const pepIcons = [
 //     pepIconSystemClose,
@@ -54,7 +54,7 @@ import { MatSliderModule } from '@angular/material/slider'
         PepColorModule,
         PepImageModule,
         PepGroupButtonsSettingsModule,
-        PepDraggableItemModule,
+        PepDraggableItemsModule,
         MatSliderModule,
         PepTextareaModule,
         SectionEditorModule,

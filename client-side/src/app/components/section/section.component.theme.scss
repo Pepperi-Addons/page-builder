@@ -45,7 +45,7 @@
             }
 
             .section-toolbar {
-                ::ng-deep.draggable-item-container {
+                ::ng-deep.pep-draggable-item-container {
                     @include mixins.focus(false, $color-caution, $border-width);
                 }
             }

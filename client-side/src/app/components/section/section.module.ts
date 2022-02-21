@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateLoader, TranslateStore } from '@ngx-translate/core';
 import { PepAddonService, PepFileService, PepHttpService } from '@pepperi-addons/ngx-lib';
 import { HideInModule } from '../hide-in/hide-in.module';
-import { PepDraggableItemModule } from '@pepperi-addons/ngx-composite-lib/draggable-item';
+import { PepDraggableItemsModule } from '@pepperi-addons/ngx-lib/draggable-items';
 
 @NgModule({
     declarations: [SectionComponent],
@@ -22,7 +22,7 @@ import { PepDraggableItemModule } from '@pepperi-addons/ngx-composite-lib/dragga
         PepAddonLoaderModule,
         SectionBlockModule,
         HideInModule,
-        PepDraggableItemModule,
+        PepDraggableItemsModule,
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,

@@ -1,6 +1,5 @@
 @import 'ngx-lib/src/core/style/abstracts/variables';
 @import 'ngx-lib/src/core/style/abstracts/mixins';
-@import 'ngx-composite-lib/src/core/style/abstracts/variables';
 @import '../../../mixins.scss';
 
 .section-container {
@@ -48,7 +47,7 @@
             height: calc(#{$draggable-item-height} + #{$border-width});
             z-index: $z-index-medium;
 
-            ::ng-deep.draggable-item-container {
+            ::ng-deep.pep-draggable-item-container {
                 border-radius: $border-radius-md $border-radius-md 0 0;
             }
         }

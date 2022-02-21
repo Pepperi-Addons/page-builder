@@ -3,6 +3,7 @@ import { CdkDragEnd, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { IPepButtonClickEvent } from '@pepperi-addons/ngx-lib/button';
+import { IPepDraggableItem } from '@pepperi-addons/ngx-lib/draggable-items/draggable-items.model';
 import { NgComponentRelation, PageSizeType } from '@pepperi-addons/papi-sdk';
 import { PagesService, IPageEditor, UiPageSizeType } from '../../services/pages.service';
 
@@ -58,6 +59,7 @@ export class PageBuilderEditorComponent implements OnInit {
     maxWidth: number;
 
     availableBlocks: NgComponentRelation[] = [];
+    availableBlocksForDrag: Array<IPepDraggableItem> = [];
     sizesGroupButtons = Array<ISpacingOption>();
     
     constructor(
@@ -91,6 +93,14 @@ export class PageBuilderEditorComponent implements OnInit {
         
         this.pagesService.availableBlocksLoadedSubject$.subscribe(availableBlocks => {
             this.availableBlocks = availableBlocks;
+            
+            this.availableBlocksForDrag = this.availableBlocks.map(ab => {
+                return {
+                    title: ab.Name,
+                    disabled: false,
+                    data: ab
+                }
+            });
         });
     }
 
