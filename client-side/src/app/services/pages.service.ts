@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { PepRemoteLoaderOptions } from "@pepperi-addons/ngx-remote-loader";
+import { IPepDraggableItem } from "@pepperi-addons/ngx-lib/draggable-items";
 import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, ResourceType, PageConfigurationParameterFilter, PageConfiguration, PageConfigurationParameterBase, PageConfigurationParameterString, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
 import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
@@ -1316,33 +1317,40 @@ export class PagesService {
 
     onBlockDropped(event: CdkDragDrop<any[]>, sectionId: string) {
         if (event.previousContainer.id === 'availableBlocks') {
-            // lock the screen untill the editor will be loaded.
-            this._lockScreenSubject.next(true);
+            // Get the block relation (previousContainer.data is IPepDraggableItem and inside we have AvailableBlock object).
+            const draggableItem: IPepDraggableItem = event.previousContainer.data[event.previousIndex] as IPepDraggableItem;
 
-            // Create new block from the relation (previousContainer.data is AvailableBlock object).
-            const relation: NgComponentRelation = event.previousContainer.data[event.previousIndex];
-            
-            let block: PageBlock = {
-                Key: PepGuid.newGuid(),
-                Relation: relation,
-                Configuration: {
-                    Resource: relation.Name,
-                    AddonUUID: relation.AddonUUID,
-                    Data: {}
-                },
-            }
-
-            // Get the column.
-            const currentColumn = this.getSectionColumnById(event.container.id);
-            
-            // Set the block key in the section block only if there is a blank column.
-            if (currentColumn && !currentColumn.BlockContainer) {
-                currentColumn.BlockContainer = { 
-                    BlockKey: block.Key
-                };
+            if (draggableItem) {
+                // lock the screen untill the editor will be loaded.
+                this._lockScreenSubject.next(true);
+    
+                // Create new block from the relation (previousContainer.data is AvailableBlock object).
+                const relation: NgComponentRelation = draggableItem.data;
                 
-                // Add the block to the page blocks and navigate to block editor when the block will loaded.
-                this.addPageBlock(block, true);
+                let block: PageBlock = {
+                    Key: PepGuid.newGuid(),
+                    Relation: relation,
+                    Configuration: {
+                        Resource: relation.Name,
+                        AddonUUID: relation.AddonUUID,
+                        Data: {}
+                    },
+                }
+    
+                // Get the column.
+                const currentColumn = this.getSectionColumnById(event.container.id);
+                
+                // Set the block key in the section block only if there is a blank column.
+                if (currentColumn && !currentColumn.BlockContainer) {
+                    currentColumn.BlockContainer = { 
+                        BlockKey: block.Key
+                    };
+                    
+                    // Add the block to the page blocks and navigate to block editor when the block will loaded.
+                    this.addPageBlock(block, true);
+                }
+            } else {
+                console.log("draggableItem is not a IPepDraggableItem type");
             }
         } else {
             // If the block moved between columns in the same section or between different sections but not in the same column.
