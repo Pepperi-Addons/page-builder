@@ -3,13 +3,15 @@ import { IPageRowModel, PagesService } from '../../services/pages.service';
 import { Component, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
-import { GenericListComponent, PepGenericListDataSource } from '@pepperi-addons/ngx-composite-lib/generic-list';
+import { IPepGenericListDataSource, IPepGenericListPager, IPepGenericListActions, IPepGenericListInitData, PepGenericListService } from "@pepperi-addons/ngx-composite-lib/generic-list";
 import { PepAddonService } from '@pepperi-addons/ngx-lib';
-import { GridDataViewField, Page } from '@pepperi-addons/papi-sdk';
+import { DataViewFieldType, GridDataViewField, Page } from '@pepperi-addons/papi-sdk';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { PepSelectionData } from '@pepperi-addons/ngx-lib/list';
 import { IPepFormFieldClickEvent } from '@pepperi-addons/ngx-lib/form';
+import { PepSelectionData } from '@pepperi-addons/ngx-lib/list';
+
+
 
 export enum Page_Type { "Homepage" = 1, "Dashbaord" = 2, "Item" = 3, "Generic" = 4, "None" = 5 };
 
@@ -34,12 +36,13 @@ export class TempPage {
 
 export class PagesManagerComponent implements OnInit {
     
-    @ViewChild(GenericListComponent) pagesList: GenericListComponent;
-    
     private selectedPageID = '';
     mainMenuItems: Array<PepMenuItem> = null;
+    //pagesList: Array<IPageRowModel>;
+    pagesList: any;
     secondaryMenuItems: Array<PepMenuItem> = null;
     isAddNewPage = false;
+    pagesDataSource: IPepGenericListDataSource;
 
     tempPages: Array<TempPage> = [{id: 1, name: "PAGES_MANAGER.ADDNEW_BLANK" , description: 'PAGES_MANAGER.ADDNEW_BLANK_DESC', type: Page_Type.Homepage},
                                   {id: 2, name: 'PAGES_MANAGER.ADDNEW_GRIDY' , description: 'PAGES_MANAGER.ADDNEW_GRIDY_DESC', type: Page_Type.Homepage},
@@ -66,88 +69,90 @@ export class PagesManagerComponent implements OnInit {
 
     ) {
         this.imagesPath = this.pepAddonService.getAddonStaticFolder() + 'assets/images/';
+        this.pagesDataSource = this.setDataSource(); 
 
     }
 
-    private getRegularReadOnlyColumn(columnId: string): GridDataViewField {
+    private getRegularReadOnlyColumn(columnId: string, columnType: DataViewFieldType = 'TextBox'): GridDataViewField {
         return {
             FieldID: columnId,
-            Type: 'TextBox',
+            Type: columnType,
             Title: this.translate.instant(`PAGES_MANAGER.GRID_HEADER_${columnId.toUpperCase()}`),
             Mandatory: false,
             ReadOnly: true
         }
     }
 
-    pagesDataSource: PepGenericListDataSource = {
-        getList: (options) => {
-            const res: Promise<IPageRowModel[]> = this.pagesService.getPages(this.navigationService.addonUUID, options).toPromise().then((pages) => {
-                this.hasPages = !pages || pages.length < 1 ? false : true;
-                return pages.map(page => ({ 
-                    Key: page.Key,
-                    Name: page.Name,
-                    Description: page.Description,
-                    CreationDate: page.CreationDate,
-                    ModificationDate: page.ModificationDate,
-                    Status: page.Status
-                }));
-            });
-
-            return res;
-        },
-
-        getDataView: async () => {
-            return {
-                Context: {
-                    Name: '',
-                    Profile: { InternalID: 0 },
-                    ScreenSize: 'Landscape'
-                },
-                Type: 'Grid',
-                Title: '',
-                Fields: [
-                    this.getRegularReadOnlyColumn('Name'),
-                    this.getRegularReadOnlyColumn('Description'),
-                    this.getRegularReadOnlyColumn('CreationDate'),
-                    this.getRegularReadOnlyColumn('ModificationDate'),
-                    this.getRegularReadOnlyColumn('Status')
-                ],
-                Columns: [
-                    { Width: 15 },
-                    { Width: 30 },
-                    { Width: 20 },
-                    { Width: 20 },
-                    { Width: 15}
-                ],
-                FrozenColumnsCount: 0,
-                MinimumColumnWidth: 0
+    private setDataSource() {
+        return {
+            init: async (state) => {
+                //this.pagesList = this.pagesService.getPages(this.navigationService.addonUUID, null);
+                    //this.hasPages = !pages || pages.length < 1 ? false : true;
+                    const pageList: any = await this.pagesService.getPages(this.navigationService.addonUUID, []).toPromise().then((pages) => {
+                        return pages;  
+                    });
+                    
+                    return{
+                        items:  pageList,
+                                totalCount: pageList.length, 
+                                dataView: {
+                                    Context: {
+                                        Name: '',
+                                        Profile: { InternalID: 0 },
+                                        ScreenSize: 'Landscape'
+                                    },
+                                    Type: 'Grid',
+                                    Title: '',
+                                    Fields: [
+                                        this.getRegularReadOnlyColumn('Name','Link'),
+                                        this.getRegularReadOnlyColumn('Description'),
+                                        this.getRegularReadOnlyColumn('CreationDate'),
+                                        this.getRegularReadOnlyColumn('ModificationDate'),
+                                        this.getRegularReadOnlyColumn('Status')
+                                    ],
+                                    Columns: [   
+                                        { Width: 15 },
+                                        { Width: 30 },
+                                        { Width: 20 },
+                                        { Width: 20 },
+                                        { Width: 15}
+                                    ],
+                                    FrozenColumnsCount: 0,
+                                    MinimumColumnWidth: 0
+                                }
+                        } as IPepGenericListInitData;
             }
-        },
-        getActions: async (data: PepSelectionData) => {
-            if (data?.rows.length > 0 && data?.rows[0]) {
-                return [
-                    {
+        }
+    } 
+
+    actions: IPepGenericListActions = {        
+        get: async (data: PepSelectionData) => {
+            if (data?.rows.length === 1 ) {
+                return [{
                         title: this.translate.instant("ACTIONS.EDIT"),
                         handler: async (data: PepSelectionData) => {
-                            this.navigationService.navigateToPage([data?.rows[0].Key].toString());
+                            this.navigationService.navigateToPage([data?.rows[0]].toString());
                         }
-                    },{
-                        title: this.translate.instant("ACTIONS.EXPORT"),
-                        handler: async (data: PepSelectionData) => {
-                            // TODO - ADD EXPORT PAGES CALL
-                            //this.pagesService.exportPage([data?.rows[0].Key].toString());
-                        }
-                    },
-                    {
-                        title: this.translate.instant("ACTIONS.DELETE"),
-                        handler: async (data: PepSelectionData) => {
-                            if (data?.rows.length > 0) {
-                                this.deletePage(data?.rows[0].Key);
+                        },{
+                            title: this.translate.instant("ACTIONS.EXPORT"),
+                            handler: async (data: PepSelectionData) => {
+                                // TODO - ADD EXPORT PAGES CALL
+                                //this.pagesService.exportPage([data?.rows[0]].toString());
+                            }
+                        },
+                        {
+                            title: this.translate.instant("ACTIONS.DELETE"),
+                            handler: async (data: PepSelectionData) => {
+                                if (data?.rows.length > 0) {
+                                    this.deletePage(data?.rows[0]);
+                                }
                             }
                         }
-                    }
-                ]
-            } else return [];   
+                    ]
+            } 
+            else {
+                return [];
+            }
         }
     }
 
@@ -201,8 +206,7 @@ export class PagesManagerComponent implements OnInit {
         this.dialog.openDefaultDialog(dataMsg).afterClosed().subscribe((isDeletePressed) => {
             if (isDeletePressed) {
                 this.pagesService.deletePage(this.navigationService.addonUUID, pageId).subscribe((res) => {
-                    this.pagesList.reload();
-                    //this.pagesDataSource.getList(null);
+                    this.pagesDataSource = this.setDataSource();
                 });
             }
         });
@@ -223,6 +227,6 @@ export class PagesManagerComponent implements OnInit {
     }
 
     onCustomizeFieldClick(fieldClickEvent: IPepFormFieldClickEvent){
-        debugger;
+        this.navigationService.navigateToPage(fieldClickEvent.id);
     }
 }

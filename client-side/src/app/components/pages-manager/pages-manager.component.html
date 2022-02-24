@@ -26,9 +26,8 @@
         <div class="pageExplanation">
             <span class="body-md">{{ 'PAGES_MANAGER.MAIN_EXPLANATION' | translate }}</span>
         </div>
-        <!-- [firstFieldAsLink]="flse" (fieldClick)="onCustomizeFieldClick($event)" [uuidMapping]="'Key'"--> 
-        <pep-generic-list #pagesList *ngIf="hasPages" [dataSource]="pagesDataSource" [inline]="true"
-                          [title]="'PAGES_MANAGER.SECONDARY_HEADER' | translate"> 
+        <pep-generic-list *ngIf="hasPages" [dataSource]="pagesDataSource" [actions]="actions" [inline]="true" [showTopBar]='true'
+                          [uuidMapping]="'Key'" [title]="'PAGES_MANAGER.SECONDARY_HEADER' | translate" (fieldClick)="onCustomizeFieldClick($event)"> 
             <ng-container right-buttons >
                 <ng-container *ngTemplateOutlet="topBarEnd"></ng-container>
             </ng-container>
