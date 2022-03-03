@@ -44,7 +44,7 @@
                 <ng-container *ngIf="showEditor; then editorButtonsTemplate; else previewButtonsTemplate"></ng-container>
                 <ng-template #editorButtonsTemplate>
                     <div class="header-end">
-                        <div *ngIf="true || pageSizeLimitInPercentage > MIN_PERCENTAGE_TO_SHOW_LIMIT" class="size-limit-container pep-button sm disable pep-spacing-element">
+                        <div *ngIf="pageSizeLimitInPercentage > MIN_PERCENTAGE_TO_SHOW_LIMIT" class="size-limit-container pep-button sm disable pep-spacing-element">
                             <span class="title-xs">{{ 'MESSAGES.PAGE_SIZE_LIMIT_TITLE' | translate }}&nbsp;</span>
                             <span class="title-sm color-caution bold">{{ pageSizeString }}</span>
                         </div>
