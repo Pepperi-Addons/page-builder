@@ -32,8 +32,17 @@ export async function pages(client: Client, request: Request): Promise<any> {
 export async function on_uninstall_block(client:Client, request: Request): Promise<any> {
     try {
         const service = new PagesApiService(client);
-        await service.deleteBlockFromPages(request.body);
+        return service.deleteBlockFromPages(request.body);
     } catch(err) {
         throw new Error(`Failed to remove uninstall block from pages. error - ${err}`);
+    }
+}
+
+export async function set_pages_variable(client:Client, request: Request): Promise<any> {
+    try {
+        const service = new PagesApiService(client);
+        return service.savePagesVariable(request.body);
+    } catch(err) {
+        throw err;
     }
 }

@@ -19,9 +19,10 @@ const pnsFunctionPathForDraftPages = '/internal_api/on_uninstall_block_draft';
 export async function install(client: Client, request: Request): Promise<any> {
     try {
         const pageService = new PagesApiService(client);
-        await pageService.createPagesTablesSchemes();
-        await pageService.subscribeUninstallAddons(pnsKeyForPages, pnsFunctionPathForPages);
-        await pageService.subscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
+        pageService.createPagesTablesSchemes();
+        pageService.createPagesRelations();
+        pageService.subscribeUninstallAddons(pnsKeyForPages, pnsFunctionPathForPages);
+        pageService.subscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
     } catch (err) {
         throw new Error(`Failed to create ADAL Tables. error - ${err}`);
     }
@@ -32,8 +33,8 @@ export async function install(client: Client, request: Request): Promise<any> {
 export async function uninstall(client: Client, request: Request): Promise<any> {
     try {
         const pageService = new PagesApiService(client);
-        await pageService.unsubscribeUninstallAddons(pnsKeyForPages, pnsFunctionPathForPages);
-        await pageService.unsubscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
+        pageService.unsubscribeUninstallAddons(pnsKeyForPages, pnsFunctionPathForPages);
+        pageService.unsubscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
     } catch (err) {
         throw new Error(`Failed to unsubscribe from PNS. error - ${err}`);
     }

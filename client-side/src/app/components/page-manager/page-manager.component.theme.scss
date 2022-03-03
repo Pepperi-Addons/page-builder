@@ -1,4 +1,5 @@
 @use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/functions';
+@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/mixins';
 
 .main-area-container {
     background: functions.get-pep-color(color-system-primary, color-tran-10);
@@ -9,6 +10,10 @@
 
         .header-title {
             color: functions.get-pep-color(color-text, color-dimmed);
+        }
+
+        .size-limit-container {
+            @include mixins.state-weak-default();
         }
     }
 

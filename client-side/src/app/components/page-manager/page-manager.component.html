@@ -44,13 +44,14 @@
                 <ng-container *ngIf="showEditor; then editorButtonsTemplate; else previewButtonsTemplate"></ng-container>
                 <ng-template #editorButtonsTemplate>
                     <div class="header-end">
-                        <div>
-                            {{pageSizeString}}
+                        <div *ngIf="true || pageSizeLimitInPercentage > MIN_PERCENTAGE_TO_SHOW_LIMIT" class="size-limit-container pep-button sm disable pep-spacing-element">
+                            <span class="title-xs">{{ 'MESSAGES.PAGE_SIZE_LIMIT_TITLE' | translate }}&nbsp;</span>
+                            <span class="title-sm color-caution bold">{{ pageSizeString }}</span>
                         </div>
-                        <pep-menu sizeType="sm" classNames="pep-spacing-element" [items]="menuItems" (menuItemClick)="onMenuItemClick($event)"></pep-menu>
-                        <pep-button [value]="'ACTIONS.PREVIEW' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="togglePreviewMode()"></pep-button>
-                        <pep-button [value]="'ACTIONS.SAVE' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="onSaveClick()"></pep-button>
-                        <pep-button [value]="'ACTIONS.PUBLISH' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="onPublishClick();">
+                        <pep-menu sizeType="sm" classNames="pep-spacing-element" [items]="menuItems" (menuItemClick)="onMenuItemClick($event)" [disabled]="isOverPageSizeLimit"></pep-menu>
+                        <pep-button [value]="'ACTIONS.PREVIEW' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="togglePreviewMode()" [disabled]="isOverPageSizeLimit"></pep-button>
+                        <pep-button [value]="'ACTIONS.SAVE' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="onSaveClick()" [disabled]="isOverPageSizeLimit"></pep-button>
+                        <pep-button [value]="'ACTIONS.PUBLISH' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="onPublishClick();" [disabled]="isOverPageSizeLimit">
                         </pep-button>
                     </div>
                 </ng-template>
@@ -58,12 +59,6 @@
                     <a class="color-link body-sm" (click)="togglePreviewMode()" href="javascript:void(0)">{{('PAGE_MANAGER.PREVIEW_CLICK_HERE' | translate)}}</a>    
                 </ng-template>
             </div>
-            <!-- <div *ngIf="!showEditor" class="header-container-preview">
-                <div class="preview-title body-sm">
-                    <span>{{('PAGE_MANAGER.PREVIEW_TITLE' | translate)}}&nbsp;-&nbsp;</span>
-                    <a class="color-link" (click)="togglePreviewMode()" href="javascript:void(0)">{{('PAGE_MANAGER.PREVIEW_CLICK_HERE' | translate)}}</a>
-                </div>
-            </div> -->
             <div #pageBuilderWrapper class="page-builder-wrapper" [ngClass]="{'limit-min-width': selectedScreenType === 'Landscape' }">
                 <!-- [selectedScreenType]="selectedScreenType"  -->
                 <page-builder [editMode]="showEditor" [screenSize]="screenSize" [sectionsColumnsDropList]="sectionsColumnsDropList"></page-builder>
