@@ -10,6 +10,7 @@ import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/oper
 import { NavigationService } from "./navigation.service";
 import { UtilitiesService } from "./utilities.service";
 import * as _ from 'lodash';
+import { Params } from "@angular/router";
 
 export type UiPageSizeType = PageSizeType | 'none';
 
@@ -117,14 +118,15 @@ export class PagesService {
     private readonly CONSUMERS_PRIORITY = 1;
     private readonly PRODUCERS_AND_CONSUMERS_PRIORITY = 2;
     private readonly PRODUCERS_PRIORITY = 3;
-    
+    private readonly SYSTEM_PARAMETER_KEY = 'SystemParameter';
+
     readonly BLOCKS_NUMBER_LIMITATION_OBJECT = {
         key: 'BLOCKS_NUMBER_LIMITATION',
         value: 15
     }
 
-    readonly BLOCKS_SIZE_LIMITATION_OBJECT = {
-        key: 'BLOCKS_SIZE_LIMITATION',
+    readonly PAGE_SIZE_LIMITATION_OBJECT = {
+        key: 'PAGE_SIZE_LIMITATION',
         value: 150
     }
     
@@ -246,7 +248,8 @@ export class PagesService {
             // Check that all pageProducersFiltersMap blocks keys exist in blocksProgress (if some block is removed we need to clear his filter).
             this._producerParameterKeysMap.forEach((value: IProducerParameters, parameterKey: string) => {
                 value?.producerParametersMap.forEach((parameterValue: any, producerBlockKey: string) => {
-                    if (!blocksProgress.has(producerBlockKey)) {
+                    // If the producer block key is not system and not exist in the blocks progress.
+                    if (producerBlockKey !== this.SYSTEM_PARAMETER_KEY && !blocksProgress.has(producerBlockKey)) {
                         // Delete the producer data in the current parameter.
                         value.producerParametersMap.delete(producerBlockKey);
                         needToRebuildFilters = true;
@@ -573,6 +576,16 @@ export class PagesService {
         return res;
     }
 
+    private setProducerParameter(parameterKey: string, parameterValue: string | IProducerFilter[], blockKey: string = this.SYSTEM_PARAMETER_KEY) {
+        // Create new producerParameters map if key isn't exists.
+        if (!this._producerParameterKeysMap.has(parameterKey)) {
+            this._producerParameterKeysMap.set(parameterKey, { producerParametersMap: new Map<string, any>() });
+        }
+
+        // Set the producer parameter value in _producerParameterKeysMap.
+        this._producerParameterKeysMap.get(parameterKey).producerParametersMap.set(blockKey, parameterValue);
+    }
+
     private canProducerRaiseFilter(filtersParameters: PageConfigurationParameterFilter[], producerFilter: IProducerFilter): boolean {
         let res = false;
 
@@ -833,9 +846,20 @@ export class PagesService {
             if (!isNaN(valueAsNumber)) {
                 if (pagesVariable.Key === this.BLOCKS_NUMBER_LIMITATION_OBJECT.key) {
                     this.BLOCKS_NUMBER_LIMITATION_OBJECT.value = valueAsNumber;
-                } else if (pagesVariable.Key === this.BLOCKS_SIZE_LIMITATION_OBJECT.key) {
-                    this.BLOCKS_SIZE_LIMITATION_OBJECT.value = valueAsNumber;
+                } else if (pagesVariable.Key === this.PAGE_SIZE_LIMITATION_OBJECT.key) {
+                    this.PAGE_SIZE_LIMITATION_OBJECT.value = valueAsNumber;
                 } 
+            }
+        });
+    }
+    
+    private setQueryParameters(queryParameters: Params) {
+        Object.keys(queryParameters).forEach(paramKey => {
+            try {
+                const paramValue = JSON.parse(queryParameters[paramKey]);
+                this.setProducerParameter(paramKey, paramValue);
+            } catch {
+                // Do nothing, skip this param
             }
         });
     }
@@ -900,40 +924,6 @@ export class PagesService {
 
         // Update the block configuration data by the propertyNamePath and set the field value.
         this.setObjectPropertyValue(objectToUpdate, propertyNamePath, fieldValue);
-    }
-
-    
-    private getPropertyPath(propertyKey: string) {
-        const propertyPath = [];
-        const arrayStartIndexChar = propertyKey.indexOf('[');
-        
-        if (arrayStartIndexChar >= 0) {
-            let itemIndex = -1;
-            // If the array property is valild.
-            if (propertyKey[propertyKey.length - 1] === ']') {
-                // Get the item index.
-                const indexNumberIndex = arrayStartIndexChar + 1;
-                itemIndex = this.pepUtilitiesService.coerceNumberProperty(propertyKey.slice(indexNumberIndex, propertyKey.length - 1 - indexNumberIndex), -1);
-    
-                if (itemIndex > -1) {
-                    propertyPath.push(propertyKey.slice(0, arrayStartIndexChar));
-                    propertyPath.push(itemIndex);
-                } else {
-                    // 'Key item index is not valid'
-                    const msg = this.translate.instant('MESSAGES.PARAMETER_VALIDATION.TYPE_IS_DIFFERENT_FOR_THIS_KEY', { propertyKey: propertyKey});
-                    throw new Error(msg);
-                }
-    
-            } else {
-                // 'Key as array is not valid '
-                const msg = this.translate.instant('MESSAGES.PARAMETER_VALIDATION.TYPE_IS_DIFFERENT_FOR_THIS_KEY', { propertyKey: propertyKey});
-                throw new Error(msg);
-            }
-        } else {
-            propertyPath.push(propertyKey);
-        }
-
-        return propertyPath;
     }
 
     // Set the object field value by propertyNamePath (deep set).
@@ -1546,14 +1536,9 @@ export class PagesService {
                 
                 // Only if can update parameter
                 if (canUpdateParameter) {
-                    // Create new producerParameters map if key isn't exists.
-                    if (!this._producerParameterKeysMap.has(event.key)) {
-                        this._producerParameterKeysMap.set(event.key, { producerParametersMap: new Map<string, any>() });
-                    }
-
                     // Set the producer parameter value in _producerParameterKeysMap.
-                    this._producerParameterKeysMap.get(event.key).producerParametersMap.set(blockKey, event.value);
-                    
+                    this.setProducerParameter(event.key, event.value, blockKey);
+
                     // Raise the filters change only if this block has loaded AND the currentBlocksPriority is CONSUMERS_PRIORITY (consumers stage)
                     // because in case that the block isn't loaded we will raise the event once when all the blocks are ready.
                     if (blockProgress.loaded && this.currentBlocksPriority === this.CONSUMERS_PRIORITY) {
@@ -1620,7 +1605,7 @@ export class PagesService {
         return this.httpService.getHttpCall(`${baseUrl}/remove_page?key=${pageKey}`);
     }
 
-    loadPageBuilder(addonUUID: string, pageKey: string, editable: boolean): void {
+    loadPageBuilder(addonUUID: string, pageKey: string, editable: boolean, queryParameters: Params): void {
         //  If is't not edit mode get the page from the CPI side.
         const baseUrl = this.getBaseUrl(addonUUID);
         
@@ -1665,6 +1650,9 @@ export class PagesService {
                     }
             });
         }
+
+        // Set the query parameters on the producer parameter map as system parameters.
+        this.setQueryParameters(queryParameters);
     }
 
     unloadPageBuilder() {

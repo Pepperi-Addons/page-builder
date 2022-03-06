@@ -22,7 +22,12 @@ export interface IAvailableBlockData {
 
 export interface IPagesVariable {
     Key: string,
-    Value: string
+    Id: string,
+    Value: any
+}
+
+export interface IVarSettingsParams {
+    Fields: IPagesVariable[]
 }
 
 export const DEFAULT_BLOCKS_NUMBER_LIMITATION = {
@@ -31,8 +36,8 @@ export const DEFAULT_BLOCKS_NUMBER_LIMITATION = {
     hardValue: 30
 }
 
-export const DEFAULT_BLOCKS_SIZE_LIMITATION = {
-    key: 'BLOCKS_SIZE_LIMITATION',
+export const DEFAULT_PAGE_SIZE_LIMITATION = {
+    key: 'PAGE_SIZE_LIMITATION',
     softValue: 150,
     hardValue: 300
 }

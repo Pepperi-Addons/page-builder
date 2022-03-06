@@ -32,16 +32,26 @@ export async function pages(client: Client, request: Request): Promise<any> {
 export async function on_uninstall_block(client:Client, request: Request): Promise<any> {
     try {
         const service = new PagesApiService(client);
-        return service.deleteBlockFromPages(request.body);
+        await service.deleteBlockFromPages(request.body);
     } catch(err) {
         throw new Error(`Failed to remove uninstall block from pages. error - ${err}`);
     }
 }
 
-export async function set_pages_variable(client:Client, request: Request): Promise<any> {
+export async function pages_variables(client:Client, request: Request): Promise<any> {
     try {
         const service = new PagesApiService(client);
-        return service.savePagesVariable(request.body);
+        let res;
+
+        if (request.method === 'POST') {
+            res = service.savePagesVariables(request.body);
+        } else if (request.method === 'GET') {
+            res = service.getPagesVariables(request.query);
+        } else {
+            throw new Error(`Method ${request.method} is not supported.`);
+        }
+
+        return res;
     } catch(err) {
         throw err;
     }

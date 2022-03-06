@@ -135,8 +135,8 @@ export class PageManagerComponent implements OnInit {
         this.pagesService.pageDataChange$.subscribe((page: Page) => {
             if (page) {
                 const pageSize = this.utilitiesService.getObjectSize(page, 'kb');
-                this.pageSizeLimitInPercentage = pageSize * 100 / this.pagesService.BLOCKS_SIZE_LIMITATION_OBJECT.value;
-                this.isOverPageSizeLimit = pageSize >= this.pagesService.BLOCKS_SIZE_LIMITATION_OBJECT.value;
+                this.pageSizeLimitInPercentage = pageSize * 100 / this.pagesService.PAGE_SIZE_LIMITATION_OBJECT.value;
+                this.isOverPageSizeLimit = pageSize >= this.pagesService.PAGE_SIZE_LIMITATION_OBJECT.value;
 
                 if (this.pageBuilderWrapper?.nativeElement) {
                     let maxWidth = this.pepUtilitiesService.coerceNumberProperty(page.Layout.MaxWidth, 0);
