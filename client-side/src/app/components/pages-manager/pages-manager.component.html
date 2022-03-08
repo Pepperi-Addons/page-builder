@@ -7,10 +7,10 @@
                     <div class="main-header pep-spacing-element title title-lg pull-left flip"><span  title="Select a Page">{{'PAGES_MANAGER.ADDNEW_HEADER' | translate}}</span></div>
                 </div>
             </div>
-            <div header-end-content>
+            <!-- <div header-end-content>
                 <pep-menu class="pep-spacing-element " [items]="mainMenuItems" (menuItemClick)="onMenuItemClicked($event)">
                 </pep-menu>
-            </div>
+            </div> -->
         </pep-top-bar>
 
     </ng-container>
@@ -51,7 +51,7 @@
 </ng-template>
 
 <ng-template #topBarEnd>
-    <pep-menu class="pep-spacing-element" [items]="mainMenuItems" [sizeType]="'sm'" (menuItemClick)="onMenuItemClicked($event)">
+    <pep-menu class="pep-spacing-element" [items]="[{key: 'import', text: 'ACTIONS.IMPORT' | translate }]" [sizeType]="'sm'" (menuItemClick)="onMenuItemClicked($event)">
     </pep-menu>
     <pep-button class="pep-spacing-element" [value]="'PAGES_MANAGER.A_PAGE' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
     </pep-button>

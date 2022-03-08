@@ -1,6 +1,6 @@
 import { NavigationService } from './../../services/navigation.service';
 import { IPageRowModel, PagesService } from '../../services/pages.service';
-import { Component, OnInit, Renderer2, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 import { IPepGenericListDataSource, IPepGenericListPager, IPepGenericListActions, IPepGenericListInitData, PepGenericListService } from "@pepperi-addons/ngx-composite-lib/generic-list";
@@ -37,7 +37,7 @@ export class TempPage {
 export class PagesManagerComponent implements OnInit {
     
     private selectedPageID = '';
-    mainMenuItems: Array<PepMenuItem> = null;
+    // mainMenuItems: Array<PepMenuItem> = null;
     //pagesList: Array<IPageRowModel>;
     pagesList: any;
     secondaryMenuItems: Array<PepMenuItem> = null;
@@ -58,8 +58,8 @@ export class PagesManagerComponent implements OnInit {
 
     public imagesPath = '';
     public hasPages = true;
-    constructor(
 
+    constructor (
         private renderer: Renderer2,
         private translate: TranslateService,
         private navigationService: NavigationService,
@@ -89,10 +89,10 @@ export class PagesManagerComponent implements OnInit {
                 //this.pagesList = this.pagesService.getPages(this.navigationService.addonUUID, null);
                     //this.hasPages = !pages || pages.length < 1 ? false : true;
                     const pageList: any = await this.pagesService.getPages(this.navigationService.addonUUID, []).toPromise().then((pages) => {
-                        return pages;  
+                        return pages; 
                     });
                     
-                    return{
+                    return {
                         items:  pageList,
                                 totalCount: pageList.length, 
                                 dataView: {
@@ -156,20 +156,10 @@ export class PagesManagerComponent implements OnInit {
         }
     }
 
-    async ngOnInit() {
-
-        const importTran = await this.translate.get('ACTIONS.IMPORT').toPromise();
+    ngOnInit() {
         
-        this.mainMenuItems = new Array<PepMenuItem>();
-        this.mainMenuItems.push({
-            key: 'import',
-            text: importTran
-            //text: this.translate.instant('ACTIONS.IMPORT')
-            // ,disabled: this.selectedPageID == ''
-        }
-        );
     }
-
+    
     addNewPage() {
         this.isAddNewPage = true;
     }

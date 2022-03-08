@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
 
-import { PepNgxLibModule, PepAddonService, PepCustomizationService, PepFileService, PepHttpService } from '@pepperi-addons/ngx-lib';
+import { PepNgxLibModule, PepAddonService } from '@pepperi-addons/ngx-lib';
 import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
 import { PepIconModule, pepIconNumberPlus, PepIconRegistry, pepIconSystemBolt, pepIconSystemClose,
     pepIconSystemEdit, pepIconSystemMove, pepIconSystemBin, pepIconViewCardMd, pepIconSystemView, pepIconDeviceMobile, pepIconDeviceTablet, pepIconDeviceDesktop } from '@pepperi-addons/ngx-lib/icon';
