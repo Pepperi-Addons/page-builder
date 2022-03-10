@@ -356,7 +356,7 @@ export class PagesApiService {
         if (pageKey) {
             let page;
             
-            // If lookForDraft try to get the page from the draft first.
+            // If lookForDraft try to get the page from the draft first (for runtime the lookForDraft will be false).
             if (lookForDraft) {
                 try {
                     // Get the page from the drafts.
@@ -366,21 +366,21 @@ export class PagesApiService {
                 }
             }
 
+            const dataPromises: Promise<any>[] = [];
+            dataPromises.push(this.getAvailableBlocks());
+            dataPromises.push(this.getPagesVariablesInternal());
+            
             // If there is no page in the drafts
             if (!page || page.Hidden) {
-                page = await this.getPage(pageKey, PAGES_TABLE_NAME);
+                dataPromises.push(this.getPage(pageKey, PAGES_TABLE_NAME));
             }
+                
+            const arr = await Promise.all(dataPromises).then(res => res);
 
-            // If page found get the available blocks return combined object.
-            if (page) {
-                const availableBlocks = await this.getAvailableBlocks() || [];
-                const pagesVariables = await this.getPagesVariablesInternal() || [];
-
-                res = {
-                    page, 
-                    availableBlocks,
-                    pagesVariables
-                };
+            res = {
+                availableBlocks: arr[0] || [],
+                pagesVariables: arr[1] || [],
+                page: page || (arr.length > 2 ? arr[2] : []),
             }
         }
 

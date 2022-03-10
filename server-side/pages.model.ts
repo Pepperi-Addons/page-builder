@@ -12,6 +12,7 @@ export interface PageRowProjection {
 export interface IPageBuilderData {
     page: Page, 
     availableBlocks: IAvailableBlockData[]
+    pagesVariables: IPagesVariable[]
 }
 
 export interface IAvailableBlockData {
