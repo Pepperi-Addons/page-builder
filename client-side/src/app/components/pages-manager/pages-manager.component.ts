@@ -92,7 +92,7 @@ export class PagesManagerComponent implements OnInit {
                         return pages;  
                     });
                     
-                    return{
+                    return {
                         items:  pageList,
                                 totalCount: pageList.length, 
                                 dataView: {
@@ -120,7 +120,7 @@ export class PagesManagerComponent implements OnInit {
                                     FrozenColumnsCount: 0,
                                     MinimumColumnWidth: 0
                                 }
-                        } as IPepGenericListInitData;
+                    } as IPepGenericListInitData;
             }
         }
     } 
