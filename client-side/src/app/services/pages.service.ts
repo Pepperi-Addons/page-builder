@@ -10,6 +10,7 @@ import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/oper
 import { NavigationService } from "./navigation.service";
 import { UtilitiesService } from "./utilities.service";
 import * as _ from 'lodash';
+import { Params } from "@angular/router";
 
 export type UiPageSizeType = PageSizeType | 'none';
 
@@ -25,13 +26,19 @@ export interface IPageRowModel {
 
 interface IPageBuilderData {
     page: Page, 
-    availableBlocks: IAvailableBlockData[]
+    availableBlocks: IAvailableBlockData[],
+    pagesVariables: IPagesVariable[]
 }
 
 interface IAvailableBlockData {
     relation: NgComponentRelation, 
     addonPublicBaseURL: string
     // addon: InstalledAddon 
+}
+
+interface IPagesVariable {
+    Key: string,
+    Value: string
 }
 
 export type EditorType = 'page-builder' | 'section' | 'block';
@@ -111,6 +118,18 @@ export class PagesService {
     private readonly CONSUMERS_PRIORITY = 1;
     private readonly PRODUCERS_AND_CONSUMERS_PRIORITY = 2;
     private readonly PRODUCERS_PRIORITY = 3;
+    private readonly SYSTEM_PARAMETER_KEY = 'SystemParameter';
+
+    readonly BLOCKS_NUMBER_LIMITATION_OBJECT = {
+        key: 'BLOCKS_NUMBER_LIMITATION',
+        value: 15
+    }
+
+    readonly PAGE_SIZE_LIMITATION_OBJECT = {
+        key: 'PAGE_SIZE_LIMITATION',
+        value: 150
+    }
+    
 
     private _editorsBreadCrumb = Array<IEditor>();
 
@@ -137,7 +156,7 @@ export class PagesService {
     get availableBlocksLoadedSubject$(): Observable<NgComponentRelation[]> {
         return this._availableBlocksSubject.asObservable().pipe(distinctUntilChanged());
     }
-
+    
     // For load the blocks
     private _blocksRemoteLoaderOptionsMap = new Map<string, PepRemoteLoaderOptions>();
     // For load the blocks editors
@@ -172,12 +191,12 @@ export class PagesService {
     }
 
     // This subject is for page change.
-    private pageSubject: BehaviorSubject<Page> = new BehaviorSubject<Page>(null);
+    private _pageSubject: BehaviorSubject<Page> = new BehaviorSubject<Page>(null);
     get pageLoad$(): Observable<Page> {
-        return this.pageSubject.asObservable().pipe(distinctUntilChanged((prevPage, nextPage) => prevPage?.Key === nextPage?.Key));
+        return this._pageSubject.asObservable().pipe(distinctUntilChanged((prevPage, nextPage) => prevPage?.Key === nextPage?.Key));
     }
     get pageDataChange$(): Observable<Page> {
-        return this.pageSubject.asObservable().pipe(filter(page => !!page));
+        return this._pageSubject.asObservable().pipe(filter(page => !!page));
     }
 
     // This map is for producers parameters by parameter key.
@@ -229,7 +248,8 @@ export class PagesService {
             // Check that all pageProducersFiltersMap blocks keys exist in blocksProgress (if some block is removed we need to clear his filter).
             this._producerParameterKeysMap.forEach((value: IProducerParameters, parameterKey: string) => {
                 value?.producerParametersMap.forEach((parameterValue: any, producerBlockKey: string) => {
-                    if (!blocksProgress.has(producerBlockKey)) {
+                    // If the producer block key is not system and not exist in the blocks progress.
+                    if (producerBlockKey !== this.SYSTEM_PARAMETER_KEY && !blocksProgress.has(producerBlockKey)) {
                         // Delete the producer data in the current parameter.
                         value.producerParametersMap.delete(producerBlockKey);
                         needToRebuildFilters = true;
@@ -362,7 +382,7 @@ export class PagesService {
 
     // Check if the block key exist in layout -> sections -> columns (if shows in the UI).
     private doesBlockExistInUI(blockKey: string) {
-        const page = this.pageSubject.getValue();
+        const page = this._pageSubject.getValue();
 
         for (let sectionIndex = 0; sectionIndex < page.Layout.Sections.length; sectionIndex++) {
             const section = page.Layout.Sections[sectionIndex];
@@ -397,7 +417,7 @@ export class PagesService {
 
     private addPageBlock(block: PageBlock, openEditorOnLoaded: boolean) {
         // Add the block to the page blocks.
-        const page = this.pageSubject.getValue();
+        const page = this._pageSubject.getValue();
         page.Blocks.push(block);
         this.notifyPageChange(page);
 
@@ -407,7 +427,7 @@ export class PagesService {
     }
 
     private removePageBlock(blockId: string) {
-        const page = this.pageSubject.getValue();
+        const page = this._pageSubject.getValue();
         const index = page.Blocks.findIndex(block => block.Key === blockId);
         
         if (index > -1) {
@@ -433,7 +453,7 @@ export class PagesService {
     }
 
     private removeAllBlocks() {
-        const page = this.pageSubject.getValue();
+        const page = this._pageSubject.getValue();
         
         if (page) {
             page.Blocks = [];
@@ -445,11 +465,11 @@ export class PagesService {
     }
     
     private notifyPageChange(page: Page) {
-        this.pageSubject.next(page);
+        this._pageSubject.next(page);
     }
 
     private notifySectionsChange(sections: PageSection[]) {
-        const page = this.pageSubject.getValue();
+        const page = this._pageSubject.getValue();
 
         if (page) {
             page.Layout.Sections = sections;
@@ -462,7 +482,7 @@ export class PagesService {
     private notifyBlockChange(block: PageBlock) {
         // The blocks are saved by reference so we don't need to update the block property just notify that page is change (existing block in blocks).
         this._pageBlockSubject.next(block);
-        const page = this.pageSubject.getValue();
+        const page = this._pageSubject.getValue();
         this.notifyPageChange(page);
     }
 
@@ -554,6 +574,16 @@ export class PagesService {
         }
 
         return res;
+    }
+
+    private setProducerParameter(parameterKey: string, parameterValue: string | IProducerFilter[], blockKey: string = this.SYSTEM_PARAMETER_KEY) {
+        // Create new producerParameters map if key isn't exists.
+        if (!this._producerParameterKeysMap.has(parameterKey)) {
+            this._producerParameterKeysMap.set(parameterKey, { producerParametersMap: new Map<string, any>() });
+        }
+
+        // Set the producer parameter value in _producerParameterKeysMap.
+        this._producerParameterKeysMap.get(parameterKey).producerParametersMap.set(blockKey, parameterValue);
     }
 
     private canProducerRaiseFilter(filtersParameters: PageConfigurationParameterFilter[], producerFilter: IProducerFilter): boolean {
@@ -809,6 +839,31 @@ export class PagesService {
         }
     }
     
+    private setPagesVariables(pagesVariables: IPagesVariable[]) {
+        pagesVariables.forEach(pagesVariable => {
+            const valueAsNumber = Number(pagesVariable.Value);
+
+            if (!isNaN(valueAsNumber)) {
+                if (pagesVariable.Key === this.BLOCKS_NUMBER_LIMITATION_OBJECT.key) {
+                    this.BLOCKS_NUMBER_LIMITATION_OBJECT.value = valueAsNumber;
+                } else if (pagesVariable.Key === this.PAGE_SIZE_LIMITATION_OBJECT.key) {
+                    this.PAGE_SIZE_LIMITATION_OBJECT.value = valueAsNumber;
+                } 
+            }
+        });
+    }
+    
+    private setQueryParameters(queryParameters: Params) {
+        Object.keys(queryParameters).forEach(paramKey => {
+            try {
+                const paramValue = JSON.parse(queryParameters[paramKey]);
+                this.setProducerParameter(paramKey, paramValue);
+            } catch {
+                // Do nothing, skip this param
+            }
+        });
+    }
+
     private loadBlocksRemoteLoaderOptionsMap(availableBlocks: IAvailableBlockData[]) {
         this._blocksRemoteLoaderOptionsMap.clear();
 
@@ -869,40 +924,6 @@ export class PagesService {
 
         // Update the block configuration data by the propertyNamePath and set the field value.
         this.setObjectPropertyValue(objectToUpdate, propertyNamePath, fieldValue);
-    }
-
-    
-    private getPropertyPath(propertyKey: string) {
-        const propertyPath = [];
-        const arrayStartIndexChar = propertyKey.indexOf('[');
-        
-        if (arrayStartIndexChar >= 0) {
-            let itemIndex = -1;
-            // If the array property is valild.
-            if (propertyKey[propertyKey.length - 1] === ']') {
-                // Get the item index.
-                const indexNumberIndex = arrayStartIndexChar + 1;
-                itemIndex = this.pepUtilitiesService.coerceNumberProperty(propertyKey.slice(indexNumberIndex, propertyKey.length - 1 - indexNumberIndex), -1);
-    
-                if (itemIndex > -1) {
-                    propertyPath.push(propertyKey.slice(0, arrayStartIndexChar));
-                    propertyPath.push(itemIndex);
-                } else {
-                    // 'Key item index is not valid'
-                    const msg = this.translate.instant('MESSAGES.PARAMETER_VALIDATION.TYPE_IS_DIFFERENT_FOR_THIS_KEY', { propertyKey: propertyKey});
-                    throw new Error(msg);
-                }
-    
-            } else {
-                // 'Key as array is not valid '
-                const msg = this.translate.instant('MESSAGES.PARAMETER_VALIDATION.TYPE_IS_DIFFERENT_FOR_THIS_KEY', { propertyKey: propertyKey});
-                throw new Error(msg);
-            }
-        } else {
-            propertyPath.push(propertyKey);
-        }
-
-        return propertyPath;
     }
 
     // Set the object field value by propertyNamePath (deep set).
@@ -1015,7 +1036,7 @@ export class PagesService {
 
     private validatePageConfigurationData(blockKey: string, pageConfiguration: PageConfiguration) {
         // Take all blocks except the given one for check if the new data is valid.
-        const blocks = this.pageSubject.getValue().Blocks.filter(block => block.Key !== blockKey);
+        const blocks = this._pageSubject.getValue().Blocks.filter(block => block.Key !== blockKey);
 
         // go for all the existing parameters.
         const blockParameterKeys = new Map<string, { block: PageBlock, parameter: PageConfigurationParameter }[]>();
@@ -1166,7 +1187,7 @@ export class PagesService {
             this.notifyEditorChange(currentEditor);
         }
 
-        const currentPage = this.pageSubject.getValue();
+        const currentPage = this._pageSubject.getValue();
 
         if (currentPage) {
             currentPage.Name = pageData.pageName;
@@ -1235,7 +1256,7 @@ export class PagesService {
         }
         
         // Add the new section to page layout.
-        const sections = this.pageSubject.getValue().Layout.Sections;
+        const sections = this._pageSubject.getValue().Layout.Sections;
         sections.push(section);
         this.notifySectionsChange(sections);
     }
@@ -1317,40 +1338,48 @@ export class PagesService {
 
     onBlockDropped(event: CdkDragDrop<any[]>, sectionId: string) {
         if (event.previousContainer.id === 'availableBlocks') {
-            // Get the block relation (previousContainer.data is IPepDraggableItem and inside we have AvailableBlock object).
-            const draggableItem: IPepDraggableItem = event.previousContainer.data[event.previousIndex] as IPepDraggableItem;
+            // Check that the blocks number are less then the limit.
+            const page = this._pageSubject.getValue();
 
-            if (draggableItem) {
-                // lock the screen untill the editor will be loaded.
-                this._lockScreenSubject.next(true);
-    
-                // Create new block from the relation (previousContainer.data is AvailableBlock object).
-                const relation: NgComponentRelation = draggableItem.data;
-                
-                let block: PageBlock = {
-                    Key: PepGuid.newGuid(),
-                    Relation: relation,
-                    Configuration: {
-                        Resource: relation.Name,
-                        AddonUUID: relation.AddonUUID,
-                        Data: {}
-                    },
-                }
-    
-                // Get the column.
-                const currentColumn = this.getSectionColumnById(event.container.id);
-                
-                // Set the block key in the section block only if there is a blank column.
-                if (currentColumn && !currentColumn.BlockContainer) {
-                    currentColumn.BlockContainer = { 
-                        BlockKey: block.Key
-                    };
-                    
-                    // Add the block to the page blocks and navigate to block editor when the block will loaded.
-                    this.addPageBlock(block, true);
-                }
+            // Validate if blocks number allow.
+            if (page.Blocks.length >= this.BLOCKS_NUMBER_LIMITATION_OBJECT.value) {
+                this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.BLOCKS_COUNT_LIMIT_MESSAGE'));
             } else {
-                console.log("draggableItem is not a IPepDraggableItem type");
+                // Get the block relation (previousContainer.data is IPepDraggableItem and inside we have AvailableBlock object).
+                const draggableItem: IPepDraggableItem = event.previousContainer.data[event.previousIndex] as IPepDraggableItem;
+    
+                if (draggableItem) {
+                    // lock the screen untill the editor will be loaded.
+                    this._lockScreenSubject.next(true);
+        
+                    // Create new block from the relation (previousContainer.data is AvailableBlock object).
+                    const relation: NgComponentRelation = draggableItem.data;
+                    
+                    let block: PageBlock = {
+                        Key: PepGuid.newGuid(),
+                        Relation: relation,
+                        Configuration: {
+                            Resource: relation.Name,
+                            AddonUUID: relation.AddonUUID,
+                            Data: {}
+                        },
+                    }
+        
+                    // Get the column.
+                    const currentColumn = this.getSectionColumnById(event.container.id);
+                    
+                    // Set the block key in the section block only if there is a blank column.
+                    if (currentColumn && !currentColumn.BlockContainer) {
+                        currentColumn.BlockContainer = { 
+                            BlockKey: block.Key
+                        };
+                        
+                        // Add the block to the page blocks and navigate to block editor when the block will loaded.
+                        this.addPageBlock(block, true);
+                    }
+                } else {
+                    console.log("draggableItem is not a IPepDraggableItem type");
+                }
             }
         } else {
             // If the block moved between columns in the same section or between different sections but not in the same column.
@@ -1507,14 +1536,9 @@ export class PagesService {
                 
                 // Only if can update parameter
                 if (canUpdateParameter) {
-                    // Create new producerParameters map if key isn't exists.
-                    if (!this._producerParameterKeysMap.has(event.key)) {
-                        this._producerParameterKeysMap.set(event.key, { producerParametersMap: new Map<string, any>() });
-                    }
-
                     // Set the producer parameter value in _producerParameterKeysMap.
-                    this._producerParameterKeysMap.get(event.key).producerParametersMap.set(blockKey, event.value);
-                    
+                    this.setProducerParameter(event.key, event.value, blockKey);
+
                     // Raise the filters change only if this block has loaded AND the currentBlocksPriority is CONSUMERS_PRIORITY (consumers stage)
                     // because in case that the block isn't loaded we will raise the event once when all the blocks are ready.
                     if (blockProgress.loaded && this.currentBlocksPriority === this.CONSUMERS_PRIORITY) {
@@ -1581,7 +1605,7 @@ export class PagesService {
         return this.httpService.getHttpCall(`${baseUrl}/remove_page?key=${pageKey}`);
     }
 
-    loadPageBuilder(addonUUID: string, pageKey: string, editable: boolean): void {
+    loadPageBuilder(addonUUID: string, pageKey: string, editable: boolean, queryParameters: Params): void {
         //  If is't not edit mode get the page from the CPI side.
         const baseUrl = this.getBaseUrl(addonUUID);
         
@@ -1602,7 +1626,7 @@ export class PagesService {
             // Get the page (sections and the blocks data) from the server.
             this.httpService.getHttpCall(`${baseUrl}/get_page_builder_data?key=${pageKey}`)
                 .subscribe((res: IPageBuilderData) => {
-                    if (res && res.page && res.availableBlocks) {
+                    if (res && res.page && res.availableBlocks && res.pagesVariables) {
                         // Load the available blocks.
                         const availableBlocks: NgComponentRelation[] = [];
                         
@@ -1612,6 +1636,9 @@ export class PagesService {
 
                         this._availableBlocksSubject.next(availableBlocks);
 
+                        // Set the pages variables into the service variables.
+                        this.setPagesVariables(res.pagesVariables);
+                        
                         // Load the blocks remote loader options.
                         this.loadBlocksRemoteLoaderOptionsMap(res.availableBlocks);
                         
@@ -1623,6 +1650,9 @@ export class PagesService {
                     }
             });
         }
+
+        // Set the query parameters on the producer parameter map as system parameters.
+        this.setQueryParameters(queryParameters);
     }
 
     unloadPageBuilder() {
@@ -1637,7 +1667,7 @@ export class PagesService {
 
     // Save the current page in drafts.
     saveCurrentPage(addonUUID: string): Observable<Page> {
-        const page: Page = this.pageSubject.getValue();
+        const page: Page = this._pageSubject.getValue();
         const body = JSON.stringify(page);
         const baseUrl = this.getBaseUrl(addonUUID);
         return this.httpService.postHttpCall(`${baseUrl}/save_draft_page`, body);
@@ -1645,7 +1675,7 @@ export class PagesService {
 
     // Publish the current page.
     publishCurrentPage(addonUUID: string): Observable<Page> {
-        const page: Page = this.pageSubject.getValue();
+        const page: Page = this._pageSubject.getValue();
         const body = JSON.stringify(page);
         const baseUrl = this.getBaseUrl(addonUUID);
         return this.httpService.postHttpCall(`${baseUrl}/publish_page`, body);

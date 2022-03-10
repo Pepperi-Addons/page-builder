@@ -20,8 +20,9 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 export class PageManagerComponent implements OnInit {
     @ViewChild('pageBuilderWrapper', { static: true }) pageBuilderWrapper: ElementRef;
 
-    readonly importKey = 'import';
-    readonly exportKey = 'export';
+    private readonly IMPORT_KEY = 'import';
+    private readonly EXPORT_KEY = 'export';
+    readonly MIN_PERCENTAGE_TO_SHOW_LIMIT = 80;
 
     lockScreen = false;
     showEditor = true;
@@ -42,8 +43,10 @@ export class PageManagerComponent implements OnInit {
 
     screenSize: PepScreenSizeType;
     menuItems: Array<PepMenuItem>;
-    pageSize: number = 0;
-    
+    // pageSize: number = 0;
+    pageSizeLimitInPercentage: number = 0;
+    isOverPageSizeLimit = false;
+
     constructor(
         private renderer: Renderer2,
         private translate: TranslateService,
@@ -82,7 +85,7 @@ export class PageManagerComponent implements OnInit {
     }
     
     get pageSizeString(): string {
-        return `page is approximately ${this.pageSize.toFixed(2)} kb`;
+        return `${this.pageSizeLimitInPercentage.toFixed(1)}%`;
     }
 
     async ngOnInit() {
@@ -112,8 +115,8 @@ export class PageManagerComponent implements OnInit {
         ];
 
         this.menuItems = [
-            { key: this.importKey, text: this.translate.instant('ACTIONS.IMPORT') },
-            { key: this.exportKey, text: this.translate.instant('ACTIONS.EXPORT') }
+            { key: this.IMPORT_KEY, text: this.translate.instant('ACTIONS.IMPORT') },
+            { key: this.EXPORT_KEY, text: this.translate.instant('ACTIONS.EXPORT') }
         ];
 
         this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
@@ -131,8 +134,10 @@ export class PageManagerComponent implements OnInit {
         // For update the page data
         this.pagesService.pageDataChange$.subscribe((page: Page) => {
             if (page) {
-                this.pageSize = this.utilitiesService.getObjectSize(page, 'kb');
-            
+                const pageSize = this.utilitiesService.getObjectSize(page, 'kb');
+                this.pageSizeLimitInPercentage = pageSize * 100 / this.pagesService.PAGE_SIZE_LIMITATION_OBJECT.value;
+                this.isOverPageSizeLimit = pageSize >= this.pagesService.PAGE_SIZE_LIMITATION_OBJECT.value;
+
                 if (this.pageBuilderWrapper?.nativeElement) {
                     let maxWidth = this.pepUtilitiesService.coerceNumberProperty(page.Layout.MaxWidth, 0);
                     const maxWidthToSet = maxWidth === 0 ? '100%' : `${maxWidth}px`;
@@ -207,9 +212,9 @@ export class PageManagerComponent implements OnInit {
 
     // TODO: Implement
     onMenuItemClick(action: IPepMenuItemClickEvent) {
-        if (action.source.key === this.importKey) { // Import page
+        if (action.source.key === this.IMPORT_KEY) { // Import page
 
-        } else if (action.source.key === this.exportKey) { // Export page
+        } else if (action.source.key === this.EXPORT_KEY) { // Export page
             
         }
     }

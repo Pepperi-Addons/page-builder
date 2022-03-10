@@ -1,5 +1,5 @@
 import { DataViewScreenSizes, NgComponentRelation, Page, PageBlock, PageLayout, PageSection, PageSectionColumn, PageSizeTypes, SplitTypes, ResourceDataConfiguration, ScreenSizeDataConfiguration, PageConfiguration, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
-import { IAvailableBlockData } from "./pages.model";
+import { DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, IAvailableBlockData, IPagesVariable } from "./pages.model";
 
 export class PagesValidatorService {
 
@@ -349,9 +349,62 @@ export class PagesValidatorService {
         }
     }
 
+    private getObjectSize(obj: any, sizeType: 'byte' | 'kb' | 'mb' = 'byte') {
+        let str = '';
+        if (typeof obj === 'string') {
+            // If obj is a string, then use it
+            str = obj;
+        } else {
+            // Else, make obj into a string
+            str = JSON.stringify(obj);
+        }
+        
+        // Get the length of the Uint8Array
+        const bytes = new TextEncoder().encode(str).length;
+
+        if (sizeType === 'byte') {
+            return bytes;
+        } else {
+            const kiloBytes = bytes / 1024;
+            
+            if (sizeType === 'kb') {
+                return kiloBytes;
+            } else { // if (sizeType === 'mb') {
+                return kiloBytes / 1024;
+            }
+        }
+    }
+
     /***********************************************************************************************/
     /*                                  Public functions
     /***********************************************************************************************/
+
+    validatePageLimitations(page: Page, pagesVariables: Array<IPagesVariable>): void {
+        let blocksNumberLimit = DEFAULT_BLOCKS_NUMBER_LIMITATION.softValue;
+        let blocksSizeLimit = DEFAULT_PAGE_SIZE_LIMITATION.softValue;
+        
+        pagesVariables.forEach(pagesVariable => {
+            const valueAsNumber = Number(pagesVariable.Value);
+
+            if (!isNaN(valueAsNumber)) {
+                if (pagesVariable.Key === DEFAULT_BLOCKS_NUMBER_LIMITATION.key) {
+                    blocksNumberLimit = valueAsNumber;
+                } else if (pagesVariable.Key === DEFAULT_PAGE_SIZE_LIMITATION.key) {
+                    blocksSizeLimit = valueAsNumber;
+                } 
+            }
+        });
+
+        // Check the limitations.
+        if (page.Blocks?.length >= blocksNumberLimit) {
+            throw new Error(`You exceeded your blocks number limit (${blocksNumberLimit}) - please contact your administrator.`);
+        }
+
+        const pageSize = this.getObjectSize(page, 'kb');
+        if (pageSize >= blocksSizeLimit) {
+            throw new Error(`You exceeded your blocks size limit (${blocksSizeLimit}) - please contact your administrator.`);
+        }
+    }
 
     // Validate the page and throw error if not valid.
     validatePageProperties(page: Page): void {

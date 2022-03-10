@@ -37,3 +37,22 @@ export async function on_uninstall_block(client:Client, request: Request): Promi
         throw new Error(`Failed to remove uninstall block from pages. error - ${err}`);
     }
 }
+
+export async function pages_variables(client:Client, request: Request): Promise<any> {
+    try {
+        const service = new PagesApiService(client);
+        let res;
+
+        if (request.method === 'POST') {
+            res = service.savePagesVariables(request.body);
+        } else if (request.method === 'GET') {
+            res = service.getPagesVariables(request.query);
+        } else {
+            throw new Error(`Method ${request.method} is not supported.`);
+        }
+
+        return res;
+    } catch(err) {
+        throw err;
+    }
+}

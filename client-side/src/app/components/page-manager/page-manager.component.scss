@@ -1,5 +1,5 @@
-@import 'ngx-lib/src/core/style/abstracts/variables';
-@import '../../../mixins.scss';
+@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
+@use '../../../mixins.scss';
 
 .side-bar-title {
     display: flex;
@@ -19,24 +19,11 @@
         display: flex;
         position: sticky;
         top: 0;
-        z-index: $z-index-medium;
+        z-index: variables.$z-index-medium;
         height: 3rem;
         align-items: center;
         justify-content: space-between;
         padding: 0 .5rem;
-
-        // &.preview-mode {
-        //     .preview-title {
-        //         display: flex;
-        //         height: inherit;
-        //         justify-content: center;
-        //         align-items: center;
-        //     }
-        // }
-
-        // .header-content {
-        //     flex: 1 1 0px;
-        // }
 
         .header-group-btn {
             display: flex;
@@ -48,21 +35,13 @@
             display: flex;
             justify-content: flex-end;
         }
+
+        .size-limit-container {
+            // display: flex;
+            // align-items: center;
+            border-radius: variables.$border-radius-md;
+        }
     }
-
-    // .header-container-preview {
-    //     height: 2rem;
-    //     position: sticky;
-    //     top: 0;
-    //     z-index: $z-index-medium;
-
-    //     .preview-title {
-    //         display: flex;
-    //         height: inherit;
-    //         justify-content: center;
-    //         align-items: center;
-    //     }
-    // }
 
     .page-builder-wrapper {
         width: 100%;
@@ -78,7 +57,7 @@
             width: 100%;
             height: 100%;
             top: 0;
-            z-index: $z-index-min + 10;
+            z-index: mixins.$z-index-min + 10;
             display: none;
         
             &.show-backdrop {

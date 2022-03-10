@@ -13,7 +13,7 @@ export class UtilitiesService {
     }
 
     getObjectSize(obj: any, sizeType: 'byte' | 'kb' | 'mb' = 'byte') {
-        let str = null;
+        let str = '';
         if (typeof obj === 'string') {
             // If obj is a string, then use it
             str = obj;

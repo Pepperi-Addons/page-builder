@@ -20,7 +20,29 @@ export interface IAvailableBlockData {
     // addon: InstalledAddon 
 }
 
-export const TempBlankPageData: Page = {
+export interface IPagesVariable {
+    Key: string,
+    Id: string,
+    Value: any
+}
+
+export interface IVarSettingsParams {
+    Fields: IPagesVariable[]
+}
+
+export const DEFAULT_BLOCKS_NUMBER_LIMITATION = {
+    key: 'BLOCKS_NUMBER_LIMITATION',
+    softValue: 15,
+    hardValue: 30
+}
+
+export const DEFAULT_PAGE_SIZE_LIMITATION = {
+    key: 'PAGE_SIZE_LIMITATION',
+    softValue: 150,
+    hardValue: 300
+}
+
+export const DEFAULT_BLANK_PAGE_DATA: Page = {
     // Regular ADAL fields
     // "Hidden": false,
     // "CreationDateTime": "2021-07-22T13:00:11.360Z",

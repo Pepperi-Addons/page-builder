@@ -85,6 +85,8 @@
     },
     "MESSAGES": {
         "TITLE_NOTICE": "Notice",
+        "PAGE_SIZE_LIMIT_TITLE": "Page size limit",
+        "BLOCKS_COUNT_LIMIT_MESSAGE": "You exceeded your blocks number limit - please contact your administrator.",
         "OPERATION_SUCCESS": "Operation success.",
         "PARAMETER_VALIDATION": {
             "BLOCK_HAS_REMOVED": "Block has removed",
