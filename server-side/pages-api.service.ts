@@ -96,7 +96,7 @@ export class PagesApiService {
         this.pagesValidatorService.validatePageData(page, availableBlocks);
 
         // Override the page according the interface.
-        page = this.pagesValidatorService.getPageCopyAccordingInterface(page);
+        page = this.pagesValidatorService.getPageCopyAccordingInterface(page, availableBlocks);
 
         return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page) as Page;
     }
