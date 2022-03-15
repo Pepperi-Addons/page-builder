@@ -8,8 +8,9 @@ import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@peppe
 import { DataViewScreenSize, Page, PageBlock, PageSection, PageSizeType } from '@pepperi-addons/papi-sdk';
 import { NavigationService } from 'src/app/services/navigation.service';
 
-export interface IPageBuiolderHostObject {
+export interface IPageBuilderHostObject {
     pageKey: string;
+    pageParams: any;
 }
 
 @Component({
@@ -24,12 +25,12 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     @Input() sectionsColumnsDropList = [];
     
     // For loading the page from the client apps.
-    private _hostObject: IPageBuiolderHostObject;
+    private _hostObject: IPageBuilderHostObject;
     @Input()
-    set hostObject(value: IPageBuiolderHostObject) {
+    set hostObject(value: IPageBuilderHostObject) {
         this._hostObject = value;
     }
-    get hostObject(): IPageBuiolderHostObject {
+    get hostObject(): IPageBuilderHostObject {
         return this._hostObject;
     }
 
@@ -120,10 +121,10 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     ngOnInit() {
         // TODO: Need to get the addonUUID not from the navigationService.
         const addonUUID = this.navigationService.addonUUID;
-        const pageKey = this.route.snapshot.data['page_key'] || this.route?.snapshot?.params['page_key'] || this.hostObject?.pageKey || '';
+        const pageKey = this.hostObject?.pageKey || this.route.snapshot.data['page_key'] || this.route?.snapshot?.params['page_key'] || '';
         
         if (pageKey.length > 0) {
-            const queryParams = this.route?.snapshot?.queryParams;
+            const queryParams = this.hostObject?.pageParams || this.route?.snapshot?.queryParams;
             this.pagesService.loadPageBuilder(addonUUID, pageKey, this.editMode, queryParams);
 
             this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
