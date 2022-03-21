@@ -459,7 +459,7 @@ export class PagesValidatorService {
         // Add Blocks specific properties.
         for (let blockIndex = 0; blockIndex < page.Blocks.length; blockIndex++) {
             const currentBlock = page.Blocks[blockIndex];
-            const currentRelation = availableBlocks.find(ab => ab.relation.AddonUUID === currentBlock.Relation?.AddonUUID)?.relation;
+            const currentRelation = availableBlocks.find(ab => ab.relation.AddonUUID === currentBlock.Relation?.AddonUUID && ab.relation.Name === currentBlock.Relation?.Name)?.relation;
 
             // The relation must exist else throw exception.
             if (currentRelation) {
