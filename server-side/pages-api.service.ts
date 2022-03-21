@@ -269,7 +269,9 @@ export class PagesApiService {
     }
 
     async getPages(options: FindOptions | undefined = undefined): Promise<Page[]> {
-        return await this.getPagesFrom(PAGES_TABLE_NAME, options);
+        // return await this.getPagesFrom(PAGES_TABLE_NAME, options);
+        // TODO: Handle options
+        return await this.getPagesFrom(PAGES_TABLE_NAME);
     }
 
     savePage(page: Page): Promise<Page> {
@@ -277,6 +279,7 @@ export class PagesApiService {
     }
 
     async saveDraftPage(page: Page): Promise<Page>  {
+        page.Hidden = false;
         return this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
     }
 
@@ -309,8 +312,11 @@ export class PagesApiService {
     }
 
     async getPagesData(options: FindOptions | undefined = undefined): Promise<PageRowProjection[]> {
-        let pages: Page[] = await this.getPagesFrom(PAGES_TABLE_NAME, options);
-        let draftPages: Page[] = await this.getPagesFrom(DRAFT_PAGES_TABLE_NAME, options);
+        // TODO: Handle options
+        // let pages: Page[] = await this.getPagesFrom(PAGES_TABLE_NAME, options);
+        // let draftPages: Page[] = await this.getPagesFrom(DRAFT_PAGES_TABLE_NAME, options);
+        let pages: Page[] = await this.getPagesFrom(PAGES_TABLE_NAME);
+        let draftPages: Page[] = await this.getPagesFrom(DRAFT_PAGES_TABLE_NAME);
 
         //  Add the pages into map for distinct them.
         const distinctPagesMap = new Map<string, Page>();
@@ -326,8 +332,14 @@ export class PagesApiService {
         });
 
         // Convert the map values to array.
-        const distinctPagesArray = Array.from(distinctPagesMap.values());
+        let distinctPagesArray = Array.from(distinctPagesMap.values());
         
+        // Filter.
+        if (options?.where !== undefined && options?.where?.length > 0) {
+            const searchString = options?.where;
+            distinctPagesArray = distinctPagesArray.filter(page => page.Name?.includes(searchString) || page.Description?.includes(searchString))
+        }
+
         const promise = new Promise<any[]>((resolve, reject): void => {
             let allPages = distinctPagesArray.map((page: Page) => {
                 // Return projection object.
@@ -342,6 +354,19 @@ export class PagesApiService {
 
                 return prp;
             });
+
+            // Sort.
+            if (options?.order_by !== undefined && options?.order_by?.length > 0) {
+                const orderByArr = options?.order_by.split(' ');
+                const orderBy = orderByArr[0] || 'Name';
+                const isAsc = orderByArr.length === 2 ? orderByArr[1] === 'ASC' : true;
+
+                allPages = allPages.sort((p1, p2) =>
+                    p1[orderBy] > p2[orderBy] ? 
+                        (isAsc ? 1 : -1) : 
+                        (p1[orderBy] < p2[orderBy] ? (isAsc ? -1 : 1) : 0)
+                );
+            }
 
             resolve(allPages);
         });

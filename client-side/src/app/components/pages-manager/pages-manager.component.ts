@@ -88,21 +88,21 @@ export class PagesManagerComponent implements OnInit {
             init: async (params) => {
                 //this.pagesList = this.pagesService.getPages(this.navigationService.addonUUID, null);
                     //this.hasPages = !pages || pages.length < 1 ? false : true;
-                    // let options = 'order_by=';
+                    let options = 'order_by=';
 
-                    // if (params.sorting) {
-                    //     options += `${params.sorting.sortBy} ${params.sorting?.isAsc ? 'ASC' : 'DESC'}`;
-                    // } else {
-                    //     options += 'Name ASC';
-                    // }
-                
-                    // const pageList: any = await this.pagesService.getPages(this.navigationService.addonUUID, encodeURI(options)).toPromise().then((pages) => {
-                    //     return pages; 
-                    // });
+                    if (params.sorting) {
+                        options += `${params.sorting.sortBy} ${params.sorting?.isAsc ? 'ASC' : 'DESC'}`;
+                    } else {
+                        options += 'Name ASC';
+                    }
+                    if (params.searchString?.length > 0) {
+                        options += `&where=${params.searchString}`;
+                    }
                     
-                    const pageList: any = await this.pagesService.getPages(this.navigationService.addonUUID, []).toPromise().then((pages) => {
+                    const pageList: any = await this.pagesService.getPages(this.navigationService.addonUUID, encodeURI(options)).toPromise().then((pages) => {
                         return pages; 
                     });
+
                     this.totalPages = pageList.length;
 
                     return {

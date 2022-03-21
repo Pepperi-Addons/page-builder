@@ -26,8 +26,8 @@
         <div class="pageExplanation">
             <span class="body-md">{{ 'PAGES_MANAGER.MAIN_EXPLANATION' | translate }}</span>
         </div>
-        <pep-generic-list *ngIf="hasPages" [dataSource]="pagesDataSource" [actions]="actions" [inline]="true" [showTopBar]='true'
-                          [uuidMapping]="'Key'" [title]="'PAGES_MANAGER.SECONDARY_HEADER' | translate" (fieldClick)="onCustomizeFieldClick($event)"> 
+        <pep-generic-list *ngIf="hasPages" [dataSource]="pagesDataSource" [actions]="actions" [inline]="true" [showTopBar]="true" [showSearch]="true"
+                [supportSorting]="true" [uuidMapping]="'Key'" [title]="'PAGES_MANAGER.SECONDARY_HEADER' | translate" (fieldClick)="onCustomizeFieldClick($event)"> 
             <ng-container right-buttons >
                 <ng-container *ngTemplateOutlet="topBarEnd"></ng-container>
             </ng-container>
