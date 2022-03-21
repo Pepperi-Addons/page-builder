@@ -38,10 +38,10 @@ export class PagesManagerComponent implements OnInit {
     
     private selectedPageID = '';
     // mainMenuItems: Array<PepMenuItem> = null;
-    //pagesList: Array<IPageRowModel>;
-    pagesList: any;
+    totalPages: 0;
     secondaryMenuItems: Array<PepMenuItem> = null;
     isAddNewPage = false;
+    softLimitPagesNumber = 100;
     pagesDataSource: IPepGenericListDataSource;
 
     tempPages: Array<TempPage> = [{id: 1, name: "PAGES_MANAGER.ADDNEW_BLANK" , description: 'PAGES_MANAGER.ADDNEW_BLANK_DESC', type: Page_Type.Homepage},
@@ -85,13 +85,26 @@ export class PagesManagerComponent implements OnInit {
 
     private setDataSource() {
         return {
-            init: async (state) => {
+            init: async (params) => {
                 //this.pagesList = this.pagesService.getPages(this.navigationService.addonUUID, null);
                     //this.hasPages = !pages || pages.length < 1 ? false : true;
+                    // let options = 'order_by=';
+
+                    // if (params.sorting) {
+                    //     options += `${params.sorting.sortBy} ${params.sorting?.isAsc ? 'ASC' : 'DESC'}`;
+                    // } else {
+                    //     options += 'Name ASC';
+                    // }
+                
+                    // const pageList: any = await this.pagesService.getPages(this.navigationService.addonUUID, encodeURI(options)).toPromise().then((pages) => {
+                    //     return pages; 
+                    // });
+                    
                     const pageList: any = await this.pagesService.getPages(this.navigationService.addonUUID, []).toPromise().then((pages) => {
                         return pages; 
                     });
-                    
+                    this.totalPages = pageList.length;
+
                     return {
                         items:  pageList,
                                 totalCount: pageList.length, 
@@ -159,9 +172,29 @@ export class PagesManagerComponent implements OnInit {
     ngOnInit() {
         
     }
+
+    canAddPage(): boolean {
+        let res = true;
+
+        if (this.totalPages >= this.softLimitPagesNumber) {
+            res = false;
+            const content = this.translate.instant('MESSAGES.PAGES_COUNT_LIMIT_MESSAGE');
+            const title = this.translate.instant('MESSAGES.TITLE_NOTICE');
+            const dataMsg = new PepDialogData({
+                title,
+                content
+            });
+
+            this.dialog.openDefaultDialog(dataMsg);
+        }
+
+        return res;
+    }
     
     addNewPage() {
-        this.isAddNewPage = true;
+        if (this.canAddPage()) {
+            this.isAddNewPage = true;
+        }
     }
 
     onMenuItemClicked(event: IPepMenuItemClickEvent = null) {
@@ -172,6 +205,9 @@ export class PagesManagerComponent implements OnInit {
                 break;
             }
             case 'import': {
+                if (this.canAddPage()) {
+                    // TODO:
+                }
                 break;
             }
         } 
