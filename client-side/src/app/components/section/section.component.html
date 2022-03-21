@@ -1,5 +1,6 @@
 <div #sectionContainer *ngIf="editable || (containsBlocks && !hideForCurrentScreenType)" class="section-container "
     [ngClass]="{ 
+        'mobile': screenType === 'Phablet',
         'editable-state': editable, 'main-editor-state': isMainEditorState, 'default-height': !containsBlocks, 'active-section': isEditing,
         'section-hidden-state': hideForCurrentScreenType, 'section-is-dragging': draggingSectionKey !== '', 'show-hover-state': hoverState }" 
     cdkDrag [cdkDragData]="key" [cdkDragDisabled]="!editable || isEditing || selectedBlockKey?.length > 0" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" 
@@ -16,7 +17,7 @@
     <div *ngIf="editable" class="section-background">
         <div class="back-template" *ngFor="let number of [0,1,2,3,4,5,6,7,8,9,10,11]"></div>
     </div>
-    <div #columnsWrapper class="columns-wrapper gap-{{ columnsGap }}">
+    <div #columnsWrapper class="columns-wrapper gap-{{ columnsGap }}" [ngClass]="{ 'mobile': screenType === 'Phablet' }">
         <div [id]="sectionColumnKeyPrefix + i" 
             *ngFor="let column of columns; let i=index;"
             class="section-column {{screenSize <= pepScreenSizeToFlipToVertical ? 'horizontal' : 'vertical'}}"

@@ -38,6 +38,7 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     @Input()
     set screenSize(value: PepScreenSizeType) {
         this._screenSize = value;
+        this.screenType = this.pagesService.getScreenType(value);
     }
     get screenSize(): PepScreenSizeType {
         return this._screenSize;
@@ -68,6 +69,8 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     sectionsGap: PageSizeType | 'none';
     columnsGap: PageSizeType | 'none';
 
+    screenType: DataViewScreenSize;
+
     private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
     get sections$(): Observable<PageSection[]> {
         return this._sectionsSubject.asObservable();
@@ -77,6 +80,7 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     get pageBlocksMap(): ReadonlyMap<string, PageBlock> {
         return this._pageBlocksMap;
     }
+
 
     constructor(
         private route: ActivatedRoute,

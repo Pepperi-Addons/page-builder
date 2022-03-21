@@ -1,1 +1,33 @@
-// @import 'ngx-lib/src/core/style/abstracts/variables';
+@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
+@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/mixins';
+
+.hide-in-menu {
+    .mat-menu-item {
+        &.splitter { 
+            margin-inline: variables.$spacing-sm; 
+        }
+    }
+}
+
+.mat-menu-item {
+    ::ng-deep.mat-checkbox-layout {
+        .mat-checkbox-inner-container {
+            margin-inline-end: 0.25rem !important;
+        }
+    }
+}
+
+.badge-button {
+    @include mixins.pep-badge();
+
+    &.none {
+        ::ng-deep.mat-badge-content {
+            display: none;
+        }
+    }
+
+    ::ng-deep.mat-badge-content {
+        z-index: 1;
+        right: -4px !important;
+    }
+}
