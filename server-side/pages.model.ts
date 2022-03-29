@@ -50,10 +50,10 @@ export const DEFAULT_BLANK_PAGE_DATA: Page = {
     // "ModificationDateTime": "2021-07-22T13:00:11.360Z",
 
     // Unique key - mandatory
-    "Name": "My page",
+    "Name": "Page",
     
     //  optional
-    "Description": "Description of my page",
+    "Description": "Description of page",
 
     // A list of the blocks on the page
     // We might want to move the actual data of each block to a seperate internal resource

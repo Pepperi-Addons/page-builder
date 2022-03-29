@@ -285,8 +285,13 @@ export class PagesApiService {
 
     createTemplatePage(query: any): Promise<Page> {
         const templateId = query['templateId'] || '';
+        const pageNum = query['pageNum'] || '0';
         // TODO: Get the correct page by template (options.TemplateKey)
-        const page: Page = DEFAULT_BLANK_PAGE_DATA;
+        let page: Page = JSON.parse(JSON.stringify(DEFAULT_BLANK_PAGE_DATA)) ;
+
+        page.Name = `${page.Name} ${pageNum}`;
+        page.Description = `${page.Description} ${pageNum}`;
+
         page.Key = '';
         return this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
     }
