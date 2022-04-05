@@ -269,9 +269,9 @@ export class PagesApiService {
     }
 
     async getPages(options: FindOptions | undefined = undefined): Promise<Page[]> {
-        // return await this.getPagesFrom(PAGES_TABLE_NAME, options);
+        return await this.getPagesFrom(PAGES_TABLE_NAME, options);
         // TODO: Handle options
-        return await this.getPagesFrom(PAGES_TABLE_NAME);
+        // return await this.getPagesFrom(PAGES_TABLE_NAME);
     }
 
     savePage(page: Page): Promise<Page> {
