@@ -22,7 +22,7 @@ export class PagesApiService {
             token: client.OAuthAccessToken,
             addonUUID: client.AddonUUID,
             addonSecretKey: client.AddonSecretKey,
-            actionUUID: client["ActionUUID"]
+            actionUUID: client.ActionUUID
         });
     }
 
@@ -426,7 +426,7 @@ export class PagesApiService {
         const pagekey = query['key'];
         if (pagekey) {
             res = await this.hidePage(pagekey, DRAFT_PAGES_TABLE_NAME);
-        } 
+        }
 
         return Promise.resolve(res);
     }

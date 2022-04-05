@@ -1582,6 +1582,15 @@ export class PagesService {
             }
         }
     }
+
+    emitEvent(event: any) {
+        const eventData = {
+            detail: event,
+        };
+        
+        const customEvent = new CustomEvent('emit-event', eventData);
+        window.dispatchEvent(customEvent);
+    }
     
     /**************************************************************************************/
     /*                            CPI & Server side calls.
