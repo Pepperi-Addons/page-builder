@@ -43,6 +43,8 @@ export const DEFAULT_PAGE_SIZE_LIMITATION = {
     hardValue: 300
 }
 
+export const PAGES_NUBER_LIMITATION = 100;
+
 export const DEFAULT_BLANK_PAGE_DATA: Page = {
     // Regular ADAL fields
     // "Hidden": false,

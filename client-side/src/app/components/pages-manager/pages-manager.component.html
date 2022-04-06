@@ -1,6 +1,6 @@
 <pep-page-layout>
     <ng-container pep-top-area>
-        <pep-top-bar class="main-top-header"  [title]="!isAddNewPage ?  ('PAGES_MANAGER.MAIN_HEADER' | translate) : ''">
+        <pep-top-bar class="main-top-header" [title]="!isAddNewPage ? ('PAGES_MANAGER.MAIN_HEADER' | translate) : ''">
             <div header-start-content>
                 <div *ngIf="isAddNewPage" header-end-content>
                     <pep-button  class="back-button pull-left flip pep-spacing-element" iconName="arrow_left_alt" (buttonClick)="navigateBackToMainPage();"></pep-button>

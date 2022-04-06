@@ -84,6 +84,12 @@ export class PagesApiService {
             page.Key = uuidv4();
         }
         
+        // Validate limit pages number only for published pages.
+        if (tableName === PAGES_TABLE_NAME) {
+            const publishedPages = await this.getPages();
+            this.pagesValidatorService.validatePagesLimitNumber(page, publishedPages);
+        }
+
         // Validate page object before upsert.
         this.pagesValidatorService.validatePageProperties(page);
     

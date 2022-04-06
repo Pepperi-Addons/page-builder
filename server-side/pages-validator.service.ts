@@ -1,5 +1,5 @@
 import { DataViewScreenSizes, NgComponentRelation, Page, PageBlock, PageLayout, PageSection, PageSectionColumn, PageSizeTypes, SplitTypes, ResourceDataConfiguration, ScreenSizeDataConfiguration, PageConfiguration, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
-import { DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, IAvailableBlockData, IPagesVariable } from "./pages.model";
+import { DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, IAvailableBlockData, IPagesVariable, PAGES_NUBER_LIMITATION } from "./pages.model";
 
 export class PagesValidatorService {
 
@@ -378,6 +378,14 @@ export class PagesValidatorService {
     /***********************************************************************************************/
     /*                                  Public functions
     /***********************************************************************************************/
+    validatePagesLimitNumber(page: Page, publishedPages: Array<Page>): void {
+        const softLimitPagesNumber = PAGES_NUBER_LIMITATION;
+        const pageExist = publishedPages.findIndex(p => p.Key === page.Key) >= 0;
+        
+        if (!pageExist && publishedPages.length >= softLimitPagesNumber) {
+            throw new Error(`You exceeded your pages number limit (${softLimitPagesNumber}) - please contact your administrator.`);
+        }
+    }
 
     validatePageLimitations(page: Page, pagesVariables: Array<IPagesVariable>): void {
         let blocksNumberLimit = DEFAULT_BLOCKS_NUMBER_LIMITATION.softValue;
