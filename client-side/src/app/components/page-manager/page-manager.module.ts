@@ -11,7 +11,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
-import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
+import { PepRemoteLoaderModule } from '@pepperi-addons/ngx-lib/remote-loader';
 
 import { PepNgxLibModule, PepAddonService } from '@pepperi-addons/ngx-lib';
 import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
@@ -62,7 +62,7 @@ const routes: Routes = [
         CommonModule,
         HttpClientModule,
         PepNgxLibModule,
-        PepAddonLoaderModule,
+        PepRemoteLoaderModule,
         PageBuilderModule,
         PageBuilderEditorModule,
         SectionEditorModule,

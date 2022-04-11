@@ -1,6 +1,6 @@
 import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, PageSection, SplitTypes, DataViewScreenSizes, PageBlock, PageSectionColumn, PageSizeTypes, PageLayout, Subscription, FindOptions, Relation } from '@pepperi-addons/papi-sdk'
 import { Client } from '@pepperi-addons/debug-server';
-import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IAvailableBlockData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, IPagesVariable, IVarSettingsParams } from './pages.model';
+import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, IPagesVariable, IVarSettingsParams } from './pages.model';
 import { PagesValidatorService } from './pages-validator.service';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -34,7 +34,7 @@ export class PagesApiService {
         return this.papiClient.addons.installedAddons.addonUUID(uuid).get();
     }
 
-    private async getAvailableBlocks(): Promise<IAvailableBlockData[]> {
+    private async getAvailableBlocks(): Promise<IBlockLoaderData[]> {
         // Get the PageBlock relations 
         const pageBlockRelations: NgComponentRelation[] = await this.getRelations('PageBlock');
                 
@@ -49,7 +49,7 @@ export class PagesApiService {
 
         const addons: InstalledAddon[] = await Promise.all(addonsPromises).then(res => res);
 
-        const availableBlocks: IAvailableBlockData[] = [];
+        const availableBlocks: IBlockLoaderData[] = [];
         pageBlockRelations.forEach((relation: NgComponentRelation) => {
             const installedAddon: InstalledAddon | undefined = addons.find((ia: InstalledAddon) => ia?.Addon?.UUID === relation?.AddonUUID);
             if (installedAddon) {
@@ -62,7 +62,7 @@ export class PagesApiService {
 
         return availableBlocks;
     }
-    
+
     private async hidePage(pagekey: string, tableName: string): Promise<boolean> {
         let page = await this.getPage(pagekey, tableName);
 
@@ -564,5 +564,26 @@ export class PagesApiService {
                 }
             }
         }
+    }
+    
+    /***********************************************************************************************/
+    //                              Addon block data Public functions
+    /************************************************************************************************/
+    async getAddonBlockData(name: string): Promise<IBlockLoaderData> {
+        // Get the addon blocks relations 
+        const addonBlockRelations: NgComponentRelation[] = await this.papiClient.get(`/addons/data/relations?where=Name=${name}`);
+    
+        if (addonBlockRelations.length > 0) {
+            const addonBlockRelation: NgComponentRelation = addonBlockRelations[0];
+            const installedAddon: InstalledAddon | undefined = await this.getInstalledAddon(addonBlockRelation.AddonUUID);
+            if (installedAddon) {
+                Promise.resolve ({
+                    relation: addonBlockRelation,
+                    addonPublicBaseURL: installedAddon.PublicBaseURL
+                });
+            }
+        }
+    
+        return Promise.reject(null);
     }
 }

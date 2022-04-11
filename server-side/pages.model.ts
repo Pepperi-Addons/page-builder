@@ -11,14 +11,13 @@ export interface PageRowProjection {
 
 export interface IPageBuilderData {
     page: Page, 
-    availableBlocks: IAvailableBlockData[]
+    availableBlocks: IBlockLoaderData[]
     pagesVariables: IPagesVariable[]
 }
 
-export interface IAvailableBlockData {
+export interface IBlockLoaderData {
     relation: NgComponentRelation, 
     addonPublicBaseURL: string
-    // addon: InstalledAddon 
 }
 
 export interface IPagesVariable {

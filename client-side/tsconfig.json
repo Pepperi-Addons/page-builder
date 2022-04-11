@@ -28,12 +28,6 @@
             "@ngx-translate/http-loader": [
                 "node_modules/@ngx-translate/http-loader"
             ],
-            // "@pepperi-addons/ngx-remote-loader": [
-            //     "../../ngx-remote-loader/dist/remote-loader"
-            // ],
-            // "@pepperi-addons/ngx-remote-loader/*": [
-            //     "../../ngx-remote-loader/dist/remote-loader/*"
-            // ],
             // "@pepperi-addons/papi-sdk": [
             //     "../../../pepperi_addons/papi-sdk/"
             // ],

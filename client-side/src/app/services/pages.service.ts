@@ -2,11 +2,11 @@ import { CdkDragDrop, CdkDragEnd, CdkDragStart, copyArrayItem, moveItemInArray, 
 import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
-import { PepRemoteLoaderOptions } from "@pepperi-addons/ngx-remote-loader";
+import { IBlockLoaderData, PepRemoteLoaderOptions, PepRemoteLoaderService } from "@pepperi-addons/ngx-lib/remote-loader";
 import { IPepDraggableItem } from "@pepperi-addons/ngx-lib/draggable-items";
-import { InstalledAddon, Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, ResourceType, PageConfigurationParameterFilter, PageConfiguration, PageConfigurationParameterBase, PageConfigurationParameterString, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
+import { Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, ResourceType, PageConfigurationParameterFilter, PageConfiguration, PageConfigurationParameterBase, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
 import { Observable, BehaviorSubject } from 'rxjs';
-import { distinctUntilChanged, distinctUntilKeyChanged, filter } from 'rxjs/operators';
+import { distinctUntilChanged, filter } from 'rxjs/operators';
 import { NavigationService } from "./navigation.service";
 import { UtilitiesService } from "./utilities.service";
 import * as _ from 'lodash';
@@ -26,14 +26,8 @@ export interface IPageRowModel {
 
 interface IPageBuilderData {
     page: Page, 
-    availableBlocks: IAvailableBlockData[],
+    availableBlocks: IBlockLoaderData[],
     pagesVariables: IPagesVariable[]
-}
-
-interface IAvailableBlockData {
-    relation: NgComponentRelation, 
-    addonPublicBaseURL: string
-    // addon: InstalledAddon 
 }
 
 interface IPagesVariable {
@@ -234,7 +228,8 @@ export class PagesService {
         private translate: TranslateService,
         private sessionService: PepSessionService,
         private httpService: PepHttpService,
-        private navigationService: NavigationService
+        private remoteLoaderService: PepRemoteLoaderService,
+        private navigationService: NavigationService,
     ) {
         this.pageLoad$.subscribe((page: Page) => {
             this.loadDefaultEditor(page);
@@ -806,7 +801,7 @@ export class PagesService {
         return currentColumn;
     }
 
-    private getRemoteEntryByType(relation: NgComponentRelation, remoteBasePath: string) {
+    private getRemoteEntryByType(remoteBasePath: string, relation: NgComponentRelation) {
         // For devBlocks gets the remote entry from the query params.
         const devBlocks = this.navigationService.devBlocks;
         if (devBlocks.has(relation.ModuleName)) {
@@ -818,15 +813,27 @@ export class PagesService {
         }
     }
 
-    private getRemoteLoaderOptions(relation: NgComponentRelation, remoteBasePath: string, editor = false) {
-        return {
-            key: relation.Key,
-            addonId: relation.AddonUUID,
-            remoteEntry: this.getRemoteEntryByType(relation, remoteBasePath),
-            remoteName: relation.AddonRelativeURL,
-            exposedModule: './' + (editor ? relation.EditorModuleName : relation.ModuleName),
-            componentName: (editor ? relation.EditorComponentName : relation.ComponentName),
+    private getRemoteLoaderOptions(data: IBlockLoaderData, editor = false) {
+        const remoteEntry = this.getRemoteEntryByType(data.addonPublicBaseURL, data.relation);
+        const remoteLoaderOptions = this.remoteLoaderService.getRemoteLoaderOptions(data, remoteEntry);
+
+        // remoteLoaderOptions['key'] = data.relation.Key;
+
+        if (editor) {
+            remoteLoaderOptions.exposedModule = `./${data.relation.EditorModuleName}`;
+            remoteLoaderOptions.componentName = data.relation.EditorComponentName;
         }
+
+        return remoteLoaderOptions;
+        
+        // return {
+        //     key: relation.Key,
+        //     addonId: relation.AddonUUID,
+        //     remoteEntry: this.getRemoteEntryByType(remoteBasePath, relation),
+        //     remoteName: relation.AddonRelativeURL,
+        //     exposedModule: './' + (editor ? relation.EditorModuleName : relation.ModuleName),
+        //     componentName: (editor ? relation.EditorComponentName : relation.ComponentName),
+        // }
     }
 
     private getBaseUrl(addonUUID: string): string {
@@ -864,7 +871,7 @@ export class PagesService {
         });
     }
 
-    private loadBlocksRemoteLoaderOptionsMap(availableBlocks: IAvailableBlockData[]) {
+    private loadBlocksRemoteLoaderOptionsMap(availableBlocks: IBlockLoaderData[]) {
         this._blocksRemoteLoaderOptionsMap.clear();
 
         availableBlocks.forEach(data => {
@@ -873,12 +880,12 @@ export class PagesService {
             
             if (relation && addonPublicBaseURL) {
                 const key = this.getRemoteLoaderMapKey(relation);
-                this._blocksRemoteLoaderOptionsMap.set(key, this.getRemoteLoaderOptions(relation, addonPublicBaseURL));
+                this._blocksRemoteLoaderOptionsMap.set(key, this.getRemoteLoaderOptions(data));
             }
         });
     }
 
-    private loadBlocksEditorsRemoteLoaderOptionsMap(availableBlocks: IAvailableBlockData[]) {
+    private loadBlocksEditorsRemoteLoaderOptionsMap(availableBlocks: IBlockLoaderData[]) {
         this._blocksEditorsRemoteLoaderOptionsMap.clear();
 
         availableBlocks.forEach(data => {
@@ -887,7 +894,7 @@ export class PagesService {
             
             if (relation && addonPublicBaseURL) {
                 const key = this.getRemoteLoaderMapKey(relation);
-                this._blocksEditorsRemoteLoaderOptionsMap.set(key, this.getRemoteLoaderOptions(relation, addonPublicBaseURL, true));
+                this._blocksEditorsRemoteLoaderOptionsMap.set(key, this.getRemoteLoaderOptions(data, true));
             }
         });
     }
