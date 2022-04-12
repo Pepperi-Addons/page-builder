@@ -246,32 +246,33 @@ export class PagesApiService {
     }
 
     async createPagesRelations(): Promise<any> {
-        // Create new var settings relation.
-        const varSettingsRelation: Relation = {
-            RelationName: 'VarSettings',
-            Name: PAGES_VARIABLES_TABLE_NAME,
-            Description: 'Set pages variables from var settings',
-            Type: 'AddonAPI',
-            SubType: 'NG11',
-            AddonUUID: this.addonUUID,
-            AddonRelativeURL: '/api/pages_variables',
-            AdditionalParams: {
-                Title: 'Pages variables', // The title of the tab in which the fields will appear
-                Fields: [{
-                    Id: DEFAULT_BLOCKS_NUMBER_LIMITATION.key,
-                    Label: 'Blocks number limitation',
-                    PepComponent: 'textbox',
-                    Type: 'int'
-                }, {
-                    Id: DEFAULT_PAGE_SIZE_LIMITATION.key,
-                    Label: 'Blocks size limitation',
-                    PepComponent: 'textbox',
-                    Type: 'int'
-                }]
-            }
-        };                
+        // TODO: Use for next version 1.0.0
+        // // Create new var settings relation.
+        // const varSettingsRelation: Relation = {
+        //     RelationName: 'VarSettings',
+        //     Name: PAGES_VARIABLES_TABLE_NAME,
+        //     Description: 'Set pages variables from var settings',
+        //     Type: 'AddonAPI',
+        //     SubType: 'NG11',
+        //     AddonUUID: this.addonUUID,
+        //     AddonRelativeURL: '/api/pages_variables',
+        //     AdditionalParams: {
+        //         Title: 'Pages variables', // The title of the tab in which the fields will appear
+        //         Fields: [{
+        //             Id: DEFAULT_BLOCKS_NUMBER_LIMITATION.key,
+        //             Label: 'Blocks number limitation',
+        //             PepComponent: 'textbox',
+        //             Type: 'int'
+        //         }, {
+        //             Id: DEFAULT_PAGE_SIZE_LIMITATION.key,
+        //             Label: 'Blocks size limitation',
+        //             PepComponent: 'textbox',
+        //             Type: 'int'
+        //         }]
+        //     }
+        // };                
 
-        return await this.papiClient.post('/addons/data/relations', varSettingsRelation);
+        // return await this.papiClient.post('/addons/data/relations', varSettingsRelation);
     }
 
     async getPages(options: FindOptions | undefined = undefined): Promise<Page[]> {
@@ -570,20 +571,24 @@ export class PagesApiService {
     //                              Addon block data Public functions
     /************************************************************************************************/
     async getAddonBlockData(name: string): Promise<IBlockLoaderData> {
-        // Get the addon blocks relations 
-        const addonBlockRelations: NgComponentRelation[] = await this.papiClient.get(`/addons/data/relations?where=Name=${name}`);
-    
-        if (addonBlockRelations.length > 0) {
-            const addonBlockRelation: NgComponentRelation = addonBlockRelations[0];
-            const installedAddon: InstalledAddon | undefined = await this.getInstalledAddon(addonBlockRelation.AddonUUID);
-            if (installedAddon) {
-                Promise.resolve ({
-                    relation: addonBlockRelation,
-                    addonPublicBaseURL: installedAddon.PublicBaseURL
-                });
+        const promise = new Promise<IBlockLoaderData>(async (resolve, reject) => {
+            // Get the addon blocks relations 
+            const addonBlockRelations: NgComponentRelation[] = await this.papiClient.get(`/addons/data/relations?where=Name=${name}`);
+        
+            if (addonBlockRelations.length > 0) {
+                const addonBlockRelation: NgComponentRelation = addonBlockRelations[0];
+                const installedAddon: InstalledAddon | undefined = await this.getInstalledAddon(addonBlockRelation.AddonUUID);
+                if (installedAddon) {
+                    resolve({
+                        relation: addonBlockRelation,
+                        addonPublicBaseURL: installedAddon.PublicBaseURL
+                    });
+                }
             }
-        }
-    
-        return Promise.reject(null);
+        
+            reject(null);
+        });
+
+        return promise;
     }
 }
