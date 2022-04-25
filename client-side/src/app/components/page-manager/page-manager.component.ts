@@ -204,9 +204,10 @@ export class PageManagerComponent implements OnInit {
 
     async onNavigateBackFromEditor() {
         if (!this.currentEditor || this.currentEditor?.type === 'page-builder') {
-            await this.pagesService.saveCurrentPage(this.navigationService.addonUUID).subscribe(res => {
+            // TODO: We want to save?
+            // await this.pagesService.saveCurrentPage(this.navigationService.addonUUID).subscribe(res => {
                 this.navigationService.back();
-            });
+            // });
         } else {
             this.pagesService.navigateBackFromEditor();
         }

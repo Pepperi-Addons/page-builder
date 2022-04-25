@@ -63,9 +63,7 @@ export class PagesApiService {
         return availableBlocks;
     }
 
-    private async hidePage(pagekey: string, tableName: string): Promise<boolean> {
-        let page = await this.getPage(pagekey, tableName);
-
+    private async hidePage(page: Page, tableName: string): Promise<boolean> {
         if (!page) {
             return Promise.reject(null);
         }
@@ -104,7 +102,7 @@ export class PagesApiService {
         // Override the page according the interface.
         page = this.pagesValidatorService.getPageCopyAccordingInterface(page, availableBlocks);
 
-        return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page) as Page;
+        return this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page) as Promise<Page>;
     }
 
     private async getPagesVariablesInternal(options: FindOptions | undefined = undefined): Promise<Array<IPagesVariable>> {
@@ -285,7 +283,7 @@ export class PagesApiService {
         return this.upsertPageInternal(page, PAGES_TABLE_NAME);
     }
 
-    async saveDraftPage(page: Page): Promise<Page>  {
+    saveDraftPage(page: Page): Promise<Page>  {
         page.Hidden = false;
         return this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
     }
@@ -307,17 +305,20 @@ export class PagesApiService {
         const pagekey = query['key'] || '';
         
         let draftRes = false;
-        try {
-            draftRes = await this.hidePage(pagekey, DRAFT_PAGES_TABLE_NAME);
-        } catch (e) {
-
-        }
-
         let res = false;
-        try {
-            res = await this.hidePage(pagekey, PAGES_TABLE_NAME);
-        } catch (e) {
-            
+
+        if (pagekey.length > 0) {
+            try {
+                let page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
+                draftRes = await this.hidePage(page, DRAFT_PAGES_TABLE_NAME);
+            } catch (e) {
+            }
+    
+            try {
+                let page = await this.getPage(pagekey, PAGES_TABLE_NAME);
+                res = await this.hidePage(page, PAGES_TABLE_NAME);
+            } catch (e) {
+            }
         }
 
         return Promise.resolve(draftRes || res);
@@ -432,7 +433,14 @@ export class PagesApiService {
         let res = false;
         const pagekey = query['key'];
         if (pagekey) {
-            res = await this.hidePage(pagekey, DRAFT_PAGES_TABLE_NAME);
+            let page = await this.getPage(pagekey, PAGES_TABLE_NAME);
+
+            // In case that the page was never published.
+            if (!page) {
+                page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
+            }
+
+            res = await this.hidePage(page, DRAFT_PAGES_TABLE_NAME);
         }
 
         return Promise.resolve(res);
@@ -445,10 +453,8 @@ export class PagesApiService {
             // Save the current page in pages table
             res = await this.upsertPageInternal(page, PAGES_TABLE_NAME) != null;
 
-            if (res) {
-                // Delete the draft.
-                res = await this.hidePage(page.Key, DRAFT_PAGES_TABLE_NAME);
-            }
+            // Update the draft page and hide it.
+            this.hidePage(page, DRAFT_PAGES_TABLE_NAME);
         }
 
         return Promise.resolve(res);
