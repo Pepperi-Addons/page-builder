@@ -355,6 +355,9 @@ export class PagesApiService {
 
         const promise = new Promise<any[]>((resolve, reject): void => {
             let allPages = distinctPagesArray.map((page: Page) => {
+                const isPublished = pages.some(published => published.Key === page.Key);
+                const isDraft = draftPages.some(draft => draft.Key === page.Key);
+
                 // Return projection object.
                 const prp: PageRowProjection = {
                     Key: page.Key,
@@ -362,7 +365,9 @@ export class PagesApiService {
                     Description: page.Description,
                     CreationDate: page.CreationDateTime,
                     ModificationDate: page.ModificationDateTime,
-                    Status: draftPages.some(draft => draft.Key === page.Key) ? 'draft' : 'published',
+                    Published: isPublished,
+                    Draft: isDraft
+                    // Status: draftPages.some(draft => draft.Key === page.Key) ? 'draft' : 'published',
                 };
 
                 return prp;
@@ -429,7 +434,7 @@ export class PagesApiService {
         return promise;
     }
     
-    async restoreToLastPublish(query: any): Promise<boolean> {
+    async restoreToLastPublish(query: any): Promise<Page> {
         let res = false;
         const pagekey = query['key'];
         if (pagekey) {
@@ -440,10 +445,13 @@ export class PagesApiService {
                 page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
             }
 
-            res = await this.hidePage(page, DRAFT_PAGES_TABLE_NAME);
-        }
+            const pageCopy = JSON.parse(JSON.stringify(page));
+            this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
 
-        return Promise.resolve(res);
+            return Promise.resolve(page);
+        }
+        
+        return Promise.reject(null);
     }
 
     async publishPage(page: Page): Promise<boolean> {

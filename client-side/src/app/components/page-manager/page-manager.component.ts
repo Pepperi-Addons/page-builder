@@ -20,6 +20,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 export class PageManagerComponent implements OnInit {
     @ViewChild('pageBuilderWrapper', { static: true }) pageBuilderWrapper: ElementRef;
 
+    private readonly RESTORE_TO_LAST_PUBLISH_KEY = 'restore';
     private readonly IMPORT_KEY = 'import';
     private readonly EXPORT_KEY = 'export';
     readonly MIN_PERCENTAGE_TO_SHOW_LIMIT = 80;
@@ -115,6 +116,7 @@ export class PageManagerComponent implements OnInit {
         ];
 
         this.menuItems = [
+            { key: this.RESTORE_TO_LAST_PUBLISH_KEY, text: this.translate.instant('ACTIONS.RESTORE_TO_LAST_PUBLISH') },
             { key: this.IMPORT_KEY, text: this.translate.instant('ACTIONS.IMPORT') },
             { key: this.EXPORT_KEY, text: this.translate.instant('ACTIONS.EXPORT') }
         ];
@@ -213,12 +215,18 @@ export class PageManagerComponent implements OnInit {
         }
     }
 
-    // TODO: Implement
     onMenuItemClick(action: IPepMenuItemClickEvent) {
-        if (action.source.key === this.IMPORT_KEY) { // Import page
-
+        // Restore to last publish
+        if (action.source.key === this.RESTORE_TO_LAST_PUBLISH_KEY) { 
+            this.pagesService.restoreToLastPublish(this.navigationService.addonUUID).subscribe(res => {
+                this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS')).afterClosed().subscribe(res => {
+                    window.location.reload();
+                });
+            });
+        } else if (action.source.key === this.IMPORT_KEY) { // Import page
+            // TODO: Implement
         } else if (action.source.key === this.EXPORT_KEY) { // Export page
-            
+            // TODO: Implement
         }
     }
 

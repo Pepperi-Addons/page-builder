@@ -21,7 +21,9 @@ export interface IPageRowModel {
     Description: string,
     CreationDate: string,
     ModificationDate: string,
-    Status: PageRowStatusType,
+    Published: boolean,
+    Draft: boolean,
+    // Status: PageRowStatusType,
 }
 
 interface IPageBuilderData {
@@ -300,8 +302,6 @@ export class PagesService {
                 
                 this.notifyBlockProgressMapChange();
             }
-        } else {
-            this.removeAllBlocks();
         }
     }
     
@@ -1672,13 +1672,17 @@ export class PagesService {
     }
 
     unloadPageBuilder() {
+        this.notifySectionsChange([]);
+        this.removeAllBlocks()
         this.notifyPageChange(null);
     }
 
     // Restore the page to tha last publish
-    restoreToLastPublish(addonUUID: string, pageKey: string): Observable<boolean> {
+    restoreToLastPublish(addonUUID: string): Observable<Page> {
+        const page = this._pageSubject.getValue();
         const baseUrl = this.getBaseUrl(addonUUID);
-        return this.httpService.getHttpCall(`${baseUrl}/restore_to_last_publish?key=${pageKey}`)
+
+        return this.httpService.getHttpCall(`${baseUrl}/restore_to_last_publish?key=${page.Key}`);
     }
 
     // Save the current page in drafts.

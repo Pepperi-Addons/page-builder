@@ -6,7 +6,9 @@ export interface PageRowProjection {
     Description?: string,
     CreationDate?: string,
     ModificationDate?: string,
-    Status: string
+    Published: boolean,
+    Draft: boolean,
+    // Status: string
 }
 
 export interface IPageBuilderData {
