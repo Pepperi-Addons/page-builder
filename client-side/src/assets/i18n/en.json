@@ -65,7 +65,9 @@
         "GRID_HEADER_DESCRIPTION": "Description",
         "GRID_HEADER_CREATIONDATE": "Creation Date",
         "GRID_HEADER_MODIFICATIONDATE": "Modification Date",
-        "GRID_HEADER_STATUS": "Status"
+        "GRID_HEADER_STATUS": "Status",
+        "GRID_HEADER_PUBLISHED": "Published",
+        "GRID_HEADER_DRAFT": "Draft"
     },
     "GROUP_SIZE": {
         "NONE": "None",
@@ -81,7 +83,8 @@
         "PREVIEW": "Preview",
         "PUBLISH": "Publish",
         "IMPORT": "Import a page",
-        "EXPORT": "Export a page"
+        "EXPORT": "Export a page",
+        "RESTORE_TO_LAST_PUBLISH": "Restore to last publish"
     },
     "MESSAGES": {
         "TITLE_NOTICE": "Notice",

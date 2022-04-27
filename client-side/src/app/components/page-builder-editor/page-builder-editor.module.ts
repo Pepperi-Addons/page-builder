@@ -9,7 +9,7 @@ import { NgModule } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { PepAddonService, PepFileService, PepHttpService, PepNgxLibModule  } from '@pepperi-addons/ngx-lib';
 import { PageBuilderEditorComponent} from  './page-builder-editor.component';
-import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
+import { PepRemoteLoaderModule } from '@pepperi-addons/ngx-lib/remote-loader';
 import { OverlayModule} from '@angular/cdk/overlay';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
 import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
@@ -42,7 +42,7 @@ import { MatSliderModule } from '@angular/material/slider'
         CommonModule,
         HttpClientModule,
         PepNgxLibModule,
-        PepAddonLoaderModule,
+        PepRemoteLoaderModule,
         PepSelectModule,
         PepTextboxModule,
         DragDropModule,

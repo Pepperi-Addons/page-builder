@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core'
+import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 
@@ -90,13 +91,14 @@ export class UtilitiesService {
         return this.mergeDeep(target, ...sources);
     }
 
-    showDialogMsg(message: string, title: string = '') {
+    showDialogMsg(message: string, title: string = ''): MatDialogRef<any> {
         title = title.length > 0 ? title: this.translate.instant('MESSAGES.TITLE_NOTICE');
 
         const data = new PepDialogData({
             title: title,
             content: message,
         });
-        this.dialogService.openDefaultDialog(data);
+
+        return this.dialogService.openDefaultDialog(data);
     }
 }

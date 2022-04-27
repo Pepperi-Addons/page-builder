@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CdkDragEnd, CdkDragEnter, CdkDragExit, CdkDragStart } from '@angular/cdk/drag-drop';
 import { IPageBlockHostObject, PagesService } from '../../services/pages.service';
 import { DataViewScreenSize, PageBlock, PageConfiguration, PageBlockContainer } from '@pepperi-addons/papi-sdk';
-import { PepRemoteLoaderOptions } from '@pepperi-addons/ngx-remote-loader';
+import { PepRemoteLoaderOptions } from '@pepperi-addons/ngx-lib/remote-loader';
 
 @Component({
     selector: 'section-block',

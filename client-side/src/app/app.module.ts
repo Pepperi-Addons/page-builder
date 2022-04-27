@@ -24,7 +24,7 @@ import { PepSizeDetectorModule } from '@pepperi-addons/ngx-lib/size-detector';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { PepFileService, PepAddonService } from '@pepperi-addons/ngx-lib';
 import { PepSideBarModule } from '@pepperi-addons/ngx-lib/side-bar';
-import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
+import { PepRemoteLoaderModule } from '@pepperi-addons/ngx-lib/remote-loader';
 import { PagesManagerModule } from './components/pages-manager/pages-manager.module';
 import { PageManagerModule } from './components/page-manager/page-manager.module';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
@@ -61,7 +61,7 @@ const pepIcons = [
         PepTextareaModule,
         PepPageLayoutModule,
         PepSideBarModule,
-        PepAddonLoaderModule,
+        PepRemoteLoaderModule,
         DragDropModule,
         MatCardModule,
         MatTabsModule,

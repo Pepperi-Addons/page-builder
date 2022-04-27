@@ -1,6 +1,6 @@
 import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, PageSection, SplitTypes, DataViewScreenSizes, PageBlock, PageSectionColumn, PageSizeTypes, PageLayout, Subscription, FindOptions, Relation } from '@pepperi-addons/papi-sdk'
 import { Client } from '@pepperi-addons/debug-server';
-import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IAvailableBlockData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, IPagesVariable, IVarSettingsParams } from './pages.model';
+import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, IPagesVariable, IVarSettingsParams } from './pages.model';
 import { PagesValidatorService } from './pages-validator.service';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -34,7 +34,7 @@ export class PagesApiService {
         return this.papiClient.addons.installedAddons.addonUUID(uuid).get();
     }
 
-    private async getAvailableBlocks(): Promise<IAvailableBlockData[]> {
+    private async getAvailableBlocks(): Promise<IBlockLoaderData[]> {
         // Get the PageBlock relations 
         const pageBlockRelations: NgComponentRelation[] = await this.getRelations('PageBlock');
                 
@@ -49,7 +49,7 @@ export class PagesApiService {
 
         const addons: InstalledAddon[] = await Promise.all(addonsPromises).then(res => res);
 
-        const availableBlocks: IAvailableBlockData[] = [];
+        const availableBlocks: IBlockLoaderData[] = [];
         pageBlockRelations.forEach((relation: NgComponentRelation) => {
             const installedAddon: InstalledAddon | undefined = addons.find((ia: InstalledAddon) => ia?.Addon?.UUID === relation?.AddonUUID);
             if (installedAddon) {
@@ -62,10 +62,8 @@ export class PagesApiService {
 
         return availableBlocks;
     }
-    
-    private async hidePage(pagekey: string, tableName: string): Promise<boolean> {
-        let page = await this.getPage(pagekey, tableName);
 
+    private async hidePage(page: Page, tableName: string): Promise<boolean> {
         if (!page) {
             return Promise.reject(null);
         }
@@ -104,7 +102,7 @@ export class PagesApiService {
         // Override the page according the interface.
         page = this.pagesValidatorService.getPageCopyAccordingInterface(page, availableBlocks);
 
-        return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page) as Page;
+        return this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page) as Promise<Page>;
     }
 
     private async getPagesVariablesInternal(options: FindOptions | undefined = undefined): Promise<Array<IPagesVariable>> {
@@ -246,32 +244,33 @@ export class PagesApiService {
     }
 
     async createPagesRelations(): Promise<any> {
-        // Create new var settings relation.
-        const varSettingsRelation: Relation = {
-            RelationName: 'VarSettings',
-            Name: PAGES_VARIABLES_TABLE_NAME,
-            Description: 'Set pages variables from var settings',
-            Type: 'AddonAPI',
-            SubType: 'NG11',
-            AddonUUID: this.addonUUID,
-            AddonRelativeURL: '/api/pages_variables',
-            AdditionalParams: {
-                Title: 'Pages variables', // The title of the tab in which the fields will appear
-                Fields: [{
-                    Id: DEFAULT_BLOCKS_NUMBER_LIMITATION.key,
-                    Label: 'Blocks number limitation',
-                    PepComponent: 'textbox',
-                    Type: 'int'
-                }, {
-                    Id: DEFAULT_PAGE_SIZE_LIMITATION.key,
-                    Label: 'Blocks size limitation',
-                    PepComponent: 'textbox',
-                    Type: 'int'
-                }]
-            }
-        };                
+        // TODO: Use for next version 1.0.0
+        // // Create new var settings relation.
+        // const varSettingsRelation: Relation = {
+        //     RelationName: 'VarSettings',
+        //     Name: PAGES_VARIABLES_TABLE_NAME,
+        //     Description: 'Set pages variables from var settings',
+        //     Type: 'AddonAPI',
+        //     SubType: 'NG11',
+        //     AddonUUID: this.addonUUID,
+        //     AddonRelativeURL: '/api/pages_variables',
+        //     AdditionalParams: {
+        //         Title: 'Pages variables', // The title of the tab in which the fields will appear
+        //         Fields: [{
+        //             Id: DEFAULT_BLOCKS_NUMBER_LIMITATION.key,
+        //             Label: 'Blocks number limitation',
+        //             PepComponent: 'textbox',
+        //             Type: 'int'
+        //         }, {
+        //             Id: DEFAULT_PAGE_SIZE_LIMITATION.key,
+        //             Label: 'Blocks size limitation',
+        //             PepComponent: 'textbox',
+        //             Type: 'int'
+        //         }]
+        //     }
+        // };                
 
-        return await this.papiClient.post('/addons/data/relations', varSettingsRelation);
+        // return await this.papiClient.post('/addons/data/relations', varSettingsRelation);
     }
 
     async getPages(options: FindOptions | undefined = undefined): Promise<Page[]> {
@@ -284,7 +283,7 @@ export class PagesApiService {
         return this.upsertPageInternal(page, PAGES_TABLE_NAME);
     }
 
-    async saveDraftPage(page: Page): Promise<Page>  {
+    saveDraftPage(page: Page): Promise<Page>  {
         page.Hidden = false;
         return this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
     }
@@ -306,17 +305,20 @@ export class PagesApiService {
         const pagekey = query['key'] || '';
         
         let draftRes = false;
-        try {
-            draftRes = await this.hidePage(pagekey, DRAFT_PAGES_TABLE_NAME);
-        } catch (e) {
-
-        }
-
         let res = false;
-        try {
-            res = await this.hidePage(pagekey, PAGES_TABLE_NAME);
-        } catch (e) {
-            
+
+        if (pagekey.length > 0) {
+            try {
+                let page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
+                draftRes = await this.hidePage(page, DRAFT_PAGES_TABLE_NAME);
+            } catch (e) {
+            }
+    
+            try {
+                let page = await this.getPage(pagekey, PAGES_TABLE_NAME);
+                res = await this.hidePage(page, PAGES_TABLE_NAME);
+            } catch (e) {
+            }
         }
 
         return Promise.resolve(draftRes || res);
@@ -353,6 +355,9 @@ export class PagesApiService {
 
         const promise = new Promise<any[]>((resolve, reject): void => {
             let allPages = distinctPagesArray.map((page: Page) => {
+                const isPublished = pages.some(published => published.Key === page.Key);
+                const isDraft = draftPages.some(draft => draft.Key === page.Key);
+
                 // Return projection object.
                 const prp: PageRowProjection = {
                     Key: page.Key,
@@ -360,7 +365,9 @@ export class PagesApiService {
                     Description: page.Description,
                     CreationDate: page.CreationDateTime,
                     ModificationDate: page.ModificationDateTime,
-                    Status: draftPages.some(draft => draft.Key === page.Key) ? 'draft' : 'published',
+                    Published: isPublished,
+                    Draft: isDraft
+                    // Status: draftPages.some(draft => draft.Key === page.Key) ? 'draft' : 'published',
                 };
 
                 return prp;
@@ -427,14 +434,24 @@ export class PagesApiService {
         return promise;
     }
     
-    async restoreToLastPublish(query: any): Promise<boolean> {
+    async restoreToLastPublish(query: any): Promise<Page> {
         let res = false;
         const pagekey = query['key'];
         if (pagekey) {
-            res = await this.hidePage(pagekey, DRAFT_PAGES_TABLE_NAME);
-        }
+            let page = await this.getPage(pagekey, PAGES_TABLE_NAME);
 
-        return Promise.resolve(res);
+            // In case that the page was never published.
+            if (!page) {
+                page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
+            }
+
+            const pageCopy = JSON.parse(JSON.stringify(page));
+            this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
+
+            return Promise.resolve(page);
+        }
+        
+        return Promise.reject(null);
     }
 
     async publishPage(page: Page): Promise<boolean> {
@@ -444,10 +461,8 @@ export class PagesApiService {
             // Save the current page in pages table
             res = await this.upsertPageInternal(page, PAGES_TABLE_NAME) != null;
 
-            if (res) {
-                // Delete the draft.
-                res = await this.hidePage(page.Key, DRAFT_PAGES_TABLE_NAME);
-            }
+            // Update the draft page and hide it.
+            this.hidePage(page, DRAFT_PAGES_TABLE_NAME);
         }
 
         return Promise.resolve(res);
@@ -564,5 +579,30 @@ export class PagesApiService {
                 }
             }
         }
+    }
+    
+    /***********************************************************************************************/
+    //                              Addon block data Public functions
+    /************************************************************************************************/
+    async getAddonBlockData(name: string): Promise<IBlockLoaderData> {
+        const promise = new Promise<IBlockLoaderData>(async (resolve, reject) => {
+            // Get the addon blocks relations 
+            const addonBlockRelations: NgComponentRelation[] = await this.papiClient.get(`/addons/data/relations?where=Name=${name}`);
+        
+            if (addonBlockRelations.length > 0) {
+                const addonBlockRelation: NgComponentRelation = addonBlockRelations[0];
+                const installedAddon: InstalledAddon | undefined = await this.getInstalledAddon(addonBlockRelation.AddonUUID);
+                if (installedAddon) {
+                    resolve({
+                        relation: addonBlockRelation,
+                        addonPublicBaseURL: installedAddon.PublicBaseURL
+                    });
+                }
+            }
+        
+            reject(null);
+        });
+
+        return promise;
     }
 }

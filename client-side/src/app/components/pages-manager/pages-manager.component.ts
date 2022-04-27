@@ -1,5 +1,5 @@
 import { NavigationService } from './../../services/navigation.service';
-import { IPageRowModel, PagesService } from '../../services/pages.service';
+import { PagesService } from '../../services/pages.service';
 import { AfterViewInit, Component, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
@@ -10,8 +10,6 @@ import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog'
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { IPepFormFieldClickEvent } from '@pepperi-addons/ngx-lib/form';
 import { PepSelectionData } from '@pepperi-addons/ngx-lib/list';
-
-
 
 export enum Page_Type { "Homepage" = 1, "Dashbaord" = 2, "Item" = 3, "Generic" = 4, "None" = 5 };
 
@@ -119,16 +117,19 @@ export class PagesManagerComponent implements OnInit {
                                     Fields: [
                                         this.getRegularReadOnlyColumn('Name','Link'),
                                         this.getRegularReadOnlyColumn('Description'),
-                                        this.getRegularReadOnlyColumn('CreationDate'),
-                                        this.getRegularReadOnlyColumn('ModificationDate'),
-                                        this.getRegularReadOnlyColumn('Status')
+                                        this.getRegularReadOnlyColumn('CreationDate', 'DateAndTime'),
+                                        this.getRegularReadOnlyColumn('ModificationDate', 'DateAndTime'),
+                                        this.getRegularReadOnlyColumn('Draft'),
+                                        this.getRegularReadOnlyColumn('Published'),
+                                        // this.getRegularReadOnlyColumn('Status')
                                     ],
                                     Columns: [   
                                         { Width: 15 },
-                                        { Width: 30 },
+                                        { Width: 25 },
                                         { Width: 20 },
                                         { Width: 20 },
-                                        { Width: 15}
+                                        { Width: 8 },
+                                        { Width: 12}
                                     ],
                                     FrozenColumnsCount: 0,
                                     MinimumColumnWidth: 0

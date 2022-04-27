@@ -1,5 +1,5 @@
 import { DataViewScreenSizes, NgComponentRelation, Page, PageBlock, PageLayout, PageSection, PageSectionColumn, PageSizeTypes, SplitTypes, ResourceDataConfiguration, ScreenSizeDataConfiguration, PageConfiguration, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
-import { DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, IAvailableBlockData, IPagesVariable, PAGES_NUBER_LIMITATION } from "./pages.model";
+import { DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, IBlockLoaderData, IPagesVariable, PAGES_NUBER_LIMITATION } from "./pages.model";
 
 export class PagesValidatorService {
 
@@ -267,7 +267,7 @@ export class PagesValidatorService {
         }
     }
 
-    private validatePageBlocksData(page: Page, availableBlocks: IAvailableBlockData[]) {
+    private validatePageBlocksData(page: Page, availableBlocks: IBlockLoaderData[]) {
         // Validate blocks.
         const blockKeys = new Map<string, string>();
         for (let index = 0; index < page.Blocks?.length; index++) {
@@ -441,7 +441,7 @@ export class PagesValidatorService {
         this.validatePageLayoutProperties(page.Layout, pagePropertyBreadcrumb)
     }
 
-    validatePageData(page: Page, availableBlocks: IAvailableBlockData[]) {
+    validatePageData(page: Page, availableBlocks: IBlockLoaderData[]) {
         // Validate page blocks data.
         this.validatePageBlocksData(page, availableBlocks);
         
@@ -449,7 +449,7 @@ export class PagesValidatorService {
         this.validatePageConfigurationData(page);
     }
     
-    getPageCopyAccordingInterface(page: Page, availableBlocks: IAvailableBlockData[]): Page {
+    getPageCopyAccordingInterface(page: Page, availableBlocks: IBlockLoaderData[]): Page {
         // Init with the mandatories properties.
         let res: Page = {
             Blocks: [],

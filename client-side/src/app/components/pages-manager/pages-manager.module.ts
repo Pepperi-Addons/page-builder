@@ -12,7 +12,6 @@ import { MatCardModule } from '@angular/material/card';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { PepNgxLibModule, PepAddonService } from '@pepperi-addons/ngx-lib';
 import { PagesManagerComponent} from './pages-manager.component';
-import { PepAddonLoaderModule } from '@pepperi-addons/ngx-remote-loader';
 import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
@@ -39,7 +38,6 @@ const routes: Routes = [
         CommonModule,
         HttpClientModule,
         PepNgxLibModule,
-        PepAddonLoaderModule,
         PepTopBarModule,
         //// When not using module as sub-addon please remark this for not loading twice resources
         MatCardModule,

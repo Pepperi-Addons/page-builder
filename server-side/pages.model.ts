@@ -6,19 +6,20 @@ export interface PageRowProjection {
     Description?: string,
     CreationDate?: string,
     ModificationDate?: string,
-    Status: string
+    Published: boolean,
+    Draft: boolean,
+    // Status: string
 }
 
 export interface IPageBuilderData {
     page: Page, 
-    availableBlocks: IAvailableBlockData[]
+    availableBlocks: IBlockLoaderData[]
     pagesVariables: IPagesVariable[]
 }
 
-export interface IAvailableBlockData {
+export interface IBlockLoaderData {
     relation: NgComponentRelation, 
     addonPublicBaseURL: string
-    // addon: InstalledAddon 
 }
 
 export interface IPagesVariable {
