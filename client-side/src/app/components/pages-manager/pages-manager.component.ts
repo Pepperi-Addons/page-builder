@@ -119,8 +119,8 @@ export class PagesManagerComponent implements OnInit {
                                         this.getRegularReadOnlyColumn('Description'),
                                         this.getRegularReadOnlyColumn('CreationDate', 'DateAndTime'),
                                         this.getRegularReadOnlyColumn('ModificationDate', 'DateAndTime'),
-                                        this.getRegularReadOnlyColumn('Draft'),
-                                        this.getRegularReadOnlyColumn('Published'),
+                                        this.getRegularReadOnlyColumn('Draft', 'Boolean'),
+                                        this.getRegularReadOnlyColumn('Published', 'Boolean'),
                                         // this.getRegularReadOnlyColumn('Status')
                                     ],
                                     Columns: [   
