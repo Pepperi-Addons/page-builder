@@ -99,6 +99,7 @@ export interface IPageBlockHostObject {
     configuration: any;
     configurationSource?: any;
     pageConfiguration?: PageConfiguration;
+    pageParameters?: any;
     parameters?: any;
 }
 
@@ -310,8 +311,8 @@ export class PagesService {
         let priority = this.PRODUCERS_PRIORITY;
 
         if (block.PageConfiguration?.Parameters.length > 0) {
-            const isConsumeFilters = block.PageConfiguration.Parameters.some(param => param.Consume && param.Type === 'Filter');
-            const isProduceFilters = block.PageConfiguration.Parameters.some(param => param.Produce && param.Type === 'Filter');
+            const isConsumeFilters = block.PageConfiguration.Parameters.some(param => param.Consume);
+            const isProduceFilters = block.PageConfiguration.Parameters.some(param => param.Produce);
 
             if (isConsumeFilters && isProduceFilters) {
                 priority = this.PRODUCERS_AND_CONSUMERS_PRIORITY;
@@ -746,6 +747,15 @@ export class PagesService {
             hostObject.pageConfiguration = block.PageConfiguration;
         }
         
+        // Add all page parameters (if there is more then one parameter the last will override).
+        const pageParameters: any = {};
+        this._producerParameterKeysMap.forEach((value: IProducerParameters, parameterKey: string) => {
+            value?.producerParametersMap.forEach((parameterValue: any, producerBlockKey: string) => {
+                pageParameters[parameterKey] = parameterValue;
+            });
+        });
+        hostObject.pageParameters = pageParameters;
+
         return hostObject;
     }
 
@@ -1552,6 +1562,8 @@ export class PagesService {
                         this.buildConsumersParameters();
                     }
                 }
+            } else {
+                console.error('The raised parameter is not declared in the block -> pageConfiguration -> parameters array as producer');
             }
         }
     }

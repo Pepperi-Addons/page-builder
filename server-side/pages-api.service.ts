@@ -356,7 +356,8 @@ export class PagesApiService {
         const promise = new Promise<any[]>((resolve, reject): void => {
             let allPages = distinctPagesArray.map((page: Page) => {
                 const isPublished = pages.some(published => published.Key === page.Key);
-                const isDraft = draftPages.some(draft => draft.Key === page.Key);
+                const draftPage = draftPages.find(draft => draft.Key === page.Key);
+                const isDraft = draftPage != null && !draftPage.Hidden;
 
                 // Return projection object.
                 const prp: PageRowProjection = {
@@ -413,7 +414,7 @@ export class PagesApiService {
             dataPromises.push(this.getAvailableBlocks());
             dataPromises.push(this.getPagesVariablesInternal());
             
-            // If there is no page in the drafts
+            // If draft is hidden or not exist add call to bring the publish page.
             if (!page || page.Hidden) {
                 dataPromises.push(this.getPage(pageKey, PAGES_TABLE_NAME));
             }
@@ -423,7 +424,7 @@ export class PagesApiService {
             res = {
                 availableBlocks: arr[0] || [],
                 pagesVariables: arr[1] || [],
-                page: page || (arr.length > 2 ? arr[2] : []),
+                page: arr.length > 2 ? arr[2] : page, // Get the publish page if exist in the array cause we populate it only if the draft is hidden or not exist.
             }
         }
 
@@ -462,7 +463,10 @@ export class PagesApiService {
             res = await this.upsertPageInternal(page, PAGES_TABLE_NAME) != null;
 
             // Update the draft page and hide it.
-            this.hidePage(page, DRAFT_PAGES_TABLE_NAME);
+            if (res) {
+                const pageCopy = JSON.parse(JSON.stringify(page));
+                this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
+            }
         }
 
         return Promise.resolve(res);

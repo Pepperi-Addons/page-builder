@@ -123,7 +123,6 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        // TODO: Need to get the addonUUID not from the navigationService.
         const addonUUID = this.navigationService.addonUUID;
         const pageKey = this.hostObject?.pageKey || this.route.snapshot.data['page_key'] || this.route?.snapshot?.params['page_key'] || '';
         

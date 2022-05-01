@@ -28,7 +28,7 @@ export class NavigationService {
         private route: ActivatedRoute,
         // private location: Location
     ) {
-        // TODO: Need to get the addonUUID from the root config.
+        // Get the addonUUID from the root config.
         this._addonUUID = config.AddonUUID;
         this._devServer = this.route.snapshot.queryParamMap.get('devServer') === 'true';
         
