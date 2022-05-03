@@ -107,7 +107,14 @@ export class PagesApiService {
 
     private async getPagesVariablesInternal(options: FindOptions | undefined = undefined): Promise<any> {
         // Get the pages variables
-        const pagesVariables = await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_VARIABLES_TABLE_NAME).key(PAGES_VARIABLES_TABLE_NAME).get() || {};
+        let pagesVariables;
+
+        try {
+            pagesVariables = await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_VARIABLES_TABLE_NAME).key(PAGES_VARIABLES_TABLE_NAME).get();
+        } catch {
+            // Declare default.
+            pagesVariables = { Key: PAGES_VARIABLES_TABLE_NAME };
+        }
 
         // If not exist add the default value of the blocks number limitation.
         if (!pagesVariables.hasOwnProperty(DEFAULT_BLOCKS_NUMBER_LIMITATION.key)) {
