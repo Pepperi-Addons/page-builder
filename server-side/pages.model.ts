@@ -14,22 +14,12 @@ export interface PageRowProjection {
 export interface IPageBuilderData {
     page: Page, 
     availableBlocks: IBlockLoaderData[]
-    pagesVariables: IPagesVariable[]
+    pagesVariables: any
 }
 
 export interface IBlockLoaderData {
     relation: NgComponentRelation, 
     addonPublicBaseURL: string
-}
-
-export interface IPagesVariable {
-    Key: string,
-    Id: string,
-    Value: any
-}
-
-export interface IVarSettingsParams {
-    Fields: IPagesVariable[]
 }
 
 export const DEFAULT_BLOCKS_NUMBER_LIMITATION = {

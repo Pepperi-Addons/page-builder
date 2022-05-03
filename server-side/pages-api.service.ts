@@ -1,6 +1,6 @@
-import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, PageSection, SplitTypes, DataViewScreenSizes, PageBlock, PageSectionColumn, PageSizeTypes, PageLayout, Subscription, FindOptions, Relation } from '@pepperi-addons/papi-sdk'
+import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView } from '@pepperi-addons/papi-sdk'
 import { Client } from '@pepperi-addons/debug-server';
-import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, IPagesVariable, IVarSettingsParams } from './pages.model';
+import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION } from './pages.model';
 import { PagesValidatorService } from './pages-validator.service';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -105,37 +105,18 @@ export class PagesApiService {
         return this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page) as Promise<Page>;
     }
 
-    private async getPagesVariablesInternal(options: FindOptions | undefined = undefined): Promise<Array<IPagesVariable>> {
-        const pagesVariables = await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_VARIABLES_TABLE_NAME).find(options) as Array<IPagesVariable> || [];
+    private async getPagesVariablesInternal(options: FindOptions | undefined = undefined): Promise<any> {
+        // Get the pages variables
+        const pagesVariables = await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_VARIABLES_TABLE_NAME).key(PAGES_VARIABLES_TABLE_NAME).get() || {};
 
-        // Get the blocks number limitation
-        const blocksNumberLimitation = pagesVariables.find(pv => pv.Key === DEFAULT_BLOCKS_NUMBER_LIMITATION.key);
-
-        // If exist convert the value to number, else add default.
-        if (blocksNumberLimitation) {
-            blocksNumberLimitation.Value = Number(blocksNumberLimitation.Value);
-        } else {
-            // Add default blocks number limitations if not exist.
-            pagesVariables.push({
-                Id: DEFAULT_BLOCKS_NUMBER_LIMITATION.key,
-                Key: DEFAULT_BLOCKS_NUMBER_LIMITATION.key,
-                Value: DEFAULT_BLOCKS_NUMBER_LIMITATION.softValue,
-            });
+        // If not exist add the default value of the blocks number limitation.
+        if (!pagesVariables.hasOwnProperty(DEFAULT_BLOCKS_NUMBER_LIMITATION.key)) {
+            pagesVariables[DEFAULT_BLOCKS_NUMBER_LIMITATION.key] = DEFAULT_BLOCKS_NUMBER_LIMITATION.softValue;
         }
 
-        // Get the page size limitation
-        const pageSizeLimitation = pagesVariables.find(pv => pv.Key === DEFAULT_PAGE_SIZE_LIMITATION.key);
-
-        // If exist convert the value to number, else add default.
-        if (pageSizeLimitation) {
-            pageSizeLimitation.Value = Number(pageSizeLimitation.Value);
-        } else {
-            // Add default page size limitations if not exist.
-            pagesVariables.push({
-                Id: DEFAULT_PAGE_SIZE_LIMITATION.key,
-                Key: DEFAULT_PAGE_SIZE_LIMITATION.key,
-                Value: DEFAULT_PAGE_SIZE_LIMITATION.softValue,
-            });
+        // If not exist add the default value of the page size limitation.
+        if (!pagesVariables.hasOwnProperty(DEFAULT_PAGE_SIZE_LIMITATION.key)) {
+            pagesVariables[DEFAULT_PAGE_SIZE_LIMITATION.key] = DEFAULT_PAGE_SIZE_LIMITATION.softValue;
         }
 
         return pagesVariables;
@@ -230,10 +211,7 @@ export class PagesApiService {
             Fields: {
                 Key: {
                     Type: 'String'
-                },
-                Value: {
-                    Type: 'String'
-                },
+                }
             }
         });
 
@@ -244,33 +222,82 @@ export class PagesApiService {
     }
 
     async createPagesRelations(): Promise<any> {
-        // TODO: Use for next version 1.0.0
-        // // Create new var settings relation.
-        // const varSettingsRelation: Relation = {
-        //     RelationName: 'VarSettings',
-        //     Name: PAGES_VARIABLES_TABLE_NAME,
-        //     Description: 'Set pages variables from var settings',
-        //     Type: 'AddonAPI',
-        //     SubType: 'NG11',
-        //     AddonUUID: this.addonUUID,
-        //     AddonRelativeURL: '/api/pages_variables',
-        //     AdditionalParams: {
-        //         Title: 'Pages variables', // The title of the tab in which the fields will appear
-        //         Fields: [{
-        //             Id: DEFAULT_BLOCKS_NUMBER_LIMITATION.key,
-        //             Label: 'Blocks number limitation',
-        //             PepComponent: 'textbox',
-        //             Type: 'int'
-        //         }, {
-        //             Id: DEFAULT_PAGE_SIZE_LIMITATION.key,
-        //             Label: 'Blocks size limitation',
-        //             PepComponent: 'textbox',
-        //             Type: 'int'
-        //         }]
-        //     }
-        // };                
+        const title = 'Pages variables'; // The title of the tab in which the fields will appear;
+        const dataView: FormDataView = {
+            Type: 'Form',
+            Context: {
+                Object: {
+                    Resource: "None",
+                    InternalID: 1,
+                },
+                Name: 'Pages variables data view',
+                ScreenSize: 'Tablet',
+                Profile: {
+                    InternalID: 1,
+                    Name: 'MyProfile'
+                }
+            },
+            Fields: [{
+                FieldID: DEFAULT_BLOCKS_NUMBER_LIMITATION.key,
+                Type: 'NumberInteger',
+                Title: 'Blocks number limitation',
+                Mandatory: false,
+                ReadOnly: false,
+                Layout: {
+                    Origin: {
+                        X: 0,
+                        Y: 0
+                    },
+                    Size: {
+                        Width: 1,
+                        Height: 0
+                    }
+                },
+                Style: {
+                    Alignment: {
+                        Horizontal: 'Stretch',
+                        Vertical: 'Stretch'
+                    }
+                }
+            }, {
+                FieldID: DEFAULT_PAGE_SIZE_LIMITATION.key,
+                Type: 'NumberInteger',
+                Title: 'Blocks size limitation',
+                Mandatory: false,
+                ReadOnly: false,
+                Layout: {
+                    Origin: {
+                        X: 0,
+                        Y: 1
+                    },
+                    Size: {
+                        Width: 1,
+                        Height: 0
+                    }
+                },
+                Style: {
+                    Alignment: {
+                        Horizontal: 'Stretch',
+                        Vertical: 'Stretch'
+                    }
+                }
+            }]
+        };
+        
+        // Create new var settings relation.
+        const varSettingsRelation: Relation = {
+            RelationName: 'VarSettings',
+            Name: PAGES_VARIABLES_TABLE_NAME,
+            Description: 'Set pages variables from var settings',
+            Type: 'AddonAPI',
+            SubType: 'NG11',
+            AddonUUID: this.addonUUID,
+            AddonRelativeURL: '/api/pages_variables',
+            Title: title,
+            DataView: dataView
+        };                
 
-        // return await this.papiClient.post('/addons/data/relations', varSettingsRelation);
+        return await this.papiClient.post('/addons/data/relations', varSettingsRelation);
     }
 
     async getPages(options: FindOptions | undefined = undefined): Promise<Page[]> {
@@ -476,48 +503,30 @@ export class PagesApiService {
     //                              VarSettings Public functions
     /************************************************************************************************/
 
-    async savePagesVariables(varSettingsParams: IVarSettingsParams) {
-        for (let index = 0; index < varSettingsParams.Fields.length; index++) {
-            const pagesVariable = varSettingsParams.Fields[index];
+    async savePagesVariables(varSettingsParams: any) {
+        const blocksNumberLimitationValue = Number(varSettingsParams[DEFAULT_BLOCKS_NUMBER_LIMITATION.key]);
+        const pageSizeLimitationValue = Number(varSettingsParams[DEFAULT_PAGE_SIZE_LIMITATION.key]);
 
-            // TODO: Need to remove this when Saar will upload version with Key instead of ID.
-            pagesVariable.Key = pagesVariable.Id;
-            
-            const valueAsNumber = Number(pagesVariable.Value);
-    
-            if (!isNaN(valueAsNumber)) {
-                let canSaveVariable = false;
-                
-                if (pagesVariable.Key === DEFAULT_BLOCKS_NUMBER_LIMITATION.key) {
-                    if (valueAsNumber >= 1 && valueAsNumber <= DEFAULT_BLOCKS_NUMBER_LIMITATION.hardValue) {
-                        canSaveVariable = true;
-                    } else {
-                        throw new Error(`${valueAsNumber} is in the range (1 - ${DEFAULT_BLOCKS_NUMBER_LIMITATION.hardValue}).`);
-                    }
-                } else if (pagesVariable.Key === DEFAULT_PAGE_SIZE_LIMITATION.key) {
-                    if (valueAsNumber >= 1 && valueAsNumber <= DEFAULT_PAGE_SIZE_LIMITATION.hardValue) {
-                        canSaveVariable = true;
-                    } else {
-                        throw new Error(`${valueAsNumber} is in the range (1 - ${DEFAULT_PAGE_SIZE_LIMITATION.hardValue}).`);
-                    }
-                }
-    
-                if (canSaveVariable) {
-                    return await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_VARIABLES_TABLE_NAME).upsert(pagesVariable);
-                }
-            } else {
-                throw new Error(`${pagesVariable.Value} is not a number.`);
+        if (!isNaN(blocksNumberLimitationValue) && !isNaN(pageSizeLimitationValue)) {
+            if (blocksNumberLimitationValue < 1 || blocksNumberLimitationValue > DEFAULT_BLOCKS_NUMBER_LIMITATION.hardValue) {
+                throw new Error(`${DEFAULT_BLOCKS_NUMBER_LIMITATION.key} should be in the range (1 - ${DEFAULT_BLOCKS_NUMBER_LIMITATION.hardValue}).`);
             }
+        
+            if (pageSizeLimitationValue < 1 || pageSizeLimitationValue > DEFAULT_PAGE_SIZE_LIMITATION.hardValue) {
+                throw new Error(`${DEFAULT_PAGE_SIZE_LIMITATION.key} should be in the range (1 - ${DEFAULT_PAGE_SIZE_LIMITATION.hardValue}).`);
+            }
+        
+            // Save the key on the object for always work on the same object.
+            varSettingsParams['Key'] = PAGES_VARIABLES_TABLE_NAME;
+            return await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_VARIABLES_TABLE_NAME).upsert(varSettingsParams);
+        } else {
+            let nanVariableName = isNaN(blocksNumberLimitationValue) ? DEFAULT_BLOCKS_NUMBER_LIMITATION.key : DEFAULT_PAGE_SIZE_LIMITATION.key;
+            throw new Error(`${nanVariableName} is not a number.`);
         }
     }
 
-    // TODO: Need to change the IVarSettingsParams object when Saar will upload version with his changes.
-    async getPagesVariables(options: FindOptions | undefined = undefined): Promise<IVarSettingsParams> {
-        const fields = await this.getPagesVariablesInternal(options);
-
-        return {
-            Fields: fields
-        };
+    async getPagesVariables(options: FindOptions | undefined = undefined): Promise<any> {
+        return await this.getPagesVariablesInternal(options);
     }
 
     /***********************************************************************************************/

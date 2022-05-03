@@ -29,12 +29,7 @@ export interface IPageRowModel {
 interface IPageBuilderData {
     page: Page, 
     availableBlocks: IBlockLoaderData[],
-    pagesVariables: IPagesVariable[]
-}
-
-interface IPagesVariable {
-    Key: string,
-    Value: string
+    pagesVariables: any
 }
 
 export type EditorType = 'page-builder' | 'section' | 'block';
@@ -126,7 +121,6 @@ export class PagesService {
         key: 'PAGE_SIZE_LIMITATION',
         value: 150
     }
-    
 
     private _editorsBreadCrumb = Array<IEditor>();
 
@@ -856,18 +850,18 @@ export class PagesService {
         }
     }
     
-    private setPagesVariables(pagesVariables: IPagesVariable[]) {
-        pagesVariables.forEach(pagesVariable => {
-            const valueAsNumber = Number(pagesVariable.Value);
+    private setPagesVariables(pagesVariables: any) {
+        Object.keys(pagesVariables).forEach(key => {
+            const valueAsNumber = Number(pagesVariables[key]);
 
             if (!isNaN(valueAsNumber)) {
-                if (pagesVariable.Key === this.BLOCKS_NUMBER_LIMITATION_OBJECT.key) {
+                if (key === this.BLOCKS_NUMBER_LIMITATION_OBJECT.key) {
                     this.BLOCKS_NUMBER_LIMITATION_OBJECT.value = valueAsNumber;
-                } else if (pagesVariable.Key === this.PAGE_SIZE_LIMITATION_OBJECT.key) {
+                } else if (key === this.PAGE_SIZE_LIMITATION_OBJECT.key) {
                     this.PAGE_SIZE_LIMITATION_OBJECT.value = valueAsNumber;
                 } 
             }
-        });
+        })
     }
     
     private setQueryParameters(queryParameters: Params) {

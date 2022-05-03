@@ -1,5 +1,5 @@
 import { DataViewScreenSizes, NgComponentRelation, Page, PageBlock, PageLayout, PageSection, PageSectionColumn, PageSizeTypes, SplitTypes, ResourceDataConfiguration, ScreenSizeDataConfiguration, PageConfiguration, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
-import { DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, IBlockLoaderData, IPagesVariable, PAGES_NUBER_LIMITATION } from "./pages.model";
+import { DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, IBlockLoaderData, PAGES_NUBER_LIMITATION } from "./pages.model";
 
 export class PagesValidatorService {
 
@@ -387,22 +387,10 @@ export class PagesValidatorService {
         }
     }
 
-    validatePageLimitations(page: Page, pagesVariables: Array<IPagesVariable>): void {
-        let blocksNumberLimit = DEFAULT_BLOCKS_NUMBER_LIMITATION.softValue;
-        let blocksSizeLimit = DEFAULT_PAGE_SIZE_LIMITATION.softValue;
+    validatePageLimitations(page: Page, pagesVariables: any): void {
+        let blocksNumberLimit = pagesVariables[DEFAULT_BLOCKS_NUMBER_LIMITATION.key] || DEFAULT_BLOCKS_NUMBER_LIMITATION.softValue;
+        let blocksSizeLimit = pagesVariables[DEFAULT_PAGE_SIZE_LIMITATION.key] || DEFAULT_PAGE_SIZE_LIMITATION.softValue;
         
-        pagesVariables.forEach(pagesVariable => {
-            const valueAsNumber = Number(pagesVariable.Value);
-
-            if (!isNaN(valueAsNumber)) {
-                if (pagesVariable.Key === DEFAULT_BLOCKS_NUMBER_LIMITATION.key) {
-                    blocksNumberLimit = valueAsNumber;
-                } else if (pagesVariable.Key === DEFAULT_PAGE_SIZE_LIMITATION.key) {
-                    blocksSizeLimit = valueAsNumber;
-                } 
-            }
-        });
-
         // Check the limitations.
         if (page.Blocks?.length >= blocksNumberLimit) {
             throw new Error(`You exceeded your blocks number limit (${blocksNumberLimit}) - please contact your administrator.`);
