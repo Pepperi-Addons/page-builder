@@ -5,6 +5,9 @@ const share = mf.share;
 const singleSpaAngularWebpack = require('single-spa-angular/lib/webpack').default;
 const { merge } = require('webpack-merge');
 
+// file_name should be lowercase and if it more then one word put '_' between them,
+const filename = `page_builder`;
+
 const sharedMappings = new mf.SharedMappings();
 sharedMappings.register(
     path.join(__dirname, './tsconfig.json'),
@@ -15,7 +18,7 @@ sharedMappings.register(
 module.exports = (config, options, env) => {
     const mfConfig = {
         output: {
-            uniqueName: "addon",
+            uniqueName: `${filename}`,
             publicPath: "auto",
         },
         optimization: {
@@ -29,8 +32,8 @@ module.exports = (config, options, env) => {
         },
         plugins: [
             new ModuleFederationPlugin({
-                name: "addon",
-                filename: "addon.js",
+                name: `${filename}`,
+                filename: `${filename}.js`,
                 exposes: {
                     './PageBuilderModule': './src/app/components/page-builder/index.ts'
                 },
