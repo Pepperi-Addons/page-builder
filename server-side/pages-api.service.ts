@@ -73,24 +73,16 @@ export class PagesApiService {
         return Promise.resolve(res != null);
     }
 
-    private async upsertPageInternal(page: Page, tableName = PAGES_TABLE_NAME): Promise<Page> {
-        if (!page) {
-            return Promise.reject(null);
-        }
-
-        if (!page.Key) {
-            page.Key = uuidv4();
-        }
-        
-        // Validate limit pages number only for published pages.
-        if (tableName === PAGES_TABLE_NAME) {
+    private async validateAndOverridePageAccordingInterface(page: Page, validatePagesLimit: boolean): Promise<Page> {
+        // Validate pages limit number.
+        if (validatePagesLimit) {
             const publishedPages = await this.getPages();
             this.pagesValidatorService.validatePagesLimitNumber(page, publishedPages);
         }
 
         // Validate page object before upsert.
         this.pagesValidatorService.validatePageProperties(page);
-    
+
         // Validate page limitations before upsert.
         const pagesVariables = await this.getPagesVariablesInternal();
         this.pagesValidatorService.validatePageLimitations(page, pagesVariables);
@@ -100,8 +92,21 @@ export class PagesApiService {
         this.pagesValidatorService.validatePageData(page, availableBlocks);
 
         // Override the page according the interface.
-        page = this.pagesValidatorService.getPageCopyAccordingInterface(page, availableBlocks);
+        return this.pagesValidatorService.getPageCopyAccordingInterface(page, availableBlocks);
+    }
 
+    private async upsertPageInternal(page: Page, tableName = PAGES_TABLE_NAME): Promise<Page> {
+        if (!page) {
+            return Promise.reject(null);
+        }
+
+        if (!page.Key) {
+            page.Key = uuidv4();
+        }
+
+        // Validate page object before upsert.
+        page = await this.validateAndOverridePageAccordingInterface(page, tableName === PAGES_TABLE_NAME);
+        
         return this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page) as Promise<Page>;
     }
 
@@ -128,54 +133,7 @@ export class PagesApiService {
 
         return pagesVariables;
     }
-
-    private async deleteBlockFromPage(page: Page, addonUUID: string, tableName: string) {
-        try {
-            // Get the blocks to remove by the addon UUID
-            const blocksToRemove = page.Blocks.filter(block => block.Relation.AddonUUID === addonUUID);
-
-            if (blocksToRemove?.length > 0) {
-                    console.log(`page blocks before - ${JSON.stringify(page.Blocks)}`);
-
-                    // Remove the page blocks with the addonUUID
-                    page.Blocks = page.Blocks.filter(block => block.Relation.AddonUUID !== addonUUID);
-
-                    console.log(`page blocks after - ${JSON.stringify(page.Blocks)}`);
-
-                    // Remove the blocks from the columns.
-                    for (let sectioIndex = 0; sectioIndex < page.Layout.Sections.length; sectioIndex++) {
-                        const section = page.Layout.Sections[sectioIndex];
-                        
-                        for (let columnIndex = 0; columnIndex < section.Columns.length; columnIndex++) {
-                            const column = section.Columns[columnIndex];
-                            
-                            if (column.BlockContainer && blocksToRemove.some(btr => btr.Key === column.BlockContainer?.BlockKey)) {
-                                console.log(`delete block with the key - ${JSON.stringify(column.BlockContainer.BlockKey)}`);
-                                delete column.BlockContainer;
-                            }
-                        }
-                    }
-
-                    // Update the page
-                    await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page);
-            }
-        } catch (err) {
-            console.log(`err - ${JSON.stringify(err)}`);
-            // Do nothing.
-        }
-    }
-
-    private getAddonUUID(installedAddonUUID: string): Promise<string | undefined>  {
-        // need to use where clause b/c currently there is no endpoint for
-        // retrieving an installed addon by UUID
-        return this.papiClient.addons.installedAddons
-            .find({
-                where: `UUID = '${installedAddonUUID}'`,
-                include_deleted: true,
-            })
-            .then((res) => res[0]?.Addon.UUID || undefined);
-    }
-
+    
     /***********************************************************************************************/
     /*                                  Protected functions
     /***********************************************************************************************/
@@ -187,10 +145,6 @@ export class PagesApiService {
     /***********************************************************************************************/
     /*                                  Public functions
     /***********************************************************************************************/
-    // async getAddonUUID(installedAddonUUID: string) : Promise<string | undefined> {
-    //     const installedAddon = await this.papiClient.addons.installedAddons.uuid(installedAddonUUID).get();
-    //     return installedAddon?.Addon.UUID || undefined;
-    // }
     
     async getPage(pagekey: string, tableName: string = PAGES_TABLE_NAME): Promise<Page> {
         return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).key(pagekey).get() as Page;
@@ -199,16 +153,31 @@ export class PagesApiService {
     async createPagesTablesSchemes(): Promise<AddonDataScheme[]> {
         const promises: AddonDataScheme[] = [];
         
+        const DIMXSchema = {
+            Blocks: {
+                Type: "Array",
+                Items: {
+                    Type: "Object",
+                    Fields: {
+                        Configuration: {
+                            Type: "ContainedDynamicResource"
+                        }
+                    }
+                }
+            }
+        }
+
         // Create pages table
         const createPagesTable = await this.papiClient.addons.data.schemes.post({
             Name: PAGES_TABLE_NAME,
-            Type: 'cpi_meta_data'
+            Type: 'cpi_meta_data',
         });
-
+        
         // Create pages draft table
         const createPagesDraftTable = await this.papiClient.addons.data.schemes.post({
             Name: DRAFT_PAGES_TABLE_NAME,
             Type: 'meta_data',
+            Fields: DIMXSchema as any // Declare the schema for the import & export.
         });
 
         // Create pages variables table
@@ -228,89 +197,14 @@ export class PagesApiService {
         return Promise.all(promises);
     }
 
-    async createPagesRelations(): Promise<any> {
-        const title = 'Pages variables'; // The title of the tab in which the fields will appear;
-        const dataView: FormDataView = {
-            Type: 'Form',
-            Context: {
-                Object: {
-                    Resource: "None",
-                    InternalID: 1,
-                },
-                Name: 'Pages variables data view',
-                ScreenSize: 'Tablet',
-                Profile: {
-                    InternalID: 1,
-                    Name: 'MyProfile'
-                }
-            },
-            Fields: [{
-                FieldID: DEFAULT_BLOCKS_NUMBER_LIMITATION.key,
-                Type: 'NumberInteger',
-                Title: 'Blocks number limitation',
-                Mandatory: false,
-                ReadOnly: false,
-                Layout: {
-                    Origin: {
-                        X: 0,
-                        Y: 0
-                    },
-                    Size: {
-                        Width: 1,
-                        Height: 0
-                    }
-                },
-                Style: {
-                    Alignment: {
-                        Horizontal: 'Stretch',
-                        Vertical: 'Stretch'
-                    }
-                }
-            }, {
-                FieldID: DEFAULT_PAGE_SIZE_LIMITATION.key,
-                Type: 'NumberInteger',
-                Title: 'Blocks size limitation',
-                Mandatory: false,
-                ReadOnly: false,
-                Layout: {
-                    Origin: {
-                        X: 0,
-                        Y: 1
-                    },
-                    Size: {
-                        Width: 1,
-                        Height: 0
-                    }
-                },
-                Style: {
-                    Alignment: {
-                        Horizontal: 'Stretch',
-                        Vertical: 'Stretch'
-                    }
-                }
-            }]
-        };
-        
-        // Create new var settings relation.
-        const varSettingsRelation: Relation = {
-            RelationName: 'VarSettings',
-            Name: PAGES_VARIABLES_TABLE_NAME,
-            Description: 'Set pages variables from var settings',
-            Type: 'AddonAPI',
-            SubType: 'NG11',
-            AddonUUID: this.addonUUID,
-            AddonRelativeURL: '/api/pages_variables',
-            Title: title,
-            DataView: dataView
-        };                
-
-        return await this.papiClient.post('/addons/data/relations', varSettingsRelation);
+    createPagesRelations(): void {
+        this.createVarSettingsRelation();
+        this.createImportRelation();
+        this.createExportRelation();
     }
 
     async getPages(options: FindOptions | undefined = undefined): Promise<Page[]> {
         return await this.getPagesFrom(PAGES_TABLE_NAME, options);
-        // TODO: Handle options
-        // return await this.getPagesFrom(PAGES_TABLE_NAME);
     }
 
     savePage(page: Page): Promise<Page> {
@@ -359,9 +253,6 @@ export class PagesApiService {
     }
 
     async getPagesData(options: FindOptions | undefined = undefined): Promise<PageRowProjection[]> {
-        // TODO: Handle options
-        // let pages: Page[] = await this.getPagesFrom(PAGES_TABLE_NAME, options);
-        // let draftPages: Page[] = await this.getPagesFrom(DRAFT_PAGES_TABLE_NAME, options);
         let pages: Page[] = await this.getPagesFrom(PAGES_TABLE_NAME);
         let draftPages: Page[] = await this.getPagesFrom(DRAFT_PAGES_TABLE_NAME);
 
@@ -507,8 +398,86 @@ export class PagesApiService {
     }
     
     /***********************************************************************************************/
-    //                              VarSettings Public functions
+    //                              VarSettings functions
     /************************************************************************************************/
+    
+    private createVarSettingsRelation(): void {
+        const title = 'Pages variables'; // The title of the tab in which the fields will appear;
+        const dataView: FormDataView = {
+            Type: 'Form',
+            Context: {
+                Object: {
+                    Resource: "None",
+                    InternalID: 1,
+                },
+                Name: 'Pages variables data view',
+                ScreenSize: 'Tablet',
+                Profile: {
+                    InternalID: 1,
+                    Name: 'MyProfile'
+                }
+            },
+            Fields: [{
+                FieldID: DEFAULT_BLOCKS_NUMBER_LIMITATION.key,
+                Type: 'NumberInteger',
+                Title: 'Blocks number limitation',
+                Mandatory: false,
+                ReadOnly: false,
+                Layout: {
+                    Origin: {
+                        X: 0,
+                        Y: 0
+                    },
+                    Size: {
+                        Width: 1,
+                        Height: 0
+                    }
+                },
+                Style: {
+                    Alignment: {
+                        Horizontal: 'Stretch',
+                        Vertical: 'Stretch'
+                    }
+                }
+            }, {
+                FieldID: DEFAULT_PAGE_SIZE_LIMITATION.key,
+                Type: 'NumberInteger',
+                Title: 'Blocks size limitation',
+                Mandatory: false,
+                ReadOnly: false,
+                Layout: {
+                    Origin: {
+                        X: 0,
+                        Y: 1
+                    },
+                    Size: {
+                        Width: 1,
+                        Height: 0
+                    }
+                },
+                Style: {
+                    Alignment: {
+                        Horizontal: 'Stretch',
+                        Vertical: 'Stretch'
+                    }
+                }
+            }]
+        };
+        
+        // Create new var settings relation.
+        const varSettingsRelation: Relation = {
+            RelationName: 'VarSettings',
+            Name: PAGES_VARIABLES_TABLE_NAME,
+            Description: 'Set pages variables from var settings',
+            Type: 'AddonAPI',
+            AddonUUID: this.addonUUID,
+            AddonRelativeURL: '/api/pages_variables',
+            Title: title,
+            DataView: dataView
+        };                
+
+        this.papiClient.post('/addons/data/relations', varSettingsRelation);
+    }
 
     async savePagesVariables(varSettingsParams: any) {
         const blocksNumberLimitationValue = Number(varSettingsParams[DEFAULT_BLOCKS_NUMBER_LIMITATION.key]);
@@ -537,8 +506,142 @@ export class PagesApiService {
     }
 
     /***********************************************************************************************/
-    //                              PNS Public functions
+    //                              Import & Export functions
     /************************************************************************************************/
+    
+    private createImportRelation(): void {
+        const importRelation: Relation = {
+            RelationName: 'DataImportResource',
+            Name: DRAFT_PAGES_TABLE_NAME,
+            Description: 'Pages import',
+            Type: 'AddonAPI',
+            AddonUUID: this.addonUUID,
+            RelativeURL: '/internal_api/draft_pages_import', // '/api/pages_import',
+            MappingRelativeURL: '/internal_api/draft_pages_import_mapping', // '/api/pages_import_mapping',
+        };                
+
+        this.papiClient.post('/addons/data/relations', importRelation);
+    }
+
+    private createExportRelation(): void {
+        const exportRelation: Relation = {
+            RelationName: 'DataExportResource',
+            Name: DRAFT_PAGES_TABLE_NAME,
+            Description: 'Pages export',
+            Type: 'AddonAPI',
+            AddonUUID: this.addonUUID,
+            RelativeURL: '/internal_api/draft_pages_export', // '/api/pages_export',
+        };                
+
+        this.papiClient.post('/addons/data/relations', exportRelation);
+    }
+
+    private getDIMXResult(body: any, isImport: boolean): any {
+        const res = {};
+
+        // Validate the pages.
+        if (body.DIMXObjects?.length > 0) {
+            body.DIMXObjects.forEach(async (dimxObject: any) => {
+                try {
+                    const page = await this.validateAndOverridePageAccordingInterface(dimxObject['Object'], isImport);
+                    
+                    // For import always generate new Key and set the Hidden to false.
+                    if (isImport) {
+                        page.Key = uuidv4();
+                        page.Hidden = false;
+                    }
+                    dimxObject['Object'] = page;
+                } catch (err) {
+                    // Set the error on the page.
+                    dimxObject['Status'] = 'Error';
+                    dimxObject['Details'] = err;
+                }
+            });
+        }
+
+        return res;
+    }
+
+    importPages(body: any, draft = true): any {
+        const res = this.getDIMXResult(body, true);
+        return res;
+    }
+
+    importMappingPages(body: any, draft = true): any {
+        const res = {};
+        
+        // TODO: Check if we need this?
+        // // Change the page key to a new one.
+        // if (body.Objects?.length > 0) {
+        //     body.Objects.forEach((page: Page) => {
+        //         if (page.Key) {
+        //             res[page.Key] = {
+        //                 Action: 'Replace',
+        //                 NewKey: uuidv4()
+        //             };
+        //         }
+        //     });
+        // }
+
+        return res;
+    }
+    
+    exportPages(body: any, draft = true): any {
+        const res = this.getDIMXResult(body, false);
+        return res;
+    }
+
+    /***********************************************************************************************/
+    //                              PNS functions
+    /************************************************************************************************/
+    
+    private async deleteBlockFromPage(page: Page, addonUUID: string, tableName: string) {
+        try {
+            // Get the blocks to remove by the addon UUID
+            const blocksToRemove = page.Blocks.filter(block => block.Relation.AddonUUID === addonUUID);
+
+            if (blocksToRemove?.length > 0) {
+                    console.log(`page blocks before - ${JSON.stringify(page.Blocks)}`);
+
+                    // Remove the page blocks with the addonUUID
+                    page.Blocks = page.Blocks.filter(block => block.Relation.AddonUUID !== addonUUID);
+
+                    console.log(`page blocks after - ${JSON.stringify(page.Blocks)}`);
+
+                    // Remove the blocks from the columns.
+                    for (let sectioIndex = 0; sectioIndex < page.Layout.Sections.length; sectioIndex++) {
+                        const section = page.Layout.Sections[sectioIndex];
+                        
+                        for (let columnIndex = 0; columnIndex < section.Columns.length; columnIndex++) {
+                            const column = section.Columns[columnIndex];
+                            
+                            if (column.BlockContainer && blocksToRemove.some(btr => btr.Key === column.BlockContainer?.BlockKey)) {
+                                console.log(`delete block with the key - ${JSON.stringify(column.BlockContainer.BlockKey)}`);
+                                delete column.BlockContainer;
+                            }
+                        }
+                    }
+
+                    // Update the page
+                    await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page);
+            }
+        } catch (err) {
+            console.log(`err - ${JSON.stringify(err)}`);
+            // Do nothing.
+        }
+    }
+
+    private getAddonUUID(installedAddonUUID: string): Promise<string | undefined>  {
+        // need to use where clause b/c currently there is no endpoint for
+        // retrieving an installed addon by UUID
+        return this.papiClient.addons.installedAddons
+            .find({
+                where: `UUID = '${installedAddonUUID}'`,
+                include_deleted: true,
+            })
+            .then((res) => res[0]?.Addon.UUID || undefined);
+    }
+
     async subscribeUninstallAddons(key: string, functionPath: string): Promise<Subscription> {
         return await this.papiClient.notification.subscriptions.upsert({
             Key: key,
@@ -587,7 +690,7 @@ export class PagesApiService {
                     
                     console.log(`pages length - ${pages.length}`);
 
-                    // Delete the blocks with this addonUUID from al the pages.
+                    // Delete the blocks with this addonUUID from all the pages.
                     for (let index = 0; index < pages.length; index++) {
                         const page = pages[index];
                         console.log(`page before - ${JSON.stringify(page)}`);
@@ -604,6 +707,7 @@ export class PagesApiService {
     /***********************************************************************************************/
     //                              Addon block data Public functions
     /************************************************************************************************/
+    
     async getAddonBlockData(name: string): Promise<IBlockLoaderData> {
         const promise = new Promise<IBlockLoaderData>(async (resolve, reject) => {
             // Get the addon blocks relations 

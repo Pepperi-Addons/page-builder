@@ -56,3 +56,30 @@ export async function pages_variables(client:Client, request: Request): Promise<
         throw err;
     }
 }
+
+// export async function pages_import(client:Client, request: Request): Promise<any> {
+//     try {
+//         const service = new PagesApiService(client);
+//         return service.importPages(request.body);
+//     } catch(err) {
+//         throw err;
+//     }
+// }
+
+// export async function pages_import_mapping(client:Client, request: Request): Promise<any> {
+//     try {
+//         const service = new PagesApiService(client);
+//         return service.importMappingPages(request.body);
+//     } catch(err) {
+//         throw err;
+//     }
+// }
+
+// export async function pages_export(client:Client, request: Request): Promise<any> {
+//     try {
+//         const service = new PagesApiService(client);
+//         return service.exportPages(request.body);
+//     } catch(err) {
+//         throw err;
+//     }
+// }

@@ -331,18 +331,25 @@ export class PagesValidatorService {
             if (block?.PageConfiguration) {
                 for (let parameterIndex = 0; parameterIndex < block.PageConfiguration.Parameters?.length; parameterIndex++) {
                     const parameter = block.PageConfiguration.Parameters[parameterIndex];
-                    
+                    const paramKey = parameter.Key;
+                    const paramType = parameter.Type;
+
+                    // Validate parameter Type.
+                    if (paramType !== 'String' && paramType !== 'Filter') {
+                        throw new Error(`Parameter type - ${paramType} is not supported, The supported types are ["String", "Filter"].`);
+                    }
+
                     // If the parameter key isn't exist insert it to the map, else, check the type if isn't the same then throw error.
-                    if (!parameterKeys.has(parameter.Key)) {
-                        parameterKeys.set(parameter.Key, parameter);
+                    if (!parameterKeys.has(paramKey)) {
+                        parameterKeys.set(paramKey, parameter);
                     } else {
-                        if (parameter.Type !== parameterKeys.get(parameter.Key)?.Type) {
-                            throw new Error(`Parameters with key ${parameter.Key} should be with the same Type.`);
+                        if (paramType !== parameterKeys.get(paramKey)?.Type) {
+                            throw new Error(`Parameters with key ${paramKey} should be with the same Type.`);
                         }
                     }
 
                     if (!parameter.Produce && !parameter.Consume) {
-                        throw new Error(`The parameter (with key ${parameter.Key}) is not allowed, at least on of the properties Produce or Consume should be true.`);
+                        throw new Error(`The parameter (with key ${paramKey}) is not allowed, at least on of the properties Produce or Consume should be true.`);
                     }
                 }
             }

@@ -129,9 +129,6 @@ export class SectionBlockComponent implements OnInit {
     onBlockHostEvents(event: any) {
         // Implement blocks events.
         switch(event.action) {
-            // case 'block-loaded':
-            //     this.pagesService.updateBlockLoaded(this.pageBlock.Key);
-            //     break;
             case 'set-parameter':
                 this.pagesService.setBlockParameter(this.pageBlock.Key, event);
                 break;

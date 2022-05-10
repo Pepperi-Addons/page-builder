@@ -81,3 +81,30 @@ export async function on_uninstall_block_draft(client:Client, request: Request):
         throw new Error(`Failed to remove uninstall block from pages. error - ${err}`);
     }
 }
+
+export async function draft_pages_import(client:Client, request: Request): Promise<any> {
+    try {
+        const service = new PagesApiService(client);
+        return service.importPages(request.body);
+    } catch(err) {
+        throw err;
+    }
+}
+
+export async function draft_pages_import_mapping(client:Client, request: Request): Promise<any> {
+    try {
+        const service = new PagesApiService(client);
+        return service.importMappingPages(request.body);
+    } catch(err) {
+        throw err;
+    }
+}
+
+export async function draft_pages_export(client:Client, request: Request): Promise<any> {
+    try {
+        const service = new PagesApiService(client);
+        return service.exportPages(request.body);
+    } catch(err) {
+        throw err;
+    }
+}

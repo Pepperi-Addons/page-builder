@@ -308,10 +308,12 @@ export class PagesService {
             const isConsumeFilters = block.PageConfiguration.Parameters.some(param => param.Consume);
             const isProduceFilters = block.PageConfiguration.Parameters.some(param => param.Produce);
 
-            if (isConsumeFilters && isProduceFilters) {
-                priority = this.PRODUCERS_AND_CONSUMERS_PRIORITY;
-            } else if (isConsumeFilters) {
-                priority = this.CONSUMERS_PRIORITY;
+            if (isConsumeFilters) {
+                if (isProduceFilters) {
+                    priority = this.PRODUCERS_AND_CONSUMERS_PRIORITY;
+                } else {
+                    priority = this.CONSUMERS_PRIORITY;
+                }
             }
         }
 
