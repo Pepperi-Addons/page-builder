@@ -154,6 +154,9 @@ export class PagesApiService {
         const promises: AddonDataScheme[] = [];
         
         const DIMXSchema = {
+            Key: { Type: "String"},
+            Name: { Type: "String"},
+            Description: { Type: "String"},
             Blocks: {
                 Type: "Array",
                 Items: {
@@ -164,8 +167,46 @@ export class PagesApiService {
                         }
                     }
                 }
-            }
-        }
+            },
+            Layout: { 
+                Type: "Object",
+                Fields: {
+                    Sections: {
+                        Type: "Array",
+                        Items: {
+                            Type: "Object",
+                            Fields: {
+                                Key: { Type: "String"},
+                                Name: { Type: "String"},
+                                Height: { Type: "String"},
+                                Split: { Type: "String"},
+                                Columns: {
+                                    Type: "Array",
+                                    Items: {
+                                        Type: "Object",
+                                        Fields: {
+                                            BlockContainer: {
+                                                Type: "Object",
+                                                Fields: {
+                                                    BlockKey: { Type: "String"},
+                                                    Hide: { Type: "String"},
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                Hide: { Type: "String"},
+                            }
+                        }
+                    },
+                    SectionsGap: { Type: "String"},
+                    CoulmnsGap: { Type: "String"},
+                    HorizontalSpacing: { Type: "String"},
+                    VerticalSpacing: { Type: "String"},
+                    MaxWidth: { Type: "String"},
+                }
+            },
+        };
 
         // Create pages table
         const createPagesTable = await this.papiClient.addons.data.schemes.post({
@@ -360,21 +401,20 @@ export class PagesApiService {
         return promise;
     }
     
-    async restoreToLastPublish(query: any): Promise<Page> {
-        let res = false;
+    async restoreToLastPublish(query: any): Promise<boolean> {
         const pagekey = query['key'];
+
         if (pagekey) {
             let page = await this.getPage(pagekey, PAGES_TABLE_NAME);
 
             // In case that the page was never published.
             if (!page) {
                 page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
+                return this.publishPage(page);
+            } else {
+                const pageCopy = JSON.parse(JSON.stringify(page));
+                return this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
             }
-
-            const pageCopy = JSON.parse(JSON.stringify(page));
-            this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
-
-            return Promise.resolve(page);
         }
         
         return Promise.reject(null);
@@ -516,8 +556,8 @@ export class PagesApiService {
             Description: 'Pages import',
             Type: 'AddonAPI',
             AddonUUID: this.addonUUID,
-            RelativeURL: '/internal_api/draft_pages_import', // '/api/pages_import',
-            MappingRelativeURL: '/internal_api/draft_pages_import_mapping', // '/api/pages_import_mapping',
+            AddonRelativeURL: '/internal_api/draft_pages_import', // '/api/pages_import',
+            MappingRelativeURL: '' // '/internal_api/draft_pages_import_mapping', // '/api/pages_import_mapping',
         };                
 
         this.papiClient.post('/addons/data/relations', importRelation);
@@ -530,15 +570,13 @@ export class PagesApiService {
             Description: 'Pages export',
             Type: 'AddonAPI',
             AddonUUID: this.addonUUID,
-            RelativeURL: '/internal_api/draft_pages_export', // '/api/pages_export',
+            AddonRelativeURL: '/internal_api/draft_pages_export', // '/api/pages_export',
         };                
 
         this.papiClient.post('/addons/data/relations', exportRelation);
     }
 
     private getDIMXResult(body: any, isImport: boolean): any {
-        const res = {};
-
         // Validate the pages.
         if (body.DIMXObjects?.length > 0) {
             body.DIMXObjects.forEach(async (dimxObject: any) => {
@@ -558,8 +596,8 @@ export class PagesApiService {
                 }
             });
         }
-
-        return res;
+        
+        return body;
     }
 
     importPages(body: any, draft = true): any {

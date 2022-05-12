@@ -1,4 +1,3 @@
-import { ActivatedRoute } from '@angular/router';
 import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
 import { PepButton } from '@pepperi-addons/ngx-lib/button';
@@ -9,8 +8,8 @@ import { IEditor, PagesService, IPageEditor, ISectionEditor } from '../../servic
 import { NavigationService } from '../../services/navigation.service';
 import { IPepSideBarStateChangeEvent } from '@pepperi-addons/ngx-lib/side-bar';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
-import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { UtilitiesService } from 'src/app/services/utilities.service';
+import { DIMXComponent } from '@pepperi-addons/ngx-composite-lib/dimx-export';
 
 @Component({
     selector: 'page-manager',
@@ -19,7 +18,8 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 })
 export class PageManagerComponent implements OnInit {
     @ViewChild('pageBuilderWrapper', { static: true }) pageBuilderWrapper: ElementRef;
-
+    @ViewChild('dimx') dimx:DIMXComponent | undefined;
+    
     private readonly RESTORE_TO_LAST_PUBLISH_KEY = 'restore';
     private readonly IMPORT_KEY = 'import';
     private readonly EXPORT_KEY = 'export';
@@ -47,6 +47,7 @@ export class PageManagerComponent implements OnInit {
     // pageSize: number = 0;
     pageSizeLimitInPercentage: number = 0;
     isOverPageSizeLimit = false;
+    pageName: string;
 
     constructor(
         private renderer: Renderer2,
@@ -54,8 +55,8 @@ export class PageManagerComponent implements OnInit {
         private pepUtilitiesService: PepUtilitiesService,
         private layoutService: PepLayoutService,
         private pagesService: PagesService,
-        private navigationService: NavigationService,
-        private utilitiesService: UtilitiesService
+        private utilitiesService: UtilitiesService,
+        public navigationService: NavigationService,
     ) {
     }
 
@@ -136,6 +137,7 @@ export class PageManagerComponent implements OnInit {
         // For update the page data
         this.pagesService.pageDataChange$.subscribe((page: Page) => {
             if (page) {
+                this.pageName = page.Name || `page_${page.Key}`;
                 const pageSize = this.utilitiesService.getObjectSize(page, 'kb');
                 this.pageSizeLimitInPercentage = pageSize * 100 / this.pagesService.PAGE_SIZE_LIMITATION_OBJECT.value;
                 this.isOverPageSizeLimit = pageSize >= this.pagesService.PAGE_SIZE_LIMITATION_OBJECT.value;
@@ -224,9 +226,12 @@ export class PageManagerComponent implements OnInit {
                 });
             });
         } else if (action.source.key === this.IMPORT_KEY) { // Import page
-            // TODO: Implement
+            this.dimx?.uploadFile({});
         } else if (action.source.key === this.EXPORT_KEY) { // Export page
-            // TODO: Implement
+            this.dimx?.DIMXExportRun({ 
+                DIMXExportFormat: 'json',
+                DIMXExportFileName: this.pageName,
+            });
         }
     }
 
@@ -240,5 +245,9 @@ export class PageManagerComponent implements OnInit {
         this.pagesService.publishCurrentPage(this.navigationService.addonUUID).subscribe(res => {
             this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
         });
+    }
+
+    onDIMXProcessDone(event:any) {
+        console.log(`DIMXProcessDone: ${JSON.stringify(event)}`);
     }
 }
