@@ -63,4 +63,68 @@ export const DEFAULT_BLANK_PAGE_DATA: Page = {
         ],
     }
 }
-  
+
+// const PageSchema = {
+//     Key: { Type: "String"},
+//     Name: { Type: "String"},
+//     Description: { Type: "String"},
+//     Blocks: {
+//         Type: "Array",
+//         Items: {
+//             Type: "Object",
+//             Fields: {
+//                 Configuration: {
+//                     Type: "ContainedDynamicResource"
+//                 }
+//             }
+//         }
+//     },
+//     Layout: { 
+//         Type: "Object",
+//         Fields: {
+//             Sections: {
+//                 Type: "Array",
+//                 Items: {
+//                     Type: "Object",
+//                     Fields: {
+//                         Key: { Type: "String"},
+//                         Name: { Type: "String"},
+//                         Height: { Type: "String"},
+//                         Split: { Type: "String"},
+//                         Columns: {
+//                             Type: "Array",
+//                             Items: {
+//                                 Type: "Object",
+//                                 Fields: {
+//                                     BlockContainer: {
+//                                         Type: "Object",
+//                                         Fields: {
+//                                             BlockKey: { Type: "String"},
+//                                             Hide: { 
+//                                                 Type: "Array",
+//                                                 Items: {
+//                                                     Type: "String"
+//                                                 }
+//                                             },
+//                                         }
+//                                     }
+//                                 }
+//                             }
+//                         },
+//                         Hide: { 
+//                             Type: "Array",
+//                             Items: {
+//                                 Type: "String"
+//                             }
+//                         },
+//                     }
+//                 }
+//             },
+//             SectionsGap: { Type: "String"},
+//             CoulmnsGap: { Type: "String"},
+//             HorizontalSpacing: { Type: "String"},
+//             VerticalSpacing: { Type: "String"},
+//             MaxWidth: { Type: "String"},
+//         }
+//     },
+// }

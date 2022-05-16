@@ -154,9 +154,6 @@ export class PagesApiService {
         const promises: AddonDataScheme[] = [];
         
         const DIMXSchema = {
-            Key: { Type: "String"},
-            Name: { Type: "String"},
-            Description: { Type: "String"},
             Blocks: {
                 Type: "Array",
                 Items: {
@@ -166,44 +163,6 @@ export class PagesApiService {
                             Type: "ContainedDynamicResource"
                         }
                     }
-                }
-            },
-            Layout: { 
-                Type: "Object",
-                Fields: {
-                    Sections: {
-                        Type: "Array",
-                        Items: {
-                            Type: "Object",
-                            Fields: {
-                                Key: { Type: "String"},
-                                Name: { Type: "String"},
-                                Height: { Type: "String"},
-                                Split: { Type: "String"},
-                                Columns: {
-                                    Type: "Array",
-                                    Items: {
-                                        Type: "Object",
-                                        Fields: {
-                                            BlockContainer: {
-                                                Type: "Object",
-                                                Fields: {
-                                                    BlockKey: { Type: "String"},
-                                                    Hide: { Type: "String"},
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                Hide: { Type: "String"},
-                            }
-                        }
-                    },
-                    SectionsGap: { Type: "String"},
-                    CoulmnsGap: { Type: "String"},
-                    HorizontalSpacing: { Type: "String"},
-                    VerticalSpacing: { Type: "String"},
-                    MaxWidth: { Type: "String"},
                 }
             },
         };
@@ -557,7 +516,7 @@ export class PagesApiService {
             Type: 'AddonAPI',
             AddonUUID: this.addonUUID,
             AddonRelativeURL: '/internal_api/draft_pages_import', // '/api/pages_import',
-            MappingRelativeURL: '' // '/internal_api/draft_pages_import_mapping', // '/api/pages_import_mapping',
+            MappingRelativeURL: '/internal_api/draft_pages_import_mapping', // '/api/pages_import_mapping',
         };                
 
         this.papiClient.post('/addons/data/relations', importRelation);
@@ -585,7 +544,7 @@ export class PagesApiService {
                     
                     // For import always generate new Key and set the Hidden to false.
                     if (isImport) {
-                        page.Key = uuidv4();
+                        // page.Key = uuidv4(); // This step happans in the importMappingPages function
                         page.Hidden = false;
                     }
                     dimxObject['Object'] = page;
@@ -608,18 +567,17 @@ export class PagesApiService {
     importMappingPages(body: any, draft = true): any {
         const res = {};
         
-        // TODO: Check if we need this?
-        // // Change the page key to a new one.
-        // if (body.Objects?.length > 0) {
-        //     body.Objects.forEach((page: Page) => {
-        //         if (page.Key) {
-        //             res[page.Key] = {
-        //                 Action: 'Replace',
-        //                 NewKey: uuidv4()
-        //             };
-        //         }
-        //     });
-        // }
+        // Change the page key to a new one.
+        if (body.Objects?.length > 0) {
+            body.Objects.forEach((page: Page) => {
+                if (page.Key) {
+                    res[page.Key] = {
+                        Action: 'Replace',
+                        NewKey: uuidv4()
+                    };
+                }
+            });
+        }
 
         return res;
     }

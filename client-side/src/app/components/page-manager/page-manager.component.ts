@@ -47,7 +47,7 @@ export class PageManagerComponent implements OnInit {
     // pageSize: number = 0;
     pageSizeLimitInPercentage: number = 0;
     isOverPageSizeLimit = false;
-    pageName: string;
+    currentPage: Page;
 
     constructor(
         private renderer: Renderer2,
@@ -137,7 +137,7 @@ export class PageManagerComponent implements OnInit {
         // For update the page data
         this.pagesService.pageDataChange$.subscribe((page: Page) => {
             if (page) {
-                this.pageName = page.Name || `page_${page.Key}`;
+                this.currentPage = page;
                 const pageSize = this.utilitiesService.getObjectSize(page, 'kb');
                 this.pageSizeLimitInPercentage = pageSize * 100 / this.pagesService.PAGE_SIZE_LIMITATION_OBJECT.value;
                 this.isOverPageSizeLimit = pageSize >= this.pagesService.PAGE_SIZE_LIMITATION_OBJECT.value;
@@ -226,11 +226,14 @@ export class PageManagerComponent implements OnInit {
                 });
             });
         } else if (action.source.key === this.IMPORT_KEY) { // Import page
-            this.dimx?.uploadFile({});
+            this.dimx?.uploadFile({
+                OwnerID: this.navigationService.addonUUID,
+            });
         } else if (action.source.key === this.EXPORT_KEY) { // Export page
             this.dimx?.DIMXExportRun({ 
                 DIMXExportFormat: 'json',
-                DIMXExportFileName: this.pageName,
+                DIMXExportFileName: this.currentPage.Name || `page_${this.currentPage.Key}`,
+                DIMXExportWhere: 'Key="' + this.currentPage.Key + '"'
             });
         }
     }
