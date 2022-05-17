@@ -19,6 +19,8 @@ import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
 
+import { PepDIMXModule } from '@pepperi-addons/ngx-composite-lib/dimx-export';
+
 import { PepGenericListModule } from '@pepperi-addons/ngx-composite-lib/generic-list';
 
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -53,6 +55,7 @@ const routes: Routes = [
         PepCheckboxModule,
         // PepIconModule,
         MatIconModule,
+        PepDIMXModule,
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,

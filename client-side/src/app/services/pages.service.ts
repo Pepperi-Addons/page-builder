@@ -1618,9 +1618,9 @@ export class PagesService {
         return this.httpService.getHttpCall(`${baseUrl}/get_pages_data?${options}`);
     }
 
-    createNewPage(addonUUID: string, templateId: any, totalPages: number = 0): Observable<Page> {
+    createNewPage(addonUUID: string, templateFileName: any, totalPages: number = 0): Observable<Page> {
         const baseUrl = this.getBaseUrl(addonUUID);
-        return this.httpService.getHttpCall(`${baseUrl}/create_page?templateId=${templateId}&pageNum=${totalPages+1}`);
+        return this.httpService.getHttpCall(`${baseUrl}/create_page?templateFileName=${templateFileName}&pageNum=${totalPages+1}`);
     }
 
     // Delete the page

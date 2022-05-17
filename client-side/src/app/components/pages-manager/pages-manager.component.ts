@@ -1,5 +1,5 @@
 import { NavigationService } from './../../services/navigation.service';
-import { PagesService } from '../../services/pages.service';
+import { IPageRowModel, PagesService } from '../../services/pages.service';
 import { AfterViewInit, Component, OnInit, Renderer2, ViewChild } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
@@ -7,11 +7,11 @@ import { IPepGenericListDataSource, IPepGenericListPager, IPepGenericListActions
 import { PepAddonService } from '@pepperi-addons/ngx-lib';
 import { DataViewFieldType, GridDataViewField, Page } from '@pepperi-addons/papi-sdk';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { IPepFormFieldClickEvent } from '@pepperi-addons/ngx-lib/form';
 import { PepSelectionData } from '@pepperi-addons/ngx-lib/list';
+import { DIMXComponent } from '@pepperi-addons/ngx-composite-lib/dimx-export';
 
-export enum Page_Type { "Homepage" = 1, "Dashbaord" = 2, "Item" = 3, "Generic" = 4, "None" = 5 };
+export type TempPageType = 'homepage' | 'dashbaord' | 'item' | 'generic' | 'none';
 
 export class pageGroup {
     title: string = '';
@@ -19,11 +19,9 @@ export class pageGroup {
     pages: Array<TempPage> = [];
 }
 export class TempPage {
+    // id: number = 0;
+    type: TempPageType = 'none';
     name: string = '';
-    description: string = '';
-    id: number = 0;
-    type: Page_Type = Page_Type.None;
-
 }
 
 @Component({
@@ -33,24 +31,31 @@ export class TempPage {
 })
 
 export class PagesManagerComponent implements OnInit {
+    @ViewChild('dimx') dimx:DIMXComponent | undefined;
+    
+    private readonly IMPORT_KEY = 'import';
     
     private selectedPageID = '';
     // mainMenuItems: Array<PepMenuItem> = null;
-    totalPages: 0;
+    totalPages: number = 0;
+    pages: IPageRowModel[];
+
     secondaryMenuItems: Array<PepMenuItem> = null;
     isAddNewPage = false;
     softLimitPagesNumber = 100;
     pagesDataSource: IPepGenericListDataSource;
-
-    tempPages: Array<TempPage> = [{id: 1, name: "PAGES_MANAGER.ADDNEW_BLANK" , description: 'PAGES_MANAGER.ADDNEW_BLANK_DESC', type: Page_Type.Homepage},
-                                  {id: 2, name: 'PAGES_MANAGER.ADDNEW_GRIDY' , description: 'PAGES_MANAGER.ADDNEW_GRIDY_DESC', type: Page_Type.Homepage},
-                                  {id: 3, name: 'PAGES_MANAGER.ADDNEW_SIMPLISTIC' , description: 'PAGES_MANAGER.ADDNEW_SIMPLISTIC_DESC', type: Page_Type.Homepage},
-                                  {id: 4, name: 'PAGES_MANAGER.ADDNEW_BRANDED' , description: 'PAGES_MANAGER.ADDNEW_BRANDED_DESC', type: Page_Type.Homepage}];
-
-    pageGroups: Array<pageGroup> = [{ title: "PAGES_MANAGER.ADDNEW_HOMEPAGE", isExpanded: true, pages: this.tempPages}
-    //                               ,{ title: "PAGES_MANAGER.ADDNEW_DASHBOARD", isExpanded: false, pages: this.tempPages},
-    //                               { title: "PAGES_MANAGER.ADDNEW_ITEM", isExpanded: false, pages: this.tempPages},
-    //                               { title: "PAGES_MANAGER.ADDNEW_GENERIC", isExpanded: false, pages: this.tempPages}
+    
+    tempPages: Array<TempPage> = [
+        { type: 'homepage', name: 'blank'},
+        { type: 'homepage', name: 'gridy'},
+        { type: 'homepage', name: 'simplistic'},
+        { type: 'homepage', name: 'branded'}
+    ];
+    
+    pageGroups: Array<pageGroup> = [{ title: "PAGES_MANAGER.ADD_NEW.TEMPLATES.GROUPS.HOMEPAGE", isExpanded: true, pages: this.tempPages}
+    //                               ,{ title: "PAGES_MANAGER.ADD_NEW.TEMPLATES.GROUPS.DASHBOARD", isExpanded: false, pages: this.tempPages},
+    //                               { title: "PAGES_MANAGER.ADD_NEW.TEMPLATES.GROUPS.ITEM", isExpanded: false, pages: this.tempPages},
+    //                               { title: "PAGES_MANAGER.ADD_NEW.TEMPLATES.GROUPS.GENERIC", isExpanded: false, pages: this.tempPages}
 
     ];
 
@@ -60,7 +65,7 @@ export class PagesManagerComponent implements OnInit {
     constructor (
         private renderer: Renderer2,
         private translate: TranslateService,
-        private navigationService: NavigationService,
+        public navigationService: NavigationService,
         private pepAddonService: PepAddonService,
         private pagesService: PagesService,
         public dialog: PepDialogService,
@@ -97,15 +102,15 @@ export class PagesManagerComponent implements OnInit {
                         options += `&where=${params.searchString}`;
                     }
                     
-                    const pageList: any = await this.pagesService.getPages(this.navigationService.addonUUID, encodeURI(options)).toPromise().then((pages) => {
+                    this.pages = await this.pagesService.getPages(this.navigationService.addonUUID, encodeURI(options)).toPromise().then((pages) => {
                         return pages; 
                     });
 
-                    this.totalPages = pageList.length;
+                    this.totalPages = this.pages.length;
 
                     return {
-                        items:  pageList,
-                                totalCount: pageList.length, 
+                        items:  this.pages,
+                                totalCount: this.pages.length, 
                                 dataView: {
                                     Context: {
                                         Name: '',
@@ -147,22 +152,28 @@ export class PagesManagerComponent implements OnInit {
                         handler: async (data: PepSelectionData) => {
                             this.navigationService.navigateToPage([data?.rows[0]].toString());
                         }
-                        },{
-                            title: this.translate.instant("ACTIONS.EXPORT"),
-                            handler: async (data: PepSelectionData) => {
-                                // TODO - ADD EXPORT PAGES CALL
-                                //this.pagesService.exportPage([data?.rows[0]].toString());
-                            }
-                        },
-                        {
-                            title: this.translate.instant("ACTIONS.DELETE"),
-                            handler: async (data: PepSelectionData) => {
-                                if (data?.rows.length > 0) {
-                                    this.deletePage(data?.rows[0]);
-                                }
+                    }, {
+                        title: this.translate.instant("ACTIONS.EXPORT"),
+                        handler: async (data: PepSelectionData) => {
+                            const pageKey = data?.rows[0];
+                            const page = this.pages.find(p => p.Key === pageKey);
+
+                            this.dimx?.DIMXExportRun({ 
+                                DIMXExportFormat: 'json',
+                                // DIMXExportIncludeDeleted: true,
+                                DIMXExportFileName: page?.Name || `page_${pageKey}`,
+                                DIMXExportWhere: 'Key="' + pageKey + '"'
+                            });
+                        }
+                    }, {
+                        title: this.translate.instant("ACTIONS.DELETE"),
+                        handler: async (data: PepSelectionData) => {
+                            if (data?.rows.length > 0) {
+                                this.deletePage(data?.rows[0]);
                             }
                         }
-                    ]
+                    }
+                ]
             } 
             else {
                 return [];
@@ -171,7 +182,6 @@ export class PagesManagerComponent implements OnInit {
     }
 
     ngOnInit() {
-        
     }
 
     canAddPage(): boolean {
@@ -200,22 +210,28 @@ export class PagesManagerComponent implements OnInit {
 
     onMenuItemClicked(event: IPepMenuItemClickEvent = null) {
         const menuItem = event.source;
-        switch(menuItem.key){
-            case 'export': {
-                //this.pagesService.exportPage(this.selectedPageID == '');
-                break;
-            }
-            case 'import': {
+        switch(menuItem.key) {
+            case this.IMPORT_KEY: {
                 if (this.canAddPage()) {
-                    // TODO:
+                    this.dimx?.uploadFile({
+                        OwnerID: this.navigationService.addonUUID,
+                    });
                 }
                 break;
             }
-        } 
-    };
+        }
+    }
+    
+    onDIMXProcessDone(event:any) {
+        // TODO: If this is a DIMX import, we need to refresh the list.
+        // this.pagesDataSource = this.setDataSource();
+        console.log(`DIMXProcessDone: ${JSON.stringify(event)}`);
+    }
 
     createTemplatePage(template: TempPage) {
-        this.pagesService.createNewPage(this.navigationService.addonUUID, template.id, this.totalPages).subscribe((page: Page) => {
+        const templateFileName = `${template.type}_${template.name}`
+        this.pagesService.createNewPage(this.navigationService.addonUUID, templateFileName, this.totalPages).subscribe((page: Page) => {
+            debugger;
             if (page) {
                 this.navigationService.navigateToPage(page.Key);
             } else {

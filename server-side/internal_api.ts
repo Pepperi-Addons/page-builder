@@ -85,7 +85,11 @@ export async function on_uninstall_block_draft(client:Client, request: Request):
 export async function draft_pages_import(client:Client, request: Request): Promise<any> {
     try {
         const service = new PagesApiService(client);
-        return service.importPages(request.body);
+        console.log('@@@@@@@@ draft_pages_import - before importPages ', JSON.stringify(request.body));
+        const res = await service.importPages(request.body);
+        console.log('@@@@@@@@ draft_pages_import - after importPages ', JSON.stringify(res));
+        return res;
+        
     } catch(err) {
         throw err;
     }
@@ -94,7 +98,10 @@ export async function draft_pages_import(client:Client, request: Request): Promi
 export async function draft_pages_import_mapping(client:Client, request: Request): Promise<any> {
     try {
         const service = new PagesApiService(client);
-        return service.importMappingPages(request.body);
+        console.log('draft_pages_import_mapping - before ', JSON.stringify(request.body));
+        const res = await service.importMappingPages(request.body);
+        console.log('draft_pages_import_mapping - after ', JSON.stringify(res));
+        return res;
     } catch(err) {
         throw err;
     }
@@ -103,7 +110,7 @@ export async function draft_pages_import_mapping(client:Client, request: Request
 export async function draft_pages_export(client:Client, request: Request): Promise<any> {
     try {
         const service = new PagesApiService(client);
-        return service.exportPages(request.body);
+        return await service.exportPages(request.body);
     } catch(err) {
         throw err;
     }

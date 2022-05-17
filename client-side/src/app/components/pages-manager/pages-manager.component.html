@@ -1,10 +1,12 @@
+<pep-dimx #dimx [DIMXAddonUUID]="navigationService.addonUUID" [DIMXResource]="'PagesDrafts'" (DIMXProcessDone)="onDIMXProcessDone($event);"></pep-dimx>
+
 <pep-page-layout>
     <ng-container pep-top-area>
         <pep-top-bar class="main-top-header" [title]="!isAddNewPage ? ('PAGES_MANAGER.MAIN_HEADER' | translate) : ''">
             <div header-start-content>
                 <div *ngIf="isAddNewPage" header-end-content>
                     <pep-button  class="back-button pull-left flip pep-spacing-element" iconName="arrow_left_alt" (buttonClick)="navigateBackToMainPage();"></pep-button>
-                    <div class="main-header pep-spacing-element title title-lg pull-left flip"><span  title="Select a Page">{{'PAGES_MANAGER.ADDNEW_HEADER' | translate}}</span></div>
+                    <div class="main-header pep-spacing-element title title-lg pull-left flip"><span  title="Select a Page">{{'PAGES_MANAGER.ADD_NEW.HEADER' | translate}}</span></div>
                 </div>
             </div>
             <!-- <div header-end-content>
@@ -60,7 +62,7 @@
 <ng-template #addNewBlock>
     <div class="add-on-width">
     <div class="pageExplanation">
-        <span class="body-md">{{ 'PAGES_MANAGER.ADDNEW_EXPLANATION' | translate }}</span>
+        <span class="body-md">{{ 'PAGES_MANAGER.ADD_NEW.EXPLANATION' | translate }}</span>
         <div>
             <p><label class="body-xs ellipsis">{{ 'PAGES_MANAGER.LINKS_HEADER' | translate }}</label></p>
             <p><label class="color-link body-sm ellipsis" (click)="openLink('Using')">{{ 'PAGES_MANAGER.LINKS_USING' | translate }}</label></p>
@@ -79,10 +81,10 @@
           </mat-expansion-panel-header>
             <div class="page-cube pull-left flip" *ngFor="let tmpPage of  group.pages">
                 <div class="page-cube-inner" (click)="createTemplatePage(tmpPage)">
-                    <div class="logo">{{tmpPage.name | translate}}</div>
+                    <div class="logo">{{'PAGES_MANAGER.ADD_NEW.TEMPLATES.PAGES.' + tmpPage.name.toUpperCase() + '.NAME' | translate}}</div>
                     <div class="activeTemplate">{{'PAGES_MANAGER.USE_THIS' | translate}}</div>
                 </div>
-                <div class="body-xs">{{tmpPage.description | translate}}</div>
+                <div class="body-xs">{{ 'PAGES_MANAGER.ADD_NEW.TEMPLATES.PAGES.' + tmpPage.name.toUpperCase() + '.DESC' | translate}}</div>
             </div>
         </mat-expansion-panel>
       </mat-accordion>

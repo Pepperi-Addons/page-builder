@@ -16,7 +16,7 @@ export async function pages(client: Client, request: Request): Promise<any> {
         let res;
 
         if (request.method === 'POST') {
-            res = service.savePage(request.body);
+            res = service.publishPage(request.body);
         } else if (request.method === 'GET') {
             res = service.getPages(request.query);
         } else {

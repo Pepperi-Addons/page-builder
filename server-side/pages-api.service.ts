@@ -3,6 +3,8 @@ import { Client } from '@pepperi-addons/debug-server';
 import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION } from './pages.model';
 import { PagesValidatorService } from './pages-validator.service';
 import { v4 as uuidv4 } from 'uuid';
+// const fs = require('fs');
+const { readFileSync } = require('fs');
 
 export const PAGES_TABLE_NAME = 'Pages';
 export const DRAFT_PAGES_TABLE_NAME = 'PagesDrafts';
@@ -170,7 +172,7 @@ export class PagesApiService {
         // Create pages table
         const createPagesTable = await this.papiClient.addons.data.schemes.post({
             Name: PAGES_TABLE_NAME,
-            Type: 'cpi_meta_data',
+            Type: 'meta_data',
         });
         
         // Create pages draft table
@@ -207,9 +209,9 @@ export class PagesApiService {
         return await this.getPagesFrom(PAGES_TABLE_NAME, options);
     }
 
-    savePage(page: Page): Promise<Page> {
-        return this.upsertPageInternal(page, PAGES_TABLE_NAME);
-    }
+    // savePage(page: Page): Promise<Page> {
+    //     return this.upsertPageInternal(page, PAGES_TABLE_NAME);
+    // }
 
     saveDraftPage(page: Page): Promise<Page>  {
         page.Hidden = false;
@@ -217,10 +219,18 @@ export class PagesApiService {
     }
 
     createTemplatePage(query: any): Promise<Page> {
-        const templateId = query['templateId'] || '';
+        const templateFileName = query['templateFileName'] || '';
         const pageNum = query['pageNum'] || '0';
-        // TODO: Get the correct page by template (options.TemplateKey)
-        let page: Page = JSON.parse(JSON.stringify(DEFAULT_BLANK_PAGE_DATA)) ;
+        
+        let page;
+        try {
+            let buffer = readFileSync(`./template_pages/${templateFileName}.json`);
+            page = JSON.parse(buffer);
+            console.log(page);
+        } catch {
+            // If file is not exist or some other reson.
+            page = JSON.parse(JSON.stringify(DEFAULT_BLANK_PAGE_DATA)) ;
+        }
 
         page.Name = `${page.Name} ${pageNum}`;
         page.Description = `${page.Description} ${pageNum}`;
@@ -382,7 +392,7 @@ export class PagesApiService {
     async publishPage(page: Page): Promise<boolean> {
         let res = false;
 
-        if (page && page.Key) {
+        if (page) {
             // Save the current page in pages table
             res = await this.upsertPageInternal(page, PAGES_TABLE_NAME) != null;
 
@@ -516,7 +526,7 @@ export class PagesApiService {
             Type: 'AddonAPI',
             AddonUUID: this.addonUUID,
             AddonRelativeURL: '/internal_api/draft_pages_import', // '/api/pages_import',
-            MappingRelativeURL: '/internal_api/draft_pages_import_mapping', // '/api/pages_import_mapping',
+            MappingRelativeURL: ''// '/internal_api/draft_pages_import_mapping', // '/api/pages_import_mapping',
         };                
 
         this.papiClient.post('/addons/data/relations', importRelation);
@@ -535,16 +545,20 @@ export class PagesApiService {
         this.papiClient.post('/addons/data/relations', exportRelation);
     }
 
-    private getDIMXResult(body: any, isImport: boolean): any {
+    private async getDIMXResult(body: any, isImport: boolean): Promise<any> {
         // Validate the pages.
         if (body.DIMXObjects?.length > 0) {
-            body.DIMXObjects.forEach(async (dimxObject: any) => {
+            console.log('@@@@@@@@ getDIMXResult - enter ', JSON.stringify(body));
+            console.log('@@@@@@@@ getDIMXResult - isImport = ', isImport);
+
+            for (let index = 0; index < body.DIMXObjects.length; index++) {
+                const dimxObject = body.DIMXObjects[index];
                 try {
                     const page = await this.validateAndOverridePageAccordingInterface(dimxObject['Object'], isImport);
                     
                     // For import always generate new Key and set the Hidden to false.
                     if (isImport) {
-                        // page.Key = uuidv4(); // This step happans in the importMappingPages function
+                        page.Key = uuidv4(); // This step happans in the importMappingPages function
                         page.Hidden = false;
                     }
                     dimxObject['Object'] = page;
@@ -553,18 +567,26 @@ export class PagesApiService {
                     dimxObject['Status'] = 'Error';
                     dimxObject['Details'] = err;
                 }
-            });
+            }
+
+            console.log('@@@@@@@@ getDIMXResult - exit ', JSON.stringify(body));
         }
         
         return body;
     }
 
-    importPages(body: any, draft = true): any {
-        const res = this.getDIMXResult(body, true);
+    async importPages(body: any, draft = true): Promise<any> {
+        console.log('@@@@@@@@ importPages - before getDIMXResult');
+
+        const res = await this.getDIMXResult(body, true);
+        
+        console.log('@@@@@@@@ importPages - after getDIMXResult');
+
         return res;
     }
 
-    importMappingPages(body: any, draft = true): any {
+    // NOTE: This function is not used TBD.
+    async importMappingPages(body: any, draft = true): Promise<any> {
         const res = {};
         
         // Change the page key to a new one.
@@ -582,8 +604,8 @@ export class PagesApiService {
         return res;
     }
     
-    exportPages(body: any, draft = true): any {
-        const res = this.getDIMXResult(body, false);
+    async exportPages(body: any, draft = true): Promise<any> {
+        const res = await this.getDIMXResult(body, false);
         return res;
     }
 

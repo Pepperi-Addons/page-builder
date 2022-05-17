@@ -118,7 +118,7 @@ export class PageManagerComponent implements OnInit {
 
         this.menuItems = [
             { key: this.RESTORE_TO_LAST_PUBLISH_KEY, text: this.translate.instant('ACTIONS.RESTORE_TO_LAST_PUBLISH') },
-            { key: this.IMPORT_KEY, text: this.translate.instant('ACTIONS.IMPORT') },
+            // TODO: { key: this.IMPORT_KEY, text: this.translate.instant('ACTIONS.IMPORT') },
             { key: this.EXPORT_KEY, text: this.translate.instant('ACTIONS.EXPORT') }
         ];
 
@@ -226,12 +226,14 @@ export class PageManagerComponent implements OnInit {
                 });
             });
         } else if (action.source.key === this.IMPORT_KEY) { // Import page
-            this.dimx?.uploadFile({
-                OwnerID: this.navigationService.addonUUID,
-            });
+            // TODO: Should work only for the same page Key (override this page).
+            // this.dimx?.uploadFile({
+            //     OwnerID: this.navigationService.addonUUID,
+            // });
         } else if (action.source.key === this.EXPORT_KEY) { // Export page
             this.dimx?.DIMXExportRun({ 
                 DIMXExportFormat: 'json',
+                // DIMXExportIncludeDeleted: true,
                 DIMXExportFileName: this.currentPage.Name || `page_${this.currentPage.Key}`,
                 DIMXExportWhere: 'Key="' + this.currentPage.Key + '"'
             });

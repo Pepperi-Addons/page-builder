@@ -38,20 +38,6 @@
         "SECONDARY_HEADER": "Pages",
         "PAGES_HEADER": "You haven't used the Page Builder yet",
         "NO_PAGES_MSG": "Add a custom page design by clicking the ‘Add Page’ button, or import an existing template through the adjacent Menu button",
-        "ADDNEW_HEADER": "Select a Page",
-        "ADDNEW_EXPLANATION": "Here is weher you configuier your deisgn instead of Pepperi’s lagacy design. Short ribs short loin shankle cow chuck pork belly. Spare ribs filet mignon t-bone jerky prosciutto. Ground round meatball corned beef pastrami venison.",
-        "ADDNEW_HOMEPAGE": "Homepage",
-        "ADDNEW_BLANK": "Blank",
-        "ADDNEW_BLANK_DESC": "An empty starter project for you to go crazy with",
-        "ADDNEW_GRIDY": "Gridy",
-        "ADDNEW_GRIDY_DESC": "A simple grid with  this thing, sutied for some other things",
-        "ADDNEW_SIMPLISTIC": "Simplistic",
-        "ADDNEW_SIMPLISTIC_DESC": "A nice layout with some things, sutied for somthing",
-        "ADDNEW_BRANDED": "Branded",
-        "ADDNEW_BRANDED_DESC": "A copywriting, sutied for a thing",
-        "ADDNEW_DASHBOARD": "Dashboard",
-        "ADDNEW_ITEM": "Item",
-        "ADDNEW_GENERIC": "Generic",
         "USE_THIS": "Use This",
         "LINKS_HEADER": "How to's",
         "LINKS_USING": "Using the page builder",
@@ -67,7 +53,37 @@
         "GRID_HEADER_MODIFICATIONDATE": "Modification Date",
         "GRID_HEADER_STATUS": "Status",
         "GRID_HEADER_PUBLISHED": "Published",
-        "GRID_HEADER_DRAFT": "Draft"
+        "GRID_HEADER_DRAFT": "Draft",
+        "ADD_NEW": {
+            "HEADER": "Select a Page",
+            "EXPLANATION": "Here is weher you configuier your deisgn instead of Pepperi’s lagacy design. Short ribs short loin shankle cow chuck pork belly. Spare ribs filet mignon t-bone jerky prosciutto. Ground round meatball corned beef pastrami venison.",
+            "TEMPLATES": {
+                "PAGES": {
+                    "BLANK": {
+                        "NAME": "Blank",
+                        "DESC": "An empty starter project for you to go crazy with"
+                    },
+                    "GRIDY": {
+                        "NAME": "Gridy",
+                        "DESC": "A simple grid with  this thing, sutied for some other things"
+                    },
+                    "SIMPLISTIC": {
+                        "NAME": "Simplistic",
+                        "DESC": "A nice layout with some things, sutied for somthing"
+                    },
+                    "BRANDED": {
+                        "NAME": "Branded",
+                        "DESC": "A copywriting, sutied for a thing"
+                    }
+                },
+                "GROUPS": {
+                    "HOMEPAGE": "Homepage",
+                    "DASHBOARD": "Dashboard",
+                    "ITEM": "Item",
+                    "GENERIC": "Generic"
+                }
+            }
+        }
     },
     "GROUP_SIZE": {
         "NONE": "None",
