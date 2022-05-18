@@ -233,7 +233,7 @@ export class PageManagerComponent implements OnInit {
         } else if (action.source.key === this.EXPORT_KEY) { // Export page
             this.dimx?.DIMXExportRun({ 
                 DIMXExportFormat: 'json',
-                // DIMXExportIncludeDeleted: true,
+                DIMXExportIncludeDeleted: true,
                 DIMXExportFileName: this.currentPage.Name || `page_${this.currentPage.Key}`,
                 DIMXExportWhere: 'Key="' + this.currentPage.Key + '"'
             });

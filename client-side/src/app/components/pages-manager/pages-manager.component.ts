@@ -160,7 +160,7 @@ export class PagesManagerComponent implements OnInit {
 
                             this.dimx?.DIMXExportRun({ 
                                 DIMXExportFormat: 'json',
-                                // DIMXExportIncludeDeleted: true,
+                                DIMXExportIncludeDeleted: true,
                                 DIMXExportFileName: page?.Name || `page_${pageKey}`,
                                 DIMXExportWhere: 'Key="' + pageKey + '"'
                             });
