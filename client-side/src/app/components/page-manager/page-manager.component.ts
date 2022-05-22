@@ -10,6 +10,7 @@ import { IPepSideBarStateChangeEvent } from '@pepperi-addons/ngx-lib/side-bar';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { DIMXComponent } from '@pepperi-addons/ngx-composite-lib/dimx-export';
+import { PepSnackBarData, PepSnackBarService } from "@pepperi-addons/ngx-lib/snack-bar";
 
 @Component({
     selector: 'page-manager',
@@ -56,6 +57,7 @@ export class PageManagerComponent implements OnInit {
         private layoutService: PepLayoutService,
         private pagesService: PagesService,
         private utilitiesService: UtilitiesService,
+        private pepSnackBarService: PepSnackBarService,
         public navigationService: NavigationService,
     ) {
     }
@@ -221,7 +223,7 @@ export class PageManagerComponent implements OnInit {
         // Restore to last publish
         if (action.source.key === this.RESTORE_TO_LAST_PUBLISH_KEY) { 
             this.pagesService.restoreToLastPublish(this.navigationService.addonUUID).subscribe(res => {
-                this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS')).afterClosed().subscribe(res => {
+                this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.PAGE_RESTORED')).afterClosed().subscribe(res => {
                     window.location.reload();
                 });
             });
@@ -242,13 +244,33 @@ export class PageManagerComponent implements OnInit {
 
     onSaveClick() {
         this.pagesService.saveCurrentPage(this.navigationService.addonUUID).subscribe(res => {
-            this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
+            // this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
+            const data: PepSnackBarData = {
+                title: this.translate.instant('MESSAGES.PAGE_SAVED'),
+                content: '',
+            }
+
+            const config = this.pepSnackBarService.getSnackBarConfig({
+                duration: 5000,
+            });
+
+            this.pepSnackBarService.openDefaultSnackBar(data, config);
         });
     }
 
     onPublishClick() {
         this.pagesService.publishCurrentPage(this.navigationService.addonUUID).subscribe(res => {
-            this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
+            // this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
+            const data: PepSnackBarData = {
+                title: this.translate.instant('MESSAGES.PAGE_PUBLISHED'),
+                content: '',
+            }
+
+            const config = this.pepSnackBarService.getSnackBarConfig({
+                duration: 5000,
+            });
+
+            this.pepSnackBarService.openDefaultSnackBar(data, config);
         });
     }
 

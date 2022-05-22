@@ -107,6 +107,9 @@
         "PAGE_SIZE_LIMIT_TITLE": "Page size limit",
         "BLOCKS_COUNT_LIMIT_MESSAGE": "You exceeded your blocks number limit - please contact your administrator.",
         "OPERATION_SUCCESS": "Operation success.",
+        "PAGE_SAVED": "Page Saved",
+        "PAGE_PUBLISHED": "Page Saved and Published",
+        "PAGE_RESTORED": "Page Restored",
         "PAGES_COUNT_LIMIT_MESSAGE": "You exceeded your pages number limit - please contact your administrator.",
         "PARAMETER_VALIDATION": {
             "BLOCK_HAS_REMOVED": "Block has removed",
