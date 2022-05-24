@@ -1,25 +1,26 @@
-import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from "@angular/core";
+import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild, ViewContainerRef } from "@angular/core";
 import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
 import { PepButton } from '@pepperi-addons/ngx-lib/button';
 import { pepIconDeviceDesktop, pepIconDeviceMobile, pepIconDeviceTablet } from '@pepperi-addons/ngx-lib/icon';
 import { TranslateService } from '@ngx-translate/core';
 import { DataViewScreenSize, Page, PageBlock } from '@pepperi-addons/papi-sdk';
 import { IEditor, PagesService, IPageEditor, ISectionEditor } from '../../services/pages.service';
+import { DIMXService } from '../../services/dimx.service';
 import { NavigationService } from '../../services/navigation.service';
 import { IPepSideBarStateChangeEvent } from '@pepperi-addons/ngx-lib/side-bar';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 import { UtilitiesService } from 'src/app/services/utilities.service';
-import { DIMXComponent } from '@pepperi-addons/ngx-composite-lib/dimx-export';
 import { PepSnackBarData, PepSnackBarService } from "@pepperi-addons/ngx-lib/snack-bar";
+import { PepRemoteLoaderService } from "@pepperi-addons/ngx-lib/remote-loader";
 
 @Component({
     selector: 'page-manager',
     templateUrl: './page-manager.component.html',
-    styleUrls: ['./page-manager.component.scss', './page-manager.component.theme.scss']
+    styleUrls: ['./page-manager.component.scss', './page-manager.component.theme.scss'],
+    providers: [DIMXService]
 })
 export class PageManagerComponent implements OnInit {
     @ViewChild('pageBuilderWrapper', { static: true }) pageBuilderWrapper: ElementRef;
-    @ViewChild('dimx') dimx:DIMXComponent | undefined;
     
     private readonly RESTORE_TO_LAST_PUBLISH_KEY = 'restore';
     private readonly IMPORT_KEY = 'import';
@@ -59,6 +60,8 @@ export class PageManagerComponent implements OnInit {
         private utilitiesService: UtilitiesService,
         private pepSnackBarService: PepSnackBarService,
         public navigationService: NavigationService,
+        private viewContainerRef: ViewContainerRef,
+        private dimxService: DIMXService,
     ) {
     }
 
@@ -92,7 +95,7 @@ export class PageManagerComponent implements OnInit {
         return `${this.pageSizeLimitInPercentage.toFixed(1)}%`;
     }
 
-    async ngOnInit() {
+    private subscribeEvents() {
         this.pagesService.lockScreenChange$.subscribe((lockScreen) => {
             this.lockScreen = lockScreen;
         });
@@ -109,23 +112,7 @@ export class PageManagerComponent implements OnInit {
             }
         });
 
-        // Get the first translation for load all translations.
-        const desktopTitle = await this.translate.get('PAGE_MANAGER.DESKTOP').toPromise();
-
-        this.screenTypes = [
-            { key: 'Landscape', value: desktopTitle, callback: () => this.setScreenWidth('Landscape'), iconName: pepIconDeviceDesktop.name, iconPosition: 'end' },
-            { key: 'Tablet', value: this.translate.instant('PAGE_MANAGER.TABLET'), callback: () => this.setScreenWidth('Tablet'), iconName: pepIconDeviceTablet.name, iconPosition: 'end' },
-            { key: 'Phablet', value: this.translate.instant('PAGE_MANAGER.MOBILE'), callback: () => this.setScreenWidth('Phablet'), iconName: pepIconDeviceMobile.name, iconPosition: 'end' }
-        ];
-
-        this.menuItems = [
-            { key: this.RESTORE_TO_LAST_PUBLISH_KEY, text: this.translate.instant('ACTIONS.RESTORE_TO_LAST_PUBLISH') },
-            // TODO: { key: this.IMPORT_KEY, text: this.translate.instant('ACTIONS.IMPORT') },
-            { key: this.EXPORT_KEY, text: this.translate.instant('ACTIONS.EXPORT') }
-        ];
-
         this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
-            // this.screenSize = size;
             const screenType = this.pagesService.getScreenType(size);
             this.setScreenWidth(screenType);
         });
@@ -169,6 +156,31 @@ export class PageManagerComponent implements OnInit {
                 )
             }));
         });
+    }
+
+    async ngOnInit() {
+        this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
+        
+        // Get the first translation for load all translations.
+        const desktopTitle = await this.translate.get('PAGE_MANAGER.DESKTOP').toPromise();
+
+        this.screenTypes = [
+            { key: 'Landscape', value: desktopTitle, callback: () => this.setScreenWidth('Landscape'), iconName: pepIconDeviceDesktop.name, iconPosition: 'end' },
+            { key: 'Tablet', value: this.translate.instant('PAGE_MANAGER.TABLET'), callback: () => this.setScreenWidth('Tablet'), iconName: pepIconDeviceTablet.name, iconPosition: 'end' },
+            { key: 'Phablet', value: this.translate.instant('PAGE_MANAGER.MOBILE'), callback: () => this.setScreenWidth('Phablet'), iconName: pepIconDeviceMobile.name, iconPosition: 'end' }
+        ];
+
+        this.menuItems = [
+            { key: this.RESTORE_TO_LAST_PUBLISH_KEY, text: this.translate.instant('ACTIONS.RESTORE_TO_LAST_PUBLISH') },
+            // TODO: { key: this.IMPORT_KEY, text: this.translate.instant('ACTIONS.IMPORT') },
+            { key: this.EXPORT_KEY, text: this.translate.instant('ACTIONS.EXPORT') }
+        ];
+
+        this.subscribeEvents();
+    }
+
+    onDIMXProcessDone(dimxEvent: any) {
+        console.log(`DIMXProcessDone: ${JSON.stringify(dimxEvent)}`);
     }
 
     @HostListener('window:resize', ['$event'])
@@ -229,19 +241,12 @@ export class PageManagerComponent implements OnInit {
             });
         } else if (action.source.key === this.IMPORT_KEY) { // Import page
             // TODO: Should work only for the same page Key (override this page).
-            // this.dimx?.uploadFile({
-            //     OwnerID: this.navigationService.addonUUID,
-            // });
+            // this.dimxService.import();
         } else if (action.source.key === this.EXPORT_KEY) { // Export page
-            this.dimx?.DIMXExportRun({ 
-                DIMXExportFormat: 'json',
-                DIMXExportIncludeDeleted: true,
-                DIMXExportFileName: this.currentPage.Name || `page_${this.currentPage.Key}`,
-                DIMXExportWhere: 'Key="' + this.currentPage.Key + '"'
-            });
+            this.dimxService.export(this.currentPage.Key, this.currentPage.Name);
         }
     }
-
+    
     onSaveClick() {
         this.pagesService.saveCurrentPage(this.navigationService.addonUUID).subscribe(res => {
             // this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
@@ -272,9 +277,5 @@ export class PageManagerComponent implements OnInit {
 
             this.pepSnackBarService.openDefaultSnackBar(data, config);
         });
-    }
-
-    onDIMXProcessDone(event:any) {
-        console.log(`DIMXProcessDone: ${JSON.stringify(event)}`);
     }
 }

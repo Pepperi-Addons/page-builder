@@ -1,6 +1,7 @@
 import { NavigationService } from './../../services/navigation.service';
 import { IPageRowModel, PagesService } from '../../services/pages.service';
-import { AfterViewInit, Component, OnInit, Renderer2, ViewChild } from "@angular/core";
+import { DIMXService } from '../../services/dimx.service';
+import { AfterViewInit, Component, OnInit, Renderer2, ViewChild, ViewContainerRef } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 import { IPepGenericListDataSource, IPepGenericListPager, IPepGenericListActions, IPepGenericListInitData, PepGenericListService } from "@pepperi-addons/ngx-composite-lib/generic-list";
@@ -9,7 +10,6 @@ import { DataViewFieldType, GridDataViewField, Page } from '@pepperi-addons/papi
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { IPepFormFieldClickEvent } from '@pepperi-addons/ngx-lib/form';
 import { PepSelectionData } from '@pepperi-addons/ngx-lib/list';
-import { DIMXComponent } from '@pepperi-addons/ngx-composite-lib/dimx-export';
 
 export type TempPageType = 'homepage' | 'dashbaord' | 'item' | 'generic' | 'none';
 
@@ -27,12 +27,11 @@ export class TempPage {
 @Component({
     selector: 'pages-manager',
     templateUrl: './pages-manager.component.html',
-    styleUrls: ['./pages-manager.component.scss']
+    styleUrls: ['./pages-manager.component.scss'],
+    providers: [DIMXService]
 })
 
 export class PagesManagerComponent implements OnInit {
-    @ViewChild('dimx') dimx:DIMXComponent | undefined;
-    
     private readonly IMPORT_KEY = 'import';
     
     private selectedPageID = '';
@@ -68,7 +67,9 @@ export class PagesManagerComponent implements OnInit {
         public navigationService: NavigationService,
         private pepAddonService: PepAddonService,
         private pagesService: PagesService,
+        private dimxService: DIMXService,
         public dialog: PepDialogService,
+        private viewContainerRef: ViewContainerRef
 
     ) {
         this.imagesPath = this.pepAddonService.getAddonStaticFolder() + 'assets/images/';
@@ -156,14 +157,9 @@ export class PagesManagerComponent implements OnInit {
                         title: this.translate.instant("ACTIONS.EXPORT"),
                         handler: async (data: PepSelectionData) => {
                             const pageKey = data?.rows[0];
-                            const page = this.pages.find(p => p.Key === pageKey);
+                            const pageName = this.pages.find(p => p.Key === pageKey)?.Name || undefined;
 
-                            this.dimx?.DIMXExportRun({ 
-                                DIMXExportFormat: 'json',
-                                DIMXExportIncludeDeleted: true,
-                                DIMXExportFileName: page?.Name || `page_${pageKey}`,
-                                DIMXExportWhere: 'Key="' + pageKey + '"'
-                            });
+                            this.dimxService.export(pageKey, pageName);
                         }
                     }, {
                         title: this.translate.instant("ACTIONS.DELETE"),
@@ -182,6 +178,13 @@ export class PagesManagerComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
+    }
+
+    onDIMXProcessDone(event:any) {
+        // TODO: If this is a DIMX import, we need to refresh the list.
+        // this.pagesDataSource = this.setDataSource();
+        console.log(`DIMXProcessDone: ${JSON.stringify(event)}`);
     }
 
     canAddPage(): boolean {
@@ -213,25 +216,17 @@ export class PagesManagerComponent implements OnInit {
         switch(menuItem.key) {
             case this.IMPORT_KEY: {
                 if (this.canAddPage()) {
-                    this.dimx?.uploadFile({
-                        OwnerID: this.navigationService.addonUUID,
-                    });
+                    this.dimxService.import();
                 }
                 break;
             }
         }
     }
     
-    onDIMXProcessDone(event:any) {
-        // TODO: If this is a DIMX import, we need to refresh the list.
-        // this.pagesDataSource = this.setDataSource();
-        console.log(`DIMXProcessDone: ${JSON.stringify(event)}`);
-    }
-
     createTemplatePage(template: TempPage) {
         const templateFileName = `${template.type}_${template.name}`
         this.pagesService.createNewPage(this.navigationService.addonUUID, templateFileName, this.totalPages).subscribe((page: Page) => {
-            debugger;
+            // debugger;
             if (page) {
                 this.navigationService.navigateToPage(page.Key);
             } else {

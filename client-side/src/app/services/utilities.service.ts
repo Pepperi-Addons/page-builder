@@ -91,7 +91,7 @@ export class UtilitiesService {
         return this.mergeDeep(target, ...sources);
     }
 
-    showDialogMsg(message: string, title: string = ''): MatDialogRef<any> {
+    showDialogMsg(message: string, title: string = ''): any {
         title = title.length > 0 ? title: this.translate.instant('MESSAGES.TITLE_NOTICE');
 
         const data = new PepDialogData({
