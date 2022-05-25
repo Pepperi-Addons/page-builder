@@ -28,6 +28,8 @@ import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
 import { PepDialogModule } from '@pepperi-addons/ngx-lib/dialog';
 import { PepSnackBarModule } from '@pepperi-addons/ngx-lib/snack-bar';
 
+import { PepNgxCompositeLibModule } from '@pepperi-addons/ngx-composite-lib';
+
 import { PageBuilderModule } from '../page-builder/page-builder.module';
 import { PageBuilderEditorModule } from '../page-builder-editor/page-builder-editor.module';
 import { SectionEditorModule } from '../section-editor/section-editor.module';
@@ -82,6 +84,7 @@ const routes: Routes = [
         PepIconModule,
         MatIconModule,
         PepRemoteLoaderModule,
+        PepNgxCompositeLibModule,
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,

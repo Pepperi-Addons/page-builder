@@ -72,9 +72,9 @@ export class PagesManagerComponent implements OnInit {
         private viewContainerRef: ViewContainerRef
 
     ) {
+        this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
         this.imagesPath = this.pepAddonService.getAddonStaticFolder() + 'assets/images/';
-        this.pagesDataSource = this.setDataSource(); 
-
+        this.pagesDataSource = this.setDataSource();
     }
 
     private getRegularReadOnlyColumn(columnId: string, columnType: DataViewFieldType = 'TextBox'): GridDataViewField {
@@ -178,7 +178,6 @@ export class PagesManagerComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
     }
 
     onDIMXProcessDone(event:any) {

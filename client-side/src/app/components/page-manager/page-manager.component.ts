@@ -11,7 +11,6 @@ import { IPepSideBarStateChangeEvent } from '@pepperi-addons/ngx-lib/side-bar';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { PepSnackBarData, PepSnackBarService } from "@pepperi-addons/ngx-lib/snack-bar";
-import { PepRemoteLoaderService } from "@pepperi-addons/ngx-lib/remote-loader";
 
 @Component({
     selector: 'page-manager',
@@ -63,6 +62,7 @@ export class PageManagerComponent implements OnInit {
         private viewContainerRef: ViewContainerRef,
         private dimxService: DIMXService,
     ) {
+        this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
     }
 
     private setCurrentEditor(): void {
@@ -159,8 +159,6 @@ export class PageManagerComponent implements OnInit {
     }
 
     async ngOnInit() {
-        this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
-        
         // Get the first translation for load all translations.
         const desktopTitle = await this.translate.get('PAGE_MANAGER.DESKTOP').toPromise();
 
