@@ -136,6 +136,10 @@ export class PagesApiService {
         return pagesVariables;
     }
     
+    private upsertRelation(relation): Promise<any> {
+        return this.papiClient.post('/addons/data/relations', relation);
+    }
+
     /***********************************************************************************************/
     /*                                  Protected functions
     /***********************************************************************************************/
@@ -203,6 +207,25 @@ export class PagesApiService {
         this.createVarSettingsRelation();
         this.createImportRelation();
         this.createExportRelation();
+    }
+
+    createAddonBlockRelation() {
+        const name = 'Pages';
+        const blockName = 'PageBuilder';
+
+        const addonBlockRelation: Relation = {
+            RelationName: "AddonBlock",
+            Name: name,
+            Description: `${name} addon block`,
+            Type: "NgComponent",
+            SubType: "NG11",
+            AddonUUID: this.addonUUID,
+            AddonRelativeURL: 'page_builder',
+            ComponentName: `${blockName}Component`,
+            ModuleName: `${blockName}Module`,
+        }; 
+        
+        this.upsertRelation(addonBlockRelation);
     }
 
     async getPages(options: FindOptions | undefined = undefined): Promise<Page[]> {
@@ -485,7 +508,7 @@ export class PagesApiService {
             DataView: dataView
         };                
 
-        this.papiClient.post('/addons/data/relations', varSettingsRelation);
+        this.upsertRelation(varSettingsRelation);
     }
 
     async savePagesVariables(varSettingsParams: any) {
@@ -529,7 +552,7 @@ export class PagesApiService {
             MappingRelativeURL: ''// '/internal_api/draft_pages_import_mapping', // '/api/pages_import_mapping',
         };                
 
-        this.papiClient.post('/addons/data/relations', importRelation);
+        this.upsertRelation(importRelation);
     }
 
     private createExportRelation(): void {
@@ -542,7 +565,7 @@ export class PagesApiService {
             AddonRelativeURL: '/internal_api/draft_pages_export', // '/api/pages_export',
         };                
 
-        this.papiClient.post('/addons/data/relations', exportRelation);
+        this.upsertRelation(exportRelation);
     }
 
     private async getDIMXResult(body: any, isImport: boolean): Promise<any> {
