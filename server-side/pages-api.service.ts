@@ -393,7 +393,7 @@ export class PagesApiService {
         return promise;
     }
     
-    async restoreToLastPublish(query: any): Promise<boolean> {
+    async restoreToLastPublish(query: any): Promise<Page> {
         const pagekey = query['key'];
 
         if (pagekey) {
@@ -405,28 +405,31 @@ export class PagesApiService {
                 return this.publishPage(page);
             } else {
                 const pageCopy = JSON.parse(JSON.stringify(page));
-                return this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
+                await this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
+                return pageCopy;
             }
         }
         
         return Promise.reject(null);
     }
 
-    async publishPage(page: Page): Promise<boolean> {
-        let res = false;
+    async publishPage(page: Page): Promise<Page> {
+        let res: Page | null = null;
 
         if (page) {
             // Save the current page in pages table
-            res = await this.upsertPageInternal(page, PAGES_TABLE_NAME) != null;
+            res = await this.upsertPageInternal(page, PAGES_TABLE_NAME);
 
             // Update the draft page and hide it.
-            if (res) {
+            if (res != null) {
                 const pageCopy = JSON.parse(JSON.stringify(page));
                 this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
             }
+            
+            return Promise.resolve(res);
         }
 
-        return Promise.resolve(res);
+        return Promise.reject(null);
     }
     
     /***********************************************************************************************/
