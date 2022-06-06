@@ -6,8 +6,8 @@ import { IBlockLoaderData, PepRemoteLoaderOptions, PepRemoteLoaderService } from
 import { IPepDraggableItem } from "@pepperi-addons/ngx-lib/draggable-items";
 import { Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, ResourceType, PageConfigurationParameterFilter, PageConfiguration, PageConfigurationParameterBase, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
 import { Observable, BehaviorSubject } from 'rxjs';
-import { distinctUntilChanged, filter } from 'rxjs/operators';
 import { NavigationService } from "./navigation.service";
+import { distinctUntilChanged, filter } from 'rxjs/operators';
 import { UtilitiesService } from "./utilities.service";
 import * as _ from 'lodash';
 import { Params } from "@angular/router";
@@ -615,14 +615,26 @@ export class PagesService {
                     const consumerParameter = consumerParameters[index];
 
                     if (consumerParameter.Type === 'String') {
-                        // Get the producer strings by the parameter key.
-                        const producerStringMap = this._producerParameterKeysMap.get(consumerParameter.Key)?.producerParametersMap;
-                        
-                        // The last value will override (can be only one value for parameter key of type string).
-                        producerStringMap?.forEach((value: string, key: string) => {
-                            consumerParametersObject[consumerParameter.Key] = value;
-                        });
-
+                        // Add all parameters to this consumer.
+                        if (consumerParameter.Key === '*') {
+                            this._producerParameterKeysMap.forEach((value: IProducerParameters, parameterKey: string) => {
+                                // Get the producer strings.
+                                const producerStringMap = value.producerParametersMap;
+                                
+                                // The last value will override (can be only one value for parameter key of type string).
+                                producerStringMap?.forEach((value: string, key: string) => {
+                                    consumerParametersObject[consumerParameter.Key] = value;
+                                });
+                            });
+                        } else {
+                            // Get the producer strings by the parameter key.
+                            const producerStringMap = this._producerParameterKeysMap.get(consumerParameter.Key)?.producerParametersMap;
+                            
+                            // The last value will override (can be only one value for parameter key of type string).
+                            producerStringMap?.forEach((value: string, key: string) => {
+                                consumerParametersObject[consumerParameter.Key] = value;
+                            });
+                        }
                     } else if (consumerParameter.Type === 'Filter') {
                         let consumerFilters: IProducerFilter[] = [];
                         // Get the producer filters by the parameter key.

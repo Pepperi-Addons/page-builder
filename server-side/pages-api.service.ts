@@ -136,6 +136,10 @@ export class PagesApiService {
         return pagesVariables;
     }
     
+    private upsertRelation(relation): Promise<any> {
+        return this.papiClient.post('/addons/data/relations', relation);
+    }
+
     /***********************************************************************************************/
     /*                                  Protected functions
     /***********************************************************************************************/
@@ -203,6 +207,25 @@ export class PagesApiService {
         this.createVarSettingsRelation();
         this.createImportRelation();
         this.createExportRelation();
+    }
+
+    createAddonBlockRelation() {
+        const name = 'Pages';
+        const blockName = 'PageBuilder';
+
+        const addonBlockRelation: Relation = {
+            RelationName: "AddonBlock",
+            Name: name,
+            Description: `${name} addon block`,
+            Type: "NgComponent",
+            SubType: "NG11",
+            AddonUUID: this.addonUUID,
+            AddonRelativeURL: 'page_builder',
+            ComponentName: `${blockName}Component`,
+            ModuleName: `${blockName}Module`,
+        }; 
+        
+        this.upsertRelation(addonBlockRelation);
     }
 
     async getPages(options: FindOptions | undefined = undefined): Promise<Page[]> {
@@ -370,7 +393,7 @@ export class PagesApiService {
         return promise;
     }
     
-    async restoreToLastPublish(query: any): Promise<boolean> {
+    async restoreToLastPublish(query: any): Promise<Page> {
         const pagekey = query['key'];
 
         if (pagekey) {
@@ -382,28 +405,31 @@ export class PagesApiService {
                 return this.publishPage(page);
             } else {
                 const pageCopy = JSON.parse(JSON.stringify(page));
-                return this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
+                await this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
+                return pageCopy;
             }
         }
         
         return Promise.reject(null);
     }
 
-    async publishPage(page: Page): Promise<boolean> {
-        let res = false;
+    async publishPage(page: Page): Promise<Page> {
+        let res: Page | null = null;
 
         if (page) {
             // Save the current page in pages table
-            res = await this.upsertPageInternal(page, PAGES_TABLE_NAME) != null;
+            res = await this.upsertPageInternal(page, PAGES_TABLE_NAME);
 
             // Update the draft page and hide it.
-            if (res) {
+            if (res != null) {
                 const pageCopy = JSON.parse(JSON.stringify(page));
                 this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
             }
+            
+            return Promise.resolve(res);
         }
 
-        return Promise.resolve(res);
+        return Promise.reject(null);
     }
     
     /***********************************************************************************************/
@@ -485,7 +511,7 @@ export class PagesApiService {
             DataView: dataView
         };                
 
-        this.papiClient.post('/addons/data/relations', varSettingsRelation);
+        this.upsertRelation(varSettingsRelation);
     }
 
     async savePagesVariables(varSettingsParams: any) {
@@ -529,7 +555,7 @@ export class PagesApiService {
             MappingRelativeURL: ''// '/internal_api/draft_pages_import_mapping', // '/api/pages_import_mapping',
         };                
 
-        this.papiClient.post('/addons/data/relations', importRelation);
+        this.upsertRelation(importRelation);
     }
 
     private createExportRelation(): void {
@@ -542,7 +568,7 @@ export class PagesApiService {
             AddonRelativeURL: '/internal_api/draft_pages_export', // '/api/pages_export',
         };                
 
-        this.papiClient.post('/addons/data/relations', exportRelation);
+        this.upsertRelation(exportRelation);
     }
 
     private async getDIMXResult(body: any, isImport: boolean): Promise<any> {

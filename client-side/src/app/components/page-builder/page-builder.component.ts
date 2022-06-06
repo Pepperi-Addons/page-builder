@@ -81,7 +81,6 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
         return this._pageBlocksMap;
     }
 
-
     constructor(
         private route: ActivatedRoute,
         private renderer: Renderer2,
