@@ -1,8 +1,10 @@
 import { coerceNumberProperty } from '@angular/cdk/coercion';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { IPepOption, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
+import { TranslateService } from '@ngx-translate/core';
+import { IPepOption } from '@pepperi-addons/ngx-lib';
 import { SplitType } from '@pepperi-addons/papi-sdk';
 import { ISectionEditor } from 'src/app/services/pages.service';
+import { PepDialogActionButton, PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 
 export interface ISplitOption {
     key: SplitType; 
@@ -68,7 +70,7 @@ export class SectionEditorComponent implements OnInit {
     splitOptions = Array<ISplitOption>();
     allSplitOptions = Array<IAllSplitOption>();
 
-    constructor(private utilitiesService: PepUtilitiesService) {
+    constructor(private translate: TranslateService, private dialog: PepDialogService) {
         this.initData();
     }
 
@@ -142,15 +144,74 @@ export class SectionEditorComponent implements OnInit {
     }
 
     onSubSectionsChange(value: boolean) {
-        this.subSections = value;
-        this.updateHostObject();
+        const oldValue = this.subSections;
+        // Check if cancel the sub sections ( change from any -> 1 section ), if true need to show confirm message
+        if(value === false){
+            this.subSections = value;
+            this.showDeleteSectionMsg(() => {
+                    this.updateHostObject();
+            },
+            () => {
+                this.subSections = oldValue;
+
+            });
+        }
+        else{
+            this.subSections = value;
+            this.updateHostObject();
+        }
+
+        
+    }
+  
+    onPartsNumberChange(key: string) {
+        const oldKey = this.partsNumber;
+        // Check if decrease on sub sections number, if true need to show confirm message
+        if(key && parseInt(key) < parseInt(this.partsNumber)){
+            this.partsNumber = key;
+            this.showDeleteSectionMsg(() => {
+                
+                this.loadSplitOptions();
+                this._split = this.splitOptions[0].key;
+                this.updateHostObject();
+            },
+            () => {
+                this.partsNumber = oldKey;
+            })
+           
+        }
+        else{
+            this.partsNumber = key;
+            this.loadSplitOptions();
+            this._split = this.splitOptions[0].key;
+            this.updateHostObject();
+        }
+        
     }
 
-    onPartsNumberChange(key: string) {
-        this.partsNumber = key;
-        this.loadSplitOptions();
-        this._split = this.splitOptions[0].key;
-        this.updateHostObject();
+    showDeleteSectionMsg(continueCB,cancelCB){
+        const actionButtons = [
+            new PepDialogActionButton(
+                this.translate.instant('ACTIONS.CANCEL'),
+                '',
+                () => {
+                    cancelCB();
+                }
+            ),
+            new PepDialogActionButton(
+                this.translate.instant('ACTIONS.CONTINUE'),
+                'strong caution',
+                () => {
+                    continueCB();
+                }
+            )
+        ];
+        
+        const content = this.translate.instant('PAGE_MANAGER.DELETE_SECTION_MSG');
+        const title = this.translate.instant('PAGE_MANAGER.DELETE_SECTION_TITLE');
+        const dataMsg = new PepDialogData({title, actionsType: 'custom', content, actionButtons});
+
+        this.dialog.openDefaultDialog(dataMsg);
     }
 
     onSplitChange(key: SplitType) {

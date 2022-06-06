@@ -12,6 +12,8 @@
         "SECTIONS_TITLE": "Sections",
         "SPLIT_TITLE": "Split",
         "ADD_SECTION": "Add Section",
+        "DELETE_SECTION_MSG": "This action will delete your out of range content, this action is irreversible !",
+        "DELETE_SECTION_TITLE": "Causion",
         "GENERAL": "General",
         "DESIGN": "Design",
         "PAGE_NAME_TITLE": "Page Name",
@@ -93,6 +95,8 @@
         "XL": "XL"
     },
     "ACTIONS": {
+        "CANCEL": "Cancel",
+        "CONTINUE": "Continue",
         "DELETE": "Delete",
         "EDIT": "Edit",
         "SAVE": "Save",
