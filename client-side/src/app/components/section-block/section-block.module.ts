@@ -3,11 +3,9 @@ import { CommonModule } from '@angular/common';
 import { SectionBlockComponent } from './section-block.component'
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
-// import { ToolbarModule } from '../toolbar/toolbar.module';
 import { PepRemoteLoaderModule } from '@pepperi-addons/ngx-lib/remote-loader';
-import { HttpClient } from '@angular/common/http';
-import { TranslateModule, TranslateLoader, TranslateStore } from '@ngx-translate/core';
-import { PepAddonService, PepFileService, PepHttpService } from '@pepperi-addons/ngx-lib';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { PepAddonService } from '@pepperi-addons/ngx-lib';
 import { HideInModule } from '../hide-in/hide-in.module';
 import { PepDraggableItemsModule } from '@pepperi-addons/ngx-lib/draggable-items';
 

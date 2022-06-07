@@ -1,6 +1,6 @@
 @use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/mixins';
 @use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/functions';
-@import '../../../mixins.scss';
+@use '../../../mixins.scss' as mix;
 
 .section-container {
     background: functions.get-pep-color(color-system-primary-invert, color-base);
@@ -25,7 +25,7 @@
         // Only in main editor state show focus colors.
         &.main-editor-state {
             &.cdk-drag-preview {
-                @include mixins.focus(false, $color-caution, $border-width);
+                @include mixins.focus(false, $color-caution, mix.$border-width);
             }
             
             &.cdk-drag-placeholder {
@@ -40,13 +40,13 @@
             &:hover,
             &.show-hover-state {
                 &:not(.section-is-dragging) {
-                    @include mixins.focus(false, $color-caution, $border-width);
+                    @include mixins.focus(false, $color-caution, mix.$border-width);
                 }
             }
 
             .section-toolbar {
                 ::ng-deep.pep-draggable-item-container {
-                    @include mixins.focus(false, $color-caution, $border-width);
+                    @include mixins.focus(false, $color-caution, mix.$border-width);
                 }
             }
         }
@@ -54,13 +54,13 @@
         .section-background {
             .back-template {
                 background-color: #BEC3E5;
-                @include dash-border(border-right, $border-width, $color-system-primary);
+                @include mix.dash-border(border-right, mix.$border-width, $color-system-primary);
             }
         }
 
         .columns-wrapper {
             .section-column {
-                @include dash-border(border, $border-width, $color-system-primary);
+                @include mix.dash-border(border, mix.$border-width, $color-system-primary);
 
                 &.active-column {
                     background: functions.get-pep-color(color-system-primary-invert, color-base);
@@ -89,7 +89,7 @@
                             border-left: unset;
                             
                             &.cdk-drop-list-dragging {
-                                @include dash-border(border-left, $border-width, $color-system-primary);
+                                @include mix.dash-border(border-left, mix.$border-width, $color-system-primary);
                             }
                         }
 
@@ -97,7 +97,7 @@
                             border-top: unset;
                             
                             &.cdk-drop-list-dragging {
-                                @include dash-border(border-top, $border-width, $color-system-primary);
+                                @include mix.dash-border(border-top, mix.$border-width, $color-system-primary);
                             }
                         }
                     }

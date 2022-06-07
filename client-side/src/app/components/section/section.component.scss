@@ -1,5 +1,4 @@
 @use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
-@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/mixins';
 @use '../../../mixins.scss';
 
 .section-container {
@@ -96,7 +95,7 @@
             display: block;
         }
         
-        @include gap-sizes();
+        @include mixins.gap-sizes();
         
         .section-column {
             position: relative;
