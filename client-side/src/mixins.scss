@@ -1,3 +1,5 @@
+@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
+
 $z-index-min: 0;
 
 //**************************************************************************
@@ -26,15 +28,15 @@ $border-width: 0.125rem;
     }
 
     &.gap-sm {
-        gap: 0.5rem;
+        gap: variables.$spacing-sm; // 0.5rem
     }
 
     &.gap-md {
-        gap: 1rem;
+        gap: variables.$spacing-lg; // 1rem
     }
 
     &.gap-lg {
-        gap: 2rem;
+        gap: variables.$spacing-2xl; // 2rem
     }
 }
 

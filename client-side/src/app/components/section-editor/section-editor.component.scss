@@ -1,10 +1,12 @@
+@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
+
 .section-editor-container {
-    padding-top: 1rem;
+    padding-top: variables.$content-padding;
 
     .split-area {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+        gap: variables.$content-margin;
     }
 
     .no-margin-bottom {

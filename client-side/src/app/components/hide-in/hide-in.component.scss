@@ -12,7 +12,7 @@
 .mat-menu-item {
     ::ng-deep.mat-checkbox-layout {
         .mat-checkbox-inner-container {
-            margin-inline-end: 0.25rem !important;
+            margin-inline-end: variables.$spacing-xs !important;
         }
     }
 }
