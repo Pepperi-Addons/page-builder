@@ -3,10 +3,10 @@
 
 .side-bar-title {
     display: flex;
-    padding-top: 0.5rem;
+    padding-top: variables.$spacing-sm;
 
     .back-button {
-        margin-inline-end: 0.5rem;
+        margin-inline-end: variables.$spacing-sm;
     }
 }
 
@@ -23,7 +23,7 @@
         height: 3rem;
         align-items: center;
         justify-content: space-between;
-        padding: 0 .5rem;
+        padding: 0 variables.$spacing-sm;
 
         .header-group-btn {
             display: flex;
@@ -37,8 +37,6 @@
         }
 
         .size-limit-container {
-            // display: flex;
-            // align-items: center;
             border-radius: variables.$border-radius-md;
         }
     }

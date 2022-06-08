@@ -1,6 +1,4 @@
-@import '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
-@import '~@pepperi-addons/ngx-lib/src/core/style/abstracts/mixins';
-@import '../../../mixins.scss';
+@use '../../../mixins.scss';
 
 .section-block-container {
     height: 100%;
@@ -32,7 +30,7 @@
         }
 
         .block-toolbar {
-            @include block-toolbar();
+            @include mixins.block-toolbar();
         }
     }  
     

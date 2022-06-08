@@ -1,10 +1,11 @@
-$z-index-min: 0;
+@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
+@use '../../../mixins.scss';
 
 .pageExplanation{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin: 1rem 0 1.25rem 0;
+    margin: variables.$spacing-lg 0 1.25rem 0;
 
     span{
         max-width: 34rem;
@@ -36,7 +37,7 @@ $z-index-min: 0;
 
 .main-top-header{
     .back-button {
-        margin-inline-end: 0.5rem;
+        margin-inline-end: variables.$spacing-sm;
     }
     .main-header{
         line-height: 2.5rem !important;
@@ -69,7 +70,7 @@ $z-index-min: 0;
             display: flex;
             justify-content: space-between;
             overflow: hidden;
-            z-index: $z-index-min;
+            z-index: mixins.$z-index-min;
 
             img{
                 width: 50%;
@@ -91,7 +92,7 @@ $z-index-min: 0;
 
         h2,
         span{
-            z-index: $z-index-min + 1;
+            z-index: mixins.$z-index-min + 1;
         }
     }
 
@@ -99,23 +100,23 @@ $z-index-min: 0;
         max-width: 34rem;
 
         ::ng-deep .mat-expansion-panel-body{
-                    padding-top: 1rem;
+                    padding-top: variables.$spacing-lg;
                     display: flex;
-                    gap: 1rem;
+                    gap: variables.$spacing-lg;
 
                     .page-cube{
                         height: 8rem;
                         width:7.75rem;
-                        margin-bottom: 1rem;
+                        margin-bottom: variables.$spacing-lg;
 
                         .page-cube-inner{
                             height: 4.5rem;
-                            margin-bottom: .5rem;;
+                            margin-bottom: variables.$spacing-sm;
                             border: 1px solid rgb(153, 153, 153);
                             box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04),
                             0px 2px 4px 0px rgba(0, 0, 0, 0.04),
                             0px 4px 8px 0px rgba(0, 0, 0, 0.04);
-                            border-radius: .25rem;
+                            border-radius: variables.$border-radius-md;
                             position: relative;
                             overflow: hidden;
                             cursor: pointer;

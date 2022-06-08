@@ -1,14 +1,14 @@
-@import '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
+@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
 
 label {
-    font-weight: $font-weight-normal;
+    font-weight: variables.$font-weight-normal;
 }
 
 .editor-tabs {
     height: 100%;
 
     .add-section-button {
-        margin-bottom: 1rem;
+        margin-bottom: variables.$spacing-lg;
     }
 
     ::ng-deep .mat-tab-header-pagination {
@@ -20,14 +20,14 @@ label {
         grid-template-columns: 1fr 1fr;
 
         .mat-tab-label {
-            padding: 0 .75rem !important;
+            padding: 0 variables.$spacing-md !important;
         }
     }
 
     ::ng-deep .group-buttons-container {
-        margin-bottom: 1rem;
+        margin-bottom: variables.$content-margin;
 
-        .toggle-buttons{
+        .toggle-buttons {
             width: 100%;
         }
     }
@@ -46,10 +46,6 @@ label {
                     display: flex;
                     flex-direction: column;
                     padding-inline: 0;
-
-                    // .available-block {
-                    //     margin-bottom: .5rem;
-                    // }
                 }
             }
         }
@@ -59,7 +55,7 @@ label {
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
-        column-gap: 1rem;
+        column-gap: variables.$content-margin;
 
         ::ng-deep pep-select {
             display: block;

@@ -1,5 +1,4 @@
-@import '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
-@import '../../../mixins.scss';
+@use '../../../mixins.scss';
 
 :host {
     display: block;
@@ -15,7 +14,7 @@
         display: block;
     }
 
-    @include gap-sizes();
+    @include mixins.gap-sizes();
     
     .draggable-section {
         display: block;

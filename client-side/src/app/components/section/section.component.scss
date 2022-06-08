@@ -1,13 +1,12 @@
-@import '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
-@import '~@pepperi-addons/ngx-lib/src/core/style/abstracts/mixins';
-@import '../../../mixins.scss';
+@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
+@use '../../../mixins.scss';
 
 .section-container {
     position: relative;
     display: grid;
     height: inherit;
     max-height: inherit;
-    min-height: $draggable-item-height;
+    min-height: variables.$draggable-item-height;
 
     &.mobile {
         display: block;
@@ -20,7 +19,7 @@
         }
 
         &.active-section {
-            z-index: $z-index-min + 11;
+            z-index: mixins.$z-index-min + 11;
         }
         
         // The placeholder of the drop area when dragging a section.
@@ -47,12 +46,12 @@
         
         .section-toolbar {
             position: absolute;
-            top: calc(#{$draggable-item-height} * -1 + #{$border-width} * -1);
-            height: calc(#{$draggable-item-height} + #{$border-width});
-            z-index: $z-index-medium;
+            top: calc(#{variables.$draggable-item-height} * -1 + #{mixins.$border-width} * -1);
+            height: calc(#{variables.$draggable-item-height} + #{mixins.$border-width});
+            z-index: variables.$z-index-medium;
 
             ::ng-deep.pep-draggable-item-container {
-                border-radius: $border-radius-md $border-radius-md 0 0;
+                border-radius: variables.$border-radius-md variables.$border-radius-md 0 0;
             }
         }
             
@@ -60,7 +59,7 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            z-index: $z-index-min;
+            z-index: mixins.$z-index-min;
             display: grid;
             grid-template-columns: repeat(12, 1fr);
 
@@ -75,10 +74,10 @@
 
         .columns-wrapper {
             .section-column {
-                z-index: $z-index-min + 1;
+                z-index: mixins.$z-index-min + 1;
                 
                 &.active-column {
-                    z-index: $z-index-min + 12;
+                    z-index: mixins.$z-index-min + 12;
                     position: relative;
                 }
             }
@@ -96,7 +95,7 @@
             display: block;
         }
         
-        @include gap-sizes();
+        @include mixins.gap-sizes();
         
         .section-column {
             position: relative;
