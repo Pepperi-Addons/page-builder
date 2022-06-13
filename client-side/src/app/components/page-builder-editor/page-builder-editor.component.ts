@@ -98,7 +98,7 @@ export class PageBuilderEditorComponent implements OnInit {
                 return {
                     title: ab.Name,
                     disabled: false,
-                    data: ab
+                    data: {key: ab.AddonUUID, relation: ab}
                 }
             });
         });

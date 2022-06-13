@@ -1378,8 +1378,8 @@ export class PagesService {
                     // lock the screen untill the editor will be loaded.
                     this._lockScreenSubject.next(true);
         
-                    // Create new block from the relation (previousContainer.data is AvailableBlock object).
-                    const relation: NgComponentRelation = draggableItem.data;
+                    // Create new block from the relation (previousContainer.data.relation is AvailableBlock object).
+                    const relation: NgComponentRelation = draggableItem.data.relation;
                     
                     let block: PageBlock = {
                         Key: PepGuid.newGuid(),

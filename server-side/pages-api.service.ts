@@ -1,23 +1,27 @@
 import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView } from '@pepperi-addons/papi-sdk'
 import { Client } from '@pepperi-addons/debug-server';
-import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION } from './pages.model';
+import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, BlockDataType, DEFAULT_PAGES_DATA } from './pages.model';
 import { PagesValidatorService } from './pages-validator.service';
 import { v4 as uuidv4 } from 'uuid';
-// const fs = require('fs');
+import fetch from 'node-fetch';
+const path = require("path");
 const { readFileSync } = require('fs');
 
 export const PAGES_TABLE_NAME = 'Pages';
 export const DRAFT_PAGES_TABLE_NAME = 'PagesDrafts';
 export const PAGES_VARIABLES_TABLE_NAME = 'PagesVariables';
 
+const bundleFileName = 'page_builder';
 export class PagesApiService {
     papiClient: PapiClient;
     addonUUID: string;
     pagesValidatorService: PagesValidatorService;
+    assetsBaseUrl: string;
 
     constructor(client: Client) {
         this.addonUUID = client.AddonUUID;
         this.pagesValidatorService = new PagesValidatorService();
+        this.assetsBaseUrl = client.AssetsBaseUrl;
 
         this.papiClient = new PapiClient({
             baseURL: client.BaseURL,
@@ -29,7 +33,7 @@ export class PagesApiService {
     }
 
     private getRelations(relationName: string): Promise<any> {
-        return this.papiClient.get(`/addons/data/relations?where=RelationName=${relationName}`);
+        return this.papiClient.addons.data.relations.find({where: `RelationName=${relationName}`});
     }
 
     private getInstalledAddon(uuid: string): Promise<InstalledAddon> {
@@ -207,6 +211,8 @@ export class PagesApiService {
         this.createVarSettingsRelation();
         this.createImportRelation();
         this.createExportRelation();
+        this.createAddonBlockRelation();
+        this.createSettingsRelation();
     }
 
     createAddonBlockRelation() {
@@ -220,7 +226,26 @@ export class PagesApiService {
             Type: "NgComponent",
             SubType: "NG11",
             AddonUUID: this.addonUUID,
-            AddonRelativeURL: 'page_builder',
+            AddonRelativeURL: bundleFileName,
+            ComponentName: `${blockName}Component`,
+            ModuleName: `${blockName}Module`,
+        }; 
+        
+        this.upsertRelation(addonBlockRelation);
+    }
+
+    createSettingsRelation() {
+        const blockName = 'Settings';
+
+        const addonBlockRelation: Relation = {
+            RelationName: "SettingsBlock",
+            GroupName: 'Pages',
+            Name: 'Pages',
+            Description: 'Page Builder (Beta)',
+            Type: "NgComponent",
+            SubType: "NG11",
+            AddonUUID: this.addonUUID,
+            AddonRelativeURL: bundleFileName,
             ComponentName: `${blockName}Component`,
             ModuleName: `${blockName}Module`,
         }; 
@@ -241,16 +266,28 @@ export class PagesApiService {
         return this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
     }
 
-    createTemplatePage(query: any): Promise<Page> {
+    async createTemplatePage(query: any): Promise<Page> {
         const templateFileName = query['templateFileName'] || '';
         const pageNum = query['pageNum'] || '0';
         
         let page;
         try {
-            let buffer = readFileSync(`./template_pages/${templateFileName}.json`);
-            page = JSON.parse(buffer);
+            // For production.
+            // const url = path.join(this.assetsBaseUrl.replace('assets', 'template_pages'), `${templateFileName}.json`);
+            // const response = await fetch(url);
+            // const textData:string = await response.text();
+            // const page = JSON.parse(textData);
+
+            // For local dev server
+            // const filePath = path.join(process.cwd(), `template_pages/${templateFileName}.json`);
+            // let buffer = readFileSync(filePath);
+            // page = JSON.parse(buffer);
+
+            page = DEFAULT_PAGES_DATA[templateFileName];
+
             console.log(page);
-        } catch {
+        } catch (error) {
+            console.log(error);
             // If file is not exist or some other reson.
             page = JSON.parse(JSON.stringify(DEFAULT_BLANK_PAGE_DATA)) ;
         }
@@ -752,11 +789,11 @@ export class PagesApiService {
     //                              Addon block data Public functions
     /************************************************************************************************/
     
-    async getAddonBlockData(name: string): Promise<IBlockLoaderData> {
+    async getBlockLoaderData(name: string, blockType: BlockDataType): Promise<IBlockLoaderData> {
         const promise = new Promise<IBlockLoaderData>(async (resolve, reject) => {
             // Get the addon blocks relations 
-            const addonBlockRelations: NgComponentRelation[] = await this.papiClient.get(`/addons/data/relations?where=Name=${name}`);
-        
+            const addonBlockRelations: NgComponentRelation[] = await this.papiClient.addons.data.relations.find({where: `RelationName=${blockType} AND Name=${name}`});
+            
             if (addonBlockRelations.length > 0) {
                 const addonBlockRelation: NgComponentRelation = addonBlockRelations[0];
                 const installedAddon: InstalledAddon | undefined = await this.getInstalledAddon(addonBlockRelation.AddonUUID);

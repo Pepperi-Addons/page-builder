@@ -1,5 +1,7 @@
 import { NgComponentRelation, Page } from "@pepperi-addons/papi-sdk";
 
+export type BlockDataType = 'SettingsBlock' | 'AddonBlock' | 'PageBlock';
+
 export interface PageRowProjection {
     Key?: string,
     Name?: string,
@@ -37,22 +39,14 @@ export const DEFAULT_PAGE_SIZE_LIMITATION = {
 export const PAGES_NUBER_LIMITATION = 100;
 
 export const DEFAULT_BLANK_PAGE_DATA: Page = {
-    // Regular ADAL fields
-    // "Hidden": false,
-    // "CreationDateTime": "2021-07-22T13:00:11.360Z",
-    // "ModificationDateTime": "2021-07-22T13:00:11.360Z",
-
     // Unique key - mandatory
     "Name": "Page",
-    
     //  optional
     "Description": "Description of page",
-
     // A list of the blocks on the page
     // We might want to move the actual data of each block to a seperate internal resource
     "Blocks": [
     ],
-
     // A list of sections in the page
     "Layout": {
         "Sections": [
@@ -64,67 +58,10 @@ export const DEFAULT_BLANK_PAGE_DATA: Page = {
     }
 }
 
-// const PageSchema = {
-//     Key: { Type: "String"},
-//     Name: { Type: "String"},
-//     Description: { Type: "String"},
-//     Blocks: {
-//         Type: "Array",
-//         Items: {
-//             Type: "Object",
-//             Fields: {
-//                 Configuration: {
-//                     Type: "ContainedDynamicResource"
-//                 }
-//             }
-//         }
-//     },
-//     Layout: { 
-//         Type: "Object",
-//         Fields: {
-//             Sections: {
-//                 Type: "Array",
-//                 Items: {
-//                     Type: "Object",
-//                     Fields: {
-//                         Key: { Type: "String"},
-//                         Name: { Type: "String"},
-//                         Height: { Type: "String"},
-//                         Split: { Type: "String"},
-//                         Columns: {
-//                             Type: "Array",
-//                             Items: {
-//                                 Type: "Object",
-//                                 Fields: {
-//                                     BlockContainer: {
-//                                         Type: "Object",
-//                                         Fields: {
-//                                             BlockKey: { Type: "String"},
-//                                             Hide: { 
-//                                                 Type: "Array",
-//                                                 Items: {
-//                                                     Type: "String"
-//                                                 }
-//                                             },
-//                                         }
-//                                     }
-//                                 }
-//                             }
-//                         },
-//                         Hide: { 
-//                             Type: "Array",
-//                             Items: {
-//                                 Type: "String"
-//                             }
-//                         },
-//                     }
-//                 }
-//             },
-//             SectionsGap: { Type: "String"},
-//             CoulmnsGap: { Type: "String"},
-//             HorizontalSpacing: { Type: "String"},
-//             VerticalSpacing: { Type: "String"},
-//             MaxWidth: { Type: "String"},
-//         }
-//     },
-// }
+import homepage_blank from './template_pages/homepage_blank.json';
+import homepage_gridy from './template_pages/homepage_gridy.json';
+
+export const DEFAULT_PAGES_DATA = {
+    "homepage_blank": homepage_blank,
+    "homepage_gridy": homepage_gridy
+}

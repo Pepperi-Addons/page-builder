@@ -35,6 +35,7 @@ module.exports = (config, options, env) => {
                 name: `${filename}`,
                 filename: `${filename}.js`,
                 exposes: {
+                    // './AppModule': './src/app/index.ts',
                     './PageBuilderModule': './src/app/components/page-builder/index.ts'
                 },
                 shared: share({
@@ -56,3 +57,41 @@ module.exports = (config, options, env) => {
     return singleSpaWebpackConfig;
     // Feel free to modify this webpack config however you'd like to
 };
+
+// module.exports = {
+//     output: {
+//         uniqueName: filename,
+//         publicPath: "auto"
+//     },
+//     optimization: {
+//         // Only needed to bypass a temporary bug
+//         runtimeChunk: false
+//     },   
+//     resolve: {
+//         alias: {
+//         ...sharedMappings.getAliases(),
+//         }
+//     },
+//     plugins: [
+//         // new webpack.ProvidePlugin({
+//         //     process: 'process/browser',
+//         // }),
+//         new ModuleFederationPlugin({
+//             name: filename,
+//             filename: `${filename}.js`,
+//             exposes: {
+//                 './AppModule': './src/app/index.ts',
+//                 './PageBuilderModule': './src/app/components/page-builder/index.ts'
+//             },
+//             shared: share({
+//                 "@angular/core": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
+//                 "@angular/common": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
+//                 "@angular/common/http": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
+//                 "@angular/router": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },
+                
+//                 ...sharedMappings.getDescriptors()
+//             })
+//         }),
+//         sharedMappings.getPlugin()
+//     ]
+// };
