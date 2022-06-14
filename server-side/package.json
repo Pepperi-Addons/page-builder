@@ -21,6 +21,7 @@
         "@rollup/plugin-node-resolve": "^8.0.0",
         "@types/dotenv": "^8.2.0",
         "@types/node": "^10.17.24",
+        "@types/node-fetch": "^2.5.7",
         "nodemon": "^2.0.4",
         "rollup": "^2.10.9",
         "rollup-plugin-copy": "^3.4.0",
@@ -32,6 +33,7 @@
         "@pepperi-addons/debug-server": "0.0.32",
         "@pepperi-addons/papi-sdk": "^1.31.1",
         "@types/uuid": "^8.3.4",
+        "node-fetch": "^2.6.0",
         "uuid": "^8.3.2"
     }
 }

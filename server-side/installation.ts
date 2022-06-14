@@ -21,7 +21,6 @@ export async function install(client: Client, request: Request): Promise<any> {
         const pageService = new PagesApiService(client);
         pageService.createPagesTablesSchemes();
         pageService.createPagesRelations();
-        pageService.createAddonBlockRelation();
         pageService.subscribeUninstallAddons(pnsKeyForPages, pnsFunctionPathForPages);
         pageService.subscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
     } catch (err) {
