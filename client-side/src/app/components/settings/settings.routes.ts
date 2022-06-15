@@ -16,7 +16,7 @@ const routes: Routes = [
         component: SettingsComponent,
         children: [
             {
-                path: 'pages',
+                path: '',
                 loadChildren: () => import('../pages-manager/pages-manager.module').then(m => m.PagesManagerModule),
             },
             {

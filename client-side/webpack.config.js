@@ -35,7 +35,7 @@ module.exports = (config, options, env) => {
                 name: `${filename}`,
                 filename: `${filename}.js`,
                 exposes: {
-                    // './AppModule': './src/app/index.ts',
+                    // './SettingsModule': './src/app/components/settings/index.ts',
                     './PageBuilderModule': './src/app/components/page-builder/index.ts'
                 },
                 shared: share({
