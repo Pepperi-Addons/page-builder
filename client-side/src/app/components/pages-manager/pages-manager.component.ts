@@ -153,14 +153,14 @@ export class PagesManagerComponent implements OnInit {
                         handler: async (data: PepSelectionData) => {
                             this.navigationService.navigateToPage([data?.rows[0]].toString());
                         }
-                    }, {
-                        title: this.translate.instant("ACTIONS.EXPORT"),
-                        handler: async (data: PepSelectionData) => {
-                            const pageKey = data?.rows[0];
-                            const pageName = this.pages.find(p => p.Key === pageKey)?.Name || undefined;
+                    // }, {
+                    //     title: this.translate.instant("ACTIONS.EXPORT"),
+                    //     handler: async (data: PepSelectionData) => {
+                    //         const pageKey = data?.rows[0];
+                    //         const pageName = this.pages.find(p => p.Key === pageKey)?.Name || undefined;
 
-                            this.dimxService.export(pageKey, pageName);
-                        }
+                    //         this.dimxService.export(pageKey, pageName);
+                    //     }
                     }, {
                         title: this.translate.instant("ACTIONS.DELETE"),
                         handler: async (data: PepSelectionData) => {
