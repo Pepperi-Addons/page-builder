@@ -11,24 +11,24 @@ import { PagesManagerComponent } from './components/pages-manager/pages-manager.
 export class EmptyRouteComponent {}
 
 const routes: Routes = [
-    {
-        path: `settings/:addonUUID`,
-        children: [
-            {
-                path: '**',
-                loadChildren: () => import('./components/pages-manager/pages-manager.module').then(m => m.PagesManagerModule)
-            },
-        ]
-    },
-    {
-        path: `addons/:addonUUID`,
-        children: [
-           {
-                path: '',
-                loadChildren: () => import('./components/page-manager/page-manager.module').then(m => m.PageManagerModule)
-            }
-        ]
-    },
+    // {
+    //     path: `settings/:addonUUID`,
+    //     children: [
+    //         {
+    //             path: '**',
+    //             loadChildren: () => import('./components/pages-manager/pages-manager.module').then(m => m.PagesManagerModule)
+    //         },
+    //     ]
+    // },
+    // {
+    //     path: `addons/:addonUUID`,
+    //     children: [
+    //        {
+    //             path: '',
+    //             loadChildren: () => import('./components/page-manager/page-manager.module').then(m => m.PageManagerModule)
+    //         }
+    //     ]
+    // },
     { path: '**', component: EmptyRouteComponent }
 ];
 

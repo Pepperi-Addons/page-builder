@@ -50,7 +50,7 @@ const pepIcons = [
 
 const routes: Routes = [
     {
-        path: 'pages/:page_key',
+        path: ':page_key',
         component: PageManagerComponent
     }
 ];

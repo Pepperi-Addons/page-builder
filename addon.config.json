@@ -23,7 +23,8 @@
       }
     ],
     "Dependencies": {
-      "webapp": "16.65.12"
+      "webapp": "16.65.12",
+      "dimx": "0.0.98"
     },
     "CPISide": [
       "addon-cpi.ts"

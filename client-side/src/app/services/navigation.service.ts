@@ -54,7 +54,8 @@ export class NavigationService {
             // this.location.back(); // not working.
             this.router.navigateByUrl(this.history.pop());
         } else {
-            this.router.navigate([`./settings/${this.addonUUID}/pages`], {
+            // this.router.navigate([`./settings/${this.addonUUID}/pages`], {
+            this.router.navigate([`./new_settings/Pages`], {
                 relativeTo: this.route,
                 queryParamsHandling: 'merge'
             });
@@ -62,7 +63,11 @@ export class NavigationService {
     }
 
     navigateToPage(pageKey: string){
-        this.router.navigate([`./addons/${this.addonUUID}/pages/${pageKey}`], {
+        debugger;
+        // this.router.navigate([`./addons/${this.addonUUID}/pages/${pageKey}`], {
+        // this.router.navigate([`${pageKey}`], {
+        
+        this.router.navigate([`./new_settings/Pages/${pageKey}`], {
             relativeTo: this.route,
             queryParamsHandling: 'merge'
         });

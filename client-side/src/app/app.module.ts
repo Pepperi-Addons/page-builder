@@ -27,6 +27,7 @@ import { PepSideBarModule } from '@pepperi-addons/ngx-lib/side-bar';
 import { PepRemoteLoaderModule } from '@pepperi-addons/ngx-lib/remote-loader';
 import { PagesManagerModule } from './components/pages-manager/pages-manager.module';
 import { PageManagerModule } from './components/page-manager/page-manager.module';
+import { SettingsModule } from './components/settings/settings.module';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
 
@@ -49,6 +50,7 @@ const pepIcons = [
         HttpClientModule,
         PagesManagerModule,
         PageManagerModule,
+        SettingsModule,
         AppRoutingModule,
         PepSizeDetectorModule,
         MatIconModule,
