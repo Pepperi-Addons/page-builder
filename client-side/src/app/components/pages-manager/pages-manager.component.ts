@@ -10,6 +10,7 @@ import { DataViewFieldType, GridDataViewField, Page } from '@pepperi-addons/papi
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { IPepFormFieldClickEvent } from '@pepperi-addons/ngx-lib/form';
 import { PepSelectionData } from '@pepperi-addons/ngx-lib/list';
+import { PepAddonBlockLoaderService } from '@pepperi-addons/ngx-lib/remote-loader';
 
 export type TempPageType = 'homepage' | 'dashbaord' | 'item' | 'generic' | 'none';
 
@@ -61,6 +62,8 @@ export class PagesManagerComponent implements OnInit {
     public imagesPath = '';
     public hasPages = true;
 
+    options = {};
+
     constructor (
         private renderer: Renderer2,
         private translate: TranslateService,
@@ -69,10 +72,18 @@ export class PagesManagerComponent implements OnInit {
         private pagesService: PagesService,
         private dimxService: DIMXService,
         public dialog: PepDialogService,
-        private viewContainerRef: ViewContainerRef
+        private viewContainerRef: ViewContainerRef,
+        private addonBlockLoaderService: PepAddonBlockLoaderService
 
     ) {
-        this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
+        // this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
+        // this.addonBlockLoaderService.loadAddonBlockInDialog({
+        //     container: this.viewContainerRef,
+        //     name: 'Assets',
+        //     hostObject: {},
+        //     hostEventsCallback: (event) => {  }
+        // });
+        
         this.imagesPath = this.pepAddonService.getAddonStaticFolder() + 'assets/images/';
         this.pagesDataSource = this.setDataSource();
     }
@@ -178,6 +189,21 @@ export class PagesManagerComponent implements OnInit {
     }
 
     ngOnInit() {
+        // this.options = {
+        //     addonId: 'ad909780-0c23-401e-8e8e-f514cc4f6aa2',
+        //     remoteEntry: 'https://cdn.pepperi.com/Addon/Public/ad909780-0c23-401e-8e8e-f514cc4f6aa2/0.0.29/file_ad909780_0c23_401e_8e8e_f514cc4f6aa2.js',
+        //     remoteName: 'file_ad909780_0c23_401e_8e8e_f514cc4f6aa2',
+        //     exposedModule: './AssetsModule',
+        //     componentName: 'AssetsComponent'
+        // };
+        this.options = {
+            addonId: '5adbc9e0-ed1d-4b2d-98e9-9c50891812ea',
+            remoteEntry: 'https://cdn.pepperi.com/Addon/Public/5adbc9e0-ed1d-4b2d-98e9-9c50891812ea/0.0.37/gallery.js',
+            remoteName: 'gallery',
+            exposedModule: './GalleryModule',
+            componentName: 'GalleryComponent'
+        };
+
     }
 
     onDIMXProcessDone(event:any) {

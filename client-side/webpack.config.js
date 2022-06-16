@@ -35,8 +35,9 @@ sharedMappings.register(
 //                 name: `${filename}`,
 //                 filename: `${filename}.js`,
 //                 exposes: {
-//                     // './AppModule': './src/app/index.ts',
-//                     './PageBuilderModule': './src/app/components/page-builder/index.ts'
+//                     './SettingsModule': './src/app/components/settings/index.ts',
+//                     './PageBuilderModule': './src/app/components/page-builder/index.ts',
+//                     './PagesManagerModule': './src/app/components/pages-manager/index.ts'
 //                 },
 //                 shared: share({
 //                     "@angular/core": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },
@@ -81,7 +82,8 @@ module.exports = {
             filename: `${filename}.js`,
             exposes: {
                 './SettingsModule': './src/app/components/settings/index.ts',
-                './PageBuilderModule': './src/app/components/page-builder/index.ts'
+                './PageBuilderModule': './src/app/components/page-builder/index.ts',
+                './PagesManagerModule': './src/app/components/pages-manager/index.ts'
             },
             shared: share({
                 "@angular/core": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 

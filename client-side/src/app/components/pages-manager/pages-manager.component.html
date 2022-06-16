@@ -16,7 +16,9 @@
     </ng-container>
 
     <ng-container pep-main-area>
-        <ng-container *ngIf="!isAddNewPage; then mainBlock; else addNewBlock"></ng-container>
+        <!-- <pep-addon-block-loader name="Assets"></pep-addon-block-loader> -->
+        <pep-remote-loader [options]="options" [hostObject]="{ test: true }" ></pep-remote-loader> 
+        <!-- <ng-container *ngIf="!isAddNewPage; then mainBlock; else addNewBlock"></ng-container> -->
  </ng-container>
 </pep-page-layout>
 

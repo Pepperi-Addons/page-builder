@@ -62,7 +62,7 @@ export class PageManagerComponent implements OnInit {
         private viewContainerRef: ViewContainerRef,
         private dimxService: DIMXService,
     ) {
-        this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
+        // this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
     }
 
     private setCurrentEditor(): void {

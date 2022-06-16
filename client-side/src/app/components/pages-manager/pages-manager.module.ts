@@ -11,7 +11,6 @@ import { MatCardModule } from '@angular/material/card';
 
 import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { PepNgxLibModule, PepAddonService } from '@pepperi-addons/ngx-lib';
-import { PagesManagerComponent} from './pages-manager.component';
 import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
 import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
 import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
@@ -22,7 +21,14 @@ import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
 import { PepNgxCompositeLibModule } from '@pepperi-addons/ngx-composite-lib';
 import { PepGenericListModule } from '@pepperi-addons/ngx-composite-lib/generic-list';
 
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { PagesService } from 'src/app/services/pages.service';
+import { NavigationService } from 'src/app/services/navigation.service';
+import { UtilitiesService } from 'src/app/services/utilities.service';
+
+import { PagesManagerComponent} from './index';
+import { DIMXService } from 'src/app/services/dimx.service';
+import { PepRemoteLoaderModule } from '@pepperi-addons/ngx-lib/remote-loader';
 
 const routes: Routes = [
     {
@@ -55,7 +61,7 @@ const routes: Routes = [
         PepCheckboxModule,
         // PepIconModule,
         MatIconModule,
-        // PepRemoteLoaderModule,
+        PepRemoteLoaderModule,
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
@@ -66,7 +72,15 @@ const routes: Routes = [
         }),
         RouterModule.forChild(routes)
     ],
-    exports:[PagesManagerComponent]
+    exports:[PagesManagerComponent],
+    providers: [
+        TranslateStore,
+        // When loading this module from route we need to add this here (because only this module is loading).
+        NavigationService,
+        UtilitiesService,
+        PagesService,
+        DIMXService
+    ]
 })
 export class PagesManagerModule {
     constructor(

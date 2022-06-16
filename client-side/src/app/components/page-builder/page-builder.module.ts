@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { PepNgxLibModule, PepAddonService, PepCustomizationService, PepFileService, PepHttpService } from '@pepperi-addons/ngx-lib';
-import { PageBuilderComponent} from './index';
-import { PepRemoteLoaderModule } from '@pepperi-addons/ngx-lib/remote-loader';
+// import { PepRemoteLoaderModule } from '@pepperi-addons/ngx-lib/remote-loader';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 
@@ -14,6 +13,8 @@ import { PagesService } from 'src/app/services/pages.service';
 import { NavigationService } from 'src/app/services/navigation.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { PepDialogModule } from '@pepperi-addons/ngx-lib/dialog';
+
+import { PageBuilderComponent} from './index';
 
 export const routes: Routes = [
     {
@@ -30,7 +31,7 @@ export const routes: Routes = [
         CommonModule,
         HttpClientModule,
         PepNgxLibModule,
-        PepRemoteLoaderModule,
+        // PepRemoteLoaderModule,
         PepSizeDetectorModule,
         PepDialogModule,
         DragDropModule,
