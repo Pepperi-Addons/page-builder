@@ -16,7 +16,7 @@ export class DIMXService {
             DIMXResource: 'PagesDrafts'
         };
 
-        this.dimxService.register(viewContainerRef, dimxHostObject, onDIMXProcessDoneCallback);
+        // this.dimxService.register(viewContainerRef, dimxHostObject, onDIMXProcessDoneCallback);
     }
 
     import() {
@@ -24,7 +24,7 @@ export class DIMXService {
             OwnerID: this.navigationService.addonUUID,
         };
 
-        this.dimxService.import(options);
+        // this.dimxService.import(options);
     }
 
     export(pageKey: string, pageName: string) {
@@ -34,6 +34,6 @@ export class DIMXService {
             DIMXExportFileName: pageName || `page_${pageKey}`,
             DIMXExportWhere: 'Key="' + pageKey + '"'
         };
-        this.dimxService.export(options);
+        // this.dimxService.export(options);
     }
 }

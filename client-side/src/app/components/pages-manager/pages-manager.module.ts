@@ -22,7 +22,7 @@ import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
 import { PepNgxCompositeLibModule } from '@pepperi-addons/ngx-composite-lib';
 import { PepGenericListModule } from '@pepperi-addons/ngx-composite-lib/generic-list';
 
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 
 const routes: Routes = [
     {
@@ -66,7 +66,11 @@ const routes: Routes = [
         }),
         RouterModule.forChild(routes)
     ],
-    exports:[PagesManagerComponent]
+    exports:[PagesManagerComponent],
+    providers: [
+        TranslateStore,
+        // Add here all used services.
+    ]
 })
 export class PagesManagerModule {
     constructor(

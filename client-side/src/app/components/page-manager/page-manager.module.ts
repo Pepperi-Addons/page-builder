@@ -95,7 +95,11 @@ const routes: Routes = [
         }),
         RouterModule.forChild(routes)
     ],
-    exports:[PageManagerComponent]
+    exports:[PageManagerComponent],
+    providers: [
+        TranslateStore,
+        // Add here all used services.
+    ]
 })
 export class PageManagerModule {
     constructor(

@@ -1,5 +1,5 @@
-@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
-@use '~@pepperi-addons/ngx-lib/src/core/style/abstracts/mixins';
+@use '@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
+@use '@pepperi-addons/ngx-lib/src/core/style/abstracts/mixins';
 
 .hide-in-menu {
     .mat-menu-item {
