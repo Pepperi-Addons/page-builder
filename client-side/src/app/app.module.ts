@@ -81,7 +81,7 @@ const pepIcons = [
 export class AppModule {
     constructor(private ngZone: NgZone, private pepIconRegistry: PepIconRegistry) {
         // (window as any).ngZone = this.ngZone;
-        shareNgZone(ngZone);
+        // shareNgZone(ngZone);
         this.pepIconRegistry.registerIcons(pepIcons);
     }
 }

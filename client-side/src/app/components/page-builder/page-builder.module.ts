@@ -15,6 +15,8 @@ import { NavigationService } from 'src/app/services/navigation.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { PepDialogModule } from '@pepperi-addons/ngx-lib/dialog';
 
+import { PepPluginProxyComponent } from '@pepperi-addons/ngx-lib/plugin';
+
 export const routes: Routes = [
     {
         path: '',
@@ -24,7 +26,7 @@ export const routes: Routes = [
 
 @NgModule({
     declarations: [
-        PageBuilderComponent
+        PageBuilderComponent,
     ],
     imports: [
         CommonModule,
@@ -33,6 +35,7 @@ export const routes: Routes = [
         PepRemoteLoaderModule,
         PepSizeDetectorModule,
         PepDialogModule,
+        PepPluginProxyComponent,
         DragDropModule,
         SectionModule,
         TranslateModule.forChild({

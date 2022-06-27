@@ -3,7 +3,7 @@
     "version": "0.0.0",
     "scripts": {
         "ng": "ng",
-        "start": "ng serve",
+        "start": "ng serve -o",
         "build": "ng build",
         "test": "ng test",
         "lint": "ng lint",
@@ -30,7 +30,7 @@
         "@ngx-translate/http-loader": "^7.0.0",
         "@pepperi-addons/data-views": "^0.0.2",
         "@pepperi-addons/ngx-composite-lib": "0.4.0-angular14.2",
-        "@pepperi-addons/ngx-lib": "^0.4.0-angular14.6",
+        "@pepperi-addons/ngx-lib": "^0.4.0-angular14.12",
         "@pepperi-addons/papi-sdk": "^1.29.2",
         "@tweenjs/tween.js": "^17.1.1",
         "file-saver": "^2.0.5",
@@ -52,7 +52,7 @@
         "zone.js": "~0.11.5"
     },
     "devDependencies": {
-        "@angular-architects/module-federation": "^14.3.8",
+        "@angular-architects/module-federation": "^14.3.0",
         "@angular-architects/module-federation-tools": "^14.3.0",
         "@angular-builders/custom-webpack": "^14.0.0",
         "@angular-devkit/build-angular": "14.0.2",
@@ -70,7 +70,6 @@
         "karma-coverage": "~2.2.0",
         "karma-jasmine": "~5.0.0",
         "karma-jasmine-html-reporter": "~1.7.0",
-        "ng-packagr": "^14.0.2",
         "ngx-build-plus": "14.0.0",
         "protractor": "~7.0.0",
         "serve": "^11.3.2",

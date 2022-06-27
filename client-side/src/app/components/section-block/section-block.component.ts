@@ -3,6 +3,7 @@ import { CdkDragEnd, CdkDragEnter, CdkDragExit, CdkDragStart } from '@angular/cd
 import { IPageBlockHostObject, PagesService } from '../../services/pages.service';
 import { DataViewScreenSize, PageBlock, PageConfiguration, PageBlockContainer } from '@pepperi-addons/papi-sdk';
 import { PepRemoteLoaderOptions } from '@pepperi-addons/ngx-lib/remote-loader';
+import { PepPluginOptions } from '@pepperi-addons/ngx-lib/plugin';
 
 @Component({
     selector: 'section-block',
@@ -59,7 +60,7 @@ export class SectionBlockComponent implements OnInit {
         return this._hostObject;
     }
 
-    remotePathOptions: PepRemoteLoaderOptions;
+    remotePathOptions: PepPluginOptions;
 
     constructor(
         private pagesService: PagesService

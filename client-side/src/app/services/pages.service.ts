@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { IBlockLoaderData, PepRemoteLoaderOptions, PepRemoteLoaderService } from "@pepperi-addons/ngx-lib/remote-loader";
+import { PepPluginOptions } from "@pepperi-addons/ngx-lib/plugin";
 import { IPepDraggableItem } from "@pepperi-addons/ngx-lib/draggable-items";
 import { Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize, 
     ResourceType, PageConfigurationParameterFilter, PageConfiguration, PageConfigurationParameterBase, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
@@ -38,7 +39,7 @@ export interface IEditor {
     id: string,
     title: string,
     type: EditorType,
-    remoteModuleOptions?: PepRemoteLoaderOptions,
+    remoteModuleOptions?: PepPluginOptions,
     hostObject?: any
 }
 
@@ -150,9 +151,9 @@ export class PagesService {
     }
     
     // For load the blocks
-    private _blocksRemoteLoaderOptionsMap = new Map<string, PepRemoteLoaderOptions>();
+    private _blocksRemoteLoaderOptionsMap = new Map<string, PepPluginOptions>();
     // For load the blocks editors
-    private _blocksEditorsRemoteLoaderOptionsMap = new Map<string, PepRemoteLoaderOptions>();
+    private _blocksEditorsRemoteLoaderOptionsMap = new Map<string, PepPluginOptions>();
     
     // This is the sections subject (a pare from the page object)
     private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
@@ -624,7 +625,7 @@ export class PagesService {
                                 
                                 // The last value will override (can be only one value for parameter key of type string).
                                 producerStringMap?.forEach((value: string, key: string) => {
-                                    consumerParametersObject[consumerParameter.Key] = value;
+                                    consumerParametersObject[parameterKey] = value;
                                 });
                             });
                         } else {
@@ -1127,6 +1128,7 @@ export class PagesService {
                 // If there is schema then support ConfigurationPerScreenSize
                 const hostObject = this.getEditorHostObject(block, blockProgress.block.Relation.Schema !== null);
     
+                remoteLoaderOptions.type = 'module';
                 res = {
                     id: blockId,
                     type: 'block',
@@ -1142,7 +1144,11 @@ export class PagesService {
 
     getBlocksRemoteLoaderOptions(relation: NgComponentRelation) {
         const key = this.getRemoteLoaderMapKey(relation);
-        return this._blocksRemoteLoaderOptionsMap.get(key);
+        const remoteLoaderOptions: PepPluginOptions = this._blocksRemoteLoaderOptionsMap.get(key);
+
+        remoteLoaderOptions.type = 'module';
+
+        return remoteLoaderOptions;
     }
     
     getBlockHostObject(block: PageBlock): IPageBlockHostObject {

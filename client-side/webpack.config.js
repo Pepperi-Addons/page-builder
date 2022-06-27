@@ -1,3 +1,12 @@
+// const { shareAll, withModuleFederationPlugin } = require('@angular-architects/module-federation/webpack');
+
+// module.exports = withModuleFederationPlugin({
+//     shared: {
+//         ...shareAll({ singleton: true, strictVersion: true, requiredVersion: 'auto' }),
+//     },
+// });
+
+
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 const mf = require("@angular-architects/module-federation/webpack");
 const path = require("path");
@@ -18,20 +27,26 @@ sharedMappings.register(
 module.exports = (config, options, env) => {
     const mfConfig = {
         output: {
-            uniqueName: `${filename}`,
             publicPath: "auto",
+            uniqueName: `${filename}`,
+            chunkFilename: `${filename}.[name].js`,
+            scriptType: 'text/javascript'
         },
+        // experiments: {
+        //     topLevelAwait: true,
+        // },
         optimization: {
             // Only needed to bypass a temporary bug
             runtimeChunk: false
         },
         resolve: {
             alias: {
-            ...sharedMappings.getAliases(),
+                ...sharedMappings.getAliases(),
             }
         },
         plugins: [
             new ModuleFederationPlugin({
+                // library: { type: "module" },
                 name: `${filename}`,
                 filename: `${filename}.js`,
                 exposes: {
@@ -39,11 +54,19 @@ module.exports = (config, options, env) => {
                     './PageBuilderModule': './src/app/components/page-builder/index.ts'
                 },
                 shared: share({
-                    "@angular/core": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },
-                    "@angular/common": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
-                    "@angular/common/http": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
-                    "@angular/router": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },
+                    // "@angular/core": { eager: true, requiredVersion: 'auto' },
+                    // "@angular/common": { eager: true, requiredVersion: 'auto' },
+                    // "@angular/common/http": { eager: true, requiredVersion: 'auto' }, 
+                    // "@angular/router": { eager: true, requiredVersion: 'auto' },
                     
+                    "@angular/core": { eager: true, singleton: true, strictVersion: true, requiredVersion: '>=12.0.0'  },
+                    "@angular/common": { eager: true, singleton: true, strictVersion: true, requiredVersion: '>=12.0.0'  }, 
+                    "@angular/common/http": { eager: true, singleton: true, strictVersion: true, requiredVersion: '>=12.0.0'  }, 
+                    "@angular/router": { eager: true, singleton: true, strictVersion: true, requiredVersion: '>=12.0.0' },
+                    "@pepperi-addons/ngx-lib": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },
+                    "@ngx-translate/core": { eager: true, singleton: true, strictVersion: true, requiredVersion: '>=13.0.0' },
+                    // "@ngx-translate/http-loader": { eager: true, singleton: true, strictVersion: true, requiredVersion: '>=6.0.0' },
+
                     ...sharedMappings.getDescriptors()
                 })
             }),
