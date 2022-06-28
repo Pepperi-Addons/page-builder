@@ -19,10 +19,10 @@ const routes: Routes = [
                 path: '',
                 loadChildren: () => import('../pages-manager/pages-manager.module').then(m => m.PagesManagerModule),
             },
-            {
-                path: 'pages/:page_key',
-                loadChildren: () => import('../page-manager/page-manager.module').then(m => m.PageManagerModule)
-            },
+            // {
+            //     path: 'pages/:page_key',
+            //     loadChildren: () => import('../page-manager/page-manager.module').then(m => m.PageManagerModule)
+            // },
             // {
             //     path: 'layout',
             //     loadChildren: () => import('./layout/layout.module')

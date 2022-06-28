@@ -5,8 +5,8 @@ import { SettingsRoutingModule } from './settings.routes';
 import { SettingsComponent } from './index';
 import { TranslateLoader, TranslateModule, TranslateStore } from '@ngx-translate/core';
 import { PepAddonService } from '@pepperi-addons/ngx-lib';
-import { PagesManagerModule } from '../pages-manager/pages-manager.module';
-import { PageManagerModule } from '../page-manager/page-manager.module';
+// import { PagesManagerModule } from '../pages-manager/pages-manager.module';
+// import { PageManagerModule } from '../page-manager/page-manager.module';
 
 import { config } from '../addon.config';
 
@@ -17,8 +17,8 @@ import { config } from '../addon.config';
     ],
     imports: [
         CommonModule,
-        PagesManagerModule,
-        PageManagerModule,
+        // PagesManagerModule,
+        // PageManagerModule,
         SettingsRoutingModule,
         TranslateModule.forChild({
             loader: {

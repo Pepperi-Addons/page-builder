@@ -79,6 +79,7 @@ export class PagesManagerModule {
         private pepAddonService: PepAddonService
 
     ) {
+        debugger;
         // this.pepIconRegistry.registerIcons(pepIcons);
         this.pepAddonService.setDefaultTranslateLang(translate);
     }
