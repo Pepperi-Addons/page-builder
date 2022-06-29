@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Component } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { PagesManagerComponent } from './components/pages-manager/pages-manager.component';
 
 // Important for single spa
 @Component({

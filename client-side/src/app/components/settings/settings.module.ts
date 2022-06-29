@@ -5,10 +5,10 @@ import { SettingsRoutingModule } from './settings.routes';
 import { SettingsComponent } from './index';
 import { TranslateLoader, TranslateModule, TranslateStore } from '@ngx-translate/core';
 import { PepAddonService } from '@pepperi-addons/ngx-lib';
-// import { PagesManagerModule } from '../pages-manager/pages-manager.module';
-// import { PageManagerModule } from '../page-manager/page-manager.module';
-
 import { config } from '../addon.config';
+import { NavigationService } from '../../services/navigation.service';
+import { UtilitiesService } from '../../services/utilities.service';
+import { PagesService } from '../../services/pages.service';
 
 
 @NgModule({
@@ -17,8 +17,6 @@ import { config } from '../addon.config';
     ],
     imports: [
         CommonModule,
-        // PagesManagerModule,
-        // PageManagerModule,
         SettingsRoutingModule,
         TranslateModule.forChild({
             loader: {
@@ -32,6 +30,9 @@ import { config } from '../addon.config';
     providers: [
         TranslateStore,
         // When loading this module from route we need to add this here (because only this module is loading).
+        NavigationService,
+        UtilitiesService,
+        PagesService
     ]
 })
 export class SettingsModule { }

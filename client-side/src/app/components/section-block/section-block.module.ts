@@ -9,7 +9,7 @@ import { PepAddonService } from '@pepperi-addons/ngx-lib';
 import { HideInModule } from '../hide-in/hide-in.module';
 import { PepDraggableItemsModule } from '@pepperi-addons/ngx-lib/draggable-items';
 
-import { PepPluginProxyComponent } from '@pepperi-addons/ngx-lib/plugin';
+// import { PepPluginProxyComponent } from '@pepperi-addons/ngx-lib/plugin';
 
 @NgModule({
     declarations: [
@@ -19,7 +19,7 @@ import { PepPluginProxyComponent } from '@pepperi-addons/ngx-lib/plugin';
         CommonModule,
         DragDropModule,
         PepButtonModule,
-        PepPluginProxyComponent,
+        // PepPluginProxyComponent,
         // ToolbarModule,
         PepRemoteLoaderModule,
         HideInModule,

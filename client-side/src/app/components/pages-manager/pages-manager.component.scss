@@ -1,6 +1,14 @@
 @use '@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
 @use '../../../mixins.scss';
 
+.add-padding {
+    padding-inline: variables.$content-padding;
+
+    @media (max-width: variables.$screen-max-size-xs) {
+        padding-inline: 0;
+    }
+}
+
 .pageExplanation{
     display: flex;
     flex-direction: row;

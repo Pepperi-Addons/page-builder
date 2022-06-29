@@ -125,6 +125,7 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
         const addonUUID = this.navigationService.addonUUID;
         const pageKey = this.hostObject?.pageKey || this.route.snapshot.data['page_key'] || this.route?.snapshot?.params['page_key'] || '';
         
+        console.log('pageKey - ' + pageKey);
         if (pageKey.length > 0) {
             const queryParams = this.hostObject?.pageParams || this.route?.snapshot?.queryParams;
             this.pagesService.loadPageBuilder(addonUUID, pageKey, this.editMode, queryParams);

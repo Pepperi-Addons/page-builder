@@ -62,17 +62,15 @@ export class PagesManagerComponent implements OnInit {
     public hasPages = true;
 
     constructor (
-        private renderer: Renderer2,
         private translate: TranslateService,
-        public navigationService: NavigationService,
+        private navigationService: NavigationService,
         private pepAddonService: PepAddonService,
         private pagesService: PagesService,
         private dimxService: DIMXService,
-        public dialog: PepDialogService,
+        private dialog: PepDialogService,
         private viewContainerRef: ViewContainerRef
 
     ) {
-debugger;
         this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
         this.imagesPath = this.pepAddonService.getAddonStaticFolder() + 'assets/images/';
         this.pagesDataSource = this.setDataSource();
@@ -226,7 +224,6 @@ debugger;
     createTemplatePage(template: TempPage) {
         const templateFileName = `${template.type}_${template.name}`
         this.pagesService.createNewPage(this.navigationService.addonUUID, templateFileName, this.totalPages).subscribe((page: Page) => {
-            // debugger;
             if (page) {
                 this.navigationService.navigateToPage(page.Key);
             } else {

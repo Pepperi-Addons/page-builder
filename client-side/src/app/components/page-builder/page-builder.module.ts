@@ -15,11 +15,11 @@ import { NavigationService } from 'src/app/services/navigation.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { PepDialogModule } from '@pepperi-addons/ngx-lib/dialog';
 
-import { PepPluginProxyComponent } from '@pepperi-addons/ngx-lib/plugin';
+// import { PepPluginProxyComponent } from '@pepperi-addons/ngx-lib/plugin';
 
 export const routes: Routes = [
     {
-        path: '',
+        path: ':page_key',
         component: PageBuilderComponent
     }
 ];
@@ -35,7 +35,7 @@ export const routes: Routes = [
         PepRemoteLoaderModule,
         PepSizeDetectorModule,
         PepDialogModule,
-        PepPluginProxyComponent,
+        // PepPluginProxyComponent,
         DragDropModule,
         SectionModule,
         TranslateModule.forChild({

@@ -34,7 +34,7 @@ import { PageBuilderModule } from '../page-builder/page-builder.module';
 import { PageBuilderEditorModule } from '../page-builder-editor/page-builder-editor.module';
 import { SectionEditorModule } from '../section-editor/section-editor.module';
 
-import { PepPluginProxyComponent } from '@pepperi-addons/ngx-lib/plugin';
+// import { PepPluginProxyComponent } from '@pepperi-addons/ngx-lib/plugin';
 import { PageManagerComponent} from './page-manager.component';
 
 const pepIcons = [
@@ -51,7 +51,7 @@ const pepIcons = [
 
 const routes: Routes = [
     {
-        path: 'pages/:page_key',
+        path: '',
         component: PageManagerComponent
     }
 ];
@@ -64,7 +64,7 @@ const routes: Routes = [
         CommonModule,
         HttpClientModule,
         PepNgxLibModule,
-        PepPluginProxyComponent,
+        // PepPluginProxyComponent,
         PageBuilderModule,
         PageBuilderEditorModule,
         SectionEditorModule,
@@ -93,7 +93,7 @@ const routes: Routes = [
                 useFactory: (addonService: PepAddonService) => 
                     PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib']),
                 deps: [PepAddonService]
-            }
+            }, isolate: false
         }),
         RouterModule.forChild(routes)
     ],
