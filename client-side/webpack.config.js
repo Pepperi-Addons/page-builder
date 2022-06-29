@@ -11,9 +11,9 @@ module.exports = withModuleFederationPlugin({
         ...shareAll({ strictVersion: true, requiredVersion: 'auto' }),
     },
     // shared: share({
-    //     "@angular/core": { singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
-    //     "@angular/common": { singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
-    //     "@angular/common/http": { singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
-    //     "@angular/router": { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    //     "@angular/core": { strictVersion: true, requiredVersion: 'auto' }, 
+    //     "@angular/common": { strictVersion: true, requiredVersion: 'auto' }, 
+    //     "@angular/common/http": { strictVersion: true, requiredVersion: 'auto' }, 
+    //     "@angular/router": { strictVersion: true, requiredVersion: 'auto' },
     // })
 });
