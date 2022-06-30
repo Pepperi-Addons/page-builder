@@ -19,6 +19,10 @@ import { PepDialogModule } from '@pepperi-addons/ngx-lib/dialog';
 
 export const routes: Routes = [
     {
+        path: '',
+        component: PageBuilderComponent
+    },
+    {
         path: ':page_key',
         component: PageBuilderComponent
     }
