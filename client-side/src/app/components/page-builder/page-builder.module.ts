@@ -1,29 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { PepNgxLibModule, PepAddonService, PepCustomizationService, PepFileService, PepHttpService } from '@pepperi-addons/ngx-lib';
-import { PageBuilderComponent} from './index';
-import { PepRemoteLoaderModule } from '@pepperi-addons/ngx-lib/remote-loader';
-import { DragDropModule } from '@angular/cdk/drag-drop';
-import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
-
-import { SectionModule } from '../section/section.module'
-import { PepSizeDetectorModule } from '@pepperi-addons/ngx-lib/size-detector';
 import { RouterModule, Routes } from '@angular/router';
-import { PagesService } from 'src/app/services/pages.service';
+import { TranslateLoader, TranslateModule, TranslateStore } from '@ngx-translate/core';
+import { PepAddonService } from '@pepperi-addons/ngx-lib';
 import { NavigationService } from 'src/app/services/navigation.service';
+import { PagesService } from 'src/app/services/pages.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
-import { PepDialogModule } from '@pepperi-addons/ngx-lib/dialog';
+import { PageBuilderInternalModule } from '../page-builder-internal';
 
-// import { PepPluginProxyComponent } from '@pepperi-addons/ngx-lib/plugin';
+import { PageBuilderComponent} from './index';
 
 export const routes: Routes = [
     {
         path: '',
-        component: PageBuilderComponent
-    },
-    {
-        path: ':page_key',
         component: PageBuilderComponent
     }
 ];
@@ -34,14 +23,7 @@ export const routes: Routes = [
     ],
     imports: [
         CommonModule,
-        HttpClientModule,
-        PepNgxLibModule,
-        PepRemoteLoaderModule,
-        PepSizeDetectorModule,
-        PepDialogModule,
-        // PepPluginProxyComponent,
-        DragDropModule,
-        SectionModule,
+        PageBuilderInternalModule,
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
@@ -61,11 +43,4 @@ export const routes: Routes = [
         PagesService
     ]
 })
-export class PageBuilderModule {
-    constructor(
-        translate: TranslateService,
-        private pepAddonService: PepAddonService
-    ) {
-        this.pepAddonService.setDefaultTranslateLang(translate);
-    }
-}
+export class PageBuilderModule {}

@@ -30,9 +30,9 @@ import { PagesService } from '../../services/pages.service';
     providers: [
         TranslateStore,
         // When loading this module from route we need to add this here (because only this module is loading).
-        NavigationService,
-        UtilitiesService,
-        PagesService
+        // NavigationService,
+        // UtilitiesService,
+        // PagesService
     ]
 })
 export class SettingsModule { }

@@ -26,8 +26,8 @@ import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } fr
 
 const routes: Routes = [
     {
-      path: '',
-      component: PagesManagerComponent
+        path: '',
+        component: PagesManagerComponent
     }
 ];
 

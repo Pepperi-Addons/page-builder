@@ -1,22 +1,22 @@
-@use '../../../mixins.scss';
+// @use '../../../mixins.scss';
 
-:host {
-    display: block;
-}
+// :host {
+//     display: block;
+// }
 
-.sections-container {
-    width: 100%;
-    margin: 0 auto;
-    position: relative;
-    display: grid;
+// .sections-container {
+//     width: 100%;
+//     margin: 0 auto;
+//     position: relative;
+//     display: grid;
 
-    &.mobile {
-        display: block;
-    }
+//     &.mobile {
+//         display: block;
+//     }
 
-    @include mixins.gap-sizes();
+//     @include mixins.gap-sizes();
     
-    .draggable-section {
-        display: block;
-    }
-}
+//     .draggable-section {
+//         display: block;
+//     }
+// }

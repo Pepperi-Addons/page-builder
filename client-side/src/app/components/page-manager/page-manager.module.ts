@@ -30,7 +30,7 @@ import { PepSnackBarModule } from '@pepperi-addons/ngx-lib/snack-bar';
 
 import { PepNgxCompositeLibModule } from '@pepperi-addons/ngx-composite-lib';
 
-import { PageBuilderModule } from '../page-builder/page-builder.module';
+import { PageBuilderInternalModule } from '../page-builder-internal/page-builder-internal.module';
 import { PageBuilderEditorModule } from '../page-builder-editor/page-builder-editor.module';
 import { SectionEditorModule } from '../section-editor/section-editor.module';
 
@@ -52,7 +52,7 @@ const pepIcons = [
 const routes: Routes = [
     {
         path: '',
-        component: PageManagerComponent
+        component: PageManagerComponent,
     }
 ];
 
@@ -65,7 +65,7 @@ const routes: Routes = [
         HttpClientModule,
         PepNgxLibModule,
         // PepPluginProxyComponent,
-        PageBuilderModule,
+        PageBuilderInternalModule,
         PageBuilderEditorModule,
         SectionEditorModule,
         PepTopBarModule,
