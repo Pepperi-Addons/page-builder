@@ -1,4 +1,4 @@
-import { NgComponentRelation, Page } from "@pepperi-addons/papi-sdk";
+import { InstalledAddon, NgComponentRelation, Page } from "@pepperi-addons/papi-sdk";
 
 export type BlockDataType = 'SettingsBlock' | 'AddonBlock' | 'PageBlock';
 
@@ -21,7 +21,8 @@ export interface IPageBuilderData {
 
 export interface IBlockLoaderData {
     relation: NgComponentRelation, 
-    addonPublicBaseURL: string
+    addonPublicBaseURL: string,
+    addon: InstalledAddon;
 }
 
 export const DEFAULT_BLOCKS_NUMBER_LIMITATION = {

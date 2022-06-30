@@ -61,7 +61,8 @@ export class PagesApiService {
             if (installedAddon) {
                 availableBlocks.push({
                     relation: relation,
-                    addonPublicBaseURL: installedAddon.PublicBaseURL
+                    addonPublicBaseURL: installedAddon.PublicBaseURL,
+                    addon: installedAddon
                 });
             }
         });
@@ -224,7 +225,7 @@ export class PagesApiService {
             Name: name,
             Description: `${name} addon block`,
             Type: "NgComponent",
-            SubType: "NG11",
+            SubType: "NG14",
             AddonUUID: this.addonUUID,
             AddonRelativeURL: bundleFileName,
             ComponentName: `${blockName}Component`,
@@ -243,7 +244,7 @@ export class PagesApiService {
             Name: 'Pages',
             Description: 'Page Builder (Beta)',
             Type: "NgComponent",
-            SubType: "NG11",
+            SubType: "NG14",
             AddonUUID: this.addonUUID,
             AddonRelativeURL: bundleFileName,
             ComponentName: `${blockName}Component`,
@@ -800,7 +801,8 @@ export class PagesApiService {
                 if (installedAddon) {
                     resolve({
                         relation: addonBlockRelation,
-                        addonPublicBaseURL: installedAddon.PublicBaseURL
+                        addonPublicBaseURL: installedAddon.PublicBaseURL,
+                        addon: installedAddon
                     });
                 }
             }
