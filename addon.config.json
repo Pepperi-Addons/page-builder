@@ -1,30 +1,32 @@
 {
-    "AddonUUID": "50062e0c-9967-4ed4-9102-f2bc50602d41",
-    "AddonVersion": "0.7.118",
-    "DebugPort": 4500,
-    "WebappBaseUrl": "https://app.sandbox.pepperi.com",
-    "DefaultEditor": "main",
-    "Endpoints": [
-        "installation.ts",
-        "api.ts",
-        "internal_api.ts",
-        "addon_blocks.ts"
-    ],
+  "AddonUUID": "50062e0c-9967-4ed4-9102-f2bc50602d41",
+  "AddonVersion": "0.7.120",
+  "DebugPort": 4500,
+  "WebappBaseUrl": "https://app.sandbox.pepperi.com",
+  "DefaultEditor": "main",
+  "Endpoints": [
+    "installation.ts",
+    "api.ts",
+    "internal_api.ts",
+    "addon_blocks.ts"
+  ],
+  "Editors": [
+    "main"
+  ],
+  "PublishConfig": {
+    "ClientStack": "ng14",
     "Editors": [
-        "main"
+      {
+        "ParentPackageName": "Pages",
+        "PackageName": "pages",
+        "Description": "Page Builder"
+      }
     ],
-    "PublishConfig": {
-        "ClientStack": "ng14",
-        "Editors": [{
-            "ParentPackageName": "Pages",
-            "PackageName": "pages",
-            "Description": "Page Builder"
-        }],
-        "Dependencies": {
-            "webapp": "16.65.12"
-        },
-        "CPISide": [
-            "addon-cpi.ts"
-        ]
-    }
+    "Dependencies": {
+      "webapp": "16.65.12"
+    },
+    "CPISide": [
+      "addon-cpi.ts"
+    ]
+  }
 }

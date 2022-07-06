@@ -18,12 +18,13 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { SectionEditorModule } from '../section-editor/section-editor.module';
 // import { ToolbarModule } from '../toolbar/toolbar.module'
-import { TranslateModule, TranslateLoader, TranslateStore } from '@ngx-translate/core';
+// import { TranslateModule, TranslateLoader, TranslateStore } from '@ngx-translate/core';
 import { PepColorModule } from '@pepperi-addons/ngx-lib/color';
 import { PepImageModule } from '@pepperi-addons/ngx-lib/image';
 import { PepGroupButtonsSettingsModule } from '@pepperi-addons/ngx-composite-lib/group-buttons-settings';
 import { PepDraggableItemsModule } from '@pepperi-addons/ngx-lib/draggable-items';
 import { MatSliderModule } from '@angular/material/slider'
+// import { config } from '../addon.config';
 // const pepIcons = [
 //     pepIconSystemClose,
 //     pepIconNumberPlus,
@@ -59,14 +60,15 @@ import { MatSliderModule } from '@angular/material/slider'
         PepTextareaModule,
         SectionEditorModule,
         // ToolbarModule,
-        TranslateModule.forChild({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: (addonService: PepAddonService) => 
-                    PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib']),
-                deps: [PepAddonService]
-            }, isolate: false
-        }),
+        // TranslateModule.forChild()
+        // ({
+        //     loader: {
+        //         provide: TranslateLoader,
+        //         useFactory: (addonService: PepAddonService) => 
+        //             PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib'], config.AddonUUID),
+        //         deps: [PepAddonService]
+        //     }, isolate: false
+        // }),
     ],
     exports:[PageBuilderEditorComponent]
 })

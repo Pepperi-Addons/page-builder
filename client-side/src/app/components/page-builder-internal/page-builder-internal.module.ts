@@ -25,22 +25,22 @@ import { PepDialogModule } from '@pepperi-addons/ngx-lib/dialog';
         PepDialogModule,
         DragDropModule,
         SectionModule,
-        TranslateModule.forChild({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: (addonService: PepAddonService) => 
-                    PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib']),
-                deps: [PepAddonService]
-            }, isolate: false
-        })
+        // TranslateModule.forChild({
+        //     loader: {
+        //         provide: TranslateLoader,
+        //         useFactory: (addonService: PepAddonService) => 
+        //             PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib']),
+        //         deps: [PepAddonService]
+        //     }, isolate: false
+        // })
     ],
     exports:[PageBuilderInternalComponent],
 })
 export class PageBuilderInternalModule {
-    constructor(
-        translate: TranslateService,
-        private pepAddonService: PepAddonService
-    ) {
-        this.pepAddonService.setDefaultTranslateLang(translate);
-    }
+    // constructor(
+    //     translate: TranslateService,
+    //     private pepAddonService: PepAddonService
+    // ) {
+    //     this.pepAddonService.setDefaultTranslateLang(translate);
+    // }
 }

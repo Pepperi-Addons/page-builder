@@ -8,19 +8,6 @@
             <pep-button class="add-section-button" value="{{'PAGE_MANAGER.ADD_SECTION' | translate}}" styleType="regular" iconName="number_plus" iconPosition="end"
                 (buttonClick)="onAddSectionClick($event)"></pep-button>
 
-            <!-- Old draggable usage
-            <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.BLOCKS_TITLE' | translate}}</label>
-            <div #availableBlocksContainer id="availableBlocks" class="available-blocks"
-                cdkDropList
-                cdkDropListSortingDisabled
-                [cdkDropListData]="availableBlocks"
-                [cdkDropListConnectedTo]="sectionsColumnsDropList">
-
-                <pep-draggable-item *ngFor="let availableBlock of availableBlocks;" class="available-block" [title]="availableBlock.Name"
-                    cdkDrag style="cursor: grab;" [cdkDragData]="availableBlock" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" >
-                </pep-draggable-item>
-            </div> -->
-
             <pep-draggable-items containerId="availableBlocks" [items]="availableBlocksForDrag" [title]="'PAGE_MANAGER.BLOCKS_TITLE' | translate" [dropAreaIds]="sectionsColumnsDropList"
                 (itemDragStarted)="onDragStart($event)" (itemDragEnded)="onDragEnd($event)">
             </pep-draggable-items>

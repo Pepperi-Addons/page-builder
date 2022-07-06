@@ -23,6 +23,7 @@ import { PepNgxCompositeLibModule } from '@pepperi-addons/ngx-composite-lib';
 import { PepGenericListModule } from '@pepperi-addons/ngx-composite-lib/generic-list';
 
 import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { config } from '../addon.config';
 
 const routes: Routes = [
     {
@@ -60,7 +61,7 @@ const routes: Routes = [
             loader: {
                 provide: TranslateLoader,
                 useFactory: (addonService: PepAddonService) => 
-                    PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib']),
+                    PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib'], config.AddonUUID),
                 deps: [PepAddonService]
             }, isolate: false
         }),

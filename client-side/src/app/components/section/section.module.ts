@@ -23,14 +23,15 @@ import { PepDraggableItemsModule } from '@pepperi-addons/ngx-lib/draggable-items
         SectionBlockModule,
         HideInModule,
         PepDraggableItemsModule,
-        TranslateModule.forChild({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: (addonService: PepAddonService) => 
-                    PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib']),
-                deps: [PepAddonService]
-            }, isolate: false
-        })
+        // TranslateModule.forChild()
+        // ({
+        //     loader: {
+        //         provide: TranslateLoader,
+        //         useFactory: (addonService: PepAddonService) => 
+        //             PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib']),
+        //         deps: [PepAddonService]
+        //     }, isolate: false
+        // })
     ],
     exports: [SectionComponent]
 })

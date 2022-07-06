@@ -10,8 +10,7 @@ import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { PepIconModule } from '@pepperi-addons/ngx-lib/icon';
 import { TranslateLoader, TranslateModule, TranslateStore } from '@ngx-translate/core';
-import { PepAddonService, PepFileService, PepHttpService } from '@pepperi-addons/ngx-lib';
-import { HttpClient } from '@angular/common/http';
+// import { PepAddonService, PepFileService, PepHttpService } from '@pepperi-addons/ngx-lib';
 
 @NgModule({
     declarations: [HideInComponent],
@@ -25,14 +24,15 @@ import { HttpClient } from '@angular/common/http';
         PepButtonModule,
         PepCheckboxModule,
         PepIconModule,
-        TranslateModule.forChild({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: (addonService: PepAddonService) => 
-                    PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib']),
-                deps: [PepAddonService]
-            }, isolate: false
-        }),
+        TranslateModule.forChild()
+        // ({
+        //     loader: {
+        //         provide: TranslateLoader,
+        //         useFactory: (addonService: PepAddonService) => 
+        //             PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib']),
+        //         deps: [PepAddonService]
+        //     }, isolate: false
+        // }),
     ],
     exports: [HideInComponent]
 })

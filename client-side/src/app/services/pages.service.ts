@@ -123,6 +123,13 @@ export class PagesService {
         value: 150
     }
 
+    private _defaultSectionTitle = '';
+    set defaultSectionTitle(value: string) {
+        if (this._defaultSectionTitle === '') {
+            this._defaultSectionTitle = value;
+        }
+    }
+
     private _editorsBreadCrumb = Array<IEditor>();
 
     // This subject is for the screen size change events.
@@ -769,7 +776,7 @@ export class PagesService {
     }
 
     private getSectionEditorTitle(section: PageSection, sectionIndex: number): string {
-        return section.Name || `${this.translate.instant('PAGE_MANAGER.SECTION')} ${sectionIndex + 1}`;
+        return section.Name || `${this._defaultSectionTitle} ${sectionIndex + 1}`;
     }
 
     private getSectionEditor(sectionId: string): IEditor {

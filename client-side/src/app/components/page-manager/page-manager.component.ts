@@ -161,6 +161,8 @@ export class PageManagerComponent implements OnInit {
     async ngOnInit() {
         // Get the first translation for load all translations.
         const desktopTitle = await this.translate.get('PAGE_MANAGER.DESKTOP').toPromise();
+        
+        this.pagesService.defaultSectionTitle = this.translate.instant('PAGE_MANAGER.SECTION');
 
         this.screenTypes = [
             { key: 'Landscape', value: desktopTitle, callback: () => this.setScreenWidth('Landscape'), iconName: pepIconDeviceDesktop.name, iconPosition: 'end' },

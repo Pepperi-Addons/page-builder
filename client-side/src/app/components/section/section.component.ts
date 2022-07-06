@@ -114,7 +114,7 @@ export class SectionComponent implements OnInit {
 
     constructor(
         private renderer: Renderer2,
-        private translate: TranslateService,
+        // private translate: TranslateService,
         private pagesService: PagesService
     ) { }
 

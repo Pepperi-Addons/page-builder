@@ -36,6 +36,7 @@ import { SectionEditorModule } from '../section-editor/section-editor.module';
 
 // import { PepPluginProxyComponent } from '@pepperi-addons/ngx-lib/plugin';
 import { PageManagerComponent} from './page-manager.component';
+import { config } from '../addon.config';
 
 const pepIcons = [
     pepIconSystemClose,
@@ -91,7 +92,7 @@ const routes: Routes = [
             loader: {
                 provide: TranslateLoader,
                 useFactory: (addonService: PepAddonService) => 
-                    PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib']),
+                    PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib'], config.AddonUUID),
                 deps: [PepAddonService]
             }, isolate: false
         }),
