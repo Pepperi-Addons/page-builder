@@ -1,8 +1,9 @@
 const { shareAll, share, withModuleFederationPlugin } = require('@angular-architects/module-federation/webpack');
+const blockName = 'page_builder';
 
 module.exports = withModuleFederationPlugin({
-    name: "page_builder",
-    filename: "page_builder.js",
+    name: blockName,
+    filename: `${blockName}.js`,
     exposes: {
         './SettingsModule': './src/app/components/settings/index.ts',
         './PageBuilderModule': './src/app/components/page-builder/index.ts'
