@@ -1,4 +1,4 @@
-import('./webpack.config.js');
+module.exports = require('./webpack.config');
 
 // const { shareAll, share, withModuleFederationPlugin } = require('@angular-architects/module-federation/webpack');
 // const TerserPlugin = require('terser-webpack-plugin');
@@ -7,7 +7,6 @@ import('./webpack.config.js');
 // const blockName = 'page_builder';
 
 // module.exports = (angularWebpackConfig, options) => {
-    
 //     return {
 //         ...angularWebpackConfig,
 //         module: {
@@ -20,6 +19,10 @@ import('./webpack.config.js');
 //                     }
 //                 }
 //             ]
+//         },
+//         output: {
+//             uniqueName: blockName,
+//             publicPath: "auto"
 //         },
 //         externals: {
 //         },

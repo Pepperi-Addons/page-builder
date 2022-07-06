@@ -35,6 +35,44 @@ export class PagesApiService {
     private getRelations(relationName: string): Promise<any> {
         return this.papiClient.addons.data.relations.find({where: `RelationName=${relationName}`});
     }
+    
+    private createAddonBlockRelation() {
+        const name = 'Pages';
+        const blockName = 'PageBuilder';
+
+        const addonBlockRelation: Relation = {
+            RelationName: "AddonBlock",
+            Name: name,
+            Description: `${name} addon block`,
+            Type: "NgComponent",
+            SubType: "NG14",
+            AddonUUID: this.addonUUID,
+            AddonRelativeURL: bundleFileName,
+            ComponentName: `${blockName}Component`,
+            ModuleName: `${blockName}Module`,
+        }; 
+        
+        this.upsertRelation(addonBlockRelation);
+    }
+
+    private createSettingsRelation() {
+        const blockName = 'Settings';
+
+        const addonBlockRelation: Relation = {
+            RelationName: "SettingsBlock",
+            GroupName: 'Pages',
+            Name: 'Pages',
+            Description: 'Page Builder (Beta)',
+            Type: "NgComponent",
+            SubType: "NG14",
+            AddonUUID: this.addonUUID,
+            AddonRelativeURL: bundleFileName,
+            ComponentName: `${blockName}Component`,
+            ModuleName: `${blockName}Module`,
+        }; 
+        
+        this.upsertRelation(addonBlockRelation);
+    }
 
     private getInstalledAddon(uuid: string): Promise<InstalledAddon> {
         return this.papiClient.addons.installedAddons.addonUUID(uuid).get();
@@ -214,44 +252,6 @@ export class PagesApiService {
         this.createExportRelation();
         this.createAddonBlockRelation();
         this.createSettingsRelation();
-    }
-
-    createAddonBlockRelation() {
-        const name = 'Pages';
-        const blockName = 'PageBuilder';
-
-        const addonBlockRelation: Relation = {
-            RelationName: "AddonBlock",
-            Name: name,
-            Description: `${name} addon block`,
-            Type: "NgComponent",
-            SubType: "NG14",
-            AddonUUID: this.addonUUID,
-            AddonRelativeURL: bundleFileName,
-            ComponentName: `${blockName}Component`,
-            ModuleName: `${blockName}Module`,
-        }; 
-        
-        this.upsertRelation(addonBlockRelation);
-    }
-
-    createSettingsRelation() {
-        const blockName = 'Settings';
-
-        const addonBlockRelation: Relation = {
-            RelationName: "SettingsBlock",
-            GroupName: 'Pages',
-            Name: 'Pages',
-            Description: 'Page Builder (Beta)',
-            Type: "NgComponent",
-            SubType: "NG14",
-            AddonUUID: this.addonUUID,
-            AddonRelativeURL: bundleFileName,
-            ComponentName: `${blockName}Component`,
-            ModuleName: `${blockName}Module`,
-        }; 
-        
-        this.upsertRelation(addonBlockRelation);
     }
 
     async getPages(options: FindOptions | undefined = undefined): Promise<Page[]> {

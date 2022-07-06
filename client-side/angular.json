@@ -10,7 +10,7 @@
                     "style": "scss"
                 }
             },
-            "root": "",
+            "root": "./",
             "sourceRoot": "src",
             "prefix": "addon",
             "architect": {
@@ -22,9 +22,6 @@
                         "main": "src/main.ts",
                         "polyfills": "src/polyfills.ts",
                         "tsConfig": "tsconfig.json",
-                        "aot": true,
-                        "extraWebpackConfig": "./webpack.config.js",
-						"commonChunk": false,
                         "stylePreprocessorOptions": {
                             "includePaths": [
                                 "node_modules/@pepperi-addons",
@@ -48,41 +45,44 @@
                         "styles": [
                             "src/styles.scss"
                         ],
-                        "scripts": []
+                        "scripts": [],
+						"commonChunk": false,
+                        "extraWebpackConfig": "webpack.config.js"
                   },
                   "configurations": {
                         "development": {
+                            "buildOptimizer": false,
                             "optimization": false,
-                            "sourceMap": true,
-                            "namedChunks": false,
-                            "aot": true,
+                            "vendorChunk": true,
                             "extractLicenses": false,
-                            "vendorChunk": false,
-                            "buildOptimizer": false
+                            "sourceMap": true,
+                            "namedChunks": true
                         },
                         "production": {
                             "optimization": true,
                             "sourceMap": false,
-                            "namedChunks": true,
+                            "namedChunks": false,
                             "extractLicenses": true,
                             "vendorChunk": false,
                             "buildOptimizer": true,
-                            "outputHashing": "all",
-                            "fileReplacements": [{
-                                "replace": "src/environments/environment.ts",
-                                "with": "src/environments/environment.prod.ts"
-                            }],
-                            "extraWebpackConfig": "./webpack.prod.config.js"
+                            "outputHashing": "none",
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.prod.ts"
+                                }
+                            ],
+                            "extraWebpackConfig": "webpack.prod.config.js"
                         }
-                    }
+                    },
+                    "defaultConfiguration": "production"
                 },
                 "serve": {
                     "builder": "ngx-build-plus:dev-server",
                     "options": {
-                        "browserTarget": "client-side:build",
+                        "port": 4400,
 						"publicHost": "http://localhost:4400",
-						"port": 4400,
-						"extraWebpackConfig": "./webpack.config.js"
+						"extraWebpackConfig": "webpack.config.js"
                     },
                     "configurations": {
                         "development": {
@@ -90,7 +90,7 @@
                         },
                         "production": {
                             "browserTarget": "client-side:build:production",
-                            "extraWebpackConfig": "./webpack.prod.config.js"
+                            "extraWebpackConfig": "webpack.prod.config.js"
                         }
                     },
                     "defaultConfiguration": "development"
