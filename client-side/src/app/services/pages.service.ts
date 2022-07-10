@@ -1659,7 +1659,6 @@ export class PagesService {
         const baseUrl = this.getBaseUrl(addonUUID);
         
         if (!editable) {
-            // TODO: Get from CPI side.
             // Get the page (sections and the blocks data) from the server.
             this.httpService.getHttpCall(`${baseUrl}/get_page_data?key=${pageKey}`)
                 .subscribe((res: IPageBuilderData) => {

@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Component } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-// Important for single spa
 @Component({
     selector: 'app-empty-route',
     template: '<div>Route is not exist.</div>',

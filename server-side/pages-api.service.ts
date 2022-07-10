@@ -1,4 +1,4 @@
-import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView } from '@pepperi-addons/papi-sdk'
+import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView } from '@pepperi-addons/papi-sdk';
 import { Client } from '@pepperi-addons/debug-server';
 import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, BlockDataType, DEFAULT_PAGES_DATA } from './pages.model';
 import { PagesValidatorService } from './pages-validator.service';

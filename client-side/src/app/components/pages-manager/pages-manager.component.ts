@@ -10,6 +10,7 @@ import { DataViewFieldType, GridDataViewField, Page } from '@pepperi-addons/papi
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { IPepFormFieldClickEvent } from '@pepperi-addons/ngx-lib/form';
 import { PepSelectionData } from '@pepperi-addons/ngx-lib/list';
+import { ActivatedRoute, Router } from '@angular/router';
 
 export type TempPageType = 'homepage' | 'dashbaord' | 'item' | 'generic' | 'none';
 
@@ -30,7 +31,6 @@ export class TempPage {
     styleUrls: ['./pages-manager.component.scss'],
     providers: [DIMXService]
 })
-
 export class PagesManagerComponent implements OnInit {
     private readonly IMPORT_KEY = 'import';
     
@@ -61,6 +61,8 @@ export class PagesManagerComponent implements OnInit {
     public imagesPath = '';
     public hasPages = true;
 
+    addPadding = true;
+
     constructor (
         private translate: TranslateService,
         private navigationService: NavigationService,
@@ -68,9 +70,13 @@ export class PagesManagerComponent implements OnInit {
         private pagesService: PagesService,
         private dimxService: DIMXService,
         private dialog: PepDialogService,
-        private viewContainerRef: ViewContainerRef
-
+        private viewContainerRef: ViewContainerRef,
+        private activatedRoute: ActivatedRoute
     ) {
+        this.activatedRoute.data.subscribe(data => {
+            this.addPadding = data.addPadding ?? true;
+        })
+
         this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
         this.imagesPath = this.pepAddonService.getAddonStaticFolder() + 'assets/images/';
         this.pagesDataSource = this.setDataSource();
