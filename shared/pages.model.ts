@@ -1,7 +1,15 @@
 import { NgComponentRelation, Page } from "@pepperi-addons/papi-sdk";
 
 export type BlockDataType = 'SettingsBlock' | 'AddonBlock' | 'PageBlock';
-
+export interface BlockFile {
+    name: string;
+    url: string;    
+}
+export interface BlockFiles {
+    AddonUUID: string;
+    AddonVersion: string;
+    Files: BlockFile[];
+}
 export interface PageRowProjection {
     Key?: string,
     Name?: string,
@@ -21,7 +29,8 @@ export interface IPageBuilderData {
 
 export interface IBlockLoaderData {
     relation: NgComponentRelation, 
-    addonPublicBaseURL: string
+    addonPublicBaseURL: string,
+    addonVersion: string,
 }
 
 export const DEFAULT_BLOCKS_NUMBER_LIMITATION = {
@@ -58,8 +67,8 @@ export const DEFAULT_BLANK_PAGE_DATA: Page = {
     }
 }
 
-import homepage_blank from './template_pages/homepage_blank.json';
-import homepage_gridy from './template_pages/homepage_gridy.json';
+import homepage_blank from '../server-side/template_pages/homepage_blank.json';
+import homepage_gridy from '../server-side/template_pages/homepage_gridy.json';
 
 export const DEFAULT_PAGES_DATA = {
     "homepage_blank": homepage_blank,

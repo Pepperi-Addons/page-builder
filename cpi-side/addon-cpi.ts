@@ -1,13 +1,40 @@
 import '@pepperi-addons/cpi-node'
-
-export async function load(configuration: any) {
-    // debugger;
-    console.log('cpi side works!');
-    // Put your cpi side code here
-}
+import ClientPagesService from './client-pages-service';
+import FilesService from './files-service'; 
 
 export const router = Router();
 
+export async function load(configuration: any) {
+    pepperi.events.intercept('SyncTerminated' as any, {}, async (data, next, main) => {
+        debugger
+        const isResync = data.JobInfoResponse?.ClientInfo?.LastSyncDateTime == 0;
+        if (isResync) {
+            const filesService = new FilesService();
+            await filesService.downloadFiles(); 
+            console.log("resync pages files finished");
+        }
+        await next(main);
+    });
+}
+
+router.get('/get_page_data/:pageKey', async (req, res) => {
+    let result = {};
+
+    try {
+        const pageKey = req.params.pageKey;
+        if (pageKey) {
+            const service = new ClientPagesService();
+            result = await service.getPageData(pageKey);
+        }
+    } catch (err) {
+        console.log(err);
+        result = {
+            error: JSON.stringify(err)
+        }
+    }
+
+    res.json(result);
+});
 // Get the page by Key
 router.get("/pages/:key", async (req, res) => {
     let page = {};
@@ -18,7 +45,6 @@ router.get("/pages/:key", async (req, res) => {
         //     addon: '50062e0c-9967-4ed4-9102-f2bc50602d41',
         //     table: 'Pages'
         // }).then(obj => obj.objects);
-        
         page = await pepperi.api.adal.get({ 
             addon: '50062e0c-9967-4ed4-9102-f2bc50602d41',
             table: 'Pages',

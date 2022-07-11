@@ -1,6 +1,6 @@
 import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView } from '@pepperi-addons/papi-sdk'
 import { Client } from '@pepperi-addons/debug-server';
-import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, BlockDataType, DEFAULT_PAGES_DATA } from './pages.model';
+import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, BlockDataType, DEFAULT_PAGES_DATA } from '../shared/pages.model';
 import { PagesValidatorService } from './pages-validator.service';
 import { v4 as uuidv4 } from 'uuid';
 import fetch from 'node-fetch';
@@ -40,7 +40,7 @@ export class PagesApiService {
         return this.papiClient.addons.installedAddons.addonUUID(uuid).get();
     }
 
-    private async getAvailableBlocks(): Promise<IBlockLoaderData[]> {
+    async getAvailableBlocks(): Promise<IBlockLoaderData[]> {
         // Get the PageBlock relations 
         const pageBlockRelations: NgComponentRelation[] = await this.getRelations('PageBlock');
                 
@@ -61,7 +61,8 @@ export class PagesApiService {
             if (installedAddon) {
                 availableBlocks.push({
                     relation: relation,
-                    addonPublicBaseURL: installedAddon.PublicBaseURL
+                    addonPublicBaseURL: installedAddon.PublicBaseURL,
+                    addonVersion: installedAddon.Version || '',
                 });
             }
         });
@@ -800,7 +801,8 @@ export class PagesApiService {
                 if (installedAddon) {
                     resolve({
                         relation: addonBlockRelation,
-                        addonPublicBaseURL: installedAddon.PublicBaseURL
+                        addonPublicBaseURL: installedAddon.PublicBaseURL,
+                        addonVersion: installedAddon.Version || '',
                     });
                 }
             }

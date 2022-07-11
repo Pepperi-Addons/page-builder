@@ -47,7 +47,7 @@
             "preLaunchTask": {
                 "label": "Build cpi side & publish for debug",
                 "type": "npm",
-                "script": "publish-cpi-side-debug",
+                "script": "cpi-publish-addon",
                 "group": "build",
                 "problemMatcher": []
             },  
