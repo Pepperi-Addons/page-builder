@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core'
-import { Location } from '@angular/common'
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router'
+import { Injectable } from '@angular/core';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+
 import { filter } from 'rxjs/operators';
 import { config } from '../components/addon.config';
 
@@ -25,8 +25,7 @@ export class NavigationService {
 
     constructor(
         private router: Router,
-        private route: ActivatedRoute,
-        // private location: Location
+        private route: ActivatedRoute
     ) {
         // Get the addonUUID from the root config.
         this._addonUUID = config.AddonUUID;
@@ -49,6 +48,8 @@ export class NavigationService {
     }
 
     back(): void {
+        // this.router['data']['showSidebar'] = true;
+
         this.history.pop();
         if (this.history.length > 0) {
             // this.location.back(); // not working.
@@ -63,6 +64,7 @@ export class NavigationService {
     }
 
     navigateToPage(pageKey: string){
+        // this.router['data'] = { showSidebar: false};
         // this.router.navigate([`./addons/${this.addonUUID}/pages/${pageKey}`], {
         this.router.navigate([`./block/Pages/${pageKey}`], {
             relativeTo: this.route,

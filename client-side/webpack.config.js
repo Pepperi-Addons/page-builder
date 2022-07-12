@@ -16,7 +16,7 @@ const webpackConfig = withModuleFederationPlugin({
 module.exports = {
     ...webpackConfig,
     output: {
-        publicPath: 'auto', // production server,
+        ...webpackConfig.output,
         uniqueName: filename,
     },
 };
