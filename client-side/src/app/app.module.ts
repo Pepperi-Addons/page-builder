@@ -29,6 +29,7 @@ import { PagesManagerModule } from './components/pages-manager/pages-manager.mod
 import { PageManagerModule } from './components/page-manager/page-manager.module';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
 import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
+import { config } from './components/addon.config';
 
 const pepIcons = [
     pepIconSystemClose,
@@ -71,7 +72,7 @@ const pepIcons = [
             loader: {
                 provide: TranslateLoader,
                 useFactory: (addonService: PepAddonService) => 
-                    PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib']),
+                    PepAddonService.createMultiTranslateLoader(config.AddonUUID, addonService, ['ngx-lib', 'ngx-composite-lib']),
                 deps: [PepAddonService]
             }
         })

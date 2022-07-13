@@ -78,7 +78,7 @@ export class PagesManagerComponent implements OnInit {
         })
 
         this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
-        this.imagesPath = this.pepAddonService.getAddonStaticFolder() + 'assets/images/';
+        this.imagesPath = this.pepAddonService.getAddonStaticFolder(this.navigationService.addonUUID) + 'assets/images/';
         this.pagesDataSource = this.setDataSource();
     }
 
