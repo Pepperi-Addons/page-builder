@@ -58,7 +58,7 @@ export class PagesApiService {
     private createSettingsRelation() {
         const blockName = 'Settings';
 
-        const addonBlockRelation: Relation = {
+        const settingsBlockRelation: Relation = {
             RelationName: "SettingsBlock",
             GroupName: 'Pages',
             Name: 'Pages',
@@ -71,7 +71,7 @@ export class PagesApiService {
             ModuleName: `${blockName}Module`,
         }; 
         
-        this.upsertRelation(addonBlockRelation);
+        this.upsertRelation(settingsBlockRelation);
     }
 
     private getInstalledAddon(uuid: string): Promise<InstalledAddon> {
