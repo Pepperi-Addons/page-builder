@@ -1,6 +1,9 @@
 import fetch from "node-fetch";
 import { BlockFile, BlockFiles } from "../shared/pages.model";
 import fs from "fs";
+import jwtDecode from 'jwt-decode';
+import config from "../addon.config.json";
+
 class FilesService {
 
     async downloadFiles(): Promise<any> {
@@ -103,8 +106,9 @@ class FilesService {
 
 
     async getAddonsClientFiles(): Promise< { Addons: BlockFiles[]}> {
-        const url = 'http://localhost:4700/internal_api/get_pages_files_to_download'; // TODO will be changed to papi
         const token = await pepperi['auth'].getAccessToken();
+        const baseURL = jwtDecode<any>(token)['pepperi.baseurl'];        
+        const url = `${baseURL}/addons/api/${config.AddonUUID}/internal_api/get_pages_files_to_download`;
         const files = await fetch(url, {
             method: 'GET',
             headers: {
