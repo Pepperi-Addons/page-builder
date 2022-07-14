@@ -21,21 +21,27 @@ class ClientPagesService {
             key: pageKey
         }); 
         const pageObject =  page.object;
-        return await this.prepageLocalPage(pageObject as Page);
+        return await this.loadLocalAssets(pageObject as Page);
     }
 
-    async prepageLocalPage(page: Page): Promise<Page> {
-        debugger
+    async loadLocalAssets(page: Page): Promise<Page> {
         // through each slideshow block, replace the image url with the correct url
         // TODO in the future, this, shouldn't be hardcoded!
-        await Promise.all(page.Blocks.map((block: any) => {
+        await Promise.all(page.Blocks.map(async (block: any) => {
             const configuration = block.Configuration;
             if (configuration.Resource === 'Slideshow') {
-                configuration.Data.slides.forEach(async (slide: any) => {
+                await Promise.all(configuration.Data.slides.map(async (slide: any) => {
                     const assetKey = slide.image.asset;
-                    const assetUrl = await pepperi["pfs"].getFile(assetKey);
+                    const assetUrl = (await pepperi["files"]["assets"].get(assetKey)).URL;
                     slide.image.assetURL = assetUrl;
-                });
+                }));
+            }
+            if (configuration.Resource === 'Gallery') {
+                await Promise.all(configuration.Data.cards.map(async (card: any) => {
+                    const assetKey = card.asset;
+                    const assetUrl = (await pepperi["files"]["assets"].get(assetKey)).URL;
+                    card.assetURL = assetUrl;
+                }));;
             }
         }));
         

@@ -13,10 +13,13 @@ class FilesService {
         const filesStatus = await this.downloadPagesBlocksFiles();
         // check if there are errors
         if (filesStatus.some(file => file.success === false)) {
-            // delete the new pages folder
-            this.deleteFolder(pagesRootDir);
-            // restore backup
-            this.renameFolderName(backupFolderName, pagesRootDir);
+            // if there is a backup folder, restore it
+            if (fs.existsSync(backupFolderName)) {
+                // delete the new pages folder
+                this.deleteFolder(pagesRootDir);
+                // restore backup
+                this.renameFolderName(backupFolderName, pagesRootDir);
+            }
             throw new Error('Some files were not downloaded');
         } else {
             // delete backup

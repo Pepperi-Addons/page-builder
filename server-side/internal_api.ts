@@ -121,7 +121,8 @@ export async function get_pages_files_to_download(client:Client, request: Reques
     try {
         if (request.method === 'GET') {
             const service = new FilesService(client);
-            return await service.getPageFilesToDownload();
+            // return await service.getPageFilesToDownload();
+            return service.getPageFilesToDownloadHack();
         }
         else {
             throw new Error(`Method ${request.method} not supported`);
