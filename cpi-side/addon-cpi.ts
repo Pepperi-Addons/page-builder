@@ -6,12 +6,14 @@ export const router = Router();
 
 export async function load(configuration: any) {
     pepperi.events.intercept('SyncTerminated' as any, {}, async (data, next, main) => {
-        debugger
-        const isResync = data.JobInfoResponse?.ClientInfo?.LastSyncDateTime == 0;
-        if (isResync) {
-            const filesService = new FilesService();
-            await filesService.downloadFiles(); 
-            console.log("resync pages files finished");
+        // TODO only for mobile
+        if(await pepperi["configuration"].isWebApp()) {
+            const isResync = data.JobInfoResponse?.ClientInfo?.LastSyncDateTime == 0;
+            if (isResync) {
+                const filesService = new FilesService();
+                await filesService.downloadFiles(); 
+                console.log("resync pages files finished");
+            }
         }
         await next(main);
     });
