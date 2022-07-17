@@ -12,10 +12,19 @@ class FilesService {
         const pagesRootDir = `${filesRootDir}/Pages`;  
         const backupFolderName = `${pagesRootDir}_${new Date().getTime()}_backup`;
         this.renameFolderName(pagesRootDir, backupFolderName);
-        // download files
-        const filesStatus = await this.downloadPagesBlocksFiles();
-        // check if there are errors
-        if (filesStatus.some(file => file.success === false)) {
+        let filesStatus:any[] = [];
+        try {
+            // download files
+            filesStatus = await this.downloadPagesBlocksFiles();
+            // check if there are errors
+            if (filesStatus.some(file => file.success === false)) {
+                throw new Error('Some files were not downloaded');
+            } else {
+                // delete backup
+                this.deleteFolder(backupFolderName);
+            }    
+            
+        } catch (error) {
             // if there is a backup folder, restore it
             if (fs.existsSync(backupFolderName)) {
                 // delete the new pages folder
@@ -23,11 +32,9 @@ class FilesService {
                 // restore backup
                 this.renameFolderName(backupFolderName, pagesRootDir);
             }
-            throw new Error('Some files were not downloaded');
-        } else {
-            // delete backup
-            this.deleteFolder(backupFolderName);
-        }    
+            throw error;
+            
+        }
         return filesStatus;
     }
 
@@ -41,9 +48,9 @@ class FilesService {
         let filesStatus:any[] = [];
         // interate flat files and download 10 files each iteration
         for (let i = 0; i < flatFiles.length; i += 10) {
-            const endBulckIndex = i + 10 > flatFiles.length ? undefined : i + 10; // If end is undefined, then the slice extends to the end of the array (From slice docs).
-            console.log(`Downloading files from ${i} to ${endBulckIndex}`);
-            const filesToDownload = flatFiles.slice(i, endBulckIndex);
+            const endBulkIndex = i + 10 > flatFiles.length ? undefined : i + 10; // If end is undefined, then the slice extends to the end of the array (From slice docs).
+            console.log(`Downloading files from ${i} to ${endBulkIndex}`);
+            const filesToDownload = flatFiles.slice(i, endBulkIndex);
             filesToDownloadPromises.push(filesToDownload.map(async (file) => {
                 // remove Version from url (section 3)
                 // file name looks like:  Addon/<AddonUUID>/<Version>/<FileName> - Addon/Public/f93658be-17b6-4c92-9df3-4e6c7151e038/0.7.2/assets/installation.js
