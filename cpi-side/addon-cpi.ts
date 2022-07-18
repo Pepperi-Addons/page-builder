@@ -6,8 +6,7 @@ export const router = Router();
 
 export async function load(configuration: any) {
     pepperi.events.intercept('SyncTerminated' as any, {}, async (data, next, main) => {
-        // TODO only for mobile
-        if(await pepperi["configuration"].isWebApp()) {
+        if(!await global['app']['wApp']['isWebApp']()) {
             const isResync = data.JobInfoResponse?.ClientInfo?.LastSyncDateTime == 0;
             if (isResync) {
                 const filesService = new FilesService();
