@@ -5,11 +5,11 @@ import jwtDecode from 'jwt-decode';
 import config from "../addon.config.json";
 
 class FilesService {
-    
+
     private _pagesFolder = '';
     get pagesFolder() {
         return (async () => {
-            if (this._pagesFolder) {
+            if (!this._pagesFolder) {
                 this._pagesFolder = await this.getPagesFolder();
             }
             return this._pagesFolder;
