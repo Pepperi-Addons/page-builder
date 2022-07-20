@@ -5,11 +5,29 @@ import jwtDecode from 'jwt-decode';
 import config from "../addon.config.json";
 
 class FilesService {
+    
+    private _pagesFolder = '';
+    get pagesFolder() {
+        return (async () => {
+            if (this._pagesFolder) {
+                this._pagesFolder = await this.getPagesFolder();
+            }
+            return this._pagesFolder;
+        })()
+    }
 
+    async getPagesFolder(): Promise<string> {
+        const filesRootDir = await pepperi.files.rootDir();
+        const pagesRootDir = `${filesRootDir}/Pages`;  
+        if (!fs.existsSync(pagesRootDir)) {
+            fs.mkdirSync(pagesRootDir);
+        }
+        return pagesRootDir;
+    }
+    
     async downloadFiles(): Promise<any> {
         // rename pages root folder for backup
-        const filesRootDir = await pepperi["files"].rootDir();
-        const pagesRootDir = `${filesRootDir}/Pages`;  
+        const pagesRootDir = await this.pagesFolder;
         const backupFolderName = `${pagesRootDir}_${new Date().getTime()}_backup`;
         this.renameFolderName(pagesRootDir, backupFolderName);
         let filesStatus:any[] = [];
@@ -39,8 +57,7 @@ class FilesService {
     }
 
     private async downloadPagesBlocksFiles(): Promise<any> {
-        const filesRootDir = await pepperi["files"].rootDir();
-        const pagesRootDir = `${filesRootDir}/Pages`;
+        const pagesRootDir = await this.pagesFolder;
         const addonsFiles = await this.getAddonsClientFiles();
         const flatFiles = this.getFlatFilesList(addonsFiles.Addons);
         console.log(`Downloading ${flatFiles.length} files`);

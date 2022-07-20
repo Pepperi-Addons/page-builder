@@ -18,7 +18,7 @@ export async function load(configuration: any) {
     });
 }
 
-router.get('/get_page_data/:pageKey', async (req, res) => {
+router.get('/get_page_data/:pageKey', async (req, res, next) => {
     let result = {};
 
     try {
@@ -29,9 +29,7 @@ router.get('/get_page_data/:pageKey', async (req, res) => {
         }
     } catch (err) {
         console.log(err);
-        result = {
-            error: JSON.stringify(err)
-        }
+        next(err)
     }
 
     res.json(result);

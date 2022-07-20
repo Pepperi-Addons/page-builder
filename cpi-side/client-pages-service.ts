@@ -32,14 +32,14 @@ class ClientPagesService {
             if (configuration.Resource === 'Slideshow') {
                 await Promise.all(configuration.Data.slides.map(async (slide: any) => {
                     const assetKey = slide.image.asset;
-                    const assetUrl = (await pepperi["files"]["assets"].get(assetKey)).URL;
+                    const assetUrl = (await pepperi.files.assets.get(assetKey)).URL
                     slide.image.assetURL = assetUrl;
                 }));
             }
             if (configuration.Resource === 'Gallery') {
                 await Promise.all(configuration.Data.cards.map(async (card: any) => {
                     const assetKey = card.asset;
-                    const assetUrl = (await pepperi["files"]["assets"].get(assetKey)).URL;
+                    const assetUrl = (await pepperi.files.assets.get(assetKey)).URL
                     card.assetURL = assetUrl;
                 }));;
             }
