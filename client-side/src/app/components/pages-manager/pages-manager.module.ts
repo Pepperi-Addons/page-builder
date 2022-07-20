@@ -24,6 +24,9 @@ import { PepGenericListModule } from '@pepperi-addons/ngx-composite-lib/generic-
 
 import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { config } from '../addon.config';
+import { NavigationService } from '../../services/navigation.service';
+import { UtilitiesService } from '../../services/utilities.service';
+import { PagesService } from '../../services/pages.service';
 
 const routes: Routes = [
     {
@@ -70,7 +73,10 @@ const routes: Routes = [
     exports:[PagesManagerComponent],
     providers: [
         TranslateStore,
-        // Add here all used services.
+        // When loading this module from route we need to add this here (because only this module is loading).
+        NavigationService,
+        UtilitiesService,
+        PagesService
     ]
 })
 export class PagesManagerModule {

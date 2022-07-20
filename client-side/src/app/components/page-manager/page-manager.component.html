@@ -26,7 +26,7 @@
             <div class="header-container" [ngClass]="{'header-container-preview': !showEditor }">
                 <ng-container *ngIf="showEditor; then editorTitleTemplate; else previewTitleTemplate"></ng-container>
                 <ng-template #editorTitleTemplate>
-                    <div class="">
+                    <div>
                         <span class="header-title body-xs">{{('PAGE_MANAGER.VIEWPORT_WIDTH' | translate)}}:&nbsp;</span>
                         <span class="body-xs"><b>{{viewportWidth}}</b></span>
                     </div>

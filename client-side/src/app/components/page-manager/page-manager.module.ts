@@ -37,6 +37,9 @@ import { SectionEditorModule } from '../section-editor/section-editor.module';
 // import { PepPluginProxyComponent } from '@pepperi-addons/ngx-lib/plugin';
 import { PageManagerComponent} from './page-manager.component';
 import { config } from '../addon.config';
+import { NavigationService } from '../../services/navigation.service';
+import { UtilitiesService } from '../../services/utilities.service';
+import { PagesService } from '../../services/pages.service';
 
 const pepIcons = [
     pepIconSystemClose,
@@ -101,7 +104,10 @@ const routes: Routes = [
     exports:[PageManagerComponent],
     providers: [
         TranslateStore,
-        // Add here all used services.
+        // When loading this module from route we need to add this here (because only this module is loading).
+        NavigationService,
+        UtilitiesService,
+        PagesService
     ]
 })
 export class PageManagerModule {
