@@ -1650,13 +1650,13 @@ export class PagesService {
 
         if (!editable) {
             // Get the page (sections and the blocks data) from the server.
-            let pageDataurl = '';
+            let pageDataURL = '';
             if (this.isOffline) {
-                pageDataurl = `http://localhost:8088/addon/api/50062e0c-9967-4ed4-9102-f2bc50602d41/addon-cpi/get_page_data/${pageKey}`;
+                pageDataURL = `http://localhost:8088/addon/api/50062e0c-9967-4ed4-9102-f2bc50602d41/addon-cpi/get_page_data/${pageKey}`;
             } else {
-                pageDataurl = `${baseUrl}/get_page_data?key=${pageKey}`;
+                pageDataURL = `${baseUrl}/get_page_data?key=${pageKey}`;
             }
-            this.httpService.getHttpCall(pageDataurl)
+            this.httpService.getHttpCall(pageDataURL)
             .subscribe((res: IPageBuilderData) => {
                 if (res && res.page && res.availableBlocks) {
                     // Load the blocks remote loader options.
