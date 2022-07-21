@@ -35,542 +35,142 @@ class FilesService {
         // https://pepperi.atlassian.net/browse/DI-20836
         return {
             "Addons": [
+                // {
+                //     "AddonUUID": "2d06b975-a03b-42c9-940a-a3a6f67d6d67", // client-actions-test
+                //     "AddonVersion": "0.0.18",
+                //     "Files": [
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/283.js",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/283.js"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/3rdpartylicenses.txt",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/3rdpartylicenses.txt"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/42.js",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/42.js"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/712.js",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/712.js"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/75.js",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/75.js"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/947.js",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/947.js"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/979.js",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/979.js"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/addon-cpi.js",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/addon-cpi.js"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/api.js",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/api.js"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/i18n/en.json",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/i18n/en.json"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/de.ngx-lib.json",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/de.ngx-lib.json"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/en.ngx-lib.json",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/en.ngx-lib.json"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/es.ngx-lib.json",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/es.ngx-lib.json"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/fr.ngx-lib.json",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/fr.ngx-lib.json"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/he.ngx-lib.json",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/he.ngx-lib.json"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/hu.ngx-lib.json",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/hu.ngx-lib.json"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/it.ngx-lib.json",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/it.ngx-lib.json"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/ja.ngx-lib.json",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/ja.ngx-lib.json"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/nl.ngx-lib.json",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/nl.ngx-lib.json"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/pl.ngx-lib.json",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/pl.ngx-lib.json"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/pt.ngx-lib.json",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/pt.ngx-lib.json"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/ru.ngx-lib.json",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/ru.ngx-lib.json"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/zh.ngx-lib.json",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/zh.ngx-lib.json"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/images/no-image.svg",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/images/no-image.svg"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/images/sail-away.jpg",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/images/sail-away.jpg"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/common.js",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/common.js"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/favicon.ico",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/favicon.ico"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/file_2d06b975_a03b_42c9_940a_a3a6f67d6d67.js",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/file_2d06b975_a03b_42c9_940a_a3a6f67d6d67.js"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/index.html",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/index.html"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/installation.js",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/installation.js"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/main.js",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/main.js"
+                //         },
+                //         {
+                //             "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/polyfills.js",
+                //             "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/polyfills.js"
+                //         }
+                //     ]
+                // },
                 {
-                    "AddonUUID": "00000000-0000-0000-0000-0da1a0de41e5",
-                    "AddonVersion": "0.6.50",
-                    "Files": [
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/101.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/101.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/103.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/103.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/161.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/161.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/172.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/172.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/282.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/282.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/342.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/342.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/3rdpartylicenses.txt",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/3rdpartylicenses.txt"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/490.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/490.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/554.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/554.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/614.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/614.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/627.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/627.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/691.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/691.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/752.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/752.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/767.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/767.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/772.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/772.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/810.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/810.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/815.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/815.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/829.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/829.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/85.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/85.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/893.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/893.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/968.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/968.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/api.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/api.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/bar.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/bar.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/benchmark_bar.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/benchmark_bar.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/benchmark_column.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/benchmark_column.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/benchmark_column_line.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/benchmark_column_line.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/column.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/column.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/gauge.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/gauge.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/line.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/line.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/pie.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/pie.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/progress_bar.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/progress_bar.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/stacked_bar.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/stacked_bar.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/stacked_column.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/stacked_column.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/value.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/value.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/value_and_change.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/value_and_change.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/value_with_area.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/value_with_area.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/value_with_columns.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ChartsTemplates/value_with_columns.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/i18n/en.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/i18n/en.json"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/de.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/de.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/en.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/en.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/es.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/es.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/fr.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/fr.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/he.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/he.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/hu.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/hu.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/it.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/it.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/ja.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/ja.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/nl.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/nl.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/pl.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/pl.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/pt.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/pt.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/ru.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/ru.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/zh.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/i18n/zh.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/images/no-image.svg",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/images/no-image.svg"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/images/sail-away.jpg",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/assets/ngx-lib/images/sail-away.jpg"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/benchmark_chart.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/benchmark_chart.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/chart.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/chart.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/common.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/common.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/elastic.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/elastic.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/favicon.ico",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/favicon.ico"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/index.html",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/index.html"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/installation.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/installation.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/main.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/main.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/monitor.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/monitor.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/polyfills.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/polyfills.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/scorecards.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/scorecards.js"
-                        },
-                        {
-                            "name": "Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/table.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/00000000-0000-0000-0000-0da1a0de41e5/0.6.50/table.js"
-                        }
-                    ]
-                },
-                {
-                    "AddonUUID": "2d06b975-a03b-42c9-940a-a3a6f67d6d67",
-                    "AddonVersion": "0.0.18",
-                    "Files": [
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/283.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/283.js"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/3rdpartylicenses.txt",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/3rdpartylicenses.txt"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/42.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/42.js"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/712.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/712.js"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/75.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/75.js"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/947.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/947.js"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/979.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/979.js"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/addon-cpi.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/addon-cpi.js"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/api.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/api.js"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/i18n/en.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/i18n/en.json"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/de.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/de.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/en.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/en.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/es.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/es.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/fr.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/fr.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/he.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/he.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/hu.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/hu.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/it.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/it.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/ja.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/ja.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/nl.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/nl.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/pl.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/pl.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/pt.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/pt.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/ru.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/ru.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/zh.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/i18n/zh.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/images/no-image.svg",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/images/no-image.svg"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/images/sail-away.jpg",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/assets/ngx-lib/images/sail-away.jpg"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/common.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/common.js"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/favicon.ico",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/favicon.ico"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/file_2d06b975_a03b_42c9_940a_a3a6f67d6d67.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/file_2d06b975_a03b_42c9_940a_a3a6f67d6d67.js"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/index.html",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/index.html"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/installation.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/installation.js"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/main.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/main.js"
-                        },
-                        {
-                            "name": "Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/polyfills.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/2d06b975-a03b-42c9-940a-a3a6f67d6d67/0.0.18/polyfills.js"
-                        }
-                    ]
-                },
-                {
-                    "AddonUUID": "5758b5e0-218f-4174-84dd-3fecfcace73c",
-                    "AddonVersion": "0.0.7",
-                    "Files": [
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/283.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/283.js"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/3rdpartylicenses.txt",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/3rdpartylicenses.txt"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/42.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/42.js"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/712.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/712.js"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/75.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/75.js"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/947.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/947.js"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/979.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/979.js"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/addon-cpi.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/addon-cpi.js"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/api.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/api.js"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/i18n/en.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/i18n/en.json"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/de.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/de.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/en.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/en.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/es.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/es.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/fr.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/fr.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/he.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/he.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/hu.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/hu.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/it.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/it.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/ja.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/ja.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/nl.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/nl.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/pl.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/pl.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/pt.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/pt.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/ru.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/ru.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/zh.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/i18n/zh.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/images/no-image.svg",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/images/no-image.svg"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/images/sail-away.jpg",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/assets/ngx-lib/images/sail-away.jpg"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/common.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/common.js"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/favicon.ico",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/favicon.ico"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/file_5758b5e0_218f_4174_84dd_3fecfcace73c.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/file_5758b5e0_218f_4174_84dd_3fecfcace73c.js"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/index.html",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/index.html"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/installation.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/installation.js"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/main.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/main.js"
-                        },
-                        {
-                            "name": "Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/polyfills.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/5758b5e0-218f-4174-84dd-3fecfcace73c/0.0.7/polyfills.js"
-                        }
-                    ]
-                },
-                {
-                    "AddonUUID": "5adbc9e0-ed1d-4b2d-98e9-9c50891812ea",
+                    "AddonUUID": "5adbc9e0-ed1d-4b2d-98e9-9c50891812ea", //Gallery
                     "AddonVersion": "0.7.6",
                     "Files": [
                         {
@@ -768,129 +368,7 @@ class FilesService {
                     ]
                 },
                 {
-                    "AddonUUID": "26f57caf-1b8d-46a3-ac31-0e8ac9260657",
-                    "AddonVersion": "0.0.82",
-                    "Files": [
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/161.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/161.js"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/217.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/217.js"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/3rdpartylicenses.txt",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/3rdpartylicenses.txt"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/774.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/774.js"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/788.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/788.js"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/947.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/947.js"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/addon-cpi.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/addon-cpi.js"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/api.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/api.js"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/i18n/en.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/i18n/en.json"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/de.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/de.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/en.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/en.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/es.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/es.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/fr.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/fr.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/he.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/he.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/hu.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/hu.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/it.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/it.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/ja.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/ja.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/nl.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/nl.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/pl.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/pl.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/pt.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/pt.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/ru.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/ru.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/zh.ngx-lib.json",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/i18n/zh.ngx-lib.json"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/images/no-image.svg",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/images/no-image.svg"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/images/sail-away.jpg",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/assets/ngx-lib/images/sail-away.jpg"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/chat.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/chat.js"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/favicon.ico",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/favicon.ico"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/index.html",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/index.html"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/installation.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/installation.js"
-                        },
-                        {
-                            "name": "Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/main.js",
-                            "url": "https://cdn.pepperi.com/Addon/Public/26f57caf-1b8d-46a3-ac31-0e8ac9260657/0.0.82/main.js"
-                        }
-                    ]
-                },
-                {
-                    "AddonUUID": "f93658be-17b6-4c92-9df3-4e6c7151e038",
+                    "AddonUUID": "f93658be-17b6-4c92-9df3-4e6c7151e038", //Slideshow
                     "AddonVersion": "0.7.3",
                     "Files": [
                         {
@@ -1096,7 +574,7 @@ class FilesService {
                     ]
                 },
                 {
-                    "AddonUUID": "50062e0c-9967-4ed4-9102-f2bc50602d41",
+                    "AddonUUID": "50062e0c-9967-4ed4-9102-f2bc50602d41", //Pages
                     "AddonVersion": "0.7.22",
                     "Files": [
                         {

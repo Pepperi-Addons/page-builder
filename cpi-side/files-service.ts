@@ -3,6 +3,7 @@ import { BlockFile, BlockFiles } from "../shared/pages.model";
 import fs from "fs";
 import jwtDecode from 'jwt-decode';
 import config from "../addon.config.json";
+import PQueue from 'p-queue';
 
 class FilesService {
 
@@ -16,6 +17,10 @@ class FilesService {
         })()
     }
 
+    filesQueue: PQueue;
+    constructor() {
+        this.filesQueue = new PQueue({ concurrency: 10 });
+    }
     async getPagesFolder(): Promise<string> {
         const filesRootDir = await pepperi.files.rootDir();
         const pagesRootDir = `${filesRootDir}/Pages`;  
@@ -63,12 +68,10 @@ class FilesService {
         console.log(`Downloading ${flatFiles.length} files`);
         let filesToDownloadPromises:any[] = [];
         let filesStatus:any[] = [];
-        // interate flat files and download 10 files each iteration
-        for (let i = 0; i < flatFiles.length; i += 10) {
-            const endBulkIndex = i + 10 > flatFiles.length ? undefined : i + 10; // If end is undefined, then the slice extends to the end of the array (From slice docs).
-            console.log(`Downloading files from ${i} to ${endBulkIndex}`);
-            const filesToDownload = flatFiles.slice(i, endBulkIndex);
-            filesToDownloadPromises.push(filesToDownload.map(async (file) => {
+        // download files by adding them to the queue
+        // and waiting for all to finish
+        await this.filesQueue.addAll(flatFiles.map((file) => {
+            return (() => {
                 // remove Version from url (section 3)
                 // file name looks like:  Addon/<AddonUUID>/<Version>/<FileName> - Addon/Public/f93658be-17b6-4c92-9df3-4e6c7151e038/0.7.2/assets/installation.js
                 const sections = file.name.split('/');
@@ -88,10 +91,8 @@ class FilesService {
                         success: false,
                     });
                 });
-            }));
-        }
-        // wait for download promises to finish
-        await Promise.all([].concat(...filesToDownloadPromises));
+            })
+        }));
         console.log(`Downloaded ${filesStatus.filter(file => file.success === true).length} files`);
         return filesStatus;
     }
