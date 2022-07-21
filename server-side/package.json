@@ -20,20 +20,25 @@
         "@rollup/plugin-json": "^4.1.0",
         "@rollup/plugin-node-resolve": "^8.0.0",
         "@types/dotenv": "^8.2.0",
-        "@types/node": "^10.17.24",
+        "@types/node": "^10.17.60",
         "@types/node-fetch": "^2.5.7",
         "nodemon": "^2.0.4",
         "rollup": "^2.10.9",
         "rollup-plugin-copy": "^3.4.0",
         "rollup-plugin-typescript2": "^0.27.1",
         "ts-node": "^8.10.1",
-        "typescript": "~3.8.0"
+        "typescript": "~3.8.0",
+        "encoding": "^0.1.13",
+        "node-fetch": "^2.6.0",
+        "aws-sdk": "2.1015.0"
     },
     "dependencies": {
         "@pepperi-addons/debug-server": "0.0.32",
         "@pepperi-addons/papi-sdk": "^1.31.1",
         "@types/uuid": "^8.3.4",
+        "jwt-decode": "^3.1.2",
         "node-fetch": "^2.6.0",
-        "uuid": "^8.3.2"
+        "uuid": "^8.3.2",
+        "shared": "file:../shared"
     }
 }

@@ -11,6 +11,7 @@ import { NavigationService } from 'src/app/services/navigation.service';
 export interface IPageBuilderHostObject {
     pageKey: string;
     pageParams: any;
+    offline: boolean;
 }
 
 @Component({
@@ -23,7 +24,7 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
 
     @Input() editMode: boolean = false;
     @Input() sectionsColumnsDropList = [];
-    
+
     // For loading the page from the client apps.
     private _hostObject: IPageBuilderHostObject;
     @Input()
@@ -57,7 +58,7 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     //         }, 0);
     //     }
     // }
-    
+
     @HostBinding('style.padding-inline')
     paddingInline = '0';
 
@@ -124,7 +125,7 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
     ngOnInit() {
         const addonUUID = this.navigationService.addonUUID;
         const pageKey = this.hostObject?.pageKey || this.route.snapshot.data['page_key'] || this.route?.snapshot?.params['page_key'] || '';
-        
+        this.pagesService.isOffline =  this.hostObject?.offline || false
         if (pageKey.length > 0) {
             const queryParams = this.hostObject?.pageParams || this.route?.snapshot?.queryParams;
             this.pagesService.loadPageBuilder(addonUUID, pageKey, this.editMode, queryParams);
@@ -148,7 +149,7 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
                         // Check that there is no other block with the same relation name that need to load.
                         // if (bp.loaded || !remoteEntriesMap.has(bp.block.Relation.Options?.remoteEntry)) {
                         if (bp.loaded || !pbRelationsNames.has(bp.block.Relation.Name)) {
-                            
+
                             // Add to the map only relations that not added yet.
                             if (!bp.loaded) {
                                 // remoteEntriesMap.set(bp.block.Relation.Options?.remoteEntry, true);
