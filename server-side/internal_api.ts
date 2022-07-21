@@ -1,5 +1,6 @@
 import { PagesApiService } from './pages-api.service'
 import { Client, Request } from '@pepperi-addons/debug-server'
+import FilesService from './files-service';
 
 export async function create_page(client: Client, request: Request): Promise<any> {
     try {
@@ -115,3 +116,20 @@ export async function draft_pages_export(client:Client, request: Request): Promi
         throw err;
     }
 }
+
+export async function get_pages_files_to_download(client:Client, request: Request): Promise<any> {
+    try {
+        if (request.method === 'GET') {
+            const service = new FilesService(client);
+            // return await service.getPageFilesToDownload();
+            return service.getPageFilesToDownloadHack();
+        }
+        else {
+            throw new Error(`Method ${request.method} not supported`);
+        }
+    } catch(err) {
+        throw err;
+    }
+}
+
+

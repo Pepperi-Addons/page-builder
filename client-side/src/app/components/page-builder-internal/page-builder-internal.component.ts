@@ -11,6 +11,7 @@ import { NavigationService } from 'src/app/services/navigation.service';
 export interface IPageBuilderHostObject {
     pageKey: string;
     pageParams: any;
+    offline: boolean;
 }
 
 @Component({
@@ -124,6 +125,7 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
     ngOnInit() {
         const addonUUID = this.navigationService.addonUUID;
         const pageKey = this.hostObject?.pageKey || this.route.snapshot.data['page_key'] || this.route?.snapshot?.params['page_key'] || '';
+        this.pagesService.isOffline =  this.hostObject?.offline || false;
 
         console.log('pageKey - ' + pageKey);
         if (pageKey.length > 0) {
