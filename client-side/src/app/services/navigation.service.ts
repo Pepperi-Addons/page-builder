@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd, ActivatedRouteSnapshot } from '@angular/router';
 
 import { filter } from 'rxjs/operators';
 import { config } from '../components/addon.config';
@@ -47,27 +47,32 @@ export class NavigationService {
         }
     }
 
-    back(): void {
-        // this.router['data']['showSidebar'] = true;
-
-        this.history.pop();
-        if (this.history.length > 0) {
-            // this.location.back(); // not working.
-            this.router.navigateByUrl(this.history.pop());
-        } else {
-            // this.router.navigate([`./settings/${this.addonUUID}/pages`], {
-            this.router.navigate([`./settings_block/Pages`], {
-                relativeTo: this.route,
-                queryParamsHandling: 'merge'
-            });
-        }
+    private getCurrentRoute(route: ActivatedRoute) {
+        return {
+            ...route,
+            ...route.children.reduce((acc, child) =>
+            ({ ...this.getCurrentRoute(child), ...acc }), {}) 
+        };
     }
 
-    navigateToPage(pageKey: string){
-        // this.router['data'] = { showSidebar: false};
-        // this.router.navigate([`./addons/${this.addonUUID}/pages/${pageKey}`], {
-        this.router.navigate([`./block/Pages/${pageKey}`], {
-            relativeTo: this.route,
+    back(): Promise<boolean> {
+        this.history.pop();
+        
+        if (this.history.length > 0) {
+            this.history.pop();
+        }
+        
+        const route: ActivatedRoute = this.getCurrentRoute(this.route);
+        return this.router.navigate(['../'], {
+            relativeTo: route,
+            queryParamsHandling: 'merge'
+        });
+    }
+
+    navigateToPage(pageKey: string): Promise<boolean> {
+        const route: ActivatedRoute = this.getCurrentRoute(this.route);
+        return this.router.navigate([`${pageKey}`], {
+            relativeTo: route,
             queryParamsHandling: 'merge'
         });
     }

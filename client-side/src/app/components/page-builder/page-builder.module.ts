@@ -14,7 +14,8 @@ import { PageBuilderComponent} from './index';
 export const routes: Routes = [
     {
         path: '',
-        component: PageBuilderComponent
+        component: PageBuilderComponent,
+        data: { showSidebar: false, addPadding: false}
     }
 ];
 

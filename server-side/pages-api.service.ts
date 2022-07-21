@@ -56,7 +56,7 @@ export class PagesApiService {
     }
 
     private createSettingsRelation() {
-        const blockName = 'Settings';
+        const settingsName = 'Settings';
 
         const settingsBlockRelation: Relation = {
             RelationName: "SettingsBlock",
@@ -67,8 +67,8 @@ export class PagesApiService {
             SubType: "NG14",
             AddonUUID: this.addonUUID,
             AddonRelativeURL: bundleFileName,
-            ComponentName: `${blockName}Component`,
-            ModuleName: `${blockName}Module`,
+            ComponentName: `${settingsName}Component`,
+            ModuleName: `${settingsName}Module`,
         }; 
         
         this.upsertRelation(settingsBlockRelation);
