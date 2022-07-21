@@ -120,13 +120,7 @@ class FilesService {
     }
 
     getFlatFilesList(blocks: BlockFiles[]): BlockFile[] {
-        let flatFilesList: BlockFile[] = [];
-        blocks.forEach(block => {
-            if (block.Files && Array.isArray(block.Files)) {
-                flatFilesList = flatFilesList.concat(block.Files);
-            }
-        });
-        return flatFilesList;
+        return blocks.map(x => (x.Files && Array.isArray(x.Files)) ? x.Files : []).flat();
     }
 
 
