@@ -5,7 +5,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { OverlayModule} from '@angular/cdk/overlay';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
-import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -34,12 +34,7 @@ import { PageBuilderInternalModule } from '../page-builder-internal/page-builder
 import { PageBuilderEditorModule } from '../page-builder-editor/page-builder-editor.module';
 import { SectionEditorModule } from '../section-editor/section-editor.module';
 
-// import { PepPluginProxyComponent } from '@pepperi-addons/ngx-lib/plugin';
 import { PageManagerComponent} from './page-manager.component';
-import { config } from '../addon.config';
-import { NavigationService } from '../../services/navigation.service';
-import { UtilitiesService } from '../../services/utilities.service';
-import { PagesService } from '../../services/pages.service';
 
 const pepIcons = [
     pepIconSystemClose,
@@ -92,33 +87,15 @@ const routes: Routes = [
         MatIconModule,
         PepRemoteLoaderModule,
         PepNgxCompositeLibModule,
-        TranslateModule.forChild({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: (addonService: PepAddonService) => 
-                    PepAddonService.createMultiTranslateLoader(config.AddonUUID, addonService, ['ngx-lib', 'ngx-composite-lib']),
-                deps: [PepAddonService]
-            }, isolate: false
-        }),
+        TranslateModule.forChild(),
         RouterModule.forChild(routes)
     ],
-    exports:[PageManagerComponent],
-    providers: [
-        TranslateStore,
-        // When loading this module from route we need to add this here (because only this module is loading).
-        NavigationService,
-        UtilitiesService,
-        PagesService
-    ]
+    exports:[PageManagerComponent]
 })
 export class PageManagerModule {
     constructor(
-        translate: TranslateService,
-        private pepIconRegistry: PepIconRegistry,
-        private pepAddonService: PepAddonService
-
+        private pepIconRegistry: PepIconRegistry
     ) {
         this.pepIconRegistry.registerIcons(pepIcons);
-        this.pepAddonService.setDefaultTranslateLang(translate);
     }
 }

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
-import { PepAddonService } from '@pepperi-addons/ngx-lib';
+import { PepAddonService, PepNgxLibModule } from '@pepperi-addons/ngx-lib';
 import { NavigationService } from '../../services/navigation.service';
 import { PagesService } from '../../services/pages.service';
 import { UtilitiesService } from '../../services/utilities.service';
@@ -25,6 +25,7 @@ export const routes: Routes = [
     ],
     imports: [
         CommonModule,
+        PepNgxLibModule,
         PageBuilderInternalModule,
         TranslateModule.forChild({
             loader: {

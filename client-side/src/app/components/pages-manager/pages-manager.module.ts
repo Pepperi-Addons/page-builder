@@ -22,11 +22,7 @@ import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
 import { PepNgxCompositeLibModule } from '@pepperi-addons/ngx-composite-lib';
 import { PepGenericListModule } from '@pepperi-addons/ngx-composite-lib/generic-list';
 
-import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
-import { config } from '../addon.config';
-import { NavigationService } from '../../services/navigation.service';
-import { UtilitiesService } from '../../services/utilities.service';
-import { PagesService } from '../../services/pages.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 const routes: Routes = [
     {
@@ -60,33 +56,15 @@ const routes: Routes = [
         // PepIconModule,
         MatIconModule,
         // PepRemoteLoaderModule,
-        TranslateModule.forChild({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: (addonService: PepAddonService) => 
-                    PepAddonService.createMultiTranslateLoader(config.AddonUUID, addonService, ['ngx-lib', 'ngx-composite-lib']),
-                deps: [PepAddonService]
-            }, isolate: false
-        }),
+        TranslateModule.forChild(),
         RouterModule.forChild(routes)
     ],
-    exports:[PagesManagerComponent],
-    providers: [
-        TranslateStore,
-        // When loading this module from route we need to add this here (because only this module is loading).
-        NavigationService,
-        UtilitiesService,
-        PagesService
-    ]
+    exports:[PagesManagerComponent]
 })
 export class PagesManagerModule {
     constructor(
-        translate: TranslateService,
         // private pepIconRegistry: PepIconRegistry,
-        private pepAddonService: PepAddonService
-
     ) {
         // this.pepIconRegistry.registerIcons(pepIcons);
-        this.pepAddonService.setDefaultTranslateLang(translate);
     }
 }

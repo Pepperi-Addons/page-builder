@@ -1,11 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
+import { PepAddonService, PepNgxLibModule } from '@pepperi-addons/ngx-lib';
+
+import { NavigationService } from '../../services/navigation.service';
+import { UtilitiesService } from '../../services/utilities.service';
+import { PagesService } from '../../services/pages.service';
+
+import { SettingsComponent } from './settings.component';
 import { SettingsRoutingModule } from './settings.routes';
 
-import { SettingsComponent } from './index';
-// import { TranslateLoader, TranslateModule, TranslateStore } from '@ngx-translate/core';
-// import { PepAddonService } from '@pepperi-addons/ngx-lib';
-// import { config } from '../addon.config';
+import { config } from '../addon.config';
 
 @NgModule({
     declarations: [
@@ -13,20 +19,31 @@ import { SettingsComponent } from './index';
     ],
     imports: [
         CommonModule,
+        PepNgxLibModule,
         SettingsRoutingModule,
-        // TranslateModule.forChild({
-        //     loader: {
-        //         provide: TranslateLoader,
-        //         useFactory: (addonService: PepAddonService) => 
-        //             PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib'], config.AddonUUID),
-        //         deps: [PepAddonService]
-        //     }, isolate: false
-        // }),
+        TranslateModule.forChild({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: (addonService: PepAddonService) => 
+                    PepAddonService.createMultiTranslateLoader(config.AddonUUID, addonService, ['ngx-lib', 'ngx-composite-lib']),
+                deps: [PepAddonService]
+            }, isolate: false
+        }),
     ],
-    // providers: [
-    //     TranslateStore,
-    //     // When loading this module from route we need to add this here (because only this module is loading).
-    // ]
+    providers: [
+        TranslateStore,
+        // When loading this module from route we need to add this here (because only this module is loading).
+        NavigationService,
+        UtilitiesService,
+        PagesService
+    ]
 })
 export class SettingsModule {
+    constructor(
+        translate: TranslateService,
+        private pepAddonService: PepAddonService
+
+    ) {
+        this.pepAddonService.setDefaultTranslateLang(translate);
+    }
 }
