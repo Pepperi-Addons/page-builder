@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { BlockFile, BlockFiles } from "../shared/pages.model";
+import { BlockFile, BlockFiles } from 'shared'
 import fs from "fs";
 import jwtDecode from 'jwt-decode';
 import config from "../addon.config.json";

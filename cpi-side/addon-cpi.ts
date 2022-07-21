@@ -18,11 +18,11 @@ export async function load(configuration: any) {
     });
 }
 
-router.get('/get_page_data/:pageKey', async (req, res, next) => {
+router.get('/get_page_data', async (req, res, next) => {
     let result = {};
 
     try {
-        const pageKey = req.params.pageKey;
+        const pageKey = req.query['key']?.toString();
         if (pageKey) {
             const service = new ClientPagesService();
             result = await service.getPageData(pageKey);

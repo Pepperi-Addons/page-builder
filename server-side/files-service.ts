@@ -2,7 +2,7 @@ import { Client } from "@pepperi-addons/debug-server";
 import { PapiClient } from "@pepperi-addons/papi-sdk";
 // import AWS, { S3 } from "aws-sdk";
 import { PagesApiService } from "./pages-api.service";
-import { BlockFiles, IBlockLoaderData } from '../shared/pages.model';
+import { BlockFiles, IBlockLoaderData } from 'shared';
 import config from '../addon.config.json';
 import jwtDecode from 'jwt-decode';
 class FilesService {

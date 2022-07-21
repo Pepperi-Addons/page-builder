@@ -858,13 +858,18 @@ export class PagesService {
     }
 
     private getBaseUrl(addonUUID: string): string {
-        // For devServer run server on localhost.
-        if(this.navigationService.devServer) {
-            return `http://localhost:4500/internal_api`;
+        if (this.isOffline){
+            return "http://localhost:8088/addon/api/50062e0c-9967-4ed4-9102-f2bc50602d41/addon-cpi";
         } else {
-            const baseUrl = this.sessionService.getPapiBaseUrl();
-            return `${baseUrl}/addons/api/${addonUUID}/internal_api`;
+             // For devServer run server on localhost.
+            if(this.navigationService.devServer) {
+                return `http://localhost:4500/internal_api`;
+            } else {
+                const baseUrl = this.sessionService.getPapiBaseUrl();
+                return `${baseUrl}/addons/api/${addonUUID}/internal_api`;
+            }
         }
+
     }
 
     private setPagesVariables(pagesVariables: any) {
@@ -1650,12 +1655,7 @@ export class PagesService {
 
         if (!editable) {
             // Get the page (sections and the blocks data) from the server.
-            let pageDataURL = '';
-            if (this.isOffline) {
-                pageDataURL = `http://localhost:8088/addon/api/50062e0c-9967-4ed4-9102-f2bc50602d41/addon-cpi/get_page_data/${pageKey}`;
-            } else {
-                pageDataURL = `${baseUrl}/get_page_data?key=${pageKey}`;
-            }
+            let pageDataURL = `${baseUrl}/get_page_data?key=${pageKey}`;
             this.httpService.getHttpCall(pageDataURL)
             .subscribe((res: IPageBuilderData) => {
                 if (res && res.page && res.availableBlocks) {
