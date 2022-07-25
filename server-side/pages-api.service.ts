@@ -791,10 +791,11 @@ export class PagesApiService {
     //                              Addon block data Public functions
     /************************************************************************************************/
     
-    async getBlockLoaderData(name: string, blockType: BlockDataType): Promise<IBlockLoaderData> {
+    async getBlockLoaderData(name: string, blockType: BlockDataType, addonUUID: string): Promise<IBlockLoaderData> {
         const promise = new Promise<IBlockLoaderData>(async (resolve, reject) => {
             // Get the addon blocks relations 
-            const addonBlockRelations: NgComponentRelation[] = await this.papiClient.addons.data.relations.find({where: `RelationName=${blockType} AND Name=${name}`});
+            const addonUUIDWhereIfExist = addonUUID.length > 0 ? ' AND AddonUUID=${addonUUID}' : '';
+            const addonBlockRelations: NgComponentRelation[] = await this.papiClient.addons.data.relations.find({where: `RelationName=${blockType} AND Name=${name}${addonUUIDWhereIfExist}`});
             
             if (addonBlockRelations.length > 0) {
                 const addonBlockRelation: NgComponentRelation = addonBlockRelations[0];
