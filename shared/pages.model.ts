@@ -68,8 +68,8 @@ export const DEFAULT_BLANK_PAGE_DATA: Page = {
     }
 }
 
-import homepage_blank from '../server-side/template_pages/homepage_blank.json';
-import homepage_gridy from '../server-side/template_pages/homepage_gridy.json';
+import homepage_blank from './template_pages/homepage_blank.json';
+import homepage_gridy from './template_pages/homepage_gridy.json';
 
 export const DEFAULT_PAGES_DATA = {
     "homepage_blank": homepage_blank,
