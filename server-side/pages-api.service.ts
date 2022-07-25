@@ -794,10 +794,17 @@ export class PagesApiService {
     async getBlockLoaderData(name: string, blockType: BlockDataType, addonUUID: string): Promise<IBlockLoaderData> {
         const promise = new Promise<IBlockLoaderData>(async (resolve, reject) => {
             // Get the addon blocks relations 
-            const addonUUIDWhereIfExist = addonUUID.length > 0 ? ' AND AddonUUID=${addonUUID}' : '';
-            const addonBlockRelations: NgComponentRelation[] = await this.papiClient.addons.data.relations.find({where: `RelationName=${blockType} AND Name=${name}${addonUUIDWhereIfExist}`});
+            // const addonUUIDWhereIfExist = addonUUID.length > 0 ? ` AND AddonUUID=${addonUUID}` : '';
+            let addonBlockRelations: NgComponentRelation[] = await this.papiClient.addons.data.relations.find(
+                {where: `RelationName=${blockType} AND Name=${name}`}
+            );
             
             if (addonBlockRelations.length > 0) {
+                // If the addonUUID is not empty and the addonBlockRelations has more then 1 blocks ? take the relevant.
+                if (addonUUID.length > 0 && addonBlockRelations.length > 1) {
+                    addonBlockRelations = addonBlockRelations.filter(abr => abr.AddonUUID === addonUUID);
+                }
+
                 const addonBlockRelation: NgComponentRelation = addonBlockRelations[0];
                 const installedAddon: InstalledAddon | undefined = await this.getInstalledAddon(addonBlockRelation.AddonUUID);
                 if (installedAddon) {
