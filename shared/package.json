@@ -1,16 +1,16 @@
 {
-  "name": "shared",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.ts",
-  "scripts": {
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@pepperi-addons/papi-sdk": "^1.39.4",
-    "typescript": "^4.7.4"
-  }
+    "name": "shared",
+    "version": "1.0.0",
+    "description": "",
+    "main": "./build/shared/index.js",
+    "scripts": {
+        "build": "tsc",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@pepperi-addons/papi-sdk": "^1.39.4",
+        "typescript": "^4.7.4"
+    }
 }
