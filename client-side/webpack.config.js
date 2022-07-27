@@ -39,10 +39,10 @@ module.exports = (config, options, env) => {
                     './PageBuilderModule': './src/app/components/page-builder/index.ts'
                 },
                 shared: share({
-                    "@angular/core": { eager: true, strictVersion: true, requiredVersion: 'auto' },
-                    "@angular/common": { eager: true, strictVersion: true, requiredVersion: 'auto' }, 
-                    "@angular/common/http": { eager: true, strictVersion: true, requiredVersion: 'auto' }, 
-                    "@angular/router": { eager: true, strictVersion: true, requiredVersion: 'auto' },
+                    "@angular/core": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },
+                    "@angular/common": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
+                    "@angular/common/http": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' }, 
+                    "@angular/router": { eager: true, singleton: true, strictVersion: true, requiredVersion: 'auto' },
                     
                     ...sharedMappings.getDescriptors()
                 })
