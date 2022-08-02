@@ -11,6 +11,7 @@ import { NavigationService } from "./navigation.service";
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 import { UtilitiesService } from "./utilities.service";
 import * as _ from 'lodash';
+// import { WebComponentWrapperOptions } from "@angular-architects/module-federation-tools";
 
 export type UiPageSizeType = PageSizeType | 'none';
 
@@ -38,6 +39,7 @@ export interface IEditor {
     title: string,
     type: EditorType,
     remoteModuleOptions?: PepRemoteLoaderOptions,
+    loadElement?: boolean,
     hostObject?: any
 }
 
@@ -845,23 +847,17 @@ export class PagesService {
         const remoteEntry = this.getRemoteEntryByType(data.addonPublicBaseURL, data.relation);
         const remoteLoaderOptions = this.remoteLoaderService.getRemoteLoaderOptions(data, remoteEntry);
 
-        // remoteLoaderOptions['key'] = data.relation.Key;
-
         if (editor) {
-            remoteLoaderOptions.exposedModule = `./${data.relation.EditorModuleName}`;
-            remoteLoaderOptions.componentName = data.relation.EditorComponentName;
+            // If there is web component change the element to be the editor element, Else set the module & component to fit the editor.
+            if (data.relation.ElementsModule?.length > 0) {
+                remoteLoaderOptions.elementName = data.relation.EditorElementName;
+            } else {
+                remoteLoaderOptions.exposedModule = `./${data.relation.EditorModuleName}`;
+                remoteLoaderOptions.componentName = data.relation.EditorComponentName;
+            }
         }
 
         return remoteLoaderOptions;
-
-        // return {
-        //     key: relation.Key,
-        //     addonId: relation.AddonUUID,
-        //     remoteEntry: this.getRemoteEntryByType(remoteBasePath, relation),
-        //     remoteName: relation.AddonRelativeURL,
-        //     exposedModule: './' + (editor ? relation.EditorModuleName : relation.ModuleName),
-        //     componentName: (editor ? relation.EditorComponentName : relation.ComponentName),
-        // }
     }
 
     private getBaseUrl(addonUUID: string): string {
@@ -1137,6 +1133,7 @@ export class PagesService {
 
             const key = this.getRemoteLoaderMapKey(blockProgress?.block.Relation);
             const remoteLoaderOptions = this._blocksEditorsRemoteLoaderOptionsMap.get(key);
+            
             if (block && remoteLoaderOptions) {
                 // If there is schema then support ConfigurationPerScreenSize
                 const hostObject = this.getEditorHostObject(block, blockProgress.block.Relation.Schema !== null);
@@ -1147,6 +1144,7 @@ export class PagesService {
                     type: 'block',
                     title: block.Relation.Name,
                     remoteModuleOptions: remoteLoaderOptions,
+                    loadElement: remoteLoaderOptions.elementName?.length > 0,
                     hostObject: JSON.parse(JSON.stringify(hostObject))
                 }
             }

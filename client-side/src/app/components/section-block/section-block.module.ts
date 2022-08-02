@@ -8,6 +8,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { PepAddonService } from '@pepperi-addons/ngx-lib';
 import { HideInModule } from '../hide-in/hide-in.module';
 import { PepDraggableItemsModule } from '@pepperi-addons/ngx-lib/draggable-items';
+// import { ModuleFederationToolsModule } from '@angular-architects/module-federation-tools';
 
 // import { PepPluginProxyComponent } from '@pepperi-addons/ngx-lib/plugin';
 
@@ -24,15 +25,8 @@ import { PepDraggableItemsModule } from '@pepperi-addons/ngx-lib/draggable-items
         PepRemoteLoaderModule,
         HideInModule,
         PepDraggableItemsModule,
-        // TranslateModule.forChild()
-        // ({
-        //     loader: {
-        //         provide: TranslateLoader,
-        //         useFactory: (addonService: PepAddonService) => 
-        //             PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib']),
-        //         deps: [PepAddonService]
-        //     }, isolate: false
-        // }),
+        // ModuleFederationToolsModule,
+        TranslateModule.forChild()
     ],
     exports: [SectionBlockComponent]
 })

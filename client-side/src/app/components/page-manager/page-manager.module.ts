@@ -35,6 +35,7 @@ import { PageBuilderEditorModule } from '../page-builder-editor/page-builder-edi
 import { SectionEditorModule } from '../section-editor/section-editor.module';
 
 import { PageManagerComponent} from './page-manager.component';
+// import { ModuleFederationToolsModule } from '@angular-architects/module-federation-tools';
 
 const pepIcons = [
     pepIconSystemClose,
@@ -88,6 +89,7 @@ const routes: Routes = [
         PepRemoteLoaderModule,
         PepNgxCompositeLibModule,
         TranslateModule.forChild(),
+        // ModuleFederationToolsModule,
         RouterModule.forChild(routes)
     ],
     exports:[PageManagerComponent]

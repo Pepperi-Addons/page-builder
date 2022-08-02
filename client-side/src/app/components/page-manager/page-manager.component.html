@@ -15,10 +15,20 @@
             <section-editor *ngIf="currentEditor?.type === 'section'" 
                 [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onSectionEditorObjectChange($event)"></section-editor>
         
-            <pep-remote-loader *ngIf="currentEditor?.type === 'block'" [options]="currentEditor?.remoteModuleOptions" 
-                [hostObject]="currentEditor?.hostObject" (hostEvents)="onBlockEditorHostEvents($event);"></pep-remote-loader>
-            <!-- <pep-plugin-proxy *ngIf="currentEditor?.type === 'block'" [options]="currentEditor?.remoteModuleOptions" 
-                [hostObject]="currentEditor?.hostObject" (hostEvents)="onBlockEditorHostEvents($event);"></pep-plugin-proxy> -->
+            <ng-container *ngIf="currentEditor?.type === 'block'">
+                <pep-remote-loader *ngIf="currentEditor?.remoteModuleOptions && !currentEditor.loadElement"
+                    [options]="currentEditor?.remoteModuleOptions" 
+                    [hostObject]="currentEditor?.hostObject"
+                    (hostEvents)="onBlockEditorHostEvents($event);">
+                </pep-remote-loader>
+
+                <pep-remote-loader-element *ngIf="currentEditor?.remoteModuleOptions && currentEditor.loadElement"
+                    [options]="currentEditor?.remoteModuleOptions" 
+                    [props]="{ hostObject: currentEditor?.hostObject }"
+                    [events]="{ hostEvents: onBlockEditorHostEventsCallback }">
+                </pep-remote-loader-element>
+            </ng-container>
+
         </pep-side-bar>
     </div>
     <ng-container pep-main-area>

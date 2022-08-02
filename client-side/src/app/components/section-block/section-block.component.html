@@ -14,17 +14,16 @@
         </ng-container>
     </pep-draggable-item>
     <div class="remote-loader-wrapper" [ngStyle]="{ 'overflow': editable ? 'hidden' : (sectionHeight === 'unset' ? 'unset' : 'auto') }">
-        <pep-remote-loader class="remote-loader"
-            [options]="remotePathOptions"
+        <pep-remote-loader *ngIf="remoteLoaderOptions && !loadElement" class="remote-loader"
+            [options]="remoteLoaderOptions"
             [hostObject]="hostObject"
             (hostEvents)="onBlockHostEvents($event);"
             (load)="onBlockLoad($event)">
         </pep-remote-loader>
-        <!-- <pep-plugin-proxy class="remote-loader"
-            [options]="remotePathOptions"
-            [hostObject]="hostObject"
-            (hostEvents)="onBlockHostEvents($event);"
-            (load)="onBlockLoad($event)">
-        </pep-plugin-proxy> -->
+        <pep-remote-loader-element *ngIf="remoteLoaderOptions && loadElement" class="remote-loader"
+            [options]="remoteLoaderOptions"
+            [props]="{ hostObject: hostObject }"
+            [events]="{ hostEvents: onBlockHostEventsCallback }">
+        </pep-remote-loader-element>
     </div>
 </div>

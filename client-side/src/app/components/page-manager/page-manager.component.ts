@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild, ViewContainerRef } from "@angular/core";
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild, ViewContainerRef } from "@angular/core";
 import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
 import { PepButton } from '@pepperi-addons/ngx-lib/button';
 import { pepIconDeviceDesktop, pepIconDeviceMobile, pepIconDeviceTablet } from '@pepperi-addons/ngx-lib/icon';
@@ -11,6 +11,7 @@ import { IPepSideBarStateChangeEvent } from '@pepperi-addons/ngx-lib/side-bar';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { PepSnackBarData, PepSnackBarService } from "@pepperi-addons/ngx-lib/snack-bar";
+import { WebComponentWrapperOptions } from "@angular-architects/module-federation-tools";
 
 @Component({
     selector: 'page-manager',
@@ -50,6 +51,8 @@ export class PageManagerComponent implements OnInit {
     isOverPageSizeLimit = false;
     currentPage: Page;
 
+    onBlockEditorHostEventsCallback: (event: CustomEvent) => void;
+
     constructor(
         private renderer: Renderer2,
         private translate: TranslateService,
@@ -61,8 +64,12 @@ export class PageManagerComponent implements OnInit {
         public navigationService: NavigationService,
         private viewContainerRef: ViewContainerRef,
         private dimxService: DIMXService,
+        private cd: ChangeDetectorRef,
     ) {
         this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
+        this.onBlockEditorHostEventsCallback = (event: CustomEvent) => {
+            this.onBlockEditorHostEvents(event.detail);
+        }
     }
 
     private setCurrentEditor(): void {

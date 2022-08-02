@@ -59,14 +59,23 @@ export class SectionBlockComponent implements OnInit {
         return this._hostObject;
     }
 
-    remotePathOptions: PepRemoteLoaderOptions;
+    protected remoteLoaderOptions: PepRemoteLoaderOptions;
+    protected loadElement: boolean = false;
+    
+    onBlockHostEventsCallback: (event: CustomEvent) => void;
 
     constructor(
         private pagesService: PagesService
-    ) { }
+    ) {
+        this.onBlockHostEventsCallback = (event: CustomEvent) => {
+            this.onBlockHostEvents(event.detail);
+        }
+    }
     
     private setRemotePathOptions() {
-        this.remotePathOptions = this.pagesService.getBlocksRemoteLoaderOptions(this.pageBlock.Relation);
+        const options = this.pagesService.getBlocksRemoteLoaderOptions(this.pageBlock.Relation);
+        this.loadElement = options.elementName?.length > 0;
+        this.remoteLoaderOptions = options;
     }
 
     private setHostObject(): void {
