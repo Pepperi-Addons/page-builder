@@ -1,34 +1,16 @@
-import { NgModule, NgZone } from '@angular/core';
+import { DoBootstrap, Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { DragDropModule } from '@angular/cdk/drag-drop';
-
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatTabsModule } from '@angular/material/tabs';
-
-import { shareNgZone } from '@angular-architects/module-federation-tools';
-
-import { PepSelectModule } from '@pepperi-addons/ngx-lib/select';
-import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
-import { PepTextareaModule } from '@pepperi-addons/ngx-lib/textarea';
-import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
-import { PepPageLayoutModule } from '@pepperi-addons/ngx-lib/page-layout';
-import { PepMenuModule } from '@pepperi-addons/ngx-lib/menu';
-import { PepTopBarModule } from '@pepperi-addons/ngx-lib/top-bar';
+import { createCustomElement } from '@angular/elements';
 import { AppRoutingModule } from './app.routes';
 import { AppComponent } from './app.component';
 import { pepIconArrowLeftAlt, PepIconModule, pepIconNumberPlus, PepIconRegistry, pepIconSystemBin, pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit, pepIconSystemMove } from '@pepperi-addons/ngx-lib/icon';
-import { PepSizeDetectorModule } from '@pepperi-addons/ngx-lib/size-detector';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { PepFileService, PepAddonService } from '@pepperi-addons/ngx-lib';
-import { PepSideBarModule } from '@pepperi-addons/ngx-lib/side-bar';
-import { PepRemoteLoaderModule } from '@pepperi-addons/ngx-lib/remote-loader';
-import { PagesManagerModule } from './components/pages-manager/pages-manager.module';
-import { PageManagerModule } from './components/page-manager/page-manager.module';
-import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
-import { PepGroupButtonsModule } from '@pepperi-addons/ngx-lib/group-buttons';
+import { TranslateModule, TranslateLoader, TranslateStore, TranslateService } from '@ngx-translate/core';
+import { PepAddonService } from '@pepperi-addons/ngx-lib';
+import { SettingsComponent, SettingsModule } from './components/settings';
+import { PageBuilderComponent } from './components/page-builder';
+
 import { config } from './components/addon.config';
 
 const pepIcons = [
@@ -48,26 +30,8 @@ const pepIcons = [
         BrowserModule,
         BrowserAnimationsModule,
         HttpClientModule,
-        PagesManagerModule,
-        PageManagerModule,
+        SettingsModule,
         AppRoutingModule,
-        PepSizeDetectorModule,
-        MatIconModule,
-        PepIconModule,
-        PepTopBarModule,
-        PepMenuModule,
-        PepButtonModule,
-        PepSelectModule,
-        PepTextboxModule,
-        PepTextareaModule,
-        PepPageLayoutModule,
-        PepSideBarModule,
-        PepRemoteLoaderModule,
-        DragDropModule,
-        MatCardModule,
-        MatTabsModule,
-        PepCheckboxModule,
-        PepGroupButtonsModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
@@ -77,12 +41,30 @@ const pepIcons = [
             }
         })
     ],
-    bootstrap: [AppComponent]
+    providers: [
+        TranslateStore,
+        // When loading this module from route we need to add this here (because only this module is loading).
+    ],
+    bootstrap: [
+        // AppComponent
+    ]
 })
-export class AppModule {
-    constructor(private ngZone: NgZone, private pepIconRegistry: PepIconRegistry) {
-        // (window as any).ngZone = this.ngZone;
-        // shareNgZone(ngZone);
+export class AppModule implements DoBootstrap {
+    constructor(
+        private injector: Injector,
+        translate: TranslateService,
+        private pepAddonService: PepAddonService,
+        private pepIconRegistry: PepIconRegistry
+    ) {
         this.pepIconRegistry.registerIcons(pepIcons);
+        this.pepAddonService.setDefaultTranslateLang(translate);
+    }
+
+    ngDoBootstrap() {
+        // const ce = createCustomElement(AppComponent, {injector: this.injector});
+        // customElements.define('assets', ce);
+    
+        customElements.define('pages-element', createCustomElement(SettingsComponent, {injector: this.injector}));
+        customElements.define('settings-element', createCustomElement(PageBuilderComponent, {injector: this.injector}));
     }
 }

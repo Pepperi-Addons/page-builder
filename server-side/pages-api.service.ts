@@ -50,6 +50,8 @@ export class PagesApiService {
             AddonRelativeURL: bundleFileName,
             ComponentName: `${blockName}Component`,
             ModuleName: `${blockName}Module`,
+            ElementsModule: 'WebComponents',
+            ElementName: `pages-element`,
         }; 
         
         this.upsertRelation(addonBlockRelation);
@@ -57,11 +59,12 @@ export class PagesApiService {
 
     private createSettingsRelation() {
         const settingsName = 'Settings';
+        const name = 'Pages';
 
         const settingsBlockRelation: Relation = {
             RelationName: "SettingsBlock",
-            GroupName: 'Pages',
-            Name: 'Pages',
+            GroupName: name,
+            Name: name,
             Description: 'Page Builder (Beta)',
             Type: "NgComponent",
             SubType: "NG14",
@@ -69,6 +72,8 @@ export class PagesApiService {
             AddonRelativeURL: bundleFileName,
             ComponentName: `${settingsName}Component`,
             ModuleName: `${settingsName}Module`,
+            ElementsModule: 'WebComponents',
+            ElementName: `settings-element`,
         }; 
         
         this.upsertRelation(settingsBlockRelation);
