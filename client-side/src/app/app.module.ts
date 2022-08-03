@@ -64,7 +64,7 @@ export class AppModule implements DoBootstrap {
         // const ce = createCustomElement(AppComponent, {injector: this.injector});
         // customElements.define('assets', ce);
     
-        customElements.define('pages-element', createCustomElement(SettingsComponent, {injector: this.injector}));
-        customElements.define('settings-element', createCustomElement(PageBuilderComponent, {injector: this.injector}));
+        customElements.define('settings-element', createCustomElement(SettingsComponent, {injector: this.injector}));
+        customElements.define('pages-element', createCustomElement(PageBuilderComponent, {injector: this.injector}));
     }
 }
