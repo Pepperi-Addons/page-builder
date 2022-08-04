@@ -64,6 +64,7 @@ export class PagesApiService {
         const settingsBlockRelation: Relation = {
             RelationName: "SettingsBlock",
             GroupName: name,
+            SlugName: 'pages',
             Name: name,
             Description: 'Page Builder (Beta)',
             Type: "NgComponent",
@@ -796,18 +797,24 @@ export class PagesApiService {
     //                              Addon block data Public functions
     /************************************************************************************************/
     
-    async getBlockLoaderData(name: string, blockType: BlockDataType, addonUUID: string): Promise<IBlockLoaderData> {
+    async getBlockLoaderData(name: string, blockType: BlockDataType, slugName: string, addonUUID: string): Promise<IBlockLoaderData> {
         const promise = new Promise<IBlockLoaderData>(async (resolve, reject) => {
             // Get the addon blocks relations 
-            // const addonUUIDWhereIfExist = addonUUID.length > 0 ? ` AND AddonUUID=${addonUUID}` : '';
+            const whereName = (name.length > 0) ? `AND Name=${name}`: '';
+
             let addonBlockRelations: NgComponentRelation[] = await this.papiClient.addons.data.relations.find(
-                {where: `RelationName=${blockType} AND Name=${name}`}
+                {where: `RelationName=${blockType} ${whereName}`}
             );
             
             if (addonBlockRelations.length > 0) {
                 // If the addonUUID is not empty and the addonBlockRelations has more then 1 blocks ? take the relevant.
                 if (addonUUID.length > 0 && addonBlockRelations.length > 1) {
                     addonBlockRelations = addonBlockRelations.filter(abr => abr.AddonUUID === addonUUID);
+                }
+
+                // If the slugName is not empty and the addonBlockRelations has more then 1 blocks ? take the relevant.
+                if (slugName.length > 0 && addonBlockRelations.length > 1) {
+                    addonBlockRelations = addonBlockRelations.filter(abr => abr.SlugName === slugName);
                 }
 
                 const addonBlockRelation: NgComponentRelation = addonBlockRelations[0];

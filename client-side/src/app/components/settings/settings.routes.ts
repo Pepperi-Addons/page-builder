@@ -12,7 +12,7 @@ export class EmptyRouteComponent {}
 
 const routes: Routes = [
     {
-        path: ':settingsSectionName/:addonUUID/:blockName',
+        path: ':settingsSectionName/:addonUUID/:slugName',
         component: SettingsComponent,
         children: [
             {
