@@ -73,9 +73,11 @@ export class PagesManagerComponent implements OnInit {
         private viewContainerRef: ViewContainerRef,
         private activatedRoute: ActivatedRoute
     ) {
-        this.activatedRoute.data.subscribe(data => {
-            this.addPadding = data.addPadding ?? true;
-        })
+        this.pepAddonService.setShellRouterData({ showSidebar: true, addPadding: true});
+
+        // this.activatedRoute.data.subscribe(data => {
+        //     this.addPadding = data.addPadding ?? true;
+        // })
 
         this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
         this.imagesPath = this.pepAddonService.getAddonStaticFolder(this.navigationService.addonUUID) + 'assets/images/';

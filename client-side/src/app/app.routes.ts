@@ -9,31 +9,34 @@ import { Routes, RouterModule } from '@angular/router';
 export class EmptyRouteComponent {}
 
 const routes: Routes = [
+    // {
+    //     path: `settings/:addonUUID`,
+    //     children: [
+    //         {
+    //             path: '**',
+    //             loadChildren: () => import('./components/pages-manager/pages-manager.module').then(m => m.PagesManagerModule)
+    //         },
+    //     ]
+    // },
+    // {
+    //     path: `addons/:addonUUID`,
+    //     children: [
+    //        {
+    //             path: '',
+    //             loadChildren: () => import('./components/page-manager/page-manager.module').then(m => m.PageManagerModule)
+    //         }
+    //     ]
+    // },
     {
-        path: `settings/:addonUUID`,
-        children: [
-            {
-                path: '**',
-                loadChildren: () => import('./components/pages-manager/pages-manager.module').then(m => m.PagesManagerModule)
-            },
-        ]
-    },
-    {
-        path: `addons/:addonUUID`,
-        children: [
-           {
-                path: '',
-                loadChildren: () => import('./components/page-manager/page-manager.module').then(m => m.PageManagerModule)
-            }
-        ]
+        path: '',
+        loadChildren: () => import('./components/settings/settings.module').then(m => m.SettingsModule),
     },
     { path: '**', component: EmptyRouteComponent }
 ];
 
 @NgModule({
     imports: [
-        // RouterModule.forChild(routes),
-        RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })
+        RouterModule.forRoot(routes)
     ],
     exports: [RouterModule]
 })

@@ -4,18 +4,17 @@
 // import { enableProdMode } from '@angular/core';
 
 // if (environment.production) {
-//   enableProdMode();
+//     enableProdMode();
 // }
 
 // platformBrowserDynamic().bootstrapModule(AppModule)
-//   .catch(err => console.error(err));
-  
+//     .catch(err => console.error(err));
+   
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 import { bootstrap } from '@angular-architects/module-federation-tools';
 
 bootstrap(AppModule, {
     production: environment.production,
-    // appType: 'shell', 
-    // appType: 'microfrontend' 
+    appType: 'microfrontend' // Only if we have routes use this!!!
 });

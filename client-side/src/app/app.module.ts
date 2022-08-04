@@ -3,15 +3,19 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { createCustomElement } from '@angular/elements';
-import { AppRoutingModule } from './app.routes';
-import { AppComponent } from './app.component';
-import { pepIconArrowLeftAlt, PepIconModule, pepIconNumberPlus, PepIconRegistry, pepIconSystemBin, pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit, pepIconSystemMove } from '@pepperi-addons/ngx-lib/icon';
+
 import { TranslateModule, TranslateLoader, TranslateStore, TranslateService } from '@ngx-translate/core';
+
+import { pepIconArrowLeftAlt, pepIconNumberPlus, PepIconRegistry, pepIconSystemBin, pepIconSystemBolt, pepIconSystemClose, pepIconSystemEdit, pepIconSystemMove } from '@pepperi-addons/ngx-lib/icon';
 import { PepAddonService } from '@pepperi-addons/ngx-lib';
+import { PagesManagerModule } from './components/pages-manager/pages-manager.module';
+import { PageManagerModule } from './components/page-manager/page-manager.module';
 import { SettingsComponent, SettingsModule } from './components/settings';
-import { PageBuilderComponent } from './components/page-builder';
+import { PageBuilderComponent, PageBuilderModule } from './components/page-builder';
+import { AppComponent } from './app.component';
 
 import { config } from './components/addon.config';
+import { AppRoutingModule } from './app.routes';
 
 const pepIcons = [
     pepIconSystemClose,
@@ -30,7 +34,10 @@ const pepIcons = [
         BrowserModule,
         BrowserAnimationsModule,
         HttpClientModule,
+        PagesManagerModule,
+        PageManagerModule,
         SettingsModule,
+        PageBuilderModule,
         AppRoutingModule,
         TranslateModule.forRoot({
             loader: {
@@ -61,10 +68,7 @@ export class AppModule implements DoBootstrap {
     }
 
     ngDoBootstrap() {
-        // const ce = createCustomElement(AppComponent, {injector: this.injector});
-        // customElements.define('assets', ce);
-    
-        customElements.define('settings-element', createCustomElement(SettingsComponent, {injector: this.injector}));
-        customElements.define('pages-element', createCustomElement(PageBuilderComponent, {injector: this.injector}));
+        customElements.define(`settings-element-${config.AddonUUID}`, createCustomElement(SettingsComponent, {injector: this.injector}));
+        customElements.define(`pages-element-${config.AddonUUID}`, createCustomElement(PageBuilderComponent, {injector: this.injector}));
     }
 }

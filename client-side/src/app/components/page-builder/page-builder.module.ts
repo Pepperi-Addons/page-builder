@@ -7,7 +7,7 @@ import { NavigationService } from '../../services/navigation.service';
 import { PagesService } from '../../services/pages.service';
 import { UtilitiesService } from '../../services/utilities.service';
 import { config } from '../addon.config';
-import { PageBuilderInternalModule } from '../page-builder-internal';
+import { PageBuilderInternalModule } from '../page-builder-internal/page-builder-internal.module';
 
 import { PageBuilderComponent} from './index';
 
@@ -15,7 +15,7 @@ export const routes: Routes = [
     {
         path: '',
         component: PageBuilderComponent,
-        data: { showSidebar: false, addPadding: false}
+        // data: { showSidebar: false, addPadding: false}
     }
 ];
 

@@ -20,7 +20,7 @@ export async function install(client: Client, request: Request): Promise<any> {
     try {
         const pageService = new PagesApiService(client);
         pageService.createPagesTablesSchemes();
-        pageService.createPagesRelations();
+        pageService.upsertPagesRelations();
         pageService.subscribeUninstallAddons(pnsKeyForPages, pnsFunctionPathForPages);
         pageService.subscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
     } catch (err) {
@@ -44,6 +44,9 @@ export async function uninstall(client: Client, request: Request): Promise<any> 
 
 export async function upgrade(client: Client, request: Request): Promise<any> {
     try {
+        const pageService = new PagesApiService(client);
+        pageService.upsertPagesRelations();
+
         const pageUpgradeService = new PagesUpgradeService(client);
         await pageUpgradeService.upgradeToVersion61(true);
     } catch (err) {

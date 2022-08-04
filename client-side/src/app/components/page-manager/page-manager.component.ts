@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild, ViewContainerRef } from "@angular/core";
-import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
+import { PepAddonService, PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
 import { PepButton } from '@pepperi-addons/ngx-lib/button';
 import { pepIconDeviceDesktop, pepIconDeviceMobile, pepIconDeviceTablet } from '@pepperi-addons/ngx-lib/icon';
 import { TranslateService } from '@ngx-translate/core';
@@ -57,6 +57,7 @@ export class PageManagerComponent implements OnInit {
         private renderer: Renderer2,
         private translate: TranslateService,
         private pepUtilitiesService: PepUtilitiesService,
+        private pepAddonService: PepAddonService,
         private layoutService: PepLayoutService,
         private pagesService: PagesService,
         private utilitiesService: UtilitiesService,
@@ -66,6 +67,7 @@ export class PageManagerComponent implements OnInit {
         private dimxService: DIMXService,
         private cd: ChangeDetectorRef,
     ) {
+        this.pepAddonService.setShellRouterData({ showSidebar: false, addPadding: false});
         this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
         this.onBlockEditorHostEventsCallback = (event: CustomEvent) => {
             this.onBlockEditorHostEvents(event.detail);

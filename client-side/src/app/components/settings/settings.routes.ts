@@ -6,13 +6,13 @@ import { SettingsComponent } from './settings.component';
 // Important for single spa
 @Component({
     selector: 'app-empty-route',
-    template: '<div>Route is not exist.</div>',
+    template: '<div>Route is not exist settings.</div>',
 })
 export class EmptyRouteComponent {}
 
 const routes: Routes = [
     {
-        path: '',
+        path: ':settingsSectionName/:addonUUID/:blockName',
         component: SettingsComponent,
         children: [
             {
@@ -23,11 +23,6 @@ const routes: Routes = [
                 path: ':page_key',
                 loadChildren: () => import('../page-manager/page-manager.module').then(m => m.PageManagerModule)
             },
-            // {
-            //     path: 'layout',
-            //     loadChildren: () => import('./layout/layout.module')
-            //       .then(m => m.LayoutModule),
-            //   },
             { path: '**', component: EmptyRouteComponent }
         ]
     }

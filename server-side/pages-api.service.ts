@@ -36,7 +36,7 @@ export class PagesApiService {
         return this.papiClient.addons.data.relations.find({where: `RelationName=${relationName}`});
     }
     
-    private createAddonBlockRelation() {
+    private upsertAddonBlockRelation() {
         const name = 'Pages';
         const blockName = 'PageBuilder';
 
@@ -51,13 +51,13 @@ export class PagesApiService {
             ComponentName: `${blockName}Component`,
             ModuleName: `${blockName}Module`,
             ElementsModule: 'WebComponents',
-            ElementName: `pages-element`,
+            ElementName: `pages-element-${this.addonUUID}`,
         }; 
         
         this.upsertRelation(addonBlockRelation);
     }
 
-    private createSettingsRelation() {
+    private upsertSettingsRelation() {
         const settingsName = 'Settings';
         const name = 'Pages';
 
@@ -73,7 +73,7 @@ export class PagesApiService {
             ComponentName: `${settingsName}Component`,
             ModuleName: `${settingsName}Module`,
             ElementsModule: 'WebComponents',
-            ElementName: `settings-element`,
+            ElementName: `settings-element-${this.addonUUID}`,
         }; 
         
         this.upsertRelation(settingsBlockRelation);
@@ -252,12 +252,12 @@ export class PagesApiService {
         return Promise.all(promises);
     }
 
-    createPagesRelations(): void {
-        this.createVarSettingsRelation();
-        this.createImportRelation();
-        this.createExportRelation();
-        this.createAddonBlockRelation();
-        this.createSettingsRelation();
+    upsertPagesRelations(): void {
+        this.upsertVarSettingsRelation();
+        this.upsertImportRelation();
+        this.upsertExportRelation();
+        this.upsertAddonBlockRelation();
+        this.upsertSettingsRelation();
     }
 
     async getPages(options: FindOptions | undefined = undefined): Promise<Page[]> {
@@ -480,7 +480,7 @@ export class PagesApiService {
     //                              VarSettings functions
     /************************************************************************************************/
     
-    private createVarSettingsRelation(): void {
+    private upsertVarSettingsRelation(): void {
         const title = 'Pages variables'; // The title of the tab in which the fields will appear;
         const dataView: FormDataView = {
             Type: 'Form',
@@ -588,7 +588,7 @@ export class PagesApiService {
     //                              Import & Export functions
     /************************************************************************************************/
     
-    private createImportRelation(): void {
+    private upsertImportRelation(): void {
         const importRelation: Relation = {
             RelationName: 'DataImportResource',
             Name: DRAFT_PAGES_TABLE_NAME,
@@ -602,7 +602,7 @@ export class PagesApiService {
         this.upsertRelation(importRelation);
     }
 
-    private createExportRelation(): void {
+    private upsertExportRelation(): void {
         const exportRelation: Relation = {
             RelationName: 'DataExportResource',
             Name: DRAFT_PAGES_TABLE_NAME,
