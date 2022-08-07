@@ -16,11 +16,11 @@
         }
 
         // DI-20922 add pointer-events: none; when current block is in focus
-        &.active-block {
-            .remote-loader-wrapper .remote-loader {
-                pointer-events: none;
-            }
-        }
+        // &.active-block {
+        //     .remote-loader-wrapper .remote-loader {
+        //         pointer-events: none;
+        //     }
+        // }
 
         // Hide the block content on the preview when dragging the block.
         &.cdk-drag-preview {
