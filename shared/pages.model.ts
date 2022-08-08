@@ -1,6 +1,5 @@
 import { InstalledAddon, NgComponentRelation, Page } from "@pepperi-addons/papi-sdk";
 
-export type BlockDataType = 'SettingsBlock' | 'AddonBlock' | 'PageBlock';
 export interface BlockFile {
     name: string;
     url: string;    

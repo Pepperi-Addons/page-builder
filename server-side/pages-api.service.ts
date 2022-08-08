@@ -1,11 +1,8 @@
 import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView } from '@pepperi-addons/papi-sdk';
 import { Client } from '@pepperi-addons/debug-server';
-import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, BlockDataType, DEFAULT_PAGES_DATA } from 'shared';
+import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, DEFAULT_PAGES_DATA } from 'shared';
 import { PagesValidatorService } from './pages-validator.service';
 import { v4 as uuidv4 } from 'uuid';
-import fetch from 'node-fetch';
-const path = require("path");
-const { readFileSync } = require('fs');
 
 export const PAGES_TABLE_NAME = 'Pages';
 export const DRAFT_PAGES_TABLE_NAME = 'PagesDrafts';
@@ -797,7 +794,7 @@ export class PagesApiService {
     //                              Addon block data Public functions
     /************************************************************************************************/
     
-    async getBlockLoaderData(name: string, blockType: BlockDataType, slugName: string, addonUUID: string): Promise<IBlockLoaderData> {
+    async getBlockLoaderData(name: string, blockType: string, slugName: string, addonUUID: string): Promise<IBlockLoaderData> {
         const promise = new Promise<IBlockLoaderData>(async (resolve, reject) => {
             // Get the addon blocks relations 
             const whereName = (name.length > 0) ? `AND Name=${name}`: '';
