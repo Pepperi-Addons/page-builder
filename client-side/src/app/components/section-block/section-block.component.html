@@ -23,7 +23,8 @@
         <pep-remote-loader-element *ngIf="remoteLoaderOptions && loadElement" class="remote-loader"
             [options]="remoteLoaderOptions"
             [props]="{ hostObject: hostObject }"
-            [events]="{ hostEvents: onBlockHostEventsCallback }">
+            [events]="{ hostEvents: onBlockHostEventsCallback }"
+            (load)="onBlockLoad($event)">
         </pep-remote-loader-element>
     </div>
 </div>
