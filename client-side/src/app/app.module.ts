@@ -1,4 +1,4 @@
-import { DoBootstrap, Injector, NgModule } from '@angular/core';
+import { DoBootstrap, Injector, NgModule, Type } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -67,8 +67,14 @@ export class AppModule implements DoBootstrap {
         this.pepAddonService.setDefaultTranslateLang(translate);
     }
 
+    private defineCustomElement(elementName: string, component: Type<any>) {
+        if (!customElements.get(elementName)) {  
+            customElements.define(elementName, createCustomElement(component, {injector: this.injector}));
+        }
+    }
+
     ngDoBootstrap() {
-        customElements.define(`settings-element-${config.AddonUUID}`, createCustomElement(SettingsComponent, {injector: this.injector}));
-        customElements.define(`pages-element-${config.AddonUUID}`, createCustomElement(PageBuilderComponent, {injector: this.injector}));
+        this.defineCustomElement(`settings-element-${config.AddonUUID}`, SettingsComponent);
+        this.defineCustomElement(`pages-element-${config.AddonUUID}`, PageBuilderComponent);
     }
 }
