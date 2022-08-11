@@ -889,7 +889,7 @@ export class PagesService {
     private setQueryParameters(queryParameters: Params) {
         Object.keys(queryParameters).forEach(paramKey => {
             try {
-                const paramValue = JSON.parse(queryParameters[paramKey]);
+                const paramValue = queryParameters[paramKey];
                 this.setProducerParameter(paramKey, paramValue);
             } catch {
                 // Do nothing, skip this param
