@@ -180,4 +180,15 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
         this.pagesService.onSectionDropped(event);
     }
 
+    getSectionsTemplateRows(){
+        let templateRows = '';
+        this.sections$.subscribe(res => {    
+               if(res?.length){
+                templateRows =  'auto';
+               } 
+        });
+
+        return templateRows;
+    }
+
 }

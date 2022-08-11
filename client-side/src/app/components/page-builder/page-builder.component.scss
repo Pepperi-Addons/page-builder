@@ -2,6 +2,8 @@
 
 :host {
     display: block;
+    //fill height task
+    height: 100%;
 }
 
 .sections-container {
@@ -9,7 +11,9 @@
     margin: 0 auto;
     position: relative;
     display: grid;
-
+    // fill height task start
+    height: inherit;
+    // fill height task - end
     &.mobile {
         display: block;
     }

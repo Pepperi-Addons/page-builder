@@ -4,7 +4,9 @@
 .section-container {
     position: relative;
     display: grid;
-    height: inherit;
+    //height: inherit;
+    // fill height task
+    height: 100%;
     max-height: inherit;
     min-height: variables.$draggable-item-height;
 
