@@ -62,7 +62,7 @@ export class PagesApiService {
                 availableBlocks.push({
                     relation: relation,
                     addonPublicBaseURL: installedAddon.PublicBaseURL,
-                    addonVersion: installedAddon.Version || '',
+                    addonVersion: installedAddon.Version || ''
                 });
             }
         });
