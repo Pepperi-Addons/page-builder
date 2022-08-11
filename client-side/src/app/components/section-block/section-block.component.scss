@@ -14,7 +14,7 @@
                 }
             }
         }
-
+        // 11.8.22 removed by Avner & Benny - cause to problems when editing slides , scripts .... 
         // DI-20922 add pointer-events: none; when current block is in focus
         // &.active-block {
         //     .remote-loader-wrapper .remote-loader {
