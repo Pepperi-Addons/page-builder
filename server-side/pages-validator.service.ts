@@ -192,6 +192,9 @@ export class PagesValidatorService {
         // Validate Height if exist (Optional)
         this.validateObjectProperty(section, 'Height', sectionsPropertyBreadcrumb, true, 'number');
 
+        // Validate FillHeight if exist (Optional)
+        this.validateObjectProperty(section, 'FillHeight', sectionsPropertyBreadcrumb, true, 'boolean');
+
         // Validate Split if exist (Optional)
         if (section.hasOwnProperty('Split')) {
             if (typeof section.Split !== 'string') {
@@ -515,7 +518,8 @@ export class PagesValidatorService {
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Height');
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Split');
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Hide');
-
+            this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'FillHeight');
+            
             // Add Columns -> blocks specific properties.
             for (let columnIndex = 0; columnIndex < currentSection.Columns.length; columnIndex++) {
                 const currentColumn = currentSection.Columns[columnIndex];
