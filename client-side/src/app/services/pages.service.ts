@@ -1241,7 +1241,7 @@ export class PagesService {
     updateSectionFromEditor(sectionData: ISectionEditor) {
         const sections = this._sectionsSubject.getValue();
         const sectionIndex = sections.findIndex(section => section.Key === sectionData.id);
-        debugger;
+
         // Update section details.
         if (sectionIndex >= 0) {
             const currentSection = sections[sectionIndex];

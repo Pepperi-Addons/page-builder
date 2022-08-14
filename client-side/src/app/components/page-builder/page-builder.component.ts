@@ -184,7 +184,9 @@ export class PageBuilderComponent implements OnInit, OnDestroy {
         let templateRows = '';
         this.sections$.subscribe(res => {    
                if(res?.length){
-                templateRows =  'auto';
+                //if all are fill height should return 1fr for all
+                //if not should return auto for fill height and min content for none
+                templateRows =  'auto min-content auto';
                } 
         });
 

@@ -225,7 +225,6 @@ export class PagesManagerComponent implements OnInit {
     createTemplatePage(template: TempPage) {
         const templateFileName = `${template.type}_${template.name}`
         this.pagesService.createNewPage(this.navigationService.addonUUID, templateFileName, this.totalPages).subscribe((page: Page) => {
-            // debugger;
             if (page) {
                 this.navigationService.navigateToPage(page.Key);
             } else {
