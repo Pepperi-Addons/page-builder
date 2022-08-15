@@ -17,7 +17,7 @@
     // This css is only for edit mode!!!
     &.editable-state {
         &.default-height {
-            height: 16rem;
+            min-height: 16rem;
         }
 
         &.active-section {
