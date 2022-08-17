@@ -1,6 +1,8 @@
 @use '@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
 @use '../../../mixins.scss';
 
+@import url('https://fonts.googleapis.com/css?family=Permanent+Marker:200,300,400,500,600,700,800');
+
 .add-padding {
     padding-inline: variables.$content-padding;
 
