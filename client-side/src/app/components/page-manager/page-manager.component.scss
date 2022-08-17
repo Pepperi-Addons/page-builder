@@ -1,6 +1,17 @@
 @use '@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
 @use '../../../mixins.scss';
 
+// set mat tab as fixed tab just on the editors
+::ng-deep {
+    .editor-tabs {
+        .mat-tab-header {
+            position: sticky;
+            top: variables.$top-bar-height;
+            z-index: 2;
+        }
+    }
+}
+
 .side-bar-title {
     display: flex;
     padding-top: variables.$spacing-sm;

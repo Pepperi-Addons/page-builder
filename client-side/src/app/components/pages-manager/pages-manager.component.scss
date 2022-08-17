@@ -3,14 +3,6 @@
 
 @import url('https://fonts.googleapis.com/css?family=Permanent+Marker:200,300,400,500,600,700,800');
 
-.add-padding {
-    padding-inline: variables.$content-padding;
-
-    @media (max-width: variables.$screen-max-size-xs) {
-        padding-inline: 0;
-    }
-}
-
 .pageExplanation{
     display: flex;
     flex-direction: row;
