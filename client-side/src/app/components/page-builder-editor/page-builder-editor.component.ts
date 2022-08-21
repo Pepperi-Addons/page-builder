@@ -120,7 +120,10 @@ export class PageBuilderEditorComponent implements OnInit {
 
     isFullWidthChange(isChecked: boolean) {
         this.isFullWidth = isChecked;
+        this.maxWidth = isChecked ? 0 : 960;
         this.updateHostObject();
+
+        
     }
 
     onMaxWidthChange(maxWidth: number) {
