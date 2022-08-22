@@ -10,7 +10,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@pepperi-addons/papi-sdk": "^1.39.4",
+        "@pepperi-addons/papi-sdk": "^1.39.9",
         "typescript": "^4.7.4"
     }
 }
