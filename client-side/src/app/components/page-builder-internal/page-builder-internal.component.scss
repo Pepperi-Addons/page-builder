@@ -2,6 +2,7 @@
 
 :host {
     display: block;
+    height: 100%;
 }
 
 .sections-container {
@@ -9,6 +10,7 @@
     margin: 0 auto;
     position: relative;
     display: grid;
+    height: inherit;
 
     &.mobile {
         display: block;

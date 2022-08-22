@@ -47,6 +47,11 @@
             justify-content: flex-end;
         }
 
+        ::ng-deep .group-buttons-container {
+            .toggle-buttons {
+                width: 16rem;
+            }
+        }
         .size-limit-container {
             border-radius: variables.$border-radius-md;
         }

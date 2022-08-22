@@ -519,7 +519,7 @@ export class PagesValidatorService {
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Split');
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Hide');
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'FillHeight');
-            
+
             // Add Columns -> blocks specific properties.
             for (let columnIndex = 0; columnIndex < currentSection.Columns.length; columnIndex++) {
                 const currentColumn = currentSection.Columns[columnIndex];

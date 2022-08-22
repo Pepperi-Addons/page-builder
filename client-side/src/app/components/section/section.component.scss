@@ -4,7 +4,9 @@
 .section-container {
     position: relative;
     display: grid;
-    height: inherit;
+    //height: inherit;
+    // fill height task
+    height: 100%;
     max-height: inherit;
     min-height: variables.$draggable-item-height;
 
@@ -15,7 +17,7 @@
     // This css is only for edit mode!!!
     &.editable-state {
         &.default-height {
-            height: 20rem;
+            min-height: 16rem;
         }
 
         &.active-section {
@@ -101,7 +103,7 @@
             position: relative;
             height: inherit;
             max-height: inherit;
-            overflow: auto;
+            overflow: visible; // changed from auto for the shadow
 
             .section-block {
                 height: inherit;

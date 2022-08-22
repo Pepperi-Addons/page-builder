@@ -60,6 +60,7 @@ export interface ISectionEditor {
     sectionName: string,
     split: SplitType,
     height: number,
+    fillHeight: boolean
 }
 
 export interface IBlockEditor {
@@ -795,6 +796,7 @@ export class PagesService {
                 sectionName: section.Name || '',
                 split: section.Split || undefined,
                 height: section.Height || 0,
+                fillHeight: section.FillHeight || false
             }
 
             return {
@@ -1256,6 +1258,7 @@ export class PagesService {
             currentSection.Name = sectionData.sectionName;
             currentSection.Split = sectionData.split;
             currentSection.Height = sectionData.height;
+            currentSection.FillHeight = sectionData.fillHeight;
 
             // Get the new columns number from currentSection.Split, if its undefined put a default 1.
             const newColumnsLength = currentSection.Split?.split(' ').length || 1;
@@ -1294,7 +1297,8 @@ export class PagesService {
             section = {
                 Key: PepGuid.newGuid(),
                 Columns: [{}], // Add empty section column
-                Hide: []
+                Hide: [],
+                FillHeight: false
             }
         }
 

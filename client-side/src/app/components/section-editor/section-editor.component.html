@@ -12,4 +12,7 @@
         <pep-select [label]="'PAGE_MANAGER.SPLIT_TITLE' | translate" [value]="split" [options]="splitOptions"
             (valueChange)="onSplitChange($event)" [emptyOption]="false" [disabled]="!subSections"></pep-select>
     </div>
+
+    <pep-checkbox class="checkbox-as-title" [value]="fillHeight" [label]="'PAGE_MANAGER.FILL_HEIGHT_SECTION_TITLE' | translate" [renderTitle]="false" (valueChange)="onFillHeightChange($event)"></pep-checkbox>
+    <span class="header-title body-xs">{{('PAGE_MANAGER.FILL_HEIGHT_SECTION_DESCRIPTION' | translate)}}</span>
 </div>
