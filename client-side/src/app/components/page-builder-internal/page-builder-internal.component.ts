@@ -171,6 +171,7 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
             });
         } else {
             // TODO: Show error message key isn't supply.
+            console.log(`pageKey in not valid: ${pageKey}`);
         }
     }
 
