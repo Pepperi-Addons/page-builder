@@ -184,7 +184,7 @@ export class PagesApiService {
     }
     
     private upsertRelation(relation): Promise<any> {
-        return this.papiClient.post('/addons/data/relations', relation);
+        return this.papiClient.addons.data.relations.upsert(relation);
     }
 
     /***********************************************************************************************/

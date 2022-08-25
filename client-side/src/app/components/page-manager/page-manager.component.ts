@@ -182,7 +182,7 @@ export class PageManagerComponent implements OnInit {
         this.menuItems = [
             { key: this.RESTORE_TO_LAST_PUBLISH_KEY, text: this.translate.instant('ACTIONS.RESTORE_TO_LAST_PUBLISH') },
             // TODO: { key: this.IMPORT_KEY, text: this.translate.instant('ACTIONS.IMPORT') },
-            // { key: this.EXPORT_KEY, text: this.translate.instant('ACTIONS.EXPORT') }
+            { key: this.EXPORT_KEY, text: this.translate.instant('ACTIONS.EXPORT') }
         ];
 
         this.subscribeEvents();
