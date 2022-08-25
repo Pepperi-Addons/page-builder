@@ -32,7 +32,7 @@ export class SectionEditorComponent implements OnInit {
         this.split = value.split;
         this.isAutoHeight = !value.height || value.height === 0;
         this.height = this.isAutoHeight ? this.MIN_HEIGHT : value.height;
-        this.fillHeight = value.fillHeight || false;
+        this.fillHeight = value.fillHeight ?? false;
     }
     get hostObject(): ISectionEditor {
         return this._hostObject;

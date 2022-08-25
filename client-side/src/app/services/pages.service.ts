@@ -796,7 +796,7 @@ export class PagesService {
                 sectionName: section.Name || '',
                 split: section.Split || undefined,
                 height: section.Height || 0,
-                fillHeight: section.FillHeight || false
+                fillHeight: section.FillHeight ?? false
             }
 
             return {
@@ -1297,8 +1297,7 @@ export class PagesService {
             section = {
                 Key: PepGuid.newGuid(),
                 Columns: [{}], // Add empty section column
-                Hide: [],
-                FillHeight: false
+                Hide: []
             }
         }
 
