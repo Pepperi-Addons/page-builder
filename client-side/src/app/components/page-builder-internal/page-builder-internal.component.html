@@ -1,6 +1,5 @@
-
-<div #sectionsCont cdkDropListGroup class="sections-container gap-{{ sectionsGap }} " [ngClass]="{'mobile': screenType === 'Phablet' }" 
-    [ngStyle]="{'grid-template-rows': getSectionsTemplateRows()}" cdkDropList (cdkDropListDropped)="onSectionDropped($event)" >
+<div #sectionsCont cdkDropListGroup class="sections-container gap-{{ sectionsGap }} " [ngClass]="{'mobile': screenType === 'Phablet' }"  
+     cdkDropList (cdkDropListDropped)="onSectionDropped($event)" [ngStyle]="{'grid-template-rows': getSectionsTemplateRows()}">
     <section *ngFor="let section of sections$ | async; let i=index;" 
         class="draggable-section" [sectionsColumnsDropList]="sectionsColumnsDropList" [pageBlocksMap]="pageBlocksMap"
         [key]="section.Key" [name]="section.Name || ('PAGE_MANAGER.SECTION' | translate) + ' ' + (i+1)" [split]="section.Split" [height]="section.Height"
