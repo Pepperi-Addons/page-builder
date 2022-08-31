@@ -224,6 +224,9 @@ export class PagesApiService {
         const createPagesTable = await this.papiClient.addons.data.schemes.post({
             Name: PAGES_TABLE_NAME,
             Type: 'meta_data',
+            SyncData: {
+                Sync: true
+            }
         });
         
         // Create pages draft table
@@ -241,6 +244,9 @@ export class PagesApiService {
                 Key: {
                     Type: 'String'
                 }
+            },
+            SyncData: {
+                Sync: true
             }
         });
 
