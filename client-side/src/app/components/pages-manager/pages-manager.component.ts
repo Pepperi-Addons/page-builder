@@ -182,8 +182,7 @@ export class PagesManagerComponent implements OnInit {
     }
 
     onDIMXProcessDone(event:any) {
-        // TODO: If this is a DIMX import, we need to refresh the list.
-        // this.pagesDataSource = this.setDataSource();
+        this.pagesDataSource = this.setDataSource();
         console.log(`DIMXProcessDone: ${JSON.stringify(event)}`);
     }
 

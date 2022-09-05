@@ -103,7 +103,9 @@
             position: relative;
             height: inherit;
             max-height: inherit;
-            overflow: visible; // changed from auto for the shadow
+            overflow: hidden; 
+            // changed from auto to visible for the shadow
+            // then to hidden for the section max-width issue
 
             .section-block {
                 height: inherit;
