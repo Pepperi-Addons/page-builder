@@ -42,9 +42,7 @@
                                 "output": "./assets/ngx-composite-lib"
                             }
                         ],
-                        "styles": [
-                            "src/styles.scss"
-                        ],
+                        "styles": [],
                         "scripts": [],
 						"commonChunk": false,
                         "extraWebpackConfig": "webpack.config.js"
