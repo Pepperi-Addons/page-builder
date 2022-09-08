@@ -1,16 +1,17 @@
 import { NavigationService } from './../../services/navigation.service';
-import { IPageRowModel, PagesService } from '../../services/pages.service';
+import { PagesService } from '../../services/pages.service';
 import { DIMXService } from '../../services/dimx.service';
 import { AfterViewInit, Component, OnInit, Renderer2, ViewChild, ViewContainerRef } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
-import { IPepGenericListDataSource, IPepGenericListPager, IPepGenericListActions, IPepGenericListInitData, PepGenericListService } from "@pepperi-addons/ngx-composite-lib/generic-list";
+import { IPepGenericListDataSource, IPepGenericListPager, IPepGenericListActions, IPepGenericListInitData } from "@pepperi-addons/ngx-composite-lib/generic-list";
 import { PepAddonService } from '@pepperi-addons/ngx-lib';
 import { DataViewFieldType, GridDataViewField, Page } from '@pepperi-addons/papi-sdk';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { IPepFormFieldClickEvent } from '@pepperi-addons/ngx-lib/form';
 import { PepSelectionData } from '@pepperi-addons/ngx-lib/list';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PageRowProjection } from 'shared';
 
 export type TempPageType = 'homepage' | 'dashbaord' | 'item' | 'generic' | 'none';
 
@@ -37,7 +38,7 @@ export class PagesManagerComponent implements OnInit {
     private selectedPageID = '';
     // mainMenuItems: Array<PepMenuItem> = null;
     totalPages: number = 0;
-    pages: IPageRowModel[];
+    pages: PageRowProjection[];
 
     secondaryMenuItems: Array<PepMenuItem> = null;
     isAddNewPage = false;

@@ -5,7 +5,9 @@ import { TranslateService } from "@ngx-translate/core";
 import { PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { IBlockLoaderData, PepRemoteLoaderOptions, PepRemoteLoaderService } from "@pepperi-addons/ngx-lib/remote-loader";
 import { IPepDraggableItem } from "@pepperi-addons/ngx-lib/draggable-items";
-import { Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize,ResourceType, PageConfigurationParameterFilter, PageConfiguration, PageConfigurationParameterBase, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
+import { Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize,ResourceType, 
+    PageConfigurationParameterFilter, PageConfiguration, PageConfigurationParameterBase, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
+import { PageRowProjection, IPageBuilderData } from 'shared';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { NavigationService } from "./navigation.service";
 import { distinctUntilChanged, filter } from 'rxjs/operators';
@@ -16,22 +18,6 @@ import * as _ from 'lodash';
 export type UiPageSizeType = PageSizeType | 'none';
 
 export type PageRowStatusType = 'draft' | 'published';
-export interface IPageRowModel {
-    Key: string,
-    Name: string,
-    Description: string,
-    CreationDate: string,
-    ModificationDate: string,
-    Published: boolean,
-    Draft: boolean,
-    // Status: PageRowStatusType,
-}
-
-interface IPageBuilderData {
-    page: Page,
-    availableBlocks: IBlockLoaderData[],
-    pagesVariables: any
-}
 
 export type EditorType = 'page-builder' | 'section' | 'block';
 export interface IEditor {
@@ -1645,7 +1631,7 @@ export class PagesService {
     /**************************************************************************************/
 
     // Get the pages (distinct with the drafts)
-    getPages(addonUUID: string, options: any): Observable<IPageRowModel[]> {
+    getPages(addonUUID: string, options: any): Observable<PageRowProjection[]> {
         // Get the pages from the server.
         const baseUrl = this.getBaseUrl(addonUUID);
         return this.httpService.getHttpCall(`${baseUrl}/get_pages_data?${options}`);
