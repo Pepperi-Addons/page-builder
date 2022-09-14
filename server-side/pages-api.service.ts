@@ -632,7 +632,7 @@ export class PagesApiService {
                     
                     // For import always generate new Key and set the Hidden to false.
                     if (isImport) {
-                        page.Key = uuidv4(); // This step happans in the importMappingPages function
+                        page.Key = page.Key && page.Key.length > 0 ? page.Key : uuidv4();
                         page.Hidden = false;
                     }
                     dimxObject['Object'] = page;
@@ -660,23 +660,23 @@ export class PagesApiService {
     }
 
     // NOTE: This function is not used TBD.
-    async importMappingPages(body: any, draft = true): Promise<any> {
-        const res = {};
+    // async importMappingPages(body: any, draft = true): Promise<any> {
+    //     const res = {};
         
-        // Change the page key to a new one.
-        if (body.Objects?.length > 0) {
-            body.Objects.forEach((page: Page) => {
-                if (page.Key) {
-                    res[page.Key] = {
-                        Action: 'Replace',
-                        NewKey: uuidv4()
-                    };
-                }
-            });
-        }
+    //     // Change the page key to a new one.
+    //     if (body.Objects?.length > 0) {
+    //         body.Objects.forEach((page: Page) => {
+    //             if (page.Key) {
+    //                 res[page.Key] = {
+    //                     Action: 'Replace',
+    //                     NewKey: uuidv4()
+    //                 };
+    //             }
+    //         });
+    //     }
 
-        return res;
-    }
+    //     return res;
+    // }
     
     async exportPages(body: any, draft = true): Promise<any> {
         const res = await this.getDIMXResult(body, false);

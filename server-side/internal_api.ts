@@ -96,17 +96,17 @@ export async function draft_pages_import(client:Client, request: Request): Promi
     }
 }
 
-export async function draft_pages_import_mapping(client:Client, request: Request): Promise<any> {
-    try {
-        const service = new PagesApiService(client);
-        console.log('draft_pages_import_mapping - before ', JSON.stringify(request.body));
-        const res = await service.importMappingPages(request.body);
-        console.log('draft_pages_import_mapping - after ', JSON.stringify(res));
-        return res;
-    } catch(err) {
-        throw err;
-    }
-}
+// export async function draft_pages_import_mapping(client:Client, request: Request): Promise<any> {
+//     try {
+//         const service = new PagesApiService(client);
+//         console.log('draft_pages_import_mapping - before ', JSON.stringify(request.body));
+//         const res = await service.importMappingPages(request.body);
+//         console.log('draft_pages_import_mapping - after ', JSON.stringify(res));
+//         return res;
+//     } catch(err) {
+//         throw err;
+//     }
+// }
 
 export async function draft_pages_export(client:Client, request: Request): Promise<any> {
     try {
