@@ -3,7 +3,7 @@
 
 // set mat tab as fixed tab just on the editors
 ::ng-deep {
-    .editor-tabs {
+    .page-builder-editor-tabs{
         .mat-tab-header {
             background: functions.get-pep-color(color-system-primary-invert, color-base);
         }
