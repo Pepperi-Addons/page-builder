@@ -34,7 +34,7 @@
             <!-- Gaps -->
             <pep-group-buttons-settings [groupType]="'sizes'" 
                                         [header]="'PAGE_MANAGER.GAPS_TITLE' | translate" [subHeader]="'PAGE_MANAGER.SECTIONS_GAP_TITLE' | translate"
-                                        [btnKey]="sectionsGap.toLowerCase()" [excludeKeys]="['xs','xl']" [useNone]="true"
+                                        [btnKey]="sectionsGap?.toLowerCase() || 'md'" [excludeKeys]="['xs','xl']" [useNone]="true"
                                         (btnkeyChange)="setSectionGap($event)">
             </pep-group-buttons-settings>
 
