@@ -1,4 +1,5 @@
 import { NgComponentRelation, Page } from "@pepperi-addons/papi-sdk";
+import { IBlockLoaderData } from "shared";
 
 class ClientPagesService {
     async getPageData(pageKey: string): Promise<any> {
@@ -53,10 +54,10 @@ class ClientPagesService {
         const pageBlockRelations: NgComponentRelation[] = await this.getRelations('PageBlock');
             
         // Distinct the addons uuid's
-        const distinctAddonsUuids = [...new Set(pageBlockRelations.map(obj => obj.AddonUUID))];
+        // const distinctAddonsUuids = [...new Set(pageBlockRelations.map(obj => obj.AddonUUID))];
 
         // Get the installed addons (for the relative path and the current version)
-        const addonsPromises: Promise<any>[] = [];
+        // const addonsPromises: Promise<any>[] = [];
      
         const baseURL = "http://localhost:8088/files/Pages/Addon/Public/";
         const availableBlocks: IBlockLoaderData[] = [];
@@ -82,8 +83,3 @@ class ClientPagesService {
 
 }
 export default ClientPagesService;
-
-export interface IBlockLoaderData {
-    relation: NgComponentRelation, 
-    addonPublicBaseURL: string
-}

@@ -29,8 +29,8 @@ export interface IPageBuilderData {
 export interface IBlockLoaderData {
     relation: NgComponentRelation, 
     addonPublicBaseURL: string,
-    addonVersion: string,
-    addon: InstalledAddon;
+    addonVersion?: string,
+    addon?: InstalledAddon;
 }
 
 export const DEFAULT_BLOCKS_NUMBER_LIMITATION = {
