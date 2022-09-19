@@ -228,7 +228,7 @@ export class PagesValidatorService {
         if (layout.hasOwnProperty('SectionsGap')) {
             if (typeof layout.SectionsGap !== 'string') {
                 throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'SectionsGap', 'string'));
-            } else if (!PageSizeTypes.some(pst => pst === layout.SectionsGap)) {
+            } else if (!PageSizeTypes.some(pst => (pst === layout.SectionsGap || 'none'))) {
                 throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'SectionsGap', `value from [${PageSizeTypes}]`));
             }
         }
@@ -237,7 +237,7 @@ export class PagesValidatorService {
         if (layout.hasOwnProperty('ColumnsGap')) {
             if (typeof layout.ColumnsGap !== 'string') {
                 throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'ColumnsGap', 'string'));
-            } else if (!PageSizeTypes.some(pst => pst === layout.ColumnsGap)) {
+            } else if (!PageSizeTypes.some(pst => (pst === layout.ColumnsGap || 'none'))) {
                 throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'ColumnsGap', `value from [${PageSizeTypes}]`));
             }
         }
@@ -246,7 +246,7 @@ export class PagesValidatorService {
         if (layout.hasOwnProperty('HorizontalSpacing')) {
             if (typeof layout.HorizontalSpacing !== 'string') {
                 throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'HorizontalSpacing', 'string'));
-            } else if (!PageSizeTypes.some(pst => pst === layout.HorizontalSpacing)) {
+            } else if (!PageSizeTypes.some(pst => (pst === layout.HorizontalSpacing || 'none'))) {
                 throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'HorizontalSpacing', `value from [${PageSizeTypes}]`));
             }
         }
@@ -255,7 +255,7 @@ export class PagesValidatorService {
         if (layout.hasOwnProperty('VerticalSpacing')) {
             if (typeof layout.VerticalSpacing !== 'string') {
                 throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'VerticalSpacing', 'string'));
-            } else if (!PageSizeTypes.some(pst => pst === layout.VerticalSpacing)) {
+            } else if (!PageSizeTypes.some(pst => (pst === layout.VerticalSpacing || 'none'))) {
                 throw new Error(this.getWrongTypeError(layoutPropertyBreadcrumb, 'VerticalSpacing', `value from [${PageSizeTypes}]`));
             }
         }
