@@ -114,8 +114,8 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
             const maxWidthToSet = maxWidth === 0 ? 'unset' : `${maxWidth}px`;
             this.renderer.setStyle(this.sectionsContainer.nativeElement, 'max-width', maxWidthToSet);
 
-            this.sectionsGap = page.Layout.SectionsGap || 'none';
-            this.columnsGap = page.Layout.ColumnsGap || 'none';
+            this.sectionsGap = page.Layout.SectionsGap || 'md';
+            this.columnsGap = page.Layout.ColumnsGap || 'md';
 
             this.paddingInline = this.convertPageSizeType(page.Layout.HorizontalSpacing);
             this.paddingBottom = this.paddingTop = this.convertPageSizeType(page.Layout.VerticalSpacing);
