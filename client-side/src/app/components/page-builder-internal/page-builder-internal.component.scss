@@ -7,6 +7,8 @@
 
 .sections-container {
     width: 100%;
+    max-width: inherit;
+    overflow-x: unset;
     margin: 0 auto;
     position: relative;
     display: grid;
@@ -22,3 +24,4 @@
         display: block;
     }
 }
+

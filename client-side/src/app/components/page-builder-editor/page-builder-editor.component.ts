@@ -51,8 +51,8 @@ export class PageBuilderEditorComponent implements OnInit {
 
     horizontalSpacing: UiPageSizeType = 'none'
     verticalSpacing: UiPageSizeType = 'none'
-    sectionsGap: UiPageSizeType = 'none';
-    columnsGap: UiPageSizeType = 'none';
+    sectionsGap: UiPageSizeType = 'md';
+    columnsGap: UiPageSizeType = 'md';
     roundedCorners: UiPageSizeType = 'none';
 
     isFullWidth: boolean;
@@ -73,10 +73,10 @@ export class PageBuilderEditorComponent implements OnInit {
         this._hostObject.pageName = this.pageName;
         this._hostObject.pageDescription = this.pageDescription;
         this._hostObject.maxWidth = this.isFullWidth ? 0 : this.maxWidth;
-        this._hostObject.horizontalSpacing = this.horizontalSpacing === 'none' ? undefined : this.horizontalSpacing;
-        this._hostObject.verticalSpacing = this.verticalSpacing === 'none' ? undefined : this.verticalSpacing;
-        this._hostObject.sectionsGap = this.sectionsGap === 'none' ? undefined : this.sectionsGap;
-        this._hostObject.columnsGap = this.columnsGap === 'none' ? undefined : this.columnsGap;
+        this._hostObject.horizontalSpacing = this.horizontalSpacing;
+        this._hostObject.verticalSpacing = this.verticalSpacing;
+        this._hostObject.sectionsGap = this.sectionsGap;
+        this._hostObject.columnsGap = this.columnsGap;
         this._hostObject.roundedCorners = this.roundedCorners === 'none' ? undefined : this.roundedCorners;
 
         this.hostObjectChange.emit(this.hostObject);

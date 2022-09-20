@@ -1,4 +1,4 @@
-<mat-tab-group  #tabGroup class="editor-tabs" animationDuration="0ms">
+<mat-tab-group  #tabGroup class="page-builder-editor-tabs" animationDuration="0ms">
     <mat-tab label="{{'PAGE_MANAGER.GENERAL' | translate}}">
         <div class="general-container ">
             <pep-textbox [value]="pageName" [label]="'PAGE_MANAGER.PAGE_NAME_TITLE' | translate" (valueChange)="onPageNameChange($event)"></pep-textbox>
@@ -34,7 +34,7 @@
             <!-- Gaps -->
             <pep-group-buttons-settings [groupType]="'sizes'" 
                                         [header]="'PAGE_MANAGER.GAPS_TITLE' | translate" [subHeader]="'PAGE_MANAGER.SECTIONS_GAP_TITLE' | translate"
-                                        [btnKey]="sectionsGap.toLowerCase()" [excludeKeys]="['xs','xl']" [useNone]="true"
+                                        [btnKey]="sectionsGap?.toLowerCase() || 'md'" [excludeKeys]="['xs','xl']" [useNone]="true"
                                         (btnkeyChange)="setSectionGap($event)">
             </pep-group-buttons-settings>
 

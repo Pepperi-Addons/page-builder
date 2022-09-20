@@ -3,11 +3,11 @@ import { Injectable } from "@angular/core";
 import { Params } from "@angular/router";
 import { TranslateService } from "@ngx-translate/core";
 import { PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
-import { IBlockLoaderData, PepRemoteLoaderOptions, PepRemoteLoaderService } from "@pepperi-addons/ngx-lib/remote-loader";
+import { PepRemoteLoaderOptions, PepRemoteLoaderService } from "@pepperi-addons/ngx-lib/remote-loader";
 import { IPepDraggableItem } from "@pepperi-addons/ngx-lib/draggable-items";
 import { Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize,ResourceType, 
     PageConfigurationParameterFilter, PageConfiguration, PageConfigurationParameterBase, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
-import { PageRowProjection, IPageBuilderData } from 'shared';
+import { PageRowProjection, IPageBuilderData, IBlockLoaderData } from 'shared';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { NavigationService } from "./navigation.service";
 import { distinctUntilChanged, filter } from 'rxjs/operators';
@@ -833,7 +833,10 @@ export class PagesService {
 
     private getRemoteLoaderOptions(data: IBlockLoaderData, editor = false) {
         const remoteEntry = this.getRemoteEntryByType(data.addonPublicBaseURL, data.relation);
-        const remoteLoaderOptions = this.remoteLoaderService.getRemoteLoaderOptions(data, remoteEntry);
+        const remoteLoaderOptions = this.remoteLoaderService.getRemoteLoaderOptions({
+            relation: data.relation,
+            addonPublicBaseURL: data.addonPublicBaseURL
+        }, remoteEntry);
 
         if (editor) {
             // If there is web component change the element to be the editor element, Else set the module & component to fit the editor.
