@@ -46,10 +46,10 @@ export class PagesManagerComponent implements OnInit {
     pagesDataSource: IPepGenericListDataSource;
     
     tempPages: Array<TempPage> = [
-        { type: 'homepage', name: 'blank'},
+        { type: 'homepage', name: 'blank'}/*,
         { type: 'homepage', name: 'gridy'},
         { type: 'homepage', name: 'simplistic'},
-        { type: 'homepage', name: 'branded'}
+        { type: 'homepage', name: 'branded'}*/
     ];
     
     pageGroups: Array<pageGroup> = [{ title: "PAGES_MANAGER.ADD_NEW.TEMPLATES.GROUPS.HOMEPAGE", isExpanded: true, pages: this.tempPages}
