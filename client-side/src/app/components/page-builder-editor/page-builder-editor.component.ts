@@ -49,8 +49,8 @@ export class PageBuilderEditorComponent implements OnInit {
     // @Input()
     pageDescription: string = '';
 
-    horizontalSpacing: UiPageSizeType = 'none'
-    verticalSpacing: UiPageSizeType = 'none'
+    horizontalSpacing: UiPageSizeType = 'md';
+    verticalSpacing: UiPageSizeType = 'md';
     sectionsGap: UiPageSizeType = 'md';
     columnsGap: UiPageSizeType = 'md';
     roundedCorners: UiPageSizeType = 'none';
