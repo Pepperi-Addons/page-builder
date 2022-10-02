@@ -34,11 +34,11 @@ export interface IPageEditor {
     pageName: string,
     pageDescription: string,
     maxWidth: number,
-    horizontalSpacing?: PageSizeType,
-    verticalSpacing?: PageSizeType,
-    sectionsGap?: PageSizeType,
-    columnsGap?: PageSizeType,
-    roundedCorners?: PageSizeType,
+    horizontalSpacing?: UiPageSizeType,
+    verticalSpacing?: UiPageSizeType,
+    sectionsGap?: UiPageSizeType,
+    columnsGap?: UiPageSizeType,
+    roundedCorners?: UiPageSizeType,
 }
 
 export interface ISectionEditor {
@@ -1227,10 +1227,10 @@ export class PagesService {
             currentPage.Name = pageData.pageName;
             currentPage.Description = pageData.pageDescription;
             currentPage.Layout.MaxWidth = pageData.maxWidth;
-            currentPage.Layout.HorizontalSpacing = pageData.horizontalSpacing;
-            currentPage.Layout.VerticalSpacing = pageData.verticalSpacing;
-            currentPage.Layout.SectionsGap = pageData.sectionsGap;
-            currentPage.Layout.ColumnsGap = pageData.columnsGap;
+            currentPage.Layout.HorizontalSpacing = pageData.horizontalSpacing == 'none' ? undefined : pageData.horizontalSpacing;
+            currentPage.Layout.VerticalSpacing = pageData.verticalSpacing == 'none' ? undefined : pageData.verticalSpacing;
+            currentPage.Layout.SectionsGap = pageData.sectionsGap == 'none' ? undefined : pageData.sectionsGap;
+            currentPage.Layout.ColumnsGap = pageData.columnsGap == 'none' ? undefined : pageData.columnsGap;
             // currentPage.Layout.RoundedCorners = pageData.roundedCorners;
 
             this.notifyPageChange(currentPage);
