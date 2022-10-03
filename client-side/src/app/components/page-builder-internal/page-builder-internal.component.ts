@@ -122,14 +122,6 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
         }
     }
 
-    private paramsToObject(entries) {
-        const result = {}
-        for(const [key, value] of entries) { // each 'entry' is a [key, value] tupple
-          result[key] = value;
-        }
-        return result;
-    }
-
     ngOnInit() {
         const addonUUID = this.navigationService.addonUUID;
         const pageKey = this.hostObject?.pageKey || this.route.snapshot.data['page_key'] || this.route?.snapshot?.params['page_key'] || '';
@@ -139,7 +131,7 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
         if (pageKey.length > 0) {
             // TODO: When running slug in runtime mode the route?.snapshot?.queryParams is empty. (Need to fix this somehow).
             // const queryParams = this.hostObject?.pageParams || this.route?.snapshot?.queryParams;
-            const urlParams = this.paramsToObject(new URLSearchParams(location.search));
+            const urlParams = this.navigationService.getQueryParamsAsObject();
 
             const queryParams = this.hostObject?.pageParams || urlParams;
             
