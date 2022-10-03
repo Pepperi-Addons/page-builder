@@ -29,8 +29,10 @@ export class NavigationService {
     ) {
         // Get the addonUUID from the root config.
         this._addonUUID = config.AddonUUID;
-        this._devServer = this.route.snapshot.queryParamMap.get('devServer') === 'true';
-        
+        // this._devServer = this.route.snapshot.queryParamMap.get('devServer') === 'true';
+        const urlParams = this.getQueryParamsAsObject();
+        this._devServer = urlParams['devServer'] === 'true';
+
         this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((event: NavigationEnd) => {
             this.history.push(event.urlAfterRedirects);
         });
@@ -38,9 +40,19 @@ export class NavigationService {
         this.loadDevBlocks();
     }
 
+    private paramsToObject(entries) {
+        const result = {}
+        for(const [key, value] of entries) { // each 'entry' is a [key, value] tupple
+          result[key] = value;
+        }
+        return result;
+    }
+
     private loadDevBlocks() {
         try {
-            const devBlocksAsJSON = JSON.parse(this.route.snapshot.queryParamMap.get('devBlocks'));
+            // const devBlocksAsJSON = JSON.parse(this.route.snapshot.queryParamMap.get('devBlocks'));
+            const urlParams = this.getQueryParamsAsObject();
+            const devBlocksAsJSON = JSON.parse(urlParams['devBlocks']);
             this._devBlocks = new Map(devBlocksAsJSON);
         } catch(err) {
             this._devBlocks = new Map<string, string>();
@@ -75,5 +87,10 @@ export class NavigationService {
             relativeTo: route,
             queryParamsHandling: 'merge'
         });
+    }
+
+    getQueryParamsAsObject(): any {
+        const queryParamsAsObject = this.paramsToObject(new URLSearchParams(location.search));
+        return queryParamsAsObject;
     }
 }
