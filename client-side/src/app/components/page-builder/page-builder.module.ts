@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { TranslateLoader, TranslateModule, TranslateService, TranslateStore } from '@ngx-translate/core';
 import { PepAddonService, PepNgxLibModule } from '@pepperi-addons/ngx-lib';
 import { NavigationService } from '../../services/navigation.service';
-import { PagesService } from '../../services/pages.service';
+// import { PagesService } from '../../services/pages.service';
 import { UtilitiesService } from '../../services/utilities.service';
 import { config } from '../addon.config';
 import { PageBuilderInternalModule } from '../page-builder-internal/page-builder-internal.module';
@@ -43,7 +43,7 @@ export const routes: Routes = [
         // When loading this module from route we need to add this here (because only this module is loading).
         NavigationService,
         UtilitiesService,
-        PagesService
+        // PagesService
     ]
 })
 export class PageBuilderModule {

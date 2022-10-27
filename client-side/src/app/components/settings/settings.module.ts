@@ -6,7 +6,7 @@ import { PepAddonService, PepNgxLibModule } from '@pepperi-addons/ngx-lib';
 
 import { NavigationService } from '../../services/navigation.service';
 import { UtilitiesService } from '../../services/utilities.service';
-import { PagesService } from '../../services/pages.service';
+// import { PagesService } from '../../services/pages.service';
 
 import { SettingsComponent } from './settings.component';
 import { SettingsRoutingModule } from './settings.routes';
@@ -35,7 +35,7 @@ import { config } from '../addon.config';
         // When loading this module from route we need to add this here (because only this module is loading).
         NavigationService,
         UtilitiesService,
-        PagesService
+        // PagesService
     ]
 })
 export class SettingsModule {
