@@ -30,7 +30,7 @@ export class TempPage {
     selector: 'pages-manager',
     templateUrl: './pages-manager.component.html',
     styleUrls: ['./pages-manager.component.scss'],
-    providers: [ DIMXService ]
+    providers: [DIMXService]
 })
 export class PagesManagerComponent implements OnInit {
     private readonly IMPORT_KEY = 'import';
