@@ -317,17 +317,18 @@ export class PagesApiService {
         let res = false;
 
         if (pagekey.length > 0) {
-            try {
+            // try {
                 let page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
                 draftRes = await this.hidePage(page, DRAFT_PAGES_TABLE_NAME);
-            } catch (e) {
-            }
+            // } catch (e) {
+
+            // }
     
-            try {
-                let page = await this.getPage(pagekey, PAGES_TABLE_NAME);
+            // try {
+                page = await this.getPage(pagekey, PAGES_TABLE_NAME);
                 res = await this.hidePage(page, PAGES_TABLE_NAME);
-            } catch (e) {
-            }
+            // } catch (e) {
+            // }
         }
 
         return Promise.resolve(draftRes || res);

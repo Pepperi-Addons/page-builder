@@ -92,9 +92,11 @@ interface IMappingResource {
     SearchIn: string[]
 }
 
-@Injectable({
-    providedIn: 'root',
-})
+@Injectable(
+//     {
+//     providedIn: 'root',
+// }
+)
 export class PagesService {
     private readonly CONSUMERS_PRIORITY = 1;
     private readonly PRODUCERS_AND_CONSUMERS_PRIORITY = 2;
