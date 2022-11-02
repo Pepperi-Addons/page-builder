@@ -10,6 +10,7 @@ The error Message is importent! it will be written in the audit log and help the
 import { Client, Request } from '@pepperi-addons/debug-server'
 import { PagesApiService } from './pages-api.service';
 import { PagesUpgradeService } from './pages-upgrade.service';
+import semver from 'semver';
 
 const pnsKeyForPages = 'uninstall_blocks_subscription';
 const pnsKeyForDraftPages = 'uninstall_blocks_subscription_draft';
@@ -47,8 +48,11 @@ export async function upgrade(client: Client, request: Request): Promise<any> {
         const pageService = new PagesApiService(client);
         pageService.upsertPagesRelations();
 
-        const pageUpgradeService = new PagesUpgradeService(client);
-        await pageUpgradeService.upgradeToVersion61(true);
+        // TODO: Maybe need to remove this.
+        if (request.body.FromVersion && semver.compare(request.body.FromVersion, '0.7.61') < 0) {
+            const pageUpgradeService = new PagesUpgradeService(client);
+            await pageUpgradeService.upgradeToVersion61(true);
+        }
     } catch (err) {
         throw new Error(`Failed to upgrade to version 61. error - ${err}`);
     }

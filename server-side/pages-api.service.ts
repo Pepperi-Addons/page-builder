@@ -804,7 +804,7 @@ export class PagesApiService {
     async getBlockLoaderData(name: string, blockType: string, slugName: string, addonUUID: string): Promise<IBlockLoaderData> {
         const promise = new Promise<IBlockLoaderData>(async (resolve, reject) => {
             // Get the addon blocks relations 
-            const whereName = (name.length > 0) ? `AND Name=${name}`: '';
+            const whereName = (name.length > 0) ? `AND Name="${name}"`: '';
 
             let addonBlockRelations: NgComponentRelation[] = await this.papiClient.addons.data.relations.find(
                 {where: `RelationName=${blockType} ${whereName}`}
