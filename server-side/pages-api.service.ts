@@ -317,18 +317,29 @@ export class PagesApiService {
         let res = false;
 
         if (pagekey.length > 0) {
-            // try {
+            let pageDeleted = false;
+            let draftExceptionMessage;
+            let exceptionMessage;
+
+            try {
                 let page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
                 draftRes = await this.hidePage(page, DRAFT_PAGES_TABLE_NAME);
-            // } catch (e) {
-
-            // }
+                pageDeleted = true;
+            } catch (e) {
+                draftExceptionMessage = e;
+            }
     
-            // try {
-                page = await this.getPage(pagekey, PAGES_TABLE_NAME);
+            try {
+                let page = await this.getPage(pagekey, PAGES_TABLE_NAME);
                 res = await this.hidePage(page, PAGES_TABLE_NAME);
-            // } catch (e) {
-            // }
+                pageDeleted = true;
+            } catch (e) {
+                exceptionMessage = e;
+            }
+
+            if (!pageDeleted) {
+                throw new Error(`${draftExceptionMessage} and ${exceptionMessage}.`);
+            }
         }
 
         return Promise.resolve(draftRes || res);
