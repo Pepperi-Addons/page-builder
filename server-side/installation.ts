@@ -49,10 +49,10 @@ export async function upgrade(client: Client, request: Request): Promise<any> {
         pageService.upsertPagesRelations();
 
         // TODO: Maybe need to remove this.
-        if (request.body.FromVersion && semver.compare(request.body.FromVersion, '0.7.61') < 0) {
-            const pageUpgradeService = new PagesUpgradeService(client);
-            await pageUpgradeService.upgradeToVersion61(true);
-        }
+        // if (request.body.FromVersion && semver.compare(request.body.FromVersion, '0.7.61') < 0) {
+        //     const pageUpgradeService = new PagesUpgradeService(client);
+        //     await pageUpgradeService.upgradeToVersion61(true);
+        // }
     } catch (err) {
         throw new Error(`Failed to upgrade to version 61. error - ${err}`);
     }
