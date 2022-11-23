@@ -1,4 +1,5 @@
 @use '../../../mixins.scss';
+@use '@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
 
 :host {
     display: block;
@@ -15,9 +16,25 @@
     height: inherit;
 
     // remove this class because of DI-21758. avner 23.11.22
-    // &.mobile {
-    //     display: block;
-    // }
+    &.mobile {
+        display: block;
+
+        .margin-none { 
+            margin-bottom: 0; /* none*/
+        }
+    
+        .margin-sm {
+            margin-bottom: variables.$spacing-sm; // 0.5rem
+        }
+    
+        .margin-md {
+            margin-bottom: variables.$spacing-lg; // 1rem
+        }
+    
+        .margin-lg {
+            margin-bottom: variables.$spacing-2xl; // 2rem
+        }
+    }
 
     @include mixins.gap-sizes();
     

@@ -2,6 +2,7 @@
      cdkDropList (cdkDropListDropped)="onSectionDropped($event)" [ngStyle]="{'grid-template-rows': getSectionsTemplateRows()}">
 
     <section *ngFor="let section of sections$ | async; let i=index;" 
+        [ngClass]="screenType === 'Phablet' ? 'margin-'+sectionsGap : ''"
         class="draggable-section" [sectionsColumnsDropList]="sectionsColumnsDropList" [pageBlocksMap]="pageBlocksMap"
         [key]="section.Key" [name]="section.Name || ('PAGE_MANAGER.SECTION' | translate) + ' ' + (i+1)" [split]="section.Split" [height]="section.Height"
         [columns]="section.Columns" [hideIn]="section.Hide" [columnsGap]="columnsGap" [screenSize]="screenSize" [editable]="editMode">
