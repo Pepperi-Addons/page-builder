@@ -1229,10 +1229,10 @@ export class PagesService {
             currentPage.Name = pageData.pageName;
             currentPage.Description = pageData.pageDescription;
             currentPage.Layout.MaxWidth = pageData.maxWidth;
-            currentPage.Layout.HorizontalSpacing = pageData.horizontalSpacing == 'none' ? undefined : pageData.horizontalSpacing;
-            currentPage.Layout.VerticalSpacing = pageData.verticalSpacing == 'none' ? undefined : pageData.verticalSpacing;
-            currentPage.Layout.SectionsGap = pageData.sectionsGap == 'none' ? undefined : pageData.sectionsGap;
-            currentPage.Layout.ColumnsGap = pageData.columnsGap == 'none' ? undefined : pageData.columnsGap;
+            currentPage.Layout.HorizontalSpacing = pageData.horizontalSpacing;
+            currentPage.Layout.VerticalSpacing = pageData.verticalSpacing;
+            currentPage.Layout.SectionsGap = pageData.sectionsGap;
+            currentPage.Layout.ColumnsGap = pageData.columnsGap;
             // currentPage.Layout.RoundedCorners = pageData.roundedCorners;
 
             this.notifyPageChange(currentPage);
