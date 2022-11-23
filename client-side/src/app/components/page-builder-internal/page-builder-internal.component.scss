@@ -14,9 +14,10 @@
     display: grid;
     height: inherit;
 
-    &.mobile {
-        display: block;
-    }
+    // remove this class because of DI-21758. avner 23.11.22
+    // &.mobile {
+    //     display: block;
+    // }
 
     @include mixins.gap-sizes();
     
