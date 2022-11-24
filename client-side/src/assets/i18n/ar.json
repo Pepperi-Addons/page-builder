@@ -97,11 +97,11 @@
         "XL": "XL"
     },
     "ACTIONS": {
-        "CANCEL": "Cancel",
-        "CONTINUE": "Continue",
-        "DELETE": "Delete",
-        "EDIT": "Edit",
-        "SAVE": "Save",
+        "CANCEL": "الغاء",
+        "CONTINUE": "استمرار",
+        "DELETE": "حذف",
+        "EDIT": "حرر",
+        "SAVE": "حفظ",
         "PREVIEW": "Preview",
         "PUBLISH": "Publish",
         "IMPORT": "Import Page",
@@ -109,7 +109,7 @@
         "RESTORE_TO_LAST_PUBLISH": "Restore to last publish"
     },
     "MESSAGES": {
-        "TITLE_NOTICE": "Notice",
+        "TITLE_NOTICE": "ملاحظة",
         "PAGE_SIZE_LIMIT_TITLE": "Page size limit",
         "BLOCKS_COUNT_LIMIT_MESSAGE": "You exceeded your blocks number limit - please contact your administrator.",
         "OPERATION_SUCCESS": "Operation Successful",

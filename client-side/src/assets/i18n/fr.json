@@ -1,0 +1,166 @@
+{
+    "PAGE_MANAGER": {
+        "VIEWPORT_WIDTH": "Visionner largeur de port",
+        "PREVIEW_TITLE": "Mode Prévisualisation",
+        "PREVIEW_CLICK_HERE": "Cliquer ici pour modifier",
+        "DESKTOP": "Bureau",
+        "TABLET": "Tablette",
+        "MOBILE": "Portable",
+        "SECTION": "Section",
+        "SECTION_NAME_TITLE": "Nom de section (kebab-case)",
+        "SUB_SECTION_TITLE": "Sous section",
+        "FILL_HEIGHT_SECTION_TITLE": "Remplir la hauteur",
+        "FILL_HEIGHT_SECTION_DESCRIPTION": "Paramétrer Remplir la hauteur pour que la section remplisse la taille relative de l'écran",
+        "SECTIONS_TITLE": "Sections",
+        "SPLIT_TITLE": "Partager",
+        "ADD_SECTION": "Ajouter section",
+        "DELETE_SECTION_MSG": "Cette action supprimera le contenu hors gamme. Cette action est irréversible !",
+        "DELETE_SECTION_TITLE": "Précaution",
+        "GENERAL": "Généralités",
+        "DESIGN": "Conception",
+        "PAGE_NAME_TITLE": "Nom de page",
+        "PAGE_DESCRIPTION_TITLE": "Description",
+        "BLOCKS_TITLE": "Blocs",
+        "FULL_WIDTH_TITLE": "Pleine largeur",
+        "MAX_WIDTH_TITLE": "Largeur max",
+        "AUTO_HEIGHT_TITLE": "Hauteur auto",
+        "MAX_HEIGHT_TITLE": "Hauteur max",
+        "HEIGHT_TITLE": "Hauteur",
+        "SPACING_TITLE": "Espacement",
+        "SPACING_HORIZONTAL_TITLE": "Gauche & Droite",
+        "SPACING_VERTICAL_TITLE": "Haut & Bas",
+        "GAPS_TITLE": "Ecarts",
+        "SECTIONS_GAP_TITLE": "Ecart de taille entre sections",
+        "COLUMNS_GAP_TITLE": "Ecart de taille entre colonnes",
+        "ROUNDED_CORNERS_TITLE": "Coins arrondis",
+        "BORDER_RADIUS_TITLE": "Rayon de limite globale"
+    },
+    "PAGES_MANAGER": {
+        "MAIN_HEADER": "Constructeur de pages",
+        "A_PAGE": "Ajouter page",
+        "MAIN_EXPLANATION": "Créer des pages avec le constructeur glisser & déposer qui vous donne le contrôle total de chaque détail. Utiliser un de nos gabarits ou démarrer de zéro et composer une disposition en utilisant des composants en blocs.",
+        "SECONDARY_HEADER": "Pages",
+        "PAGES_HEADER": "Vous n'avez pas encore utilisé le Page Builder",
+        "NO_PAGES_MSG": "Ajouter une page personnalisée en cliquant sur le bouton 'Ajouter page', ou importer un gabarit existant au moyen du bouton Menu adjacent",
+        "USE_THIS": "Utiliser ceci",
+        "LINKS_HEADER": "Comment faire",
+        "LINKS_USING": "Guide du Page Builder",
+        "LINKS_IMPORTING": "Importer une page",
+        "LINKS_SAVE": "Enregistrer la page en tant que brouillon",
+        "LINKS_PUBLISH": "Publier une page pour servir aux configurations",
+        "LINKS_EXPORT": "Exporter la page",
+        "DELETE_PAGE_DIALOG_TITLE": "Supprimer la page",
+        "DELETE_PAGE_MSG": "Êtes-vous sûr de vouloir supprimer cette page ? ",
+        "GRID_HEADER_NAME": "Nom",
+        "GRID_HEADER_DESCRIPTION": "Description",
+        "GRID_HEADER_CREATIONDATE": "Date de création",
+        "GRID_HEADER_MODIFICATIONDATE": "Date de la modification",
+        "GRID_HEADER_STATUS": "État",
+        "GRID_HEADER_PUBLISHED": "Publiées",
+        "GRID_HEADER_DRAFT": "Brouillon",
+        "ADD_NEW": {
+            "HEADER": "Sélectionner un gabarit de page",
+            "EXPLANATION": "Sélectionner un gabarit pour configurer la conception de votre page.",
+            "TEMPLATES": {
+                "PAGES": {
+                    "BLANK": {
+                        "NAME": "Vierge",
+                        "DESC": "Un projet de démarrage vide pour votre plaisir"
+                    },
+                    "GRIDY": {
+                        "NAME": "A grille",
+                        "DESC": "Une simple grille"
+                    },
+                    "SIMPLISTIC": {
+                        "NAME": "Simpliste",
+                        "DESC": "Une simple disposition avec sections basiques"
+                    },
+                    "BRANDED": {
+                        "NAME": "Marques",
+                        "DESC": "Une expérience de marque"
+                    }
+                },
+                "GROUPS": {
+                    "HOMEPAGE": "Modèles :",
+                    "DASHBOARD": "Tableau de bord",
+                    "ITEM": "Article",
+                    "GENERIC": "Généralités"
+                }
+            }
+        }
+    },
+    "GROUP_SIZE": {
+        "NONE": "Aucun(e)",
+        "SM": "SM",
+        "MD": "MD",
+        "LG": "LG",
+        "XL": "XL"
+    },
+    "ACTIONS": {
+        "CANCEL": "Annuler",
+        "CONTINUE": "Continuer",
+        "DELETE": "Supprimer",
+        "EDIT": "Modifier",
+        "SAVE": "Enregistrer",
+        "PREVIEW": "Prévisualiser",
+        "PUBLISH": "Publier",
+        "IMPORT": "Importer la page",
+        "EXPORT": "Exporter la page",
+        "RESTORE_TO_LAST_PUBLISH": "Revenir à la dernière publication"
+    },
+    "MESSAGES": {
+        "TITLE_NOTICE": "Notice",
+        "PAGE_SIZE_LIMIT_TITLE": "Limite de taille de page",
+        "BLOCKS_COUNT_LIMIT_MESSAGE": "Vous avez dépassé votre nombre limite de blocs - contactez votre administrateur.",
+        "OPERATION_SUCCESS": "Opération réussie",
+        "PAGE_SAVED": "Page enregistrée",
+        "PAGE_PUBLISHED": "Page enregistrée et publiée",
+        "PAGE_RESTORED": "Page restaurée",
+        "PAGES_COUNT_LIMIT_MESSAGE": "Vous avez dépassé votre nombre limite de pages - contactez votre administrateur.",
+        "PARAMETER_VALIDATION": {
+            "BLOCK_HAS_REMOVED": "Bloc retiré",
+            "TYPE_IS_DIFFERENT_FOR_THIS_KEY": "L'objet de configuration de page de ce bloc a des Paramètres avec Type différent pour la touche '{{parameterKey}}'.",
+            "CONSUME_AND_PRODUCE_ARE_FALSE": "L'objet de configuration de page de ce bloc a un paramètre (avec touche '{{parameterKey}}') qui n'est pas autorisé, au moins une des propriétés Produire ou Consumer doit être vraie.",
+            "TYPE_IS_DIFFERENT_FOR_THIS_KEY_IN_OTHER_BLOCKS": "Il y a un conflit de données entre l'objet de configuration de page de ce bloc et le bloc existant dans la section {{section}} -> colonne {{column}}.<br/>Le paramètre avec la touche '{{parameterKey}}' existe pour le Type {{parameterType}}."
+        }
+    },
+    "HIDE_IN": {
+        "HIDE_IN_TITLE": "Cacher sur :"
+    },
+    "SLIDESHOW": {
+        "HEIGHTUNITS_TITLE": "Unités de hauteur",
+        "HEIGHTUNITS_REM": "REM",
+        "HEIGHTUNITS_VH": "VH (pourcentage)",
+        "HEIGHT": "Hauteur",
+        "INNERSPACING_TITLE": "Espacement interne",
+        "TRANSITION": "Transition",
+        "TRANSITION_TITLE": "Définir Durée de transition et Type",
+        "SLIDE_DURATION": "Durée(s) de diapo",
+        "TRANSITION_TYPE": "Type de transition",
+        "TRANSITION_TIME": "Délai(s) de transition",
+        "ARROWS": "Flèches",
+        "ARROWS_DESC": "Les flèches naviguent entre les diapos du début à la fin.<br>Les Flèches sont cachées dans la vue mobile.",
+        "ARROWS_TYPE": "Type de flèches",
+        "ARROWS_BUTTONS": "Boutons de flèches",
+        "ARROWS_STYLE": "Modèle",
+        "ARROWS_COLOR": "Couleur",
+        "ARROW_TYPE": {
+            "TWO_ARROWS": ">>",
+            "ONE_ARROW": ">",
+            "STYLED_ARROW": " -->"
+        },
+        "ARROW_BUTTON": {
+            "RECT": "Rect",
+            "ROUNDED": "Arrondi"
+        },
+        "CONTROLLERS": "Contrôleurs",
+        "CONTROLLERS_DESC": "Les points indiquent le nombre de diapos<br>et la position de la diapo, elles sont<br>cliquables et changeront la diapo.",
+        "CONTROLLERS_PROPERTIES": {
+            "PAUSE_PLAY": "Montrer Pause/Lecture",
+            "MOBILE": "Montrer sur mobile",
+            "INVERT_STYLE": "Inverser le style",
+            "SHOW_CONTROLLERS": "Montrer les contrôleurs dans la règle"
+        },
+        "CONTROLLER_SIZE": "Taille de contrôleur"
+    }
+}

@@ -1,0 +1,166 @@
+{
+    "PAGE_MANAGER": {
+        "VIEWPORT_WIDTH": "ポート幅を表示",
+        "PREVIEW_TITLE": "プレビューモード",
+        "PREVIEW_CLICK_HERE": "ここをクリックして編集",
+        "DESKTOP": "デスクトップ",
+        "TABLET": "タブレット",
+        "MOBILE": "携帯電話",
+        "SECTION": "セクション",
+        "SECTION_NAME_TITLE": "セクション名（単語間をハイフンでつなげる）",
+        "SUB_SECTION_TITLE": "サブセクション",
+        "FILL_HEIGHT_SECTION_TITLE": "塗りつぶし高さ",
+        "FILL_HEIGHT_SECTION_DESCRIPTION": "相対画面サイズを塗りつぶすためのセクションを作成するため [塗りつぶし高さ] をオンに設定します",
+        "SECTIONS_TITLE": "セクション",
+        "SPLIT_TITLE": "分割",
+        "ADD_SECTION": "セクションを追加",
+        "DELETE_SECTION_MSG": "この操作により、範囲外のコンテンツが削除されます。この操作はやり直しできません！",
+        "DELETE_SECTION_TITLE": "注意",
+        "GENERAL": "一般",
+        "DESIGN": "デザイン",
+        "PAGE_NAME_TITLE": "ページ名",
+        "PAGE_DESCRIPTION_TITLE": "説明",
+        "BLOCKS_TITLE": "ブロック",
+        "FULL_WIDTH_TITLE": "全長",
+        "MAX_WIDTH_TITLE": "最大長",
+        "AUTO_HEIGHT_TITLE": "自動高さ",
+        "MAX_HEIGHT_TITLE": "最大高さ",
+        "HEIGHT_TITLE": "高さ",
+        "SPACING_TITLE": "スペース",
+        "SPACING_HORIZONTAL_TITLE": "左右",
+        "SPACING_VERTICAL_TITLE": "上下",
+        "GAPS_TITLE": "間隔",
+        "SECTIONS_GAP_TITLE": "セクション間の間隔",
+        "COLUMNS_GAP_TITLE": "列間の間隔",
+        "ROUNDED_CORNERS_TITLE": "角丸",
+        "BORDER_RADIUS_TITLE": "境界ボックスのコーナーの半径（共通）"
+    },
+    "PAGES_MANAGER": {
+        "MAIN_HEADER": "ページビルダー",
+        "A_PAGE": "ページを追加",
+        "MAIN_EXPLANATION": "細かい部分をすべてコントロールできるドラッグ＆ドロップビルダーでページを作成してください。当社テンプレートのひとつを使用するか、ゼロから始めて、ブロックコンポーネントを使用してレイアウトを作成してください。",
+        "SECONDARY_HEADER": "ページ",
+        "PAGES_HEADER": "まだページビルダーを使用していません",
+        "NO_PAGES_MSG": "[ページを追加] ボタンをクリックしてカスタムページデザインを追加するか、隣の [メニュー] ボタンを使用して既存のテンプレートをインポートしてください。",
+        "USE_THIS": "これを使用",
+        "LINKS_HEADER": "方法",
+        "LINKS_USING": "ページビルダーガイド",
+        "LINKS_IMPORTING": "ページをインポート中",
+        "LINKS_SAVE": "ページをドラフトとして保存",
+        "LINKS_PUBLISH": "設定で使用するためページを公開",
+        "LINKS_EXPORT": "ページをエクスポート",
+        "DELETE_PAGE_DIALOG_TITLE": "ページを削除",
+        "DELETE_PAGE_MSG": "このページを削除しますか？",
+        "GRID_HEADER_NAME": "名前",
+        "GRID_HEADER_DESCRIPTION": "説明",
+        "GRID_HEADER_CREATIONDATE": "作成日",
+        "GRID_HEADER_MODIFICATIONDATE": "変更日",
+        "GRID_HEADER_STATUS": "ステータス",
+        "GRID_HEADER_PUBLISHED": "公開済み",
+        "GRID_HEADER_DRAFT": "ドラフト",
+        "ADD_NEW": {
+            "HEADER": "ページテンプレートを選択",
+            "EXPLANATION": "ページのデザインを設定するテンプレートを選択してください。",
+            "TEMPLATES": {
+                "PAGES": {
+                    "BLANK": {
+                        "NAME": "空白",
+                        "DESC": "早速お試しいただける空白のスタータープロジェクトです"
+                    },
+                    "GRIDY": {
+                        "NAME": "Gridy",
+                        "DESC": "シンプルなグリッド"
+                    },
+                    "SIMPLISTIC": {
+                        "NAME": "シンプル",
+                        "DESC": "基本セクションを含むシンプルなレイアウト"
+                    },
+                    "BRANDED": {
+                        "NAME": "ブランドロゴ入り",
+                        "DESC": "ブランドロゴ入りの体験。"
+                    }
+                },
+                "GROUPS": {
+                    "HOMEPAGE": "テンプレート",
+                    "DASHBOARD": "ダッシュボード",
+                    "ITEM": "アイテム",
+                    "GENERIC": "汎用"
+                }
+            }
+        }
+    },
+    "GROUP_SIZE": {
+        "NONE": "なし",
+        "SM": "SM",
+        "MD": "MD",
+        "LG": "LG",
+        "XL": "極大"
+    },
+    "ACTIONS": {
+        "CANCEL": "キャンセル",
+        "CONTINUE": "続ける",
+        "DELETE": "削除",
+        "EDIT": "編集",
+        "SAVE": "保存",
+        "PREVIEW": "プレビュー",
+        "PUBLISH": "公開",
+        "IMPORT": "ページをインポート",
+        "EXPORT": "ページをエクスポート",
+        "RESTORE_TO_LAST_PUBLISH": "最後に公開した内容に復元"
+    },
+    "MESSAGES": {
+        "TITLE_NOTICE": "通知",
+        "PAGE_SIZE_LIMIT_TITLE": "ページサイズの制限",
+        "BLOCKS_COUNT_LIMIT_MESSAGE": "ブロック数の上限を超えています。管理者までお問い合わせください。",
+        "OPERATION_SUCCESS": "操作が正常に行われました。",
+        "PAGE_SAVED": "ページが保存されました",
+        "PAGE_PUBLISHED": "ページが保存され公開されました",
+        "PAGE_RESTORED": "ページが復元されました",
+        "PAGES_COUNT_LIMIT_MESSAGE": "ページ数の上限を超えています。管理者までお問い合わせください。",
+        "PARAMETER_VALIDATION": {
+            "BLOCK_HAS_REMOVED": "ブロックが削除されました",
+            "TYPE_IS_DIFFERENT_FOR_THIS_KEY": "ブロックのページ設定オブジェクトにキー'{{parameterKey}}'の異なるタイプが含まれたパラメーターがあります。",
+            "CONSUME_AND_PRODUCE_ARE_FALSE": "ブロックのページ設定オブジェクトに許可されていないパラメーター（キー'{{parameterKey}}'を含む）があります。少なくともプロパティ [Produce] または [Consume] がTrueである必要があります。",
+            "TYPE_IS_DIFFERENT_FOR_THIS_KEY_IN_OTHER_BLOCKS": "このブロックとセクション {{section}} -> 列 {{column}} の既存のブロックのページ設定の間にデータの競合が生じています。<br/>キー'{{parameterKey}}'を含むパラメーターがタイプ{{parameterType}}に対して存在しています。"
+        }
+    },
+    "HIDE_IN": {
+        "HIDE_IN_TITLE": "非表示："
+    },
+    "SLIDESHOW": {
+        "HEIGHTUNITS_TITLE": "高さの単位",
+        "HEIGHTUNITS_REM": "REM",
+        "HEIGHTUNITS_VH": "VH（%）",
+        "HEIGHT": "高さ",
+        "INNERSPACING_TITLE": "内側スペース",
+        "TRANSITION": "トランジション",
+        "TRANSITION_TITLE": "トランジションの継続時間とタイプを設定",
+        "SLIDE_DURATION": "スライドの継続時間",
+        "TRANSITION_TYPE": "トランジションのタイプ",
+        "TRANSITION_TIME": "トランジションの時間",
+        "ARROWS": "矢印",
+        "ARROWS_DESC": "矢印は最初から最後までスライドをナビゲートします。<br>モバイルビューでは矢印が非表示になります。",
+        "ARROWS_TYPE": "矢印の種類",
+        "ARROWS_BUTTONS": "矢印ボタン",
+        "ARROWS_STYLE": "スタイル",
+        "ARROWS_COLOR": "色",
+        "ARROW_TYPE": {
+            "TWO_ARROWS": ">>",
+            "ONE_ARROW": ">",
+            "STYLED_ARROW": " -->"
+        },
+        "ARROW_BUTTON": {
+            "RECT": "長方形",
+            "ROUNDED": "丸"
+        },
+        "CONTROLLERS": "コントローラー",
+        "CONTROLLERS_DESC": "ドット（点）はスライドの数と<br>スライドの位置を示します。ドット（点）はクリックでき、<br>クリックするとスライドが変わります。",
+        "CONTROLLERS_PROPERTIES": {
+            "PAUSE_PLAY": "停止/再生を表示",
+            "MOBILE": "モバイルで表示",
+            "INVERT_STYLE": "逆スタイル",
+            "SHOW_CONTROLLERS": "スライダーにコントローラーを表示"
+        },
+        "CONTROLLER_SIZE": "コントローラーのサイズ"
+    }
+}

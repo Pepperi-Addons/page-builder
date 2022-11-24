@@ -1,0 +1,166 @@
+{
+    "PAGE_MANAGER": {
+        "VIEWPORT_WIDTH": "Visualizar a largura da porta",
+        "PREVIEW_TITLE": "Prever Modo",
+        "PREVIEW_CLICK_HERE": "Clique aqui para editar",
+        "DESKTOP": "Desktop",
+        "TABLET": "Tablet",
+        "MOBILE": "Celular",
+        "SECTION": "Seção",
+        "SECTION_NAME_TITLE": "Nome da Seção (caso-kebab)",
+        "SUB_SECTION_TITLE": "Sub-seção",
+        "FILL_HEIGHT_SECTION_TITLE": "Altura do preenchimento",
+        "FILL_HEIGHT_SECTION_DESCRIPTION": "Defina a altura de preenchimento para que a seção preencha o tamanho relativo da tela",
+        "SECTIONS_TITLE": "Seções",
+        "SPLIT_TITLE": "Dividir",
+        "ADD_SECTION": "Adicionar Seção",
+        "DELETE_SECTION_MSG": "Esta ação excluirá o conteúdo fora do intervalo. Esta ação é irreversível!",
+        "DELETE_SECTION_TITLE": "Cuidado",
+        "GENERAL": "Geral",
+        "DESIGN": "Desenho",
+        "PAGE_NAME_TITLE": "Nome da página",
+        "PAGE_DESCRIPTION_TITLE": "Descrição",
+        "BLOCKS_TITLE": "Blocos",
+        "FULL_WIDTH_TITLE": "Largura total",
+        "MAX_WIDTH_TITLE": "Largura máxima",
+        "AUTO_HEIGHT_TITLE": "Altura automática",
+        "MAX_HEIGHT_TITLE": "Altura máxima",
+        "HEIGHT_TITLE": "Altura",
+        "SPACING_TITLE": "Espaçamento",
+        "SPACING_HORIZONTAL_TITLE": "Direita & Esquerda",
+        "SPACING_VERTICAL_TITLE": "Cabeçalho & Rodapé",
+        "GAPS_TITLE": "Lacunas",
+        "SECTIONS_GAP_TITLE": "Tamanho das lacunas entre seções",
+        "COLUMNS_GAP_TITLE": "Tamanho da lacuna entre colunas",
+        "ROUNDED_CORNERS_TITLE": "Cantos arredondados",
+        "BORDER_RADIUS_TITLE": "Raio de fronteira global"
+    },
+    "PAGES_MANAGER": {
+        "MAIN_HEADER": "Construtor de página",
+        "A_PAGE": "Adicionar página",
+        "MAIN_EXPLANATION": "Crie páginas com nosso construtor de arrastar e soltar que oferece controle total de todos os detalhes. Use um de nossos modelos ou comece do zero e componha um layout usando componentes de bloco.",
+        "SECONDARY_HEADER": "Páginas",
+        "PAGES_HEADER": "Você ainda não usou o Construtor de Página",
+        "NO_PAGES_MSG": "Adicione um design de página personalizado clicando no botão 'Adicionar página' ou importe um modelo existente através do botão Menu adjacente",
+        "USE_THIS": "Use isto",
+        "LINKS_HEADER": "Como fazer",
+        "LINKS_USING": "Guia do Construtor de Página",
+        "LINKS_IMPORTING": "Importando uma página",
+        "LINKS_SAVE": "Salvar página como rascunho",
+        "LINKS_PUBLISH": "Publicar página para uso em configurações",
+        "LINKS_EXPORT": "Exportar Página",
+        "DELETE_PAGE_DIALOG_TITLE": "Excluir Página",
+        "DELETE_PAGE_MSG": "Você tem certeza que quer remover esta página? ",
+        "GRID_HEADER_NAME": "Nome",
+        "GRID_HEADER_DESCRIPTION": "Descrição",
+        "GRID_HEADER_CREATIONDATE": "Data de criação",
+        "GRID_HEADER_MODIFICATIONDATE": "Data de Modificação",
+        "GRID_HEADER_STATUS": "Status",
+        "GRID_HEADER_PUBLISHED": "Publicado",
+        "GRID_HEADER_DRAFT": "Rascunho",
+        "ADD_NEW": {
+            "HEADER": "Selecione um modelo de página",
+            "EXPLANATION": "Selecione um modelo para configurar o design da sua página.",
+            "TEMPLATES": {
+                "PAGES": {
+                    "BLANK": {
+                        "NAME": "Vazio",
+                        "DESC": "Um projeto inicial vazio para você enlouquecer"
+                    },
+                    "GRIDY": {
+                        "NAME": "Retículado",
+                        "DESC": "Uma retícula simples"
+                    },
+                    "SIMPLISTIC": {
+                        "NAME": "Simplista",
+                        "DESC": "Um layout simples com seções básicas"
+                    },
+                    "BRANDED": {
+                        "NAME": "Com a Marca",
+                        "DESC": "Uma experiência de Marca"
+                    }
+                },
+                "GROUPS": {
+                    "HOMEPAGE": "Modelos:",
+                    "DASHBOARD": "Painel",
+                    "ITEM": "Item",
+                    "GENERIC": "Geral"
+                }
+            }
+        }
+    },
+    "GROUP_SIZE": {
+        "NONE": "Nenhum",
+        "SM": "SM",
+        "MD": "MD",
+        "LG": "LG",
+        "XL": "XL"
+    },
+    "ACTIONS": {
+        "CANCEL": "Cancelar",
+        "CONTINUE": "Continue",
+        "DELETE": "Deletar",
+        "EDIT": "Editar",
+        "SAVE": "Salvar",
+        "PREVIEW": "Visualizar",
+        "PUBLISH": "Publicar",
+        "IMPORT": "Importar Página",
+        "EXPORT": "Exportar Página",
+        "RESTORE_TO_LAST_PUBLISH": "Restaurar a última publicação"
+    },
+    "MESSAGES": {
+        "TITLE_NOTICE": "Aviso",
+        "PAGE_SIZE_LIMIT_TITLE": "Limite do tamanho da página",
+        "BLOCKS_COUNT_LIMIT_MESSAGE": "Você excedeu seu limite de número de blocos - entre em contato com seu administrador.",
+        "OPERATION_SUCCESS": "Operação bem sucedida",
+        "PAGE_SAVED": "Página Salva",
+        "PAGE_PUBLISHED": "Página Salva e Publicada",
+        "PAGE_RESTORED": "Página Restaurada",
+        "PAGES_COUNT_LIMIT_MESSAGE": "Você excedeu o limite de número de páginas - entre em contato com seu administrador.",
+        "PARAMETER_VALIDATION": {
+            "BLOCK_HAS_REMOVED": "O bloco foi removido",
+            "TYPE_IS_DIFFERENT_FOR_THIS_KEY": "O objeto de configuração da página deste bloco possui Parâmetros com Tipo diferente para a chave.",
+            "CONSUME_AND_PRODUCE_ARE_FALSE": "O objeto de configuração da página deste bloco possui parâmetro (com chave '{{parameterKey}}') que não é permitido, pelo menos uma das propriedades Produzir ou Consumir deve ser verdadeira.",
+            "TYPE_IS_DIFFERENT_FOR_THIS_KEY_IN_OTHER_BLOCKS": "Há um conflito de dados entre o objeto de configuração da página deste bloco e o bloco existente na seção {{section}} -> coluna {{column}}.<br/>O parâmetro com a chave '{{parameterKey}}' existe para Digitar {{parameterType}}."
+        }
+    },
+    "HIDE_IN": {
+        "HIDE_IN_TITLE": "Ocultar em:"
+    },
+    "SLIDESHOW": {
+        "HEIGHTUNITS_TITLE": "Unidades de altura",
+        "HEIGHTUNITS_REM": "REM",
+        "HEIGHTUNITS_VH": "VH (porcentagem)",
+        "HEIGHT": "Altura",
+        "INNERSPACING_TITLE": "Espaçamento interno",
+        "TRANSITION": "Transição",
+        "TRANSITION_TITLE": "Definir duração e tipo de transição",
+        "SLIDE_DURATION": "Duração do slide(s)",
+        "TRANSITION_TYPE": "Tipo de Transição",
+        "TRANSITION_TIME": "Tempo(s) de transição",
+        "ARROWS": "Flechas",
+        "ARROWS_DESC": "As setas navegam pelos slides do início ao fim.<br>As setas ficam ocultas na visualização para dispositivos móveis.",
+        "ARROWS_TYPE": "Tipo de flechas",
+        "ARROWS_BUTTONS": "Botões de flechas",
+        "ARROWS_STYLE": "Modelo",
+        "ARROWS_COLOR": "Cor",
+        "ARROW_TYPE": {
+            "TWO_ARROWS": ">>",
+            "ONE_ARROW": ">",
+            "STYLED_ARROW": " -->"
+        },
+        "ARROW_BUTTON": {
+            "RECT": "Reto",
+            "ROUNDED": "Arredondado"
+        },
+        "CONTROLLERS": "Controladores",
+        "CONTROLLERS_DESC": "Os pontos indicam o número de slides<br>e a posição do slide, eles são<br>clicáveis e mudarão o slide.",
+        "CONTROLLERS_PROPERTIES": {
+            "PAUSE_PLAY": "Exibir Pausar/Reproduzir",
+            "MOBILE": "Exibir no dispositivo móvel",
+            "INVERT_STYLE": "Inverter estilo",
+            "SHOW_CONTROLLERS": "Mostrar controladores no slide"
+        },
+        "CONTROLLER_SIZE": "Tamanho do controlador"
+    }
+}

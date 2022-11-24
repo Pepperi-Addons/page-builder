@@ -1,0 +1,166 @@
+{
+    "PAGE_MANAGER": {
+        "VIEWPORT_WIDTH": "Breite des Ports anzeigen",
+        "PREVIEW_TITLE": "Vorschaumodus",
+        "PREVIEW_CLICK_HERE": "Hier klicken zum Bearbeiten",
+        "DESKTOP": "Desktop",
+        "TABLET": "Tablet",
+        "MOBILE": "Handy",
+        "SECTION": "Abschnitt",
+        "SECTION_NAME_TITLE": "Name der Sektion (kebab-case)",
+        "SUB_SECTION_TITLE": "Untersektion",
+        "FILL_HEIGHT_SECTION_TITLE": "Füllhöhe",
+        "FILL_HEIGHT_SECTION_DESCRIPTION": "Aktivieren Sie die Füllhöhe, damit die Sektion die entsprechende Bildschirmgröße ausfüllt",
+        "SECTIONS_TITLE": "Sektionen",
+        "SPLIT_TITLE": "Aufteilen",
+        "ADD_SECTION": "Sektion hinzufügen",
+        "DELETE_SECTION_MSG": "Diese Aktion löscht außerhalb liegende Inhalte. Diese Aktion ist unumkehrbar!",
+        "DELETE_SECTION_TITLE": "Achtung",
+        "GENERAL": "Allgemeines",
+        "DESIGN": "Design",
+        "PAGE_NAME_TITLE": "Seitenname",
+        "PAGE_DESCRIPTION_TITLE": "Beschreibung",
+        "BLOCKS_TITLE": "Blöcke",
+        "FULL_WIDTH_TITLE": "Volle Breite",
+        "MAX_WIDTH_TITLE": "Max. Breite",
+        "AUTO_HEIGHT_TITLE": "Auto-Höhe",
+        "MAX_HEIGHT_TITLE": "Max. Höhe",
+        "HEIGHT_TITLE": "Höhe",
+        "SPACING_TITLE": "Abstand",
+        "SPACING_HORIZONTAL_TITLE": "Links & Rechts",
+        "SPACING_VERTICAL_TITLE": "Oben & Unten",
+        "GAPS_TITLE": "Lücken",
+        "SECTIONS_GAP_TITLE": "Lückengröße zwischen Sektionen",
+        "COLUMNS_GAP_TITLE": "Lückengröße zwischen Spalten",
+        "ROUNDED_CORNERS_TITLE": "Runde Ecken",
+        "BORDER_RADIUS_TITLE": "Globaler Randradius"
+    },
+    "PAGES_MANAGER": {
+        "MAIN_HEADER": "Seiten-Builder",
+        "A_PAGE": "Seite hinzufügen",
+        "MAIN_EXPLANATION": "Erstellen Sie Seiten mit unserem Drag & Drop-Builder, der Ihnen die volle Kontrolle über jedes Detail gibt. Verwenden Sie eine unserer Vorlagen oder fangen Sie bei null an und erstellen Sie ein Layout mit Blockkomponenten.",
+        "SECONDARY_HEADER": "Seiten",
+        "PAGES_HEADER": "Sie haben den Seiten-Builder noch nicht verwendet",
+        "NO_PAGES_MSG": "Fügen Sie ein personalisiertes Seitendesign hinzu, indem Sie auf 'Add Page' klicken, oder importieren Sie eine bestehende Vorlage über die nebenstehende Schaltfläche 'Menu'",
+        "USE_THIS": "Dieses nehmen",
+        "LINKS_HEADER": "Tipps",
+        "LINKS_USING": "Seiten-Builder Anleitung",
+        "LINKS_IMPORTING": "Eine Seite importieren",
+        "LINKS_SAVE": "Eine Seite als Entwurf speichern",
+        "LINKS_PUBLISH": "Seite zur Verwendung in Konfigurationen veröffentlichen",
+        "LINKS_EXPORT": "Seite exportieren",
+        "DELETE_PAGE_DIALOG_TITLE": "Seite löschen",
+        "DELETE_PAGE_MSG": "Sind Sie sicher, dass Sie diese Seite löschen möchten? ",
+        "GRID_HEADER_NAME": "Name",
+        "GRID_HEADER_DESCRIPTION": "Beschreibung",
+        "GRID_HEADER_CREATIONDATE": "Erstellungsdatum",
+        "GRID_HEADER_MODIFICATIONDATE": "Änderungsdatum",
+        "GRID_HEADER_STATUS": "État",
+        "GRID_HEADER_PUBLISHED": "Veröffentlicht",
+        "GRID_HEADER_DRAFT": "Entwerfen",
+        "ADD_NEW": {
+            "HEADER": "Eine Seitenvorlage wählen",
+            "EXPLANATION": "Wählen Sie eine Vorlage, um das Design für Ihre Seite zu konfigurieren.",
+            "TEMPLATES": {
+                "PAGES": {
+                    "BLANK": {
+                        "NAME": "Leer",
+                        "DESC": "Ein leeres Startprojekt, mit dem Sie sich austoben können"
+                    },
+                    "GRIDY": {
+                        "NAME": "Raster",
+                        "DESC": "Ein einfaches Raster"
+                    },
+                    "SIMPLISTIC": {
+                        "NAME": "Simpel",
+                        "DESC": "Ein simples Layout mit den wichtigsten Sektionen"
+                    },
+                    "BRANDED": {
+                        "NAME": "Marke",
+                        "DESC": "Ein Markenerlebnis"
+                    }
+                },
+                "GROUPS": {
+                    "HOMEPAGE": "Vorlagen:",
+                    "DASHBOARD": "Cockpit",
+                    "ITEM": "Artikel",
+                    "GENERIC": "Allgemein"
+                }
+            }
+        }
+    },
+    "GROUP_SIZE": {
+        "NONE": "Keine",
+        "SM": "SM",
+        "MD": "MD",
+        "LG": "LG",
+        "XL": "XL"
+    },
+    "ACTIONS": {
+        "CANCEL": "Abbrechen",
+        "CONTINUE": "Weiter",
+        "DELETE": "Löschen",
+        "EDIT": "Bearbeiten",
+        "SAVE": "Speichern",
+        "PREVIEW": "Vorschau",
+        "PUBLISH": "Veröffentlichen",
+        "IMPORT": "Seite importieren",
+        "EXPORT": "Seite exportieren",
+        "RESTORE_TO_LAST_PUBLISH": "Letzte Veröffentlichung wiederherstellen"
+    },
+    "MESSAGES": {
+        "TITLE_NOTICE": "Hinweis",
+        "PAGE_SIZE_LIMIT_TITLE": "Limit der Seitengröße",
+        "BLOCKS_COUNT_LIMIT_MESSAGE": "Sie haben das Limit für die Anzahl der Blöcke überschritten - wenden Sie sich an Ihren Administrator.",
+        "OPERATION_SUCCESS": "Aktion erfolgreich",
+        "PAGE_SAVED": "Seite gespeichert",
+        "PAGE_PUBLISHED": "Seite gespeichert und veröffentlicht",
+        "PAGE_RESTORED": "Seite wiederhergestellt",
+        "PAGES_COUNT_LIMIT_MESSAGE": "Sie haben das Limit für die Anzahl der Seiten überschritten - wenden Sie sich an Ihren Administrator.",
+        "PARAMETER_VALIDATION": {
+            "BLOCK_HAS_REMOVED": "Block wurde entfernt",
+            "TYPE_IS_DIFFERENT_FOR_THIS_KEY": "Das Seitenkonfigurationsobjekt dieses Blocks hat Parameter mit verschiedenen Typen für den Schlüssel '{{parameterKey}}'.",
+            "CONSUME_AND_PRODUCE_ARE_FALSE": "Das Seitenkonfigurationsobjekt dieses Blocks hat einen Parameter (mit dem Schlüssel '{{parameterKey}}'), der nicht zulässig ist, mindestens eine der Eigenschaften Produce oder Consume muss wahr sein.",
+            "TYPE_IS_DIFFERENT_FOR_THIS_KEY_IN_OTHER_BLOCKS": "Es gibt einen Datenkonflikt zwischen dem Seitenkonfigurationsobjekt dieses Blocks und dem bestehenden Block im Sektion {{section}} -> Spalte {{column}}.<br/>Der Parameter mit Schlüssel '{{parameterKey}}' besteht für Typ {{parameterType}}."
+        }
+    },
+    "HIDE_IN": {
+        "HIDE_IN_TITLE": "Ausblenden:"
+    },
+    "SLIDESHOW": {
+        "HEIGHTUNITS_TITLE": "Höheneinheiten",
+        "HEIGHTUNITS_REM": "REM",
+        "HEIGHTUNITS_VH": "VH (Prozentsatz)",
+        "HEIGHT": "Höhe",
+        "INNERSPACING_TITLE": "Innerer Abstand",
+        "TRANSITION": "Übergang",
+        "TRANSITION_TITLE": "Übergangsdauer und -typ festlegen",
+        "SLIDE_DURATION": "Folien-Dauer(n)",
+        "TRANSITION_TYPE": "Übergangstyp",
+        "TRANSITION_TIME": "Übergangszeit(en)",
+        "ARROWS": "Pfeile",
+        "ARROWS_DESC": "Pfeile bewegen die Folien von Anfang bis Ende.<br>Pfeile sind in der mobilen Ansicht ausgeblendet.",
+        "ARROWS_TYPE": "Pfeiltyp",
+        "ARROWS_BUTTONS": "Pfeiltasten",
+        "ARROWS_STYLE": "Modell",
+        "ARROWS_COLOR": "Farbe",
+        "ARROW_TYPE": {
+            "TWO_ARROWS": ">>",
+            "ONE_ARROW": ">",
+            "STYLED_ARROW": " -->"
+        },
+        "ARROW_BUTTON": {
+            "RECT": "Eckig",
+            "ROUNDED": "Rund"
+        },
+        "CONTROLLERS": "Controller",
+        "CONTROLLERS_DESC": "Punkte zeigen die Anzahl der Folien<br>und die Folien-Position an, sie sind<br>anklickbar und verändern die Folie.",
+        "CONTROLLERS_PROPERTIES": {
+            "PAUSE_PLAY": "Pause/Wiedergabe anzeigen",
+            "MOBILE": "Auf Mobilgerät anzeigen",
+            "INVERT_STYLE": "Stil invertieren",
+            "SHOW_CONTROLLERS": "Controller in Folie anzeigen"
+        },
+        "CONTROLLER_SIZE": "Controller-Größe"
+    }
+}
