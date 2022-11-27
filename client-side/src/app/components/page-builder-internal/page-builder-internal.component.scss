@@ -15,31 +15,20 @@
     display: grid;
     height: inherit;
 
-    // remove this class because of DI-21758. avner 23.11.22
-    &.mobile {
-        display: block;
-
-        .margin-none { 
-            margin-bottom: 0; /* none*/
-        }
-    
-        .margin-sm {
-            margin-bottom: variables.$spacing-sm; // 0.5rem
-        }
-    
-        .margin-md {
-            margin-bottom: variables.$spacing-lg; // 1rem
-        }
-    
-        .margin-lg {
-            margin-bottom: variables.$spacing-2xl; // 2rem
-        }
-    }
-
     @include mixins.gap-sizes();
     
     .draggable-section {
         display: block;
+        // DI- 21762 - Hidden sections takes up space in the UI (AVNER)
+        // Makes the container disappear, making the child elements children of the 
+        // element the next level up in the DOM
+        //display: contents;
+    }
+
+    &.preview-state{
+        section{
+            display: contents;
+        }
     }
 }
 

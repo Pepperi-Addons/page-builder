@@ -1,4 +1,4 @@
-<div #sectionsCont cdkDropListGroup class="sections-container gap-{{ sectionsGap }} " [ngClass]="{'mobile': screenType === 'Phablet' }"  
+<div #sectionsCont cdkDropListGroup class="sections-container gap-{{ sectionsGap }} " [ngClass]="{'mobile': screenType === 'Phablet', 'preview-state': !editMode }"  
      cdkDropList (cdkDropListDropped)="onSectionDropped($event)" [ngStyle]="{'grid-template-rows': getSectionsTemplateRows()}">
 
     <section *ngFor="let section of sections$ | async; let i=index;" 
