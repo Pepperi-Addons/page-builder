@@ -86,6 +86,23 @@
         }
     }
 
+    &.main-editor-state{
+        .mobile{
+            .hideBlock{
+                display: none;
+            }
+        }
+    }
+    &.editable-state{
+        .mobile{
+            .hideBlock{
+                display: block;
+            }
+        }
+    }
+
+
+
     // This css is run in edit mode and also without edit mode!!!
     .columns-wrapper {
         display: grid;

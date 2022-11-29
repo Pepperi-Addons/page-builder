@@ -194,8 +194,8 @@ export class SectionComponent implements OnInit {
                                     cssSplitArray[index] = '0';
                                 }
                             });
-
-                            this.renderer.setStyle(section.nativeElement, 'grid-template-rows', cssSplitArray.join(' '));
+                            this.renderer.setStyle(section.nativeElement, 'grid-template-rows', 'auto');
+                            //this.renderer.setStyle(section.nativeElement, 'grid-template-rows', cssSplitArray.join(' '));
                         }
                     }
                 });

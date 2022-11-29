@@ -22,7 +22,7 @@
             *ngFor="let column of columns; let i=index;"
             class="section-column {{screenSize <= pepScreenSizeToFlipToVertical ? 'horizontal' : 'vertical'}}"
             [ngClass]="{ 'active-column': selectedBlockKey === column.BlockContainer?.BlockKey, 
-                'hideBlock': column.BlockContainer.Hide == 'Phablet',
+                'hideBlock': column?.BlockContainer?.Hide == 'Phablet',
                 'already-contains-block': editable && column.BlockContainer?.BlockKey?.length > 0 && draggingBlockKey?.length > 0 && column.BlockContainer?.BlockKey !== draggingBlockKey }"
             cdkDropList
             [cdkDropListData]="column"
