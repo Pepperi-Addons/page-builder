@@ -93,9 +93,9 @@
         height: inherit;
         max-height: inherit;
         
-        &.mobile {
-            display: block;
-        }
+        // &.mobile {
+        //     display: block;
+        // }
         
         @include mixins.gap-sizes();
         
