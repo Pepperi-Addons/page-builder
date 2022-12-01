@@ -13,6 +13,7 @@ import { NavigationService } from "./navigation.service";
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 import { UtilitiesService } from "./utilities.service";
 import * as _ from 'lodash';
+import { coerceNumberProperty } from "@angular/cdk/coercion";
 // import { WebComponentWrapperOptions } from "@angular-architects/module-federation-tools";
 
 export type UiPageSizeType = PageSizeType | 'none';
@@ -812,7 +813,7 @@ export class PagesService {
             const sectionId = sectionColumnArr[0];
             const sectionIndex = sections.findIndex(section => section.Key === sectionId);
             // Get the column index.
-            const columnIndex = this.pepUtilitiesService.coerceNumberProperty(sectionColumnArr[1], -1);
+            const columnIndex = coerceNumberProperty(sectionColumnArr[1], -1);
             if (sectionIndex >= 0 && columnIndex >= 0) {
                 currentColumn = sections[sectionIndex].Columns[columnIndex];
             }
@@ -1600,7 +1601,7 @@ export class PagesService {
     }
 
     setScreenWidth(value: string) {
-        let width = this.pepUtilitiesService.coerceNumberProperty(value, 0);
+        let width = coerceNumberProperty(value, 0);
         if (width === 0) {
             this._screenWidthSubject.next('100%');
             this._screenSizeSubject.next(PepScreenSizeType.XL);

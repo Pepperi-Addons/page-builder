@@ -12,6 +12,7 @@ import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/men
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { PepSnackBarData, PepSnackBarService } from "@pepperi-addons/ngx-lib/snack-bar";
 import { WebComponentWrapperOptions } from "@angular-architects/module-federation-tools";
+import { coerceNumberProperty } from "@angular/cdk/coercion";
 
 @Component({
     selector: 'page-manager',
@@ -141,7 +142,7 @@ export class PageManagerComponent implements OnInit {
                 this.isOverPageSizeLimit = pageSize >= this.pagesService.PAGE_SIZE_LIMITATION_OBJECT.value;
 
                 if (this.pageBuilderWrapper?.nativeElement) {
-                    let maxWidth = this.pepUtilitiesService.coerceNumberProperty(page.Layout.MaxWidth, 0);
+                    let maxWidth = coerceNumberProperty(page.Layout.MaxWidth, 0);
                     const maxWidthToSet = maxWidth === 0 ? '100%' : `${maxWidth}px`;
                     this.renderer.setStyle(this.pageBuilderWrapper.nativeElement, 'max-width', maxWidthToSet);
                     this.updateViewportWidth();

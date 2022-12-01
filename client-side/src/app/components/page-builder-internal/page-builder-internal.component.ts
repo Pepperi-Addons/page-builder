@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
 import { DataViewScreenSize, Page, PageBlock, PageSection, PageSizeType } from '@pepperi-addons/papi-sdk';
 import { NavigationService } from 'src/app/services/navigation.service';
+import { coerceNumberProperty } from '@angular/cdk/coercion';
 
 export interface IPageBuilderHostObject {
     pageKey: string;
@@ -110,7 +111,7 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
 
     private setPageDataProperties(page: Page) {
         if (page && this.sectionsContainer?.nativeElement) {
-            let maxWidth = this.utilitiesService.coerceNumberProperty(page.Layout.MaxWidth, 0);
+            let maxWidth = coerceNumberProperty(page.Layout.MaxWidth, 0);
             const maxWidthToSet = maxWidth === 0 ? 'unset' : `${maxWidth}px`;
             this.renderer.setStyle(this.sectionsContainer.nativeElement, 'max-width', maxWidthToSet);
 
