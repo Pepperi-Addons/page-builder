@@ -13,6 +13,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { PepSnackBarData, PepSnackBarService } from "@pepperi-addons/ngx-lib/snack-bar";
 import { WebComponentWrapperOptions } from "@angular-architects/module-federation-tools";
 import { coerceNumberProperty } from "@angular/cdk/coercion";
+import { PepDialogActionButton, PepDialogData, PepDialogService } from "@pepperi-addons/ngx-lib/dialog";
 
 @Component({
     selector: 'page-manager',
@@ -58,6 +59,7 @@ export class PageManagerComponent implements OnInit {
         private renderer: Renderer2,
         private translate: TranslateService,
         private pepUtilitiesService: PepUtilitiesService,
+        private dialogService: PepDialogService,
         private pepAddonService: PepAddonService,
         private layoutService: PepLayoutService,
         private pagesService: PagesService,
@@ -230,12 +232,39 @@ export class PageManagerComponent implements OnInit {
         }
     }
 
-    async onNavigateBackFromEditor() {
+    onNavigateBackFromEditor() {
         if (!this.currentEditor || this.currentEditor?.type === 'page-builder') {
-            // TODO: We want to save?
-            // await this.pagesService.saveCurrentPage(this.navigationService.addonUUID).subscribe(res => {
+            if (this.pagesService.doesCurrentPageHasChanges()) {
+                const title = this.translate.instant('MESSAGES.TITLE_NOTICE');
+                const content = this.translate.instant('MESSAGES.CHANGES_ARE_NOT_SAVED');
+                let dataMsg: PepDialogData;
+                let actionButtons: PepDialogActionButton[];
+                actionButtons = [
+                    new PepDialogActionButton(
+                        this.translate.instant('ACTIONS.CANCEL'),
+                        '',
+                        () => { /* Do nothing */ }),
+                    new PepDialogActionButton(
+                        this.translate.instant('ACTIONS.LEAVE_PAGE'),
+                        'strong',
+                        () => this.navigationService.back())
+                ];
+                dataMsg = new PepDialogData({
+                    title,
+                    actionsType: 'custom',
+                    content: content,
+                    actionButtons
+                });
+                this.dialogService.openDefaultDialog(dataMsg).afterClosed()
+                    .subscribe((isActionButtonClicked) => {
+                        // If user pressed on cancel (X button) or clicked outside
+                        if (!isActionButtonClicked) {
+                            // Do nothing.
+                        }
+                });
+            } else {
                 this.navigationService.back();
-            // });
+            }
         } else {
             this.pagesService.navigateBackFromEditor();
         }
@@ -258,34 +287,10 @@ export class PageManagerComponent implements OnInit {
     }
     
     onSaveClick() {
-        this.pagesService.saveCurrentPage(this.navigationService.addonUUID).subscribe(res => {
-            // this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
-            const data: PepSnackBarData = {
-                title: this.translate.instant('MESSAGES.PAGE_SAVED'),
-                content: '',
-            }
-
-            const config = this.pepSnackBarService.getSnackBarConfig({
-                duration: 5000,
-            });
-
-            this.pepSnackBarService.openDefaultSnackBar(data, config);
-        });
+        this.pagesService.saveCurrentPage(this.navigationService.addonUUID);
     }
 
     onPublishClick() {
-        this.pagesService.publishCurrentPage(this.navigationService.addonUUID).subscribe(res => {
-            // this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.OPERATION_SUCCESS'));
-            const data: PepSnackBarData = {
-                title: this.translate.instant('MESSAGES.PAGE_PUBLISHED'),
-                content: '',
-            }
-
-            const config = this.pepSnackBarService.getSnackBarConfig({
-                duration: 5000,
-            });
-
-            this.pepSnackBarService.openDefaultSnackBar(data, config);
-        });
+        this.pagesService.publishCurrentPage(this.navigationService.addonUUID);
     }
 }

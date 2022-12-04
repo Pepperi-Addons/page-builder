@@ -14,6 +14,7 @@ import { distinctUntilChanged, filter } from 'rxjs/operators';
 import { UtilitiesService } from "./utilities.service";
 import * as _ from 'lodash';
 import { coerceNumberProperty } from "@angular/cdk/coercion";
+import { PepSnackBarData, PepSnackBarService } from "@pepperi-addons/ngx-lib/snack-bar";
 // import { WebComponentWrapperOptions } from "@angular-architects/module-federation-tools";
 
 export type UiPageSizeType = PageSizeType | 'none';
@@ -180,6 +181,9 @@ export class PagesService {
         return this._pageBlockSubject.asObservable();
     }
 
+    // This is for know if the user made changes in the draft page and not save it yet.
+    private _pageAfterLastSave = null;
+
     // This subject is for page change.
     private _pageSubject: BehaviorSubject<Page> = new BehaviorSubject<Page>(null);
     get pageLoad$(): Observable<Page> {
@@ -224,6 +228,7 @@ export class PagesService {
     constructor(
         private utilitiesService: UtilitiesService,
         private pepUtilitiesService: PepUtilitiesService,
+        private pepSnackBarService: PepSnackBarService,
         private translate: TranslateService,
         private sessionService: PepSessionService,
         private httpService: PepHttpService,
@@ -458,8 +463,12 @@ export class PagesService {
         this.notifyBlockProgressMapChange();
     }
 
-    private notifyPageChange(page: Page) {
+    private notifyPageChange(page: Page, setLastSavedPage = false) {
         this._pageSubject.next(page);
+        
+        if (setLastSavedPage) {
+            this._pageAfterLastSave = page ?JSON.parse(JSON.stringify(page)) : null;
+        }
     }
 
     private notifySectionsChange(sections: PageSection[]) {
@@ -1632,6 +1641,17 @@ export class PagesService {
         window.dispatchEvent(customEvent);
     }
 
+    doesCurrentPageHasChanges(): boolean {
+        let res = false;
+        const currentPage = this._pageSubject.getValue();
+
+        if (this._pageAfterLastSave != null && currentPage != null && JSON.stringify(currentPage) !== JSON.stringify(this._pageAfterLastSave)) {
+            res = true;
+        }
+
+        return res;
+    }
+
     /**************************************************************************************/
     /*                            CPI & Server side calls.
     /**************************************************************************************/
@@ -1695,7 +1715,7 @@ export class PagesService {
                         this.loadBlocksEditorsRemoteLoaderOptionsMap(res.availableBlocks);
 
                         // Load the page.
-                        this.notifyPageChange(res.page);
+                        this.notifyPageChange(res.page, true);
                     }
             });
         }
@@ -1707,7 +1727,7 @@ export class PagesService {
     unloadPageBuilder() {
         this.notifySectionsChange([]);
         this.removeAllBlocks()
-        this.notifyPageChange(null);
+        this.notifyPageChange(null, true);
     }
 
     // Restore the page to tha last publish
@@ -1719,18 +1739,47 @@ export class PagesService {
     }
 
     // Save the current page in drafts.
-    saveCurrentPage(addonUUID: string): Observable<Page> {
+    saveCurrentPage(addonUUID: string): void {
         const page: Page = this._pageSubject.getValue();
         const body = JSON.stringify(page);
         const baseUrl = this.getBaseUrl(addonUUID);
-        return this.httpService.postHttpCall(`${baseUrl}/save_draft_page`, body);
+        
+        this.httpService.postHttpCall(`${baseUrl}/save_draft_page`, body).subscribe(savedPage => {
+            this.notifyPageChange(savedPage, true);
+
+            // Show message
+            const data: PepSnackBarData = {
+                title: this.translate.instant('MESSAGES.PAGE_SAVED'),
+                content: '',
+            }
+
+            const config = this.pepSnackBarService.getSnackBarConfig({
+                duration: 5000,
+            });
+
+            this.pepSnackBarService.openDefaultSnackBar(data, config);
+        });
     }
 
     // Publish the current page.
-    publishCurrentPage(addonUUID: string): Observable<Page> {
+    publishCurrentPage(addonUUID: string): void {
         const page: Page = this._pageSubject.getValue();
         const body = JSON.stringify(page);
         const baseUrl = this.getBaseUrl(addonUUID);
-        return this.httpService.postHttpCall(`${baseUrl}/publish_page`, body);
+        this.httpService.postHttpCall(`${baseUrl}/publish_page`, body).subscribe(savedPage => {
+            this.notifyPageChange(savedPage, true);
+
+            // Show message
+            const data: PepSnackBarData = {
+                title: this.translate.instant('MESSAGES.PAGE_PUBLISHED'),
+                content: '',
+            }
+
+            const config = this.pepSnackBarService.getSnackBarConfig({
+                duration: 5000,
+            });
+
+            this.pepSnackBarService.openDefaultSnackBar(data, config);
+        });
     }
 }

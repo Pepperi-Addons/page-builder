@@ -106,7 +106,8 @@
         "PUBLISH": "Publish",
         "IMPORT": "Import Page",
         "EXPORT": "Export Page",
-        "RESTORE_TO_LAST_PUBLISH": "Restore to last publish"
+        "RESTORE_TO_LAST_PUBLISH": "Restore to last publish",
+        "LEAVE_PAGE": "Leave Page"
     },
     "MESSAGES": {
         "TITLE_NOTICE": "Notice",
@@ -122,7 +123,8 @@
             "TYPE_IS_DIFFERENT_FOR_THIS_KEY": "The page configuration object of this block has Parameters with different Type for the key '{{parameterKey}}'.",
             "CONSUME_AND_PRODUCE_ARE_FALSE": "The page configuration object of this block has parameter (with key '{{parameterKey}}') that is not allowed, at least one of the properties Produce or Consume should be true.",
             "TYPE_IS_DIFFERENT_FOR_THIS_KEY_IN_OTHER_BLOCKS": "There is a data conflict between the page configuration object of this block and the existing block in section {{section}} -> column {{column}}.<br/>The parameter with key '{{parameterKey}}' exists for Type {{parameterType}}."
-        }
+        },
+        "CHANGES_ARE_NOT_SAVED": "This page is asking you to confirm that you want to leave, <br/> Information you've entered may not be saved."
     },
     "HIDE_IN": {
         "HIDE_IN_TITLE": "Hide on:"
