@@ -24,14 +24,6 @@ label {
         }
     }
 
-    ::ng-deep .group-buttons-container {
-        margin-bottom: variables.$content-margin;
-
-        .toggle-buttons {
-            width: 100%;
-        }
-    }
-
     ::ng-deep .mat-tab-body-wrapper {
         overflow: unset;
         margin: 0;
@@ -50,7 +42,16 @@ label {
             }
         }
     }
-    
+
+    ::ng-deep .group-buttons-container {
+        margin-bottom: variables.$content-margin;
+
+        .toggle-buttons {
+            width: 100%;
+        }
+    }
+
+
     .split-area {
         display: flex;
         flex-direction: row;
