@@ -65,7 +65,7 @@ class ClientPagesService {
             availableBlocks.push({
                 relation: relation,
                 addonPublicBaseURL: `${baseURL}${relation.AddonUUID}/`,
-            });
+            } as any);
            
         });
 
