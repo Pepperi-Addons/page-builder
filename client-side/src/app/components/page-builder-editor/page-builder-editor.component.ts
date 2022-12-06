@@ -32,10 +32,10 @@ export class PageBuilderEditorComponent implements OnInit {
 
         this.isFullWidth = !value.maxWidth || value.maxWidth === 0;
         this.maxWidth = value.maxWidth;
-        this.horizontalSpacing = this._hostObject.horizontalSpacing || 'none';
-        this.verticalSpacing = this._hostObject.verticalSpacing || 'none';
-        this.sectionsGap = this._hostObject.sectionsGap || 'none';
-        this.columnsGap = this._hostObject.columnsGap || 'none';
+        this.horizontalSpacing = this._hostObject.horizontalSpacing || 'md';
+        this.verticalSpacing = this._hostObject.verticalSpacing || 'md';
+        this.sectionsGap = this._hostObject.sectionsGap || 'md';
+        this.columnsGap = this._hostObject.columnsGap || 'md';
         this.roundedCorners = this._hostObject.roundedCorners || 'none';
     }
     get hostObject(): IPageEditor {

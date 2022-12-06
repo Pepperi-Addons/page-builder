@@ -114,12 +114,12 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
             let maxWidth = coerceNumberProperty(page.Layout.MaxWidth, 0);
             const maxWidthToSet = maxWidth === 0 ? 'unset' : `${maxWidth}px`;
             this.renderer.setStyle(this.sectionsContainer.nativeElement, 'max-width', maxWidthToSet);
-
+          
             this.sectionsGap = page.Layout.SectionsGap || 'md';
             this.columnsGap = page.Layout.ColumnsGap || 'md';
 
-            this.paddingInline = this.convertPageSizeType(page.Layout.HorizontalSpacing);
-            this.paddingBottom = this.paddingTop = this.convertPageSizeType(page.Layout.VerticalSpacing);
+            this.paddingInline = this.convertPageSizeType(page.Layout.HorizontalSpacing || 'md');
+            this.paddingBottom = this.paddingTop = this.convertPageSizeType(page.Layout.VerticalSpacing || 'md');
         }
     }
 
