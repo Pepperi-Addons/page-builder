@@ -1,4 +1,4 @@
-import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView } from '@pepperi-addons/papi-sdk';
+import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView, RecursiveImportInput, RecursiveExportInput } from '@pepperi-addons/papi-sdk';
 import { Client } from '@pepperi-addons/debug-server';
 import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, DEFAULT_PAGES_DATA } from 'shared';
 import { PagesValidatorService } from './pages-validator.service';
@@ -693,6 +693,14 @@ export class PagesApiService {
     async exportPages(body: any, draft = true): Promise<any> {
         const res = await this.getDIMXResult(body, false);
         return res;
+    }
+
+    async importPageFile(body: RecursiveImportInput) {
+        return await this.papiClient.addons.data.import.file.recursive.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).upsert(body);
+    }
+
+    async exportPageFile(body: RecursiveExportInput) {
+        return await this.papiClient.addons.data.export.file.recursive.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).get(body);
     }
 
     /***********************************************************************************************/
