@@ -2,7 +2,7 @@ import { CdkDragDrop, CdkDragEnd, CdkDragStart, copyArrayItem, moveItemInArray, 
 import { Injectable } from "@angular/core";
 import { Params } from "@angular/router";
 import { TranslateService } from "@ngx-translate/core";
-import { PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
+import { PepAddonService, PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { PepRemoteLoaderOptions, PepRemoteLoaderService } from "@pepperi-addons/ngx-lib/remote-loader";
 import { IPepDraggableItem } from "@pepperi-addons/ngx-lib/draggable-items";
 import { Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize,ResourceType, 
@@ -234,6 +234,7 @@ export class PagesService {
         private httpService: PepHttpService,
         private remoteLoaderService: PepRemoteLoaderService,
         private navigationService: NavigationService,
+        private addonService: PepAddonService
     ) {
         this.pageLoad$.subscribe((page: Page) => {
             this.loadDefaultEditor(page);
@@ -1680,9 +1681,7 @@ export class PagesService {
 
         if (!editable) {
             // Get the page (sections and the blocks data) from the server.
-            let pageDataURL = `${baseUrl}/get_page_data?key=${pageKey}`;
-            this.httpService.getHttpCall(pageDataURL)
-            .subscribe((res: IPageBuilderData) => {
+            this.addonService.getAddonCPICall(addonUUID, `addon-cpi/get_page_data?key=${pageKey}`).then((res: IPageBuilderData) => {
                 if (res && res.page && res.availableBlocks) {
                     // Load the blocks remote loader options.
                     this.loadBlocksRemoteLoaderOptionsMap(res.availableBlocks);
@@ -1691,6 +1690,19 @@ export class PagesService {
                     this.notifyPageChange(res.page);
                 }
             });
+
+            // Get the page (sections and the blocks data) from the server.
+            // let pageDataURL = `${baseUrl}/get_page_data?key=${pageKey}`;
+            // this.httpService.getHttpCall(pageDataURL)
+            // .subscribe((res: IPageBuilderData) => {
+            //     if (res && res.page && res.availableBlocks) {
+            //         // Load the blocks remote loader options.
+            //         this.loadBlocksRemoteLoaderOptionsMap(res.availableBlocks);
+
+            //         // Load the page.
+            //         this.notifyPageChange(res.page);
+            //     }
+            // });
         } else { // If is't edit mode get the data of the page and the relations from the Server side.
             // Get the page (sections and the blocks data) from the server.
             this.httpService.getHttpCall(`${baseUrl}/get_page_builder_data?key=${pageKey}`)
