@@ -1,21 +1,10 @@
 import '@pepperi-addons/cpi-node'
 import ClientPagesService from './client-pages-service';
-import FilesService from './files-service'; 
 
 export const router = Router();
 
 export async function load(configuration: any) {
-    pepperi.events.intercept('SyncTerminated' as any, {}, async (data, next, main) => {
-        if(!await global['app']['wApp']['isWebApp']()) {
-            const isResync = data.JobInfoResponse?.ClientInfo?.LastSyncDateTime == 0;
-            if (isResync) {
-                const filesService = new FilesService();
-                await filesService.downloadFiles(); 
-                console.log("resync pages files finished");
-            }
-        }
-        await next(main);
-    });
+    
 }
 
 router.get('/get_page_data', async (req, res, next) => {
