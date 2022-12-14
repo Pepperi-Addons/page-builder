@@ -4,45 +4,55 @@ import { IBlockLoaderData } from "shared";
 class ClientPagesService {
     async getPageData(pageKey: string): Promise<any> {
         let result = {};
-        const availableBlocks = await this.getAvailableBlocks();
-            const page = await this.getPage(pageKey);
 
-            result = {
-                availableBlocks: availableBlocks || [],
-                pagesVariables: [], // no need in cpi-side
-                page: page,           
-            }
+        const availableBlocks: IBlockLoaderData[] = await this.getAvailableBlocks();
+        const page = await this.getPage(pageKey, availableBlocks);
+
+        result = {
+            availableBlocks: availableBlocks || [],
+            page: page,           
+        }
+
         return result;
     }
     
-    async getPage(pageKey: string): Promise<any> {
-        const page = await pepperi.api.adal.get({
-            addon: '50062e0c-9967-4ed4-9102-f2bc50602d41', // pages addon
-            table: 'Pages',
-            key: pageKey
-        }); 
-        const pageObject =  page.object;
-        return await this.loadLocalAssets(pageObject as Page);
+    async getPage(pageKey: string, availableBlocks: IBlockLoaderData[]): Promise<any> {
+        const page = await pepperi.resources.resource('Pages').key(pageKey).get() as Page;
+        return await this.manipulateBlocksData(page, availableBlocks);
+        // const page = await pepperi.api.adal.get({
+        //     addon: '50062e0c-9967-4ed4-9102-f2bc50602d41', // pages addon
+        //     table: 'Pages',
+        //     key: pageKey
+        // }); 
+        // const pageObject =  page.object;
+        // return await this.loadLocalAssets(pageObject as Page);
     }
 
-    async loadLocalAssets(page: Page): Promise<Page> {
-        // through each slideshow block, replace the image url with the correct url
-        // TODO in the future, this, shouldn't be hardcoded!
+    async manipulateBlocksData(page: Page, availableBlocks: IBlockLoaderData[]): Promise<Page> {
+        // Let the blocks manipulate there data and replace it in page blocks
         await Promise.all(page.Blocks.map(async (block: any) => {
-            const configuration = block.Configuration;
-            if (configuration.Resource === 'Slideshow') {
-                await Promise.all(configuration.Data.slides.map(async (slide: any) => {
-                    const assetKey = slide.image.asset;
-                    const assetUrl = (await pepperi.files.assets.get(assetKey)).URL
-                    slide.image.assetURL = assetUrl;
-                }));
-            }
-            if (configuration.Resource === 'Gallery') {
-                await Promise.all(configuration.Data.cards.map(async (card: any) => {
-                    const assetKey = card.asset;
-                    const assetUrl = (await pepperi.files.assets.get(assetKey)).URL
-                    card.assetURL = assetUrl;
-                }));;
+            const blockRelation = block.Relation;
+            const currentAvailableBlock = availableBlocks.find(ab => ab.relation.AddonUUID === blockRelation.AddonUUID && ab.relation.Name ===blockRelation.Name);
+            const blockCpiFunc = currentAvailableBlock?.relation.CPIEndpoint || 'addon-cpi/test';
+
+            if (blockCpiFunc?.length > 0) {
+                try {
+                    // Call block CPI side for getting the data to override.
+                    const data: any = {
+                        AddonUUID: blockRelation.AddonUUID,
+                        RelativeURL: blockCpiFunc,
+                        Method: 'POST',
+                        Body: { 
+                            Configuration: block.Configuration
+                        }
+                    }
+                
+                    const blockDataToOverride: any = await pepperi.events.emit('AddonAPI', data);
+                    block.Configuration = blockDataToOverride.Configuration;
+                }
+                catch {
+                    // Do nothing
+                }
             }
         }));
         
@@ -50,36 +60,18 @@ class ClientPagesService {
     }
 
     async getAvailableBlocks(): Promise<any> {
-        // Get the PageBlock relations 
-        const pageBlockRelations: NgComponentRelation[] = await this.getRelations('PageBlock');
-            
-        // Distinct the addons uuid's
-        // const distinctAddonsUuids = [...new Set(pageBlockRelations.map(obj => obj.AddonUUID))];
+        const pageBlocks = await pepperi.addons.data['relations'].pageBlocks();
 
-        // Get the installed addons (for the relative path and the current version)
-        // const addonsPromises: Promise<any>[] = [];
-     
-        const baseURL = "http://localhost:8088/files/Pages/Addon/Public/";
         const availableBlocks: IBlockLoaderData[] = [];
-        pageBlockRelations.forEach((relation: NgComponentRelation) => {
+        pageBlocks.forEach((relation: NgComponentRelation) => {
             availableBlocks.push({
                 relation: relation,
-                addonPublicBaseURL: `${baseURL}${relation.AddonUUID}/`,
+                addonPublicBaseURL: `${relation.AddonBaseURL}`,
             } as any);
            
         });
 
         return availableBlocks;
     }
-    
-    async getRelations(relationName: string): Promise<NgComponentRelation[]> {
-        const relations = await  pepperi.api.adal.getList({
-            addon: '5ac7d8c3-0249-4805-8ce9-af4aecd77794', // relations addon
-            table: "AddonRelations"
-        });
-        const objs =  relations.objects as any[];
-        return objs.filter(obj => obj.RelationName === relationName);         
-    }
-
 }
 export default ClientPagesService;
