@@ -23,27 +23,55 @@ router.get('/get_page_data', async (req, res, next) => {
 
     res.json(result);
 });
+
+router.get('/get_page_blocks_data', async (req, res, next) => {
+    let result = {};
+
+    try {
+        const service = new ClientPagesService();
+        result = await service.getPageBlocksData();
+    } catch (err) {
+        console.log(err);
+        next(err)
+    }
+
+    res.json(result);
+});
+
+router.get('/get_addon_blocks_data', async (req, res, next) => {
+    let result = {};
+
+    try {
+        const service = new ClientPagesService();
+        result = await service.getAddonBlocksData();
+    } catch (err) {
+        console.log(err);
+        next(err)
+    }
+
+    res.json(result);
+});
+
 // Get the page by Key
 router.get("/pages/:key", async (req, res) => {
-    let page = {};
+    let result = {};
     
     try {
         console.log("CPISide - GET page with query params (page key)");
-        // pages = await pepperi.api.adal.getList({ 
+        // page = await pepperi.api.adal.get({ 
         //     addon: '50062e0c-9967-4ed4-9102-f2bc50602d41',
-        //     table: 'Pages'
-        // }).then(obj => obj.objects);
-        page = await pepperi.api.adal.get({ 
-            addon: '50062e0c-9967-4ed4-9102-f2bc50602d41',
-            table: 'Pages',
-            key: req.params.key
-        }).then(obj => obj.object);
+        //     table: 'Pages',
+        //     key: req.params.key
+        // }).then(obj => obj.object);
+
+        const service = new ClientPagesService();
+        result = await service.getPage(req.params.key);
 
     } catch(exception) {
         // Handle exception.
     }
 
-    res.json({ result: page });
+    res.json(result);
 });
 
 // Example get function from Dor

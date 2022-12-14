@@ -1,39 +1,27 @@
 import { NgComponentRelation, Page } from "@pepperi-addons/papi-sdk";
-import { IBlockLoaderData } from "shared";
+import { IBlockLoaderData, IPageBuilderData } from "shared";
 
 class ClientPagesService {
-    async getPageData(pageKey: string): Promise<any> {
-        let result = {};
-
-        const availableBlocks: IBlockLoaderData[] = await this.getAvailableBlocks();
-        const page = await this.getPage(pageKey, availableBlocks);
-
-        result = {
-            availableBlocks: availableBlocks || [],
-            page: page,           
-        }
-
-        return result;
-    }
     
-    async getPage(pageKey: string, availableBlocks: IBlockLoaderData[]): Promise<any> {
-        // const page = await pepperi.resources.resource('Pages').key(pageKey).get() as Page;
-        const page = await pepperi.api.adal.get({
-            addon: '50062e0c-9967-4ed4-9102-f2bc50602d41', // pages addon
-            table: 'Pages',
-            key: pageKey
-        }); 
-        const pageObject =  page.object as Page;
-        return await this.manipulateBlocksData(pageObject, availableBlocks);
-        // return await this.loadLocalAssets(pageObject as Page);
+    private convertRelationToBlockLoaderData(relations: NgComponentRelation[]): IBlockLoaderData[] {
+        const availableBlocks: IBlockLoaderData[] = [];
+        relations.forEach((relation: NgComponentRelation) => {
+            availableBlocks.push({
+                relation: relation,
+                addonPublicBaseURL: `${relation.AddonBaseURL}`,
+            } as any);
+           
+        });
+
+        return availableBlocks;
     }
 
-    async manipulateBlocksData(page: Page, availableBlocks: IBlockLoaderData[]): Promise<Page> {
+    private async overrideBlocksData(page: Page, availableBlocks: IBlockLoaderData[]): Promise<void> {
         // Let the blocks manipulate there data and replace it in page blocks
         await Promise.all(page.Blocks.map(async (block: any) => {
             const blockRelation = block.Relation;
-            const currentAvailableBlock = availableBlocks.find(ab => ab.relation.AddonUUID === blockRelation.AddonUUID && ab.relation.Name ===blockRelation.Name);
-            const blockCpiFunc = currentAvailableBlock?.relation.CPINodeEndpoint;// || 'addon-cpi/test';
+            const currentAvailableBlock = availableBlocks.find(ab => ab.relation.AddonUUID === blockRelation.AddonUUID && ab.relation.Name === blockRelation.Name);
+            const blockCpiFunc = currentAvailableBlock?.relation.CPINodeEndpoint;
 
             if (blockCpiFunc?.length > 0) {
                 try {
@@ -58,23 +46,44 @@ class ClientPagesService {
                 }
             }
         }));
-        
-        return page;    
     }
 
-    async getAvailableBlocks(): Promise<any> {
+    async getPage(pageKey: string): Promise<Page> {
+        const res = await pepperi.api.adal.get({
+            addon: '50062e0c-9967-4ed4-9102-f2bc50602d41', // pages addon
+            table: 'Pages',
+            key: pageKey
+        }); 
+        const page =  res.object as Page;
+        return page;
+    }
+
+    async getPageData(pageKey: string): Promise<IPageBuilderData> {
+        let page = await this.getPage(pageKey);
+        const availableBlocks: IBlockLoaderData[] = await this.getPageBlocksData();
+
+        // This function override blocks data properties in page object.
+        await this.overrideBlocksData(page, availableBlocks);
+
+        const result: IPageBuilderData = {
+            page: page,           
+            availableBlocks: availableBlocks || [],
+        }
+
+        return result;
+    }
+    
+    async getPageBlocksData(): Promise<IBlockLoaderData[]> {
         const pageBlocks = await pepperi.addons.data['relations'].pageBlocks();
-
-        const availableBlocks: IBlockLoaderData[] = [];
-        pageBlocks.forEach((relation: NgComponentRelation) => {
-            availableBlocks.push({
-                relation: relation,
-                addonPublicBaseURL: `${relation.AddonBaseURL}`,
-            } as any);
-           
-        });
-
-        return availableBlocks;
+        const pageBlocksLoaderData = this.convertRelationToBlockLoaderData(pageBlocks);
+        return pageBlocksLoaderData;
     }
+
+    async getAddonBlocksData(): Promise<IBlockLoaderData[]> {
+        const addonBlocks = await pepperi.addons.data['relations'].addonBlocks();
+        const addonBlocksLoaderData = this.convertRelationToBlockLoaderData(addonBlocks);
+        return addonBlocksLoaderData;
+    }
+    
 }
 export default ClientPagesService;

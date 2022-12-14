@@ -23,7 +23,7 @@ export interface PageRowProjection {
 export interface IPageBuilderData {
     page: Page, 
     availableBlocks: IBlockLoaderData[]
-    pagesVariables: any
+    pagesVariables?: any
 }
 
 export interface IBlockLoaderData {
