@@ -155,12 +155,10 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
                 blocksProgress.forEach(bp => {
                     if (bp.priority >= this.pagesService.currentBlocksPriority) {
                         // Check that there is no other block with the same relation name that need to load.
-                        // if (bp.loaded || !remoteEntriesMap.has(bp.block.Relation.Options?.remoteEntry)) {
                         if (bp.loaded || !pbRelationsNames.has(bp.block.Relation.Name)) {
                             
                             // Add to the map only relations that not added yet.
                             if (!bp.loaded) {
-                                // remoteEntriesMap.set(bp.block.Relation.Options?.remoteEntry, true);
                                 pbRelationsNames.set(bp.block.Relation.Name, true);
                             }
 
@@ -176,7 +174,6 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
                 this.setPageDataProperties(page);
             });
         } else {
-            // TODO: Show error message key isn't supply.
             console.log(`pageKey in not valid: ${pageKey}`);
         }
     }

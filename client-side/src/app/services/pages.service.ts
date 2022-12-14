@@ -865,9 +865,9 @@ export class PagesService {
     }
 
     private getBaseUrl(addonUUID: string): string {
-        if (this.isOffline){
-            return "http://localhost:8088/addon/api/50062e0c-9967-4ed4-9102-f2bc50602d41/addon-cpi";
-        } else {
+        // if (this.isOffline){
+        //     return "http://localhost:8088/addon/api/50062e0c-9967-4ed4-9102-f2bc50602d41/addon-cpi";
+        // } else {
              // For devServer run server on localhost.
             if(this.navigationService.devServer) {
                 return `http://localhost:4500/internal_api`;
@@ -875,8 +875,7 @@ export class PagesService {
                 const baseUrl = this.sessionService.getPapiBaseUrl();
                 return `${baseUrl}/addons/api/${addonUUID}/internal_api`;
             }
-        }
-
+        // }
     }
 
     private setPagesVariables(pagesVariables: any) {
@@ -912,7 +911,7 @@ export class PagesService {
             const addonPublicBaseURL = data?.addonPublicBaseURL;
 
             if (relation && addonPublicBaseURL) {
-                const key = this.getRemoteLoaderMapKey(relation);
+                const key = this.getRemoteLoaderMapKey(relation.Name, relation.AddonUUID);
                 this._blocksRemoteLoaderOptionsMap.set(key, this.getRemoteLoaderOptions(data));
             }
         });
@@ -926,14 +925,14 @@ export class PagesService {
             const addonPublicBaseURL = data?.addonPublicBaseURL;
 
             if (relation && addonPublicBaseURL) {
-                const key = this.getRemoteLoaderMapKey(relation);
+                const key = this.getRemoteLoaderMapKey(relation.Name, relation.AddonUUID);
                 this._blocksEditorsRemoteLoaderOptionsMap.set(key, this.getRemoteLoaderOptions(data, true));
             }
         });
     }
 
-    private getRemoteLoaderMapKey(relation: NgComponentRelation): string {
-        return `${relation.Name}_${relation.AddonUUID}`;
+    private getRemoteLoaderMapKey(relationName: string, addonUUID: string): string {
+        return `${relationName}_${addonUUID}`;
     }
 
     // Update the block configuration data by the propertyNamePath and set the field value (deep set).
@@ -1133,14 +1132,15 @@ export class PagesService {
         const blockProgress = this._pageBlockProgressMap.get(blockId);
 
         if (blockProgress) {
-            const block = blockProgress?.block;
-
-            const key = this.getRemoteLoaderMapKey(blockProgress?.block.Relation);
+            const block = blockProgress.block;
+            const key = this.getRemoteLoaderMapKey(block.Relation.Name, block.Relation.AddonUUID);
             const remoteLoaderOptions = this._blocksEditorsRemoteLoaderOptionsMap.get(key);
             
             if (block && remoteLoaderOptions) {
                 // If there is schema then support ConfigurationPerScreenSize
-                const hostObject = this.getEditorHostObject(block, blockProgress.block.Relation.Schema !== null);
+                const abRelation = this._availableBlocksSubject.getValue().find(ab => ab.AddonUUID === block.Relation.AddonUUID && ab.Name === block.Relation.Name);
+                
+                const hostObject = this.getEditorHostObject(block, abRelation?.Schema !== null); 
     
                 // remoteLoaderOptions.type = 'module';
                 res = {
@@ -1157,8 +1157,8 @@ export class PagesService {
         return res;
     }
 
-    getBlocksRemoteLoaderOptions(relation: NgComponentRelation) {
-        const key = this.getRemoteLoaderMapKey(relation);
+    getBlocksRemoteLoaderOptions(relationName: string, addonUUID: string) {
+        const key = this.getRemoteLoaderMapKey(relationName, addonUUID);
         const remoteLoaderOptions: PepRemoteLoaderOptions = this._blocksRemoteLoaderOptionsMap.get(key);
 
         // remoteLoaderOptions.type = 'module';
@@ -1476,37 +1476,38 @@ export class PagesService {
 
         try {
             if (blockProgress) {
+                const block = blockProgress.block;
                 const currentScreenType = this.getScreenType(this._screenSizeSubject.getValue());
 
                 // If it's Landscape mode then set the field to the regular (Configuration -> Data -> field hierarchy).
                 if (currentScreenType === 'Landscape') {
                     // Update confuguration data only if the value is not undefined (cannot reset the root).
                     if (fieldValue !== undefined) {
-                        this.updateConfigurationDataFieldValue(blockProgress.block, fieldKey, fieldValue);
-                        this.notifyBlockChange(blockProgress.block);
+                        this.updateConfigurationDataFieldValue(block, fieldKey, fieldValue);
+                        this.notifyBlockChange(block);
                     }
                 } else {
-                    const schema = blockProgress.block.Relation.Schema;
+                    // Get this relation from the online relation and not from the block.
+                    const abRelation = this._availableBlocksSubject.getValue().find(ab => ab.AddonUUID === block.Relation.AddonUUID && ab.Name === block.Relation.Name);
                     let canConfigurePerScreenSize = false;
 
-                    if (schema?.Fields) {
+                    if (abRelation?.Schema?.Fields) {
                         const propertiesHierarchy = fieldKey.split('.');
-                        canConfigurePerScreenSize = this.searchFieldInSchemaFields(schema?.Fields, propertiesHierarchy);
+                        canConfigurePerScreenSize = this.searchFieldInSchemaFields(abRelation.Schema.Fields, propertiesHierarchy);
                     }
 
                     // Update
                     if (canConfigurePerScreenSize) {
-                        this.updateConfigurationPerScreenSizeFieldValue(blockProgress.block, fieldKey, fieldValue, currentScreenType);
+                        this.updateConfigurationPerScreenSizeFieldValue(block, fieldKey, fieldValue, currentScreenType);
                     } else {
                         // Update confuguration data.
-                        this.updateConfigurationDataFieldValue(blockProgress.block, fieldKey, fieldValue);
+                        this.updateConfigurationDataFieldValue(block, fieldKey, fieldValue);
                     }
 
-                    this.notifyBlockChange(blockProgress.block);
+                    this.notifyBlockChange(block);
                 }
             }
         } catch (err) {
-            // TODO: Show msg
             console.log(`set-configuration-field is failed with error: ${err}`);
         }
     }
@@ -1683,6 +1684,15 @@ export class PagesService {
             // Get the page (sections and the blocks data) from the server.
             this.addonService.getAddonCPICall(addonUUID, `addon-cpi/get_page_data?key=${pageKey}`).then((res: IPageBuilderData) => {
                 if (res && res.page && res.availableBlocks) {
+                    // Load the available blocks.
+                    const availableBlocks: NgComponentRelation[] = [];
+
+                    res.availableBlocks.forEach(data => {
+                        availableBlocks.push(data?.relation);
+                    });
+
+                    this._availableBlocksSubject.next(availableBlocks);
+
                     // Load the blocks remote loader options.
                     this.loadBlocksRemoteLoaderOptionsMap(res.availableBlocks);
 

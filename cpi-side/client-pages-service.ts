@@ -33,7 +33,7 @@ class ClientPagesService {
         await Promise.all(page.Blocks.map(async (block: any) => {
             const blockRelation = block.Relation;
             const currentAvailableBlock = availableBlocks.find(ab => ab.relation.AddonUUID === blockRelation.AddonUUID && ab.relation.Name ===blockRelation.Name);
-            const blockCpiFunc = currentAvailableBlock?.relation.CPIEndpoint || 'addon-cpi/test';
+            const blockCpiFunc = currentAvailableBlock?.relation.CPINodeEndpoint;// || 'addon-cpi/test';
 
             if (blockCpiFunc?.length > 0) {
                 try {

@@ -73,7 +73,7 @@ export class SectionBlockComponent implements OnInit {
     }
     
     private setRemotePathOptions() {
-        const options = this.pagesService.getBlocksRemoteLoaderOptions(this.pageBlock.Relation);
+        const options = this.pagesService.getBlocksRemoteLoaderOptions(this.pageBlock.Relation.Name, this.pageBlock.Relation.AddonUUID);
         this.loadElement = options.elementName?.length > 0;
         this.remoteLoaderOptions = options;
     }
