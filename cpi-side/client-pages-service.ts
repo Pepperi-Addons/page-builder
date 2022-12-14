@@ -17,14 +17,14 @@ class ClientPagesService {
     }
     
     async getPage(pageKey: string, availableBlocks: IBlockLoaderData[]): Promise<any> {
-        const page = await pepperi.resources.resource('Pages').key(pageKey).get() as Page;
-        return await this.manipulateBlocksData(page, availableBlocks);
-        // const page = await pepperi.api.adal.get({
-        //     addon: '50062e0c-9967-4ed4-9102-f2bc50602d41', // pages addon
-        //     table: 'Pages',
-        //     key: pageKey
-        // }); 
-        // const pageObject =  page.object;
+        // const page = await pepperi.resources.resource('Pages').key(pageKey).get() as Page;
+        const page = await pepperi.api.adal.get({
+            addon: '50062e0c-9967-4ed4-9102-f2bc50602d41', // pages addon
+            table: 'Pages',
+            key: pageKey
+        }); 
+        const pageObject =  page.object as Page;
+        return await this.manipulateBlocksData(pageObject, availableBlocks);
         // return await this.loadLocalAssets(pageObject as Page);
     }
 
@@ -47,8 +47,11 @@ class ClientPagesService {
                         }
                     }
                 
-                    const blockDataToOverride: any = await pepperi.events.emit('AddonAPI', data);
-                    block.Configuration = blockDataToOverride.Configuration;
+                    const blockDataToOverride: any = (await pepperi.events.emit('AddonAPI', data)).data;
+                    if (blockDataToOverride.Success) {
+                        const value = JSON.parse(blockDataToOverride.Value);
+                        block.Configuration = value.Configuration;
+                    }
                 }
                 catch {
                     // Do nothing
