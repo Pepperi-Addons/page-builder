@@ -1,3 +1,4 @@
+import { IContext } from "@pepperi-addons/cpi-node/build/cpi-side/events";
 import { NgComponentRelation, Page } from "@pepperi-addons/papi-sdk";
 import { IBlockLoaderData, IPageBuilderData } from "shared";
 
@@ -17,30 +18,26 @@ class ClientPagesService {
         return availableBlocks;
     }
 
-    private async overrideBlocksData(page: Page, availableBlocks: IBlockLoaderData[]): Promise<void> {
+    private async overrideBlocksData(page: Page, availableBlocks: IBlockLoaderData[], context: IContext | undefined): Promise<void> {
         // Let the blocks manipulate there data and replace it in page blocks
         await Promise.all(page.Blocks.map(async (block: any) => {
             const blockRelation = block.Relation;
             const currentAvailableBlock = availableBlocks.find(ab => ab.relation.AddonUUID === blockRelation.AddonUUID && ab.relation.Name === blockRelation.Name);
-            const blockCpiFunc = currentAvailableBlock?.relation.CPINodeEndpoint;
+            const blockCpiFunc = currentAvailableBlock?.relation.OnPageLoadEndpoint;
 
             if (blockCpiFunc?.length > 0) {
                 try {
                     // Call block CPI side for getting the data to override.
                     const data: any = {
-                        AddonUUID: blockRelation.AddonUUID,
-                        RelativeURL: blockCpiFunc,
-                        Method: 'POST',
-                        Body: { 
+                        url: blockCpiFunc,
+                        body: {
                             Configuration: block.Configuration
-                        }
-                    }
-                
-                    const blockDataToOverride: any = (await pepperi.events.emit('AddonAPI', data)).data;
-                    if (blockDataToOverride.Success) {
-                        const value = JSON.parse(blockDataToOverride.Value);
-                        block.Configuration = value.Configuration;
-                    }
+                        },
+                        ...(context && { context }) // Add context if not undefined.
+                    };
+                    
+                    const blockDataToOverride: any = await pepperi.addons.api.uuid(blockRelation.AddonUUID).post(data);
+                    block.Configuration = blockDataToOverride?.Configuration ?? block.Configuration;
                 }
                 catch {
                     // Do nothing
@@ -59,12 +56,12 @@ class ClientPagesService {
         return page;
     }
 
-    async getPageData(pageKey: string): Promise<IPageBuilderData> {
+    async getPageData(pageKey: string, context: IContext | undefined): Promise<IPageBuilderData> {
         let page = await this.getPage(pageKey);
         const availableBlocks: IBlockLoaderData[] = await this.getBlocksData('PageBlock');
 
         // This function override blocks data properties in page object.
-        await this.overrideBlocksData(page, availableBlocks);
+        await this.overrideBlocksData(page, availableBlocks, context);
 
         const result: IPageBuilderData = {
             page: page,           

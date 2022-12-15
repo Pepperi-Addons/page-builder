@@ -27,7 +27,7 @@ router.get('/get_page_data', async (req, res, next) => {
         const pageKey = req.query['key']?.toString();
         if (pageKey) {
             const service = new ClientPagesService();
-            result = await service.getPageData(pageKey);
+            result = await service.getPageData(pageKey, req?.context);
         }
     } catch (err) {
         console.log(err);
