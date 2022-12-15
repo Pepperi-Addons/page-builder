@@ -4,7 +4,20 @@ import ClientPagesService from './client-pages-service';
 export const router = Router();
 
 export async function load(configuration: any) {
-    
+    // Handle on get block loader data.
+    pepperi.events.intercept('GetBlockLoaderData' as any, {}, async (data): Promise<any> => {
+        let res = {};
+        const blockType = data.BlockType || 'AddonBlock';
+        const name = data.Name || '';
+        const service = new ClientPagesService();
+        const resultArr = await service.getBlocksData(blockType, name);
+
+        if (resultArr.length > 0) {
+            res = resultArr[0];
+        }
+
+        return res;
+    });
 }
 
 router.get('/get_page_data', async (req, res, next) => {
@@ -24,33 +37,21 @@ router.get('/get_page_data', async (req, res, next) => {
     res.json(result);
 });
 
-router.get('/get_page_blocks_data', async (req, res, next) => {
-    let result = {};
+// router.get('/get_blocks_data', async (req, res, next) => {
+//     let result = {};
 
-    try {
-        const service = new ClientPagesService();
-        result = await service.getPageBlocksData();
-    } catch (err) {
-        console.log(err);
-        next(err)
-    }
+//     try {
+//         const blockType = req.query['blockType']?.toString() || 'AddonBlock';
+//         const name = req.query['name']?.toString() || '';
+//         const service = new ClientPagesService();
+//         result = await service.getBlocksData(blockType, name);
+//     } catch (err) {
+//         console.log(err);
+//         next(err)
+//     }
 
-    res.json(result);
-});
-
-router.get('/get_addon_blocks_data', async (req, res, next) => {
-    let result = {};
-
-    try {
-        const service = new ClientPagesService();
-        result = await service.getAddonBlocksData();
-    } catch (err) {
-        console.log(err);
-        next(err)
-    }
-
-    res.json(result);
-});
+//     res.json(result);
+// });
 
 // Get the page by Key
 router.get("/pages/:key", async (req, res) => {

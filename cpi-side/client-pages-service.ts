@@ -3,14 +3,15 @@ import { IBlockLoaderData, IPageBuilderData } from "shared";
 
 class ClientPagesService {
     
-    private convertRelationToBlockLoaderData(relations: NgComponentRelation[]): IBlockLoaderData[] {
+    private convertRelationToBlockLoaderData(relations: NgComponentRelation[], name: string = ''): IBlockLoaderData[] {
         const availableBlocks: IBlockLoaderData[] = [];
         relations.forEach((relation: NgComponentRelation) => {
-            availableBlocks.push({
-                relation: relation,
-                addonPublicBaseURL: `${relation.AddonBaseURL}`,
-            } as any);
-           
+            if (name.length === 0 || (name.length > 0 && relation.Name === name)) {
+                availableBlocks.push({
+                    relation: relation,
+                    addonPublicBaseURL: `${relation.AddonBaseURL}`,
+                } as any);
+            }
         });
 
         return availableBlocks;
@@ -60,7 +61,7 @@ class ClientPagesService {
 
     async getPageData(pageKey: string): Promise<IPageBuilderData> {
         let page = await this.getPage(pageKey);
-        const availableBlocks: IBlockLoaderData[] = await this.getPageBlocksData();
+        const availableBlocks: IBlockLoaderData[] = await this.getBlocksData('PageBlock');
 
         // This function override blocks data properties in page object.
         await this.overrideBlocksData(page, availableBlocks);
@@ -73,15 +74,16 @@ class ClientPagesService {
         return result;
     }
     
-    async getPageBlocksData(): Promise<IBlockLoaderData[]> {
-        const pageBlocks = await pepperi.addons.data['relations'].pageBlocks();
-        const pageBlocksLoaderData = this.convertRelationToBlockLoaderData(pageBlocks);
-        return pageBlocksLoaderData;
-    }
-
-    async getAddonBlocksData(): Promise<IBlockLoaderData[]> {
-        const addonBlocks = await pepperi.addons.data['relations'].addonBlocks();
-        const addonBlocksLoaderData = this.convertRelationToBlockLoaderData(addonBlocks);
+    async getBlocksData(blockType: string = 'AddonBlock', name: string = ''): Promise<IBlockLoaderData[]> {
+        let blocks;
+        
+        if (blockType === 'PageBlock') {
+            blocks = await pepperi.addons.data['relations'].pageBlocks();
+        } else { // AddonBlock
+            blocks = await pepperi.addons.data['relations'].addonBlocks();
+        }
+        
+        const addonBlocksLoaderData = this.convertRelationToBlockLoaderData(blocks, name);
         return addonBlocksLoaderData;
     }
     
