@@ -26,13 +26,13 @@
         <div class="pageExplanation">
             <span class="body-md">{{ 'PAGES_MANAGER.MAIN_EXPLANATION' | translate }}</span>
         </div>
-        <pep-generic-list *ngIf="hasPages" [dataSource]="pagesDataSource" [actions]="actions" [inline]="true" [showTopBar]="true" [showSearch]="true"
+        <pep-generic-list [emptyState]="emptyState" [dataSource]="pagesDataSource" [actions]="actions" [inline]="true" [showTopBar]="true" [showSearch]="true"
                 [supportSorting]="true" [uuidMapping]="'Key'" [title]="'PAGES_MANAGER.SECONDARY_HEADER' | translate" (fieldClick)="onCustomizeFieldClick($event)"> 
             <ng-container right-buttons >
                 <ng-container *ngTemplateOutlet="topBarEnd"></ng-container>
             </ng-container>
         </pep-generic-list>
-        <ng-container *ngIf="!hasPages">
+        <!-- <ng-container *ngIf="!hasPages">
             <pep-top-bar class="main-top-header" [inline]="true">
                 <div header-end-content>
                     <ng-container *ngTemplateOutlet="topBarEnd"></ng-container>
@@ -46,7 +46,7 @@
                     <h2>{{ "PAGES_MANAGER.PAGES_HEADER" | translate}}</h2>
                     <span>{{ "PAGES_MANAGER.NO_PAGES_MSG" | translate}}</span>
             </div>
-        </ng-container>
+        </ng-container> -->
     </div>
 </ng-template>
 

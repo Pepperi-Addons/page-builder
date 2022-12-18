@@ -4,7 +4,7 @@ import { DIMXService } from '../../services/dimx.service';
 import { AfterViewInit, Component, OnInit, Renderer2, ViewChild, ViewContainerRef } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
-import { IPepGenericListDataSource, IPepGenericListPager, IPepGenericListActions, IPepGenericListInitData } from "@pepperi-addons/ngx-composite-lib/generic-list";
+import { IPepGenericListDataSource, IPepGenericListPager, IPepGenericListActions, IPepGenericListInitData, IPepGenericListEmptyState } from "@pepperi-addons/ngx-composite-lib/generic-list";
 import { PepAddonService } from '@pepperi-addons/ngx-lib';
 import { DataViewFieldType, GridDataViewField, Page } from '@pepperi-addons/papi-sdk';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
@@ -45,6 +45,10 @@ export class PagesManagerComponent implements OnInit {
     softLimitPagesNumber = 100;
     pagesDataSource: IPepGenericListDataSource;
     
+    emptyState: IPepGenericListEmptyState = {
+        show: true
+    };
+
     tempPages: Array<TempPage> = [
         { type: 'homepage', name: 'blank'}/*,
         { type: 'homepage', name: 'gridy'},
@@ -60,7 +64,6 @@ export class PagesManagerComponent implements OnInit {
     ];
 
     public imagesPath = '';
-    public hasPages = true;
 
     constructor (
         private translate: TranslateService,
@@ -72,6 +75,13 @@ export class PagesManagerComponent implements OnInit {
         private viewContainerRef: ViewContainerRef,
         private activatedRoute: ActivatedRoute
     ) {
+ 
+        this.emptyState = {
+            show: true,
+            description: this.translate.instant('PAGES_MANAGER.NO_PAGES_MSG'),
+            title: this.translate.instant('PAGES_MANAGER.PAGES_HEADER'),
+        }
+        
         this.pepAddonService.setShellRouterData({ showSidebar: true, addPadding: true});
 
         this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
@@ -93,7 +103,6 @@ export class PagesManagerComponent implements OnInit {
         return {
             init: async (params) => {
                 //this.pagesList = this.pagesService.getPages(this.navigationService.addonUUID, null);
-                    //this.hasPages = !pages || pages.length < 1 ? false : true;
                     let options = 'order_by=';
 
                     if (params.sorting) {
