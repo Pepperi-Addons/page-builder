@@ -6,15 +6,10 @@ export const router = Router();
 export async function load(configuration: any) {
     // Handle on get block loader data.
     pepperi.events.intercept('GetBlockLoaderData' as any, {}, async (data): Promise<any> => {
-        let res = {};
         const blockType = data.BlockType || 'AddonBlock';
         const name = data.Name || '';
         const service = new ClientPagesService();
-        const resultArr = await service.getBlocksData(blockType, name);
-
-        if (resultArr.length > 0) {
-            res = resultArr[0];
-        }
+        const res = await service.getBlockData(blockType, name);
 
         return res;
     });

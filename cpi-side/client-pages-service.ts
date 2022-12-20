@@ -1,9 +1,9 @@
 import { IContext } from "@pepperi-addons/cpi-node/build/cpi-side/events";
 import { NgComponentRelation, Page } from "@pepperi-addons/papi-sdk";
 import { IBlockLoaderData, IPageBuilderData } from "shared";
-
+import config from "../addon.config.json";
 class ClientPagesService {
-    
+
     private convertRelationToBlockLoaderData(relations: NgComponentRelation[], name: string = ''): IBlockLoaderData[] {
         const availableBlocks: IBlockLoaderData[] = [];
         relations.forEach((relation: NgComponentRelation) => {
@@ -46,9 +46,26 @@ class ClientPagesService {
         }));
     }
 
+    private async isSyncInstalled(): Promise<boolean> {
+        let isSyncInstalled = false;
+
+        try {
+            const res = await pepperi.api.adal.getList({
+                addon: config.AddonUUID,
+                table: 'Pages'
+            }); 
+            
+            isSyncInstalled = res?.objects ? true : false;
+        } catch {
+            isSyncInstalled = false;
+        }
+
+        return isSyncInstalled;
+    }
+
     async getPage(pageKey: string): Promise<Page> {
         const res = await pepperi.api.adal.get({
-            addon: '50062e0c-9967-4ed4-9102-f2bc50602d41', // pages addon
+            addon: config.AddonUUID,
             table: 'Pages',
             key: pageKey
         }); 
@@ -56,22 +73,7 @@ class ClientPagesService {
         return page;
     }
 
-    async getPageData(pageKey: string, context: IContext | undefined): Promise<IPageBuilderData> {
-        let page = await this.getPage(pageKey);
-        const availableBlocks: IBlockLoaderData[] = await this.getBlocksData('PageBlock');
-
-        // This function override blocks data properties in page object.
-        await this.overrideBlocksData(page, availableBlocks, context);
-
-        const result: IPageBuilderData = {
-            page: page,           
-            availableBlocks: availableBlocks || [],
-        }
-
-        return result;
-    }
-    
-    async getBlocksData(blockType: string = 'AddonBlock', name: string = ''): Promise<IBlockLoaderData[]> {
+    private async getBlocksData(blockType: string = 'AddonBlock', name: string = ''): Promise<IBlockLoaderData[]> {
         let blocks;
         
         if (blockType === 'PageBlock') {
@@ -82,6 +84,47 @@ class ClientPagesService {
         
         const addonBlocksLoaderData = this.convertRelationToBlockLoaderData(blocks, name);
         return addonBlocksLoaderData;
+    }
+    
+    async getPageData(pageKey: string, context: IContext | undefined): Promise<IPageBuilderData> {
+        let result: IPageBuilderData;
+        const isSyncInstalled = await this.isSyncInstalled();
+
+        if (isSyncInstalled) {
+            let page = await this.getPage(pageKey);
+            const availableBlocks: IBlockLoaderData[] = await this.getBlocksData('PageBlock');
+    
+            // This function override blocks data properties in page object.
+            await this.overrideBlocksData(page, availableBlocks, context);
+    
+            result = {
+                page: page,           
+                availableBlocks: availableBlocks || [],
+            }
+        } else {
+            // Get the page data online if sync isn't installed.
+            result = await pepperi.papiClient.apiCall("GET", `/internal_api/get_page_data?key=${pageKey}`);
+        }
+
+        return result;
+    }
+    
+    async getBlockData(blockType: string = 'AddonBlock', name: string = ''): Promise<IBlockLoaderData | null> {
+        let result: IBlockLoaderData | null = null;
+        const isSyncInstalled = await this.isSyncInstalled();
+
+        if (isSyncInstalled) {
+            let resultArr = await this.getBlocksData(blockType, name);
+            
+            if (resultArr.length > 0) {
+                result = resultArr[0];
+            }
+        } else {
+            // Get the page data online if sync isn't installed.
+            result = await pepperi.papiClient.apiCall("GET", `/addon_blocks/get_addon_block_loader_data?blockType=${blockType}&name=${name}`);
+        }
+        
+        return result;
     }
     
 }
