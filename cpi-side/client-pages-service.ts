@@ -103,7 +103,7 @@ class ClientPagesService {
             }
         } else {
             // Get the page data online if sync isn't installed.
-            const temp = await pepperi.papiClient.apiCall("GET", `/internal_api/get_page_data?key=${pageKey}`);
+            const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}`);
             result = temp.ok ? await(temp.json()) : null;
         }
 
@@ -122,7 +122,7 @@ class ClientPagesService {
             }
         } else {
             // Get the page data online if sync isn't installed.
-            const temp = await pepperi.papiClient.apiCall("GET", `/addon_blocks/get_addon_block_loader_data?blockType=${blockType}&name=${name}`);
+            const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/addon_blocks/get_addon_block_loader_data?blockType=${blockType}&name=${name}`);
             result = temp.ok ? await(temp.json()) : null;
         }
         
