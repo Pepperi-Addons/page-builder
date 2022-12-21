@@ -51,11 +51,11 @@ class ClientPagesService {
 
         try {
             const res = await pepperi.api.adal.getList({
-                addon: config.AddonUUID,
-                table: 'Pages'
+                addon: 'bb6ee826-1c6b-4a11-9758-40a46acb69c5', // CPI Node
+                table: 'addons'
             }); 
             
-            isSyncInstalled = res?.objects ? true : false;
+            isSyncInstalled = res?.objects?.length > 0 ? true : false;
         } catch {
             isSyncInstalled = false;
         }
@@ -103,7 +103,8 @@ class ClientPagesService {
             }
         } else {
             // Get the page data online if sync isn't installed.
-            result = await pepperi.papiClient.apiCall("GET", `/internal_api/get_page_data?key=${pageKey}`);
+            const temp = await pepperi.papiClient.apiCall("GET", `/internal_api/get_page_data?key=${pageKey}`);
+            result = temp.ok ? await(temp.json()) : null;
         }
 
         return result;
@@ -121,7 +122,8 @@ class ClientPagesService {
             }
         } else {
             // Get the page data online if sync isn't installed.
-            result = await pepperi.papiClient.apiCall("GET", `/addon_blocks/get_addon_block_loader_data?blockType=${blockType}&name=${name}`);
+            const temp = await pepperi.papiClient.apiCall("GET", `/addon_blocks/get_addon_block_loader_data?blockType=${blockType}&name=${name}`);
+            result = temp.ok ? await(temp.json()) : null;
         }
         
         return result;
