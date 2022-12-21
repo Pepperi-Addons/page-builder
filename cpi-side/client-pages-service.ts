@@ -51,7 +51,7 @@ class ClientPagesService {
 
         try {
             const res = await pepperi.api.adal.getList({
-                addon: 'bb6ee826-1c6b-4a11-9758-40a46acb69c5', // CPI Node
+                addon: 'bb6ee826-1c6b-4a11-9758-40a46acb69c5', // CPI Node addon uuid
                 table: 'addons'
             }); 
             
