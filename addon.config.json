@@ -23,7 +23,7 @@
       }
     ],
     "Dependencies": {
-      "webapp": "16.65.12"
+      "webapp": "17.15.106"
     },
     "CPISide": [
       "addon-cpi.ts"
