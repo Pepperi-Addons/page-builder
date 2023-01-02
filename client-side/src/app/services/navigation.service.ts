@@ -86,11 +86,26 @@ export class NavigationService {
         return this.router.navigate([`${pageKey}`], {
             relativeTo: route,
             queryParamsHandling: 'merge'
-        });
+        });;
     }
 
     getQueryParamsAsObject(): any {
         const queryParamsAsObject = this.paramsToObject(new URLSearchParams(location.search));
         return queryParamsAsObject;
+    }
+
+    unloadRouter() {
+        if (this.router) {
+            // debugger;
+            // this.router.dispose();
+            // const route: ActivatedRoute = this.getCurrentRoute(this.route);
+            this.router.navigate(['../'], {
+                skipLocationChange: true
+            });
+            // , {
+            //     relativeTo: route,
+            //     queryParamsHandling: 'merge'
+            // });
+        }
     }
 }

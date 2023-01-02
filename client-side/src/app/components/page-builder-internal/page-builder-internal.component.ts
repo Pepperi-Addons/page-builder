@@ -180,6 +180,7 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.pagesService.unloadPageBuilder();
+        this.navigationService.unloadRouter();
     }
 
     onSectionDropped(event: CdkDragDrop<any[]>) {
