@@ -23,7 +23,8 @@
       }
     ],
     "Dependencies": {
-      "webapp": "17.15.109"
+      "webapp": "17.15.109",
+      "themes": "1.1.21"
     },
     "CPISide": [
       "addon-cpi.ts"
