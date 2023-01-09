@@ -13,7 +13,7 @@ import { SettingsComponent } from './settings.component';
 const routes: Routes = [
     {
         path: ':settingsSectionName/:addonUUID/:slugName',
-        component: SettingsComponent,
+        // component: SettingsComponent,
         children: [
             {
                 path: ':page_key',
