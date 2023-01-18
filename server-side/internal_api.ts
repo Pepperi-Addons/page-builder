@@ -20,6 +20,15 @@ export async function remove_page(client: Client, request: Request): Promise<any
     }
 }
 
+export async function duplicate_page(client: Client, request: Request): Promise<any> {
+    try {
+        const service = new PagesApiService(client);
+        return service.duplicatePage(request.query);
+    } catch(err) {
+        throw new Error(`Failed to duplicate page. error - ${err}`);
+    }
+}
+
 export async function get_pages_data(client: Client, request: Request): Promise<any> {
     try {
         const service = new PagesApiService(client);

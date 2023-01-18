@@ -173,6 +173,13 @@ export class PagesManagerComponent implements OnInit {
                     //         this.dimxService.export(pageKey, pageName);
                     //     }
                     }, {
+                        title: this.translate.instant("ACTIONS.DUPLICATE"),
+                        handler: async (data: PepSelectionData) => {
+                            if (data?.rows.length > 0) {
+                                this.duplicatePage(data?.rows[0]);
+                            }
+                        }
+                    }, {
                         title: this.translate.instant("ACTIONS.DELETE"),
                         handler: async (data: PepSelectionData) => {
                             if (data?.rows.length > 0) {
@@ -241,6 +248,12 @@ export class PagesManagerComponent implements OnInit {
                 // TODO: show error.
             }
             //console.log(returnedData);
+        });
+    }
+
+    duplicatePage(pageId: string) {
+        this.pagesService.duplicatePage(this.navigationService.addonUUID, pageId).subscribe((res) => {
+            this.pagesDataSource = this.setDataSource();
         });
     }
 

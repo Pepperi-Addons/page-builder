@@ -1669,13 +1669,19 @@ export class PagesService {
         const baseUrl = this.getBaseUrl(addonUUID);
         return this.httpService.getHttpCall(`${baseUrl}/create_page?templateFileName=${templateFileName}&pageNum=${totalPages+1}`);
     }
-
+    
+    // Duplicate the page
+    duplicatePage(addonUUID: string, pageKey: string): Observable<any> {
+        const baseUrl = this.getBaseUrl(addonUUID);
+        return this.httpService.getHttpCall(`${baseUrl}/duplicate_page?key=${pageKey}`);
+    }
+    
     // Delete the page
     deletePage(addonUUID: string, pageKey: string): Observable<any> {
         const baseUrl = this.getBaseUrl(addonUUID);
         return this.httpService.getHttpCall(`${baseUrl}/remove_page?key=${pageKey}`);
     }
-
+    
     loadPageBuilder(addonUUID: string, pageKey: string, editable: boolean, queryParameters: Params): void {
         //  If is't not edit mode get the page from the CPI side.
         const baseUrl = this.getBaseUrl(addonUUID);

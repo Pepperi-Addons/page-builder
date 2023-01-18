@@ -345,6 +345,15 @@ export class PagesApiService {
         return Promise.resolve(draftRes || res);
     }
 
+    async duplicatePage(query: any, lookForDraft = false): Promise<Page> {
+        const pageData: IPageBuilderData = await this.getPageData(query, true);
+
+        const dupplicatePage: Page = JSON.parse(JSON.stringify(pageData.page));
+        dupplicatePage.Name = `${dupplicatePage.Name} copy`;
+        delete dupplicatePage.Key;
+        return await this.upsertPageInternal(dupplicatePage, DRAFT_PAGES_TABLE_NAME);
+    }
+
     async getPagesData(options: FindOptions | undefined = undefined): Promise<PageRowProjection[]> {
         let pages: Page[] = await this.getPagesFrom(PAGES_TABLE_NAME);
         let draftPages: Page[] = await this.getPagesFrom(DRAFT_PAGES_TABLE_NAME);
