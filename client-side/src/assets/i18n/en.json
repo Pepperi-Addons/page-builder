@@ -107,7 +107,8 @@
         "IMPORT": "Import Page",
         "EXPORT": "Export Page",
         "RESTORE_TO_LAST_PUBLISH": "Restore to last publish",
-        "LEAVE_PAGE": "Leave Page"
+        "LEAVE_PAGE": "Leave Page",
+        "DUPLICATE": "Duplicate"
     },
     "MESSAGES": {
         "TITLE_NOTICE": "Notice",

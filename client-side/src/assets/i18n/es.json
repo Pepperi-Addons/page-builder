@@ -106,8 +106,7 @@
         "PUBLISH": "Publicar",
         "IMPORT": "Import Page",
         "EXPORT": "Export Page",
-        "RESTORE_TO_LAST_PUBLISH": "Restore to last publish",
-        "DUPLICATE": "Duplicate"
+        "RESTORE_TO_LAST_PUBLISH": "Restore to last publish"
     },
     "MESSAGES": {
         "TITLE_NOTICE": "Aviso",
