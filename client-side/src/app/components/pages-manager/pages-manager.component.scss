@@ -173,10 +173,7 @@
     height: 2.5rem !important;
 }
 
-// ::ng-deep .inline-container{
-//      display: unset !important;
-
-//      .list-empty-state{
-//         width: 100%;
-//      }
-// }
+::ng-deep .inline-container{
+    display: flex !important;
+    flex-flow: column;
+}

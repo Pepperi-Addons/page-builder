@@ -76,11 +76,14 @@ export class PagesManagerComponent implements OnInit {
         private activatedRoute: ActivatedRoute
     ) {
  
-        this.emptyState = {
-            show: true,
-            description: this.translate.instant('PAGES_MANAGER.NO_PAGES_MSG'),
-            title: this.translate.instant('PAGES_MANAGER.PAGES_HEADER'),
-        }
+        this.translate.get(['PAGES_MANAGER.NO_PAGES_MSG', 'PAGES_MANAGER.PAGES_HEADER']).subscribe(res => {
+            
+            this.emptyState = {
+                show: true,
+                description: res?.length > 0 ? res[0] : this.translate.instant('PAGES_MANAGER.NO_PAGES_MSG'),
+                title: res?.length > 1 ? res[1] : this.translate.instant('PAGES_MANAGER.PAGES_HEADER'),
+            }
+        })
         
         this.pepAddonService.setShellRouterData({ showSidebar: true, addPadding: true});
 

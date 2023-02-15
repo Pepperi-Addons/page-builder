@@ -93,6 +93,7 @@
             }
         }
     }
+
     &.editable-state{
         .mobile{
             .hideBlock{
@@ -101,7 +102,12 @@
         }
     }
 
-
+    // This is for runtime only (to allow scrolling in section)
+    &:not(.editable-state) {
+        .columns-wrapper {
+            overflow: auto;
+        }
+    }
 
     // This css is run in edit mode and also without edit mode!!!
     .columns-wrapper {
