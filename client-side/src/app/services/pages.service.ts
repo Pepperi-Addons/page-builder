@@ -1405,7 +1405,7 @@ export class PagesService {
 
                     let block: PageBlock = {
                         Key: PepGuid.newGuid(),
-                        Relation: relation,
+                        Relation: relation, // The whole relation is saved on the block but for calculate it later we use only the relation.Name & relation.AddonUUID
                         Configuration: {
                             Resource: relation.Name,
                             AddonUUID: relation.AddonUUID,
