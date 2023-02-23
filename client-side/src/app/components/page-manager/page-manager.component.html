@@ -32,8 +32,8 @@
         </pep-side-bar>
     </div>
     <ng-container pep-main-area>
-        <div class="main-area-container">
-            <div class="header-container" [ngClass]="{'header-container-preview': !showEditor }">
+        <div class="main-area-container" [ngClass]="{'preview-mode': !showEditor }">
+            <div class="header-container" >
                 <ng-container *ngIf="showEditor; then editorTitleTemplate; else previewTitleTemplate"></ng-container>
                 <ng-template #editorTitleTemplate>
                     <div>

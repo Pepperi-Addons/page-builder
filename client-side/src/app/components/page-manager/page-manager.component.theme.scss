@@ -26,14 +26,20 @@
         }
     }
 
-    .header-container-preview {
-        background: unset;
-        // box-shadow: unset;
-        background-color: functions.get-pep-color(color-text, color-caution);
-        
-        .preview-title,
-        .color-link {
-            color: functions.get-pep-color(color-text, color-invert);
+    &.preview-mode {
+        .header-container {
+            background: unset;
+            // box-shadow: unset;
+            background-color: functions.get-pep-color(color-text, color-caution);
+            
+            .preview-title,
+            .color-link {
+                color: functions.get-pep-color(color-text, color-invert);
+            }
+        }
+
+        .page-builder-wrapper {
+            overflow: auto;
         }
     }
 
