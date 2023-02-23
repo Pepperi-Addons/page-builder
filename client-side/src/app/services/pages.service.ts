@@ -484,9 +484,18 @@ export class PagesService {
     }
 
     private notifyBlockChange(block: PageBlock) {
-        // The blocks are saved by reference so we don't need to update the block property just notify that page is change (existing block in blocks).
+        // The blocks are saved by value (in some of the cases) so we need to update the block property and notify that page is change (existing block in blocks).
         this._pageBlockSubject.next(block);
         const page = this._pageSubject.getValue();
+
+        for (let blockIndex = 0; blockIndex < page.Blocks.length; blockIndex++) {
+            // If this is the block, set it.
+            if (page.Blocks[blockIndex].Key === block.Key) {
+                page.Blocks[blockIndex] = block;
+                break;
+            }
+        }
+        
         this.notifyPageChange(page);
     }
 
