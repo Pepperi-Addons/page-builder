@@ -19,7 +19,7 @@ export class PageBuilderComponent implements OnInit {
         private pagesService: PagesService,
     ) {
         //
-        this.pepAddonService.setShellRouterData({ showSidebar: false, addPadding: false});
+        // this.pepAddonService.setShellRouterData({ showSidebar: false, addPadding: false});
 
     }
 
