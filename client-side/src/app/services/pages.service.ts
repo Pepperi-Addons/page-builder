@@ -758,7 +758,7 @@ export class PagesService {
         return configurationData;
     }
 
-    private getEditorHostObject(block: PageBlock, addconfigurationSource = false): IPageBlockHostObject {
+    private getCommonHostObject(block: PageBlock, addconfigurationSource = false): IPageBlockHostObject {
 
         let hostObject: IPageBlockHostObject = {
             configuration: this.getMergedConfigurationData(block)
@@ -1149,8 +1149,11 @@ export class PagesService {
                 // If there is schema then support ConfigurationPerScreenSize
                 const abRelation = this._availableBlocksSubject.getValue().find(ab => ab.AddonUUID === block.Relation.AddonUUID && ab.Name === block.Relation.Name);
                 
-                const hostObject = this.getEditorHostObject(block, abRelation?.Schema !== null); 
+                const hostObject = this.getCommonHostObject(block, abRelation?.Schema !== null); 
     
+                // Added page to the host object of the editor (only for edit).
+                hostObject['page'] = this._pageSubject.getValue();
+
                 // remoteLoaderOptions.type = 'module';
                 res = {
                     id: blockId,
@@ -1176,7 +1179,7 @@ export class PagesService {
     }
 
     getBlockHostObject(block: PageBlock): IPageBlockHostObject {
-        let hostObject = this.getEditorHostObject(block);
+        let hostObject = this.getCommonHostObject(block);
 
         // Add parameters.
         hostObject.parameters = this._consumerParametersMapSubject.getValue()?.get(block.Key) || null;
