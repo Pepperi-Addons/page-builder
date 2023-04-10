@@ -22,7 +22,7 @@
         "@types/dotenv": "^8.2.0",
         "@types/node": "^10.17.60",
         "@types/node-fetch": "^2.5.7",
-        "aws-sdk": "2.1015.0",
+        "aws-sdk": "2.1354.0",
         "encoding": "^0.1.13",
         "node-fetch": "^2.6.0",
         "nodemon": "^2.0.4",
