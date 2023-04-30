@@ -77,7 +77,7 @@ export class UtilitiesService {
                                 if (target[key].length > index) {
                                     this.mergeDeep(target[key][index], srcElement);
                                 } else {
-                                    target[key][index].push(srcElement);
+                                    target[key].push(srcElement);
                                 }
                             }
                         }
