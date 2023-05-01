@@ -85,13 +85,8 @@ export class SectionBlockComponent implements OnInit {
     }
 
     private setIfHideForCurrentScreenType(): void {
-        let isHidden = false;
-
-        if (this.screenType && this.blockContainer?.Hide) {
-            isHidden = this.blockContainer.Hide.some(hideIn => hideIn === this.screenType);
-        }
-
-        this.hideForCurrentScreenType = isHidden;
+        this.hideForCurrentScreenType = this.blockContainer ? 
+            this.pagesService.getIsHidden(this.blockContainer.Hide, this.screenType) : false;
     }
 
     ngOnInit(): void {

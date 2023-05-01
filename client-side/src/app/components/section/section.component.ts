@@ -129,13 +129,7 @@ export class SectionComponent implements OnInit {
     }
 
     private setIfHideForCurrentScreenType(): void {
-        let isHidden = false;
-
-        if (this.hideIn) {
-            isHidden = this.hideIn.some(hideIn => hideIn === this.screenType);
-        }
-
-        this.hideForCurrentScreenType = isHidden;
+        this.hideForCurrentScreenType = this.pagesService.getIsHidden(this.hideIn, this.screenType);
     }
     
     private getCssSplitString() {
@@ -209,6 +203,10 @@ export class SectionComponent implements OnInit {
         } else {
             this.styleHeight = this.styleMaxHeight = 'unset';
         }
+    }
+
+    getIsHidden(hideIn: DataViewScreenSize[], currentScreenType: DataViewScreenSize) {
+        return this.pagesService.getIsHidden(hideIn, currentScreenType);
     }
 
     ngOnInit(): void {
