@@ -88,7 +88,7 @@
 
     &.main-editor-state{
         .mobile{
-            .hideBlock{
+            .is-hidden{
                 display: none;
             }
         }
@@ -96,7 +96,7 @@
 
     &.editable-state{
         .mobile{
-            .hideBlock{
+            .is-hidden{
                 display: block;
             }
         }

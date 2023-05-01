@@ -1196,6 +1196,10 @@ export class PagesService {
         return `${sectionKey}_column_${index}`;
     }
 
+    getIsHidden(hideIn: DataViewScreenSize[], currentScreenType: DataViewScreenSize) {
+        return hideIn?.length > 0 ? hideIn.some(hi => hi === currentScreenType) : false;
+    }
+
     navigateToEditor(editorType: EditorType, id: string): boolean {
         let success = false;
 
