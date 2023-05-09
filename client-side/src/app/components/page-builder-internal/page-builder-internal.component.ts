@@ -125,28 +125,31 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
 
     private isBlockShouldBeHidden(blockKey: string): boolean {
         let res = false;
-        let blockFound = false;
 
-        const sections = this._sectionsSubject.getValue();
-        for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
-            const section = sections[sectionIndex];
-            
-            for (let columnIndex = 0; columnIndex < section.Columns.length; columnIndex++) {
-                const column = section.Columns[columnIndex];
+        if (!this.editMode) {
+            let blockFound = false;
+            const sections = this._sectionsSubject.getValue();
+
+            for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
+                const section = sections[sectionIndex];
                 
-                if (column.BlockContainer?.BlockKey === blockKey) {
-                    // Check if the block should be hidden
-                    const sectionShouldBeHidden = this.pagesService.getIsHidden(section.Hide, this.screenType);
-                    const blockShouldBeHidden = this.pagesService.getIsHidden(column.BlockContainer.Hide, this.screenType);
-
-                    res = (sectionShouldBeHidden || blockShouldBeHidden);
-                    blockFound = true;
+                for (let columnIndex = 0; columnIndex < section.Columns.length; columnIndex++) {
+                    const column = section.Columns[columnIndex];
+                    
+                    if (column.BlockContainer?.BlockKey === blockKey) {
+                        // Check if the block should be hidden
+                        const sectionShouldBeHidden = this.pagesService.getIsHidden(section.Hide, this.screenType);
+                        const blockShouldBeHidden = this.pagesService.getIsHidden(column.BlockContainer.Hide, this.screenType);
+    
+                        res = (sectionShouldBeHidden || blockShouldBeHidden);
+                        blockFound = true;
+                        break;
+                    }
+                }
+    
+                if (blockFound) {
                     break;
                 }
-            }
-
-            if (blockFound) {
-                break;
             }
         }
 
