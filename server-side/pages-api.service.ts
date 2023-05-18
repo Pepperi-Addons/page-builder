@@ -416,6 +416,7 @@ export class PagesApiService {
         const pageKey = query['key'] || '';
         
         if (pageKey) {
+            let needToFixDraftIfNotExist = false;
             let page;
             
             // If lookForDraft try to get the page from the draft first (for runtime the lookForDraft will be false).
@@ -424,7 +425,6 @@ export class PagesApiService {
                     // Get the page from the drafts.
                     page = await this.getPage(pageKey, DRAFT_PAGES_TABLE_NAME);
                 } catch {
-                    // Do nothing
                 }
             }
 
@@ -435,6 +435,11 @@ export class PagesApiService {
             // If draft is hidden or not exist add call to bring the publish page.
             if (!page || page.Hidden) {
                 dataPromises.push(this.getPage(pageKey, PAGES_TABLE_NAME));
+
+                if (lookForDraft) {
+                    // This is can't be, draft must exist so here we will set a flag to save the draft later.
+                    needToFixDraftIfNotExist = true;
+                }
             }
                 
             const arr = await Promise.all(dataPromises).then(res => res);
@@ -443,6 +448,12 @@ export class PagesApiService {
                 availableBlocks: arr[0] || [],
                 pagesVariables: arr[1] || [],
                 page: arr.length > 2 ? arr[2] : page, // Get the publish page if exist in the array cause we populate it only if the draft is hidden or not exist.
+            }
+
+            if (needToFixDraftIfNotExist) {
+                await this.upsertPageInternal(res.page, DRAFT_PAGES_TABLE_NAME);
+                // const pageCopy = JSON.parse(JSON.stringify(page));
+                // await this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
             }
         }
 
@@ -462,11 +473,14 @@ export class PagesApiService {
             // In case that the page was never published.
             if (!page) {
                 page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
-                return this.publishPage(page);
+                return await this.upsertPageInternal(page, PAGES_TABLE_NAME);
+                // return this.publishPage(page);
             } else {
-                const pageCopy = JSON.parse(JSON.stringify(page));
-                await this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
-                return pageCopy;
+                // const pageCopy = JSON.parse(JSON.stringify(page));
+                // await this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
+                // return pageCopy;
+
+                return await this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
             }
         }
         
@@ -482,8 +496,9 @@ export class PagesApiService {
 
             // Update the draft page and hide it.
             if (res != null) {
-                const pageCopy = JSON.parse(JSON.stringify(page));
-                this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
+                // const pageCopy = JSON.parse(JSON.stringify(page));
+                // this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
+                await this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
             }
             
             return Promise.resolve(res);
