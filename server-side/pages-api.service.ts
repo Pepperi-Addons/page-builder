@@ -807,33 +807,36 @@ export class PagesApiService {
     }
 
     async deleteBlockFromPages(body: any, draft = false): Promise<void> {
-        const obj = body?.Message?.ModifiedObjects[0];
-        console.log(`obj - ${obj}`);
-        
-        if (obj) {
-            // If the field id is hidden AND the value is true (this block is uninstalled)
-            if (obj.ModifiedFields?.filter(field => field.FieldID === 'Hidden' && field.NewValue === true)) {
-                console.log(`obj.ObjectKey - ${obj.ObjectKey}`);
-                const addonUUID = await this.getAddonUUID(obj.ObjectKey);
+        for (let modifiedObjectIndex = 0; modifiedObjectIndex < body?.Message?.ModifiedObjects.length; modifiedObjectIndex++) {
+            const obj = body?.Message?.ModifiedObjects[modifiedObjectIndex];
+            
+            if (obj) {
+                console.log(`obj - ${JSON.stringify(obj)}`);
 
-                console.log(`addonUUID - ${addonUUID}`);
+                // If the field id is hidden AND the value is true (this block is uninstalled)
+                if (obj.ModifiedFields?.filter(field => field.FieldID === 'Hidden' && field.NewValue === true)) {
+                    console.log(`obj.ObjectKey - ${obj.ObjectKey}`);
+                    const addonUUID = await this.getAddonUUID(obj.ObjectKey);
 
-                if (addonUUID) {
-                    const tableName = draft ? DRAFT_PAGES_TABLE_NAME : PAGES_TABLE_NAME;
-                    console.log(`tableName - ${tableName}`);
+                    console.log(`addonUUID - ${addonUUID}`);
 
-                    let pages = await this.getPagesFrom(tableName);
-                    
-                    console.log(`pages length - ${pages.length}`);
+                    if (addonUUID) {
+                        const tableName = draft ? DRAFT_PAGES_TABLE_NAME : PAGES_TABLE_NAME;
+                        console.log(`tableName - ${tableName}`);
 
-                    // Delete the blocks with this addonUUID from all the pages.
-                    for (let index = 0; index < pages.length; index++) {
-                        const page = pages[index];
-                        console.log(`page before - ${JSON.stringify(page)}`);
+                        let pages = await this.getPagesFrom(tableName);
+                        
+                        console.log(`pages length - ${pages.length}`);
 
-                        await this.deleteBlockFromPage(page, addonUUID, tableName);
+                        // Delete the blocks with this addonUUID from all the pages.
+                        for (let index = 0; index < pages.length; index++) {
+                            const page = pages[index];
+                            console.log(`page before - ${JSON.stringify(page)}`);
 
-                        console.log(`page after - ${JSON.stringify(page)}`);
+                            await this.deleteBlockFromPage(page, addonUUID, tableName);
+
+                            console.log(`page after - ${JSON.stringify(page)}`);
+                        }
                     }
                 }
             }
