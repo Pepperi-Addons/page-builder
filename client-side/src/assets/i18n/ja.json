@@ -126,41 +126,5 @@
     },
     "HIDE_IN": {
         "HIDE_IN_TITLE": "非表示："
-    },
-    "SLIDESHOW": {
-        "HEIGHTUNITS_TITLE": "高さの単位",
-        "HEIGHTUNITS_REM": "REM",
-        "HEIGHTUNITS_VH": "VH（%）",
-        "HEIGHT": "高さ",
-        "INNERSPACING_TITLE": "内側スペース",
-        "TRANSITION": "トランジション",
-        "TRANSITION_TITLE": "トランジションの継続時間とタイプを設定",
-        "SLIDE_DURATION": "スライドの継続時間",
-        "TRANSITION_TYPE": "トランジションのタイプ",
-        "TRANSITION_TIME": "トランジションの時間",
-        "ARROWS": "矢印",
-        "ARROWS_DESC": "矢印は最初から最後までスライドをナビゲートします。<br>モバイルビューでは矢印が非表示になります。",
-        "ARROWS_TYPE": "矢印の種類",
-        "ARROWS_BUTTONS": "矢印ボタン",
-        "ARROWS_STYLE": "スタイル",
-        "ARROWS_COLOR": "色",
-        "ARROW_TYPE": {
-            "TWO_ARROWS": ">>",
-            "ONE_ARROW": ">",
-            "STYLED_ARROW": " -->"
-        },
-        "ARROW_BUTTON": {
-            "RECT": "長方形",
-            "ROUNDED": "丸"
-        },
-        "CONTROLLERS": "コントローラー",
-        "CONTROLLERS_DESC": "ドット（点）はスライドの数と<br>スライドの位置を示します。ドット（点）はクリックでき、<br>クリックするとスライドが変わります。",
-        "CONTROLLERS_PROPERTIES": {
-            "PAUSE_PLAY": "停止/再生を表示",
-            "MOBILE": "モバイルで表示",
-            "INVERT_STYLE": "逆スタイル",
-            "SHOW_CONTROLLERS": "スライダーにコントローラーを表示"
-        },
-        "CONTROLLER_SIZE": "コントローラーのサイズ"
     }
 }

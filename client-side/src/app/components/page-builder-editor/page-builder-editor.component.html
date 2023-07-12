@@ -8,7 +8,7 @@
             <pep-button class="add-section-button" value="{{'PAGE_MANAGER.ADD_SECTION' | translate}}" styleType="regular" iconName="number_plus" iconPosition="end"
                 (buttonClick)="onAddSectionClick($event)"></pep-button>
 
-            <pep-draggable-items containerId="availableBlocks" [items]="availableBlocksForDrag" [title]="'PAGE_MANAGER.BLOCKS_TITLE' | translate" [dropAreaIds]="sectionsColumnsDropList"
+            <pep-draggable-items containerId="availableBlocksContainerId" [items]="availableBlocksForDrag" [title]="'PAGE_MANAGER.BLOCKS_TITLE' | translate" [dropAreaIds]="sectionsColumnsDropList"
                 (itemDragStarted)="onDragStart($event)" (itemDragEnded)="onDragEnd($event)">
             </pep-draggable-items>
         </div>

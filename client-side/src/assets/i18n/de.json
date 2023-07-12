@@ -126,41 +126,5 @@
     },
     "HIDE_IN": {
         "HIDE_IN_TITLE": "Ausblenden:"
-    },
-    "SLIDESHOW": {
-        "HEIGHTUNITS_TITLE": "Höheneinheiten",
-        "HEIGHTUNITS_REM": "REM",
-        "HEIGHTUNITS_VH": "VH (Prozentsatz)",
-        "HEIGHT": "Höhe",
-        "INNERSPACING_TITLE": "Innerer Abstand",
-        "TRANSITION": "Übergang",
-        "TRANSITION_TITLE": "Übergangsdauer und -typ festlegen",
-        "SLIDE_DURATION": "Folien-Dauer(n)",
-        "TRANSITION_TYPE": "Übergangstyp",
-        "TRANSITION_TIME": "Übergangszeit(en)",
-        "ARROWS": "Pfeile",
-        "ARROWS_DESC": "Pfeile bewegen die Folien von Anfang bis Ende.<br>Pfeile sind in der mobilen Ansicht ausgeblendet.",
-        "ARROWS_TYPE": "Pfeiltyp",
-        "ARROWS_BUTTONS": "Pfeiltasten",
-        "ARROWS_STYLE": "Modell",
-        "ARROWS_COLOR": "Farbe",
-        "ARROW_TYPE": {
-            "TWO_ARROWS": ">>",
-            "ONE_ARROW": ">",
-            "STYLED_ARROW": " -->"
-        },
-        "ARROW_BUTTON": {
-            "RECT": "Eckig",
-            "ROUNDED": "Rund"
-        },
-        "CONTROLLERS": "Controller",
-        "CONTROLLERS_DESC": "Punkte zeigen die Anzahl der Folien<br>und die Folien-Position an, sie sind<br>anklickbar und verändern die Folie.",
-        "CONTROLLERS_PROPERTIES": {
-            "PAUSE_PLAY": "Pause/Wiedergabe anzeigen",
-            "MOBILE": "Auf Mobilgerät anzeigen",
-            "INVERT_STYLE": "Stil invertieren",
-            "SHOW_CONTROLLERS": "Controller in Folie anzeigen"
-        },
-        "CONTROLLER_SIZE": "Controller-Größe"
     }
 }

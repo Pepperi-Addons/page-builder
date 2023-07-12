@@ -1,7 +1,7 @@
 <div *ngIf="lockScreen" class="cdk-overlay-backdrop cdk-overlay-dark-backdrop cdk-overlay-backdrop-showing"></div>
 
-<pep-page-layout [showShadow]="showEditor && currentEditor" >
-    <div pep-side-area *ngIf="showEditor && currentEditor" style="padding-inline-start: 1rem; height: inherit;">
+<pep-page-layout [showShadow]="!previewMode && currentEditor" >
+    <div pep-side-area *ngIf="!previewMode && currentEditor" style="padding-inline-start: 1rem; height: inherit;">
         <pep-side-bar #sideBar [ignoreResize]="true" (stateChange)="onSidebarStateChange($event)">
             <div header-content class="side-bar-title">
                 <pep-button class="back-button" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="onNavigateBackFromEditor();"></pep-button>
@@ -16,13 +16,7 @@
                 [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onSectionEditorObjectChange($event)"></section-editor>
         
             <ng-container *ngIf="currentEditor?.type === 'block'">
-                <pep-remote-loader *ngIf="currentEditor?.remoteModuleOptions && !currentEditor.loadElement"
-                    [options]="currentEditor?.remoteModuleOptions" 
-                    [hostObject]="currentEditor?.hostObject"
-                    (hostEvents)="onBlockEditorHostEvents($event);">
-                </pep-remote-loader>
-
-                <pep-remote-loader-element *ngIf="currentEditor?.remoteModuleOptions && currentEditor.loadElement"
+                <pep-remote-loader-element *ngIf="currentEditor?.remoteModuleOptions"
                     [options]="currentEditor?.remoteModuleOptions" 
                     [props]="{ hostObject: currentEditor?.hostObject }"
                     [events]="{ hostEvents: onBlockEditorHostEventsCallback }">
@@ -32,9 +26,9 @@
         </pep-side-bar>
     </div>
     <ng-container pep-main-area>
-        <div class="main-area-container" [ngClass]="{'preview-mode': !showEditor }">
+        <div class="main-area-container" [ngClass]="{'preview-mode': previewMode }">
             <div class="header-container" >
-                <ng-container *ngIf="showEditor; then editorTitleTemplate; else previewTitleTemplate"></ng-container>
+                <ng-container *ngIf="!previewMode; then editorTitleTemplate; else previewTitleTemplate"></ng-container>
                 <ng-template #editorTitleTemplate>
                     <div>
                         <span class="header-title body-xs">{{('PAGE_MANAGER.VIEWPORT_WIDTH' | translate)}}:&nbsp;</span>
@@ -52,7 +46,7 @@
                     </pep-group-buttons>
                 </div>
 
-                <ng-container *ngIf="showEditor; then editorButtonsTemplate; else previewButtonsTemplate"></ng-container>
+                <ng-container *ngIf="!previewMode; then editorButtonsTemplate; else previewButtonsTemplate"></ng-container>
                 <ng-template #editorButtonsTemplate>
                     <div class="header-end">
                         <div *ngIf="pageSizeLimitInPercentage > MIN_PERCENTAGE_TO_SHOW_LIMIT" class="size-limit-container pep-button sm disable pep-spacing-element">
@@ -72,8 +66,8 @@
             </div>
             <div #pageBuilderWrapper class="page-builder-wrapper" [ngClass]="{'limit-min-width': selectedScreenType === 'Landscape' }">
                 <!-- [selectedScreenType]="selectedScreenType"  -->
-                <page-builder-internal [editMode]="showEditor" [screenSize]="screenSize" [sectionsColumnsDropList]="sectionsColumnsDropList"></page-builder-internal>
-                <div *ngIf="showEditor" class="backdrop" [ngClass]="{'show-backdrop': currentEditor?.type === 'section' || currentEditor?.type === 'block'}"></div>
+                <page-builder-internal [editMode]="!previewMode" [screenSize]="screenSize" [sectionsColumnsDropList]="sectionsColumnsDropList"></page-builder-internal>
+                <div *ngIf="!previewMode" class="backdrop" [ngClass]="{'show-backdrop': currentEditor?.type === 'section' || currentEditor?.type === 'block'}"></div>
             </div>
         </div>
     </ng-container>

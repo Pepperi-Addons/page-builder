@@ -248,7 +248,15 @@ export class PagesManagerComponent implements OnInit {
             if (page) {
                 this.navigationService.navigateToPage(page.Key);
             } else {
-                // TODO: show error.
+                // show error.
+                const content = this.translate.instant('MESSAGES.FAILED_TO_CREATE_TEMPLATE');
+                const title = this.translate.instant('MESSAGES.TITLE_NOTICE');
+                const dataMsg = new PepDialogData({
+                    title,
+                    content
+                });
+
+                this.dialog.openDefaultDialog(dataMsg);
             }
             //console.log(returnedData);
         });

@@ -3,6 +3,7 @@ import { CdkDragEnd, CdkDragEnter, CdkDragExit, CdkDragStart } from '@angular/cd
 import { IPageBlockHostObject, PagesService } from '../../services/pages.service';
 import { DataViewScreenSize, PageBlock, PageConfiguration, PageBlockContainer } from '@pepperi-addons/papi-sdk';
 import { PepRemoteLoaderOptions } from '@pepperi-addons/ngx-lib/remote-loader';
+import { PageBlockView } from 'shared';
 
 @Component({
     selector: 'section-block',
@@ -17,14 +18,14 @@ export class SectionBlockComponent implements OnInit {
     @Input() editable = false;
     @Input() active = false;
     
-    private _pageBlock: PageBlock;
+    private _pageBlock: PageBlockView;
     @Input()
-    set pageBlock(value: PageBlock) {
+    set pageBlock(value: PageBlockView) {
         this._pageBlock = value;
         this.setRemotePathOptions();
         this.setHostObject();
     }
-    get pageBlock(): PageBlock {
+    get pageBlock(): PageBlockView {
         return this._pageBlock;
     }
 
@@ -60,7 +61,6 @@ export class SectionBlockComponent implements OnInit {
     }
 
     protected remoteLoaderOptions: PepRemoteLoaderOptions;
-    protected loadElement: boolean = false;
     
     onBlockHostEventsCallback: (event: CustomEvent) => void;
 
@@ -73,8 +73,7 @@ export class SectionBlockComponent implements OnInit {
     }
     
     private setRemotePathOptions() {
-        const options = this.pagesService.getBlocksRemoteLoaderOptions(this.pageBlock.Relation.Name, this.pageBlock.Relation.AddonUUID);
-        this.loadElement = options.elementName?.length > 0;
+        const options = this.pagesService.getBlocksRemoteLoaderOptions(this.pageBlock.RelationData.Name, this.pageBlock.RelationData.AddonUUID);
         this.remoteLoaderOptions = options;
     }
 
@@ -90,31 +89,35 @@ export class SectionBlockComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.pagesService.pageBlockChange$.subscribe((pageBlock: PageBlock) => {
-            if (pageBlock && this.pageBlock.Key === pageBlock.Key) {
-                this.pageBlock = pageBlock;
+        this.pagesService.pageBlockChange$.subscribe((pageBlockKey: string) => {
+            if (this.pageBlock.Key === pageBlockKey) {
+                this.pageBlock = this.pagesService.pageBlockProgressMap.get(pageBlockKey).block;
             }
         });
 
-        this.pagesService.consumerParametersMapChange$.subscribe((map: Map<string, any>) => {
-            if (!map) return;
+        // TODO: Update the changed blocks
+        // Set the whole host object cause if we want that the hostObject will update we need to change the reference.
+        // this.setHostObject();
 
-            // Only if this block is consumer than set hostObject (cause some parameter was change).
-            const blockIsConsumeParameters = this.pageBlock?.PageConfiguration?.Parameters.some(param => param.Consume);
+        // this.pagesService.consumerParametersMapChange$.subscribe((map: Map<string, any>) => {
+        //     if (!map) return;
+
+        //     // Only if this block is consumer than set hostObject (cause some parameter was change).
+        //     const blockIsConsumeParameters = this.pageBlock?.PageConfiguration?.Parameters.some(param => param.Consume);
             
-            if (blockIsConsumeParameters) {
-                const currentParameters = map?.get(this.pageBlock.Key);
+        //     if (blockIsConsumeParameters) {
+        //         const currentParameters = map?.get(this.pageBlock.Key);
 
-                // Check that the updated filter is not equals to the old one.
-                const oldParametersAsString = JSON.stringify(this.hostObject.parameters || {});
-                const newParametersAsString = JSON.stringify(currentParameters || {});
+        //         // Check that the updated filter is not equals to the old one.
+        //         const oldParametersAsString = JSON.stringify(this.hostObject.parameters || {});
+        //         const newParametersAsString = JSON.stringify(currentParameters || {});
 
-                if (newParametersAsString !== oldParametersAsString) {
-                    // Set the whole host object cause if we want that the hostObject will update we need to change the reference.
-                    this.setHostObject();
-                }
-            }
-        });
+        //         if (newParametersAsString !== oldParametersAsString) {
+        //             // Set the whole host object cause if we want that the hostObject will update we need to change the reference.
+        //             this.setHostObject();
+        //         }
+        //     }
+        // });
     }
 
     onEditBlockClick() {
@@ -131,14 +134,20 @@ export class SectionBlockComponent implements OnInit {
     }
 
     onBlockHostEvents(event: any) {
-        // Implement blocks events.
-        switch(event.action) {
-            case 'set-parameter':
-                this.pagesService.setBlockParameter(this.pageBlock.Key, event);
-                break;
-            case 'emit-event':
-                this.pagesService.emitEvent(event);
-                break;
+        // In runtime (or preview mode).
+        if (!this.editable) {
+            // Implement blocks events.
+            switch(event.action) {
+                case 'set-parameter':
+                    this.pagesService.setBlockParameter(this.pageBlock.Key, event);
+                    break;
+                case 'set-parameters':
+                    this.pagesService.setBlockParameters(this.pageBlock.Key, event);
+                    break;
+                case 'emit-event':
+                    this.pagesService.emitEvent(event);
+                    break;
+            }
         }
     }
 

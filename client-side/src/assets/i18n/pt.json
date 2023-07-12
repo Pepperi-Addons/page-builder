@@ -126,41 +126,5 @@
     },
     "HIDE_IN": {
         "HIDE_IN_TITLE": "Ocultar em:"
-    },
-    "SLIDESHOW": {
-        "HEIGHTUNITS_TITLE": "Unidades de altura",
-        "HEIGHTUNITS_REM": "REM",
-        "HEIGHTUNITS_VH": "VH (porcentagem)",
-        "HEIGHT": "Altura",
-        "INNERSPACING_TITLE": "Espaçamento interno",
-        "TRANSITION": "Transição",
-        "TRANSITION_TITLE": "Definir duração e tipo de transição",
-        "SLIDE_DURATION": "Duração do slide(s)",
-        "TRANSITION_TYPE": "Tipo de Transição",
-        "TRANSITION_TIME": "Tempo(s) de transição",
-        "ARROWS": "Flechas",
-        "ARROWS_DESC": "As setas navegam pelos slides do início ao fim.<br>As setas ficam ocultas na visualização para dispositivos móveis.",
-        "ARROWS_TYPE": "Tipo de flechas",
-        "ARROWS_BUTTONS": "Botões de flechas",
-        "ARROWS_STYLE": "Modelo",
-        "ARROWS_COLOR": "Cor",
-        "ARROW_TYPE": {
-            "TWO_ARROWS": ">>",
-            "ONE_ARROW": ">",
-            "STYLED_ARROW": " -->"
-        },
-        "ARROW_BUTTON": {
-            "RECT": "Reto",
-            "ROUNDED": "Arredondado"
-        },
-        "CONTROLLERS": "Controladores",
-        "CONTROLLERS_DESC": "Os pontos indicam o número de slides<br>e a posição do slide, eles são<br>clicáveis e mudarão o slide.",
-        "CONTROLLERS_PROPERTIES": {
-            "PAUSE_PLAY": "Exibir Pausar/Reproduzir",
-            "MOBILE": "Exibir no dispositivo móvel",
-            "INVERT_STYLE": "Inverter estilo",
-            "SHOW_CONTROLLERS": "Mostrar controladores no slide"
-        },
-        "CONTROLLER_SIZE": "Tamanho do controlador"
     }
 }

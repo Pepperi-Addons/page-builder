@@ -1,4 +1,53 @@
-import { InstalledAddon, NgComponentRelation, Page } from "@pepperi-addons/papi-sdk";
+import { InstalledAddon, NgComponentRelation, Page, PageLayout, ResourceDataConfiguration, ScreenSizeDataConfiguration } from "@pepperi-addons/papi-sdk";
+
+// **********************************************************************************************
+//                          Client & User events const
+// **********************************************************************************************
+
+export const CLIENT_ACTION_ON_CLIENT_PAGE_LOAD = 'OnClientPageLoad';
+export const CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE = 'OnClientPageStateChange';
+
+// **********************************************************************************************
+
+export interface IPageView {
+    Key: string;
+    Name?: string;
+    Description?: string;
+    Blocks: PageBlockView[];
+    Layout?: PageLayout;
+}
+
+export interface PageBlockView {
+    Key: string;
+    RelationData: { 
+        Name: string;
+        AddonUUID: string;
+    }
+    Configuration: ResourceDataConfiguration;
+    ConfigurationPerScreenSize?: ScreenSizeDataConfiguration;    
+}
+
+export interface IAvailableBlockData {
+    RelationName: string,
+    RelationAddonUUID: string,
+    RelationSchema?: any,
+    PageRemoteLoaderOptions: {
+        RemoteEntry: string, // "http://.../.../addon_block.js"
+        ModuleName: string, // "WebComponents",
+        ElementName: string, // "xxx-element-a6f4fd84-d539-41a5-9ff6-946bddebf4d1"
+        EditorElementName?: string, // "xxx-editor-element-a6f4fd84-d539-41a5-9ff6-946bddebf4d1"
+    }
+}
+
+export interface IPageClientEventResult {
+    State: {
+        PageParameters: {
+            [key: string]: any;
+        }
+    };
+    PageView: IPageView;
+    AvailableBlocksData?: IAvailableBlockData[];
+}
 
 export interface BlockFile {
     name: string;

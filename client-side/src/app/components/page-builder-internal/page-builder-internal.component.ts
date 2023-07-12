@@ -8,6 +8,7 @@ import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@peppe
 import { DataViewScreenSize, Page, PageBlock, PageSection, PageSizeType } from '@pepperi-addons/papi-sdk';
 import { NavigationService } from 'src/app/services/navigation.service';
 import { coerceNumberProperty } from '@angular/cdk/coercion';
+import { IPageView } from 'shared';
 
 export interface IPageBuilderHostObject {
     pageKey: string;
@@ -46,20 +47,6 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
         return this._screenSize;
     }
 
-    // private _selectedScreenType: DataViewScreenSize;
-    // @Input()
-    // set selectedScreenType(value: DataViewScreenSize) {
-    //     // This is HACK for reload the sections when selected screen changed.
-    //     if (this._selectedScreenType !== value) {
-    //         this._selectedScreenType = value;
-    //         const tmp = this._sectionsSubject.value;
-    //         this._sectionsSubject.next(null);
-    //         setTimeout(() => {
-    //             this._sectionsSubject.next(tmp);
-    //         }, 0);
-    //     }
-    // }
-    
     @HostBinding('style.padding-inline')
     paddingInline = '0';
 
@@ -109,17 +96,17 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
         return res;
     }
 
-    private setPageDataProperties(page: Page) {
-        if (page && this.sectionsContainer?.nativeElement) {
-            let maxWidth = coerceNumberProperty(page.Layout.MaxWidth, 0);
+    private setPageDataProperties(pageView: IPageView) {
+        if (pageView && this.sectionsContainer?.nativeElement) {
+            let maxWidth = coerceNumberProperty(pageView.Layout.MaxWidth, 0);
             const maxWidthToSet = maxWidth === 0 ? 'unset' : `${maxWidth}px`;
             this.renderer.setStyle(this.sectionsContainer.nativeElement, 'max-width', maxWidthToSet);
           
-            this.sectionsGap = page.Layout.SectionsGap || 'md';
-            this.columnsGap = page.Layout.ColumnsGap || 'md';
+            this.sectionsGap = pageView.Layout.SectionsGap || 'md';
+            this.columnsGap = pageView.Layout.ColumnsGap || 'md';
 
-            this.paddingInline = this.convertPageSizeType(page.Layout.HorizontalSpacing || 'md');
-            this.paddingBottom = this.paddingTop = this.convertPageSizeType(page.Layout.VerticalSpacing || 'md');
+            this.paddingInline = this.convertPageSizeType(pageView.Layout.HorizontalSpacing || 'md');
+            this.paddingBottom = this.paddingTop = this.convertPageSizeType(pageView.Layout.VerticalSpacing || 'md');
         }
     }
 
@@ -163,7 +150,7 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
 
         console.log('pageKey - ' + pageKey);
         if (pageKey.length > 0) {
-            // TODO: When running slug in runtime mode the route?.snapshot?.queryParams is empty. (Need to fix this somehow).
+            // When running slug in runtime mode the route?.snapshot?.queryParams is empty. (Need to fix this somehow).
             // const queryParams = this.hostObject?.pageParams || this.route?.snapshot?.queryParams;
             const urlParams = this.navigationService.getQueryParamsAsObject();
 
@@ -191,11 +178,11 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
                         if (bp.priority >= this.pagesService.currentBlocksPriority) {
                             // Check that there is no other block with the same relation name that need to load 
                             // (cause the module deferation throw error when we try to load two blocks from the same relation).
-                            if (bp.loaded || !pbRelationsNames.has(bp.block.Relation.Name)) {
+                            if (bp.loaded || !pbRelationsNames.has(bp.block.RelationData.Name)) {
                                 
                                 // Add to the map only relations that not added yet.
                                 if (!bp.loaded) {
-                                    pbRelationsNames.set(bp.block.Relation.Name, true);
+                                    pbRelationsNames.set(bp.block.RelationData.Name, true);
                                 }
     
                                 pageBlocksMap.set(bp.block.Key, bp.block);
@@ -207,8 +194,8 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
                 this._pageBlocksMap = pageBlocksMap;
             });
 
-            this.pagesService.pageDataChange$.subscribe((page: Page) => {
-                this.setPageDataProperties(page);
+            this.pagesService.pageViewDataChange$.subscribe((pageView: IPageView) => {
+                this.setPageDataProperties(pageView);
             });
         } else {
             console.log(`pageKey in not valid: ${pageKey}`);

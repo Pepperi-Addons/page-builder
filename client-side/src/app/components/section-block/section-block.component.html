@@ -6,7 +6,7 @@
     (cdkDragExited)="onDragExited($event)" (cdkDragEntered)="onDragEntered($event)">
    
     <pep-draggable-item *ngIf="editable && isMainEditorState" cdkDragHandle style="cursor: grab;"
-        class="block-toolbar" [title]="pageBlock.Relation?.Name" >
+        class="block-toolbar" [title]="pageBlock.RelationData?.Name" >
         <ng-container pep-actions>
             <pep-button classNames="caution" sizeType="xs" iconName="system_bin" (buttonClick)="onRemoveBlockClick();"></pep-button>
             <hide-in [hideIn]="blockContainer.Hide" (hideInChange)="onHideBlockChange($event)"></hide-in>
@@ -14,13 +14,7 @@
         </ng-container>
     </pep-draggable-item>
     <div class="remote-loader-wrapper" [ngStyle]="{ 'overflow': editable ? 'hidden' : (sectionHeight === 'unset' ? 'unset' : 'auto') }">
-        <pep-remote-loader *ngIf="remoteLoaderOptions && !loadElement" class="remote-loader"
-            [options]="remoteLoaderOptions"
-            [hostObject]="hostObject"
-            (hostEvents)="onBlockHostEvents($event);"
-            (load)="onBlockLoad($event)">
-        </pep-remote-loader>
-        <pep-remote-loader-element *ngIf="remoteLoaderOptions && loadElement" class="remote-loader"
+        <pep-remote-loader-element *ngIf="remoteLoaderOptions" class="remote-loader"
             [options]="remoteLoaderOptions"
             [props]="{ hostObject: hostObject }"
             [events]="{ hostEvents: onBlockHostEventsCallback }"

@@ -126,41 +126,5 @@
     },
     "HIDE_IN": {
         "HIDE_IN_TITLE": "Cacher sur :"
-    },
-    "SLIDESHOW": {
-        "HEIGHTUNITS_TITLE": "Unités de hauteur",
-        "HEIGHTUNITS_REM": "REM",
-        "HEIGHTUNITS_VH": "VH (pourcentage)",
-        "HEIGHT": "Hauteur",
-        "INNERSPACING_TITLE": "Espacement interne",
-        "TRANSITION": "Transition",
-        "TRANSITION_TITLE": "Définir Durée de transition et Type",
-        "SLIDE_DURATION": "Durée(s) de diapo",
-        "TRANSITION_TYPE": "Type de transition",
-        "TRANSITION_TIME": "Délai(s) de transition",
-        "ARROWS": "Flèches",
-        "ARROWS_DESC": "Les flèches naviguent entre les diapos du début à la fin.<br>Les Flèches sont cachées dans la vue mobile.",
-        "ARROWS_TYPE": "Type de flèches",
-        "ARROWS_BUTTONS": "Boutons de flèches",
-        "ARROWS_STYLE": "Modèle",
-        "ARROWS_COLOR": "Couleur",
-        "ARROW_TYPE": {
-            "TWO_ARROWS": ">>",
-            "ONE_ARROW": ">",
-            "STYLED_ARROW": " -->"
-        },
-        "ARROW_BUTTON": {
-            "RECT": "Rect",
-            "ROUNDED": "Arrondi"
-        },
-        "CONTROLLERS": "Contrôleurs",
-        "CONTROLLERS_DESC": "Les points indiquent le nombre de diapos<br>et la position de la diapo, elles sont<br>cliquables et changeront la diapo.",
-        "CONTROLLERS_PROPERTIES": {
-            "PAUSE_PLAY": "Montrer Pause/Lecture",
-            "MOBILE": "Montrer sur mobile",
-            "INVERT_STYLE": "Inverser le style",
-            "SHOW_CONTROLLERS": "Montrer les contrôleurs dans la règle"
-        },
-        "CONTROLLER_SIZE": "Taille de contrôleur"
     }
 }

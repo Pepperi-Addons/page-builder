@@ -734,13 +734,13 @@ export class PagesApiService {
     private async deleteBlockFromPage(page: Page, addonUUID: string, tableName: string) {
         try {
             // Get the blocks to remove by the addon UUID
-            const blocksToRemove = page.Blocks.filter(block => block.Relation.AddonUUID === addonUUID);
+            const blocksToRemove = page.Blocks.filter(block => block.Configuration.AddonUUID === addonUUID);
 
             if (blocksToRemove?.length > 0) {
                     console.log(`page blocks before - ${JSON.stringify(page.Blocks)}`);
 
                     // Remove the page blocks with the addonUUID
-                    page.Blocks = page.Blocks.filter(block => block.Relation.AddonUUID !== addonUUID);
+                    page.Blocks = page.Blocks.filter(block => block.Configuration.AddonUUID !== addonUUID);
 
                     console.log(`page blocks after - ${JSON.stringify(page.Blocks)}`);
 

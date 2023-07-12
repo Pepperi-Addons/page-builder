@@ -1,16 +1,30 @@
 import '@pepperi-addons/cpi-node'
+import { CLIENT_ACTION_ON_CLIENT_PAGE_LOAD, CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, IPageClientEventResult } from 'shared';
 import ClientPagesService from './client-pages-service';
 
 export const router = Router();
 
 export async function load(configuration: any) {
+    // Handle on page load.
+    pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_LOAD as any, {}, async (data): Promise<IPageClientEventResult> => {
+        const service = new ClientPagesService();
+        const result = await service.getPageLoadData(data, data.client?.context);
+        return result;
+    });
+
+    // Handle on page state change.
+    pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE as any, {}, async (data): Promise<IPageClientEventResult> => {
+        const service = new ClientPagesService();
+        const result = await service.getPageStateChangeData(data, data.client?.context);
+        return result;
+    });
+
     // Handle on get block loader data.
     pepperi.events.intercept('GetBlockLoaderData' as any, {}, async (data): Promise<any> => {
         const blockType = data.BlockType || 'AddonBlock';
         const name = data.Name || '';
         const service = new ClientPagesService();
         const res = await service.getBlockData(blockType, name);
-
         return res;
     });
 }
@@ -22,7 +36,7 @@ router.get('/get_page_data', async (req, res, next) => {
         const pageKey = req.query['key']?.toString();
         if (pageKey) {
             const service = new ClientPagesService();
-            result = await service.getPageData(pageKey, req?.context);
+            result = await service.getPageDataOld(pageKey, req?.context);
         }
     } catch (err) {
         console.log(err);

@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { IPepButtonClickEvent } from '@pepperi-addons/ngx-lib/button';
 import { IPepDraggableItem } from '@pepperi-addons/ngx-lib/draggable-items/draggable-items.model';
 import { NgComponentRelation, PageSizeType } from '@pepperi-addons/papi-sdk';
+import { IAvailableBlockData } from 'shared';
 import { PagesService, IPageEditor, UiPageSizeType } from '../../services/pages.service';
 
 export interface ISpacingOption {
@@ -58,9 +59,11 @@ export class PageBuilderEditorComponent implements OnInit {
     isFullWidth: boolean;
     maxWidth: number;
 
-    availableBlocks: NgComponentRelation[] = [];
+    availableBlocksData: IAvailableBlockData[] = [];
     availableBlocksForDrag: Array<IPepDraggableItem> = [];
     sizesGroupButtons = Array<ISpacingOption>();
+    
+    availableBlocksContainerId = PagesService.AVAILABLE_BLOCKS_CONTAINER_ID;
     
     constructor(
         private translate: TranslateService,
@@ -91,14 +94,14 @@ export class PageBuilderEditorComponent implements OnInit {
             { key: 'lg', value: this.translate.instant('GROUP_SIZE.LG') }
         ];
         
-        this.pagesService.availableBlocksLoadedSubject$.subscribe(availableBlocks => {
-            this.availableBlocks = availableBlocks;
+        this.pagesService.availableBlocksDataLoadedSubject$.subscribe(availableBlocksData => {
+            this.availableBlocksData = availableBlocksData;
             
-            this.availableBlocksForDrag = this.availableBlocks.map(ab => {
+            this.availableBlocksForDrag = this.availableBlocksData.map(abd => {
                 return {
-                    title: ab.Name,
+                    title: abd.RelationName,
                     disabled: false,
-                    data: {key: ab.AddonUUID, relation: ab}
+                    data: { key: abd.RelationAddonUUID, availableBlockData: abd }
                 }
             });
         });

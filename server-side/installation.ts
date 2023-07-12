@@ -49,7 +49,7 @@ export async function upgrade(client: Client, request: Request): Promise<any> {
         await pageService.createPagesTablesSchemes();
         await pageService.upsertPagesRelations();
 
-        // TODO: Maybe need to remove this.
+        // Example how to use migration code.
         // if (request.body.FromVersion && semver.compare(request.body.FromVersion, '0.7.61') < 0) {
         //     const pageUpgradeService = new PagesUpgradeService(client);
         //     await pageUpgradeService.upgradeToVersion61(true);

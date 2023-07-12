@@ -30,7 +30,7 @@ export class PageManagerComponent implements OnInit {
     readonly MIN_PERCENTAGE_TO_SHOW_LIMIT = 80;
 
     lockScreen = false;
-    showEditor = true;
+    previewMode = false;
     currentEditor: IEditor;
     sectionsColumnsDropList = [];
 
@@ -108,6 +108,10 @@ export class PageManagerComponent implements OnInit {
     }
 
     private subscribeEvents() {
+        this.pagesService.previewModeChange$.subscribe((previewMode) => {
+            this.previewMode = previewMode;
+        });
+
         this.pagesService.lockScreenChange$.subscribe((lockScreen) => {
             this.lockScreen = lockScreen;
         });
@@ -118,8 +122,8 @@ export class PageManagerComponent implements OnInit {
         });
 
         // For update editor data in case that the editor is block editor and the id is the updated block key.
-        this.pagesService.pageBlockChange$.subscribe((pageBlock: PageBlock) => {
-            if (this.currentEditor?.type === 'block' && this.currentEditor.id === pageBlock.Key) {
+        this.pagesService.pageBlockChange$.subscribe((pageBlockKey: string) => {
+            if (this.currentEditor?.type === 'block' && this.currentEditor.id === pageBlockKey) {
                 this.setCurrentEditor();
             }
         });
@@ -136,7 +140,7 @@ export class PageManagerComponent implements OnInit {
         });
 
         // For update the page data
-        this.pagesService.pageDataChange$.subscribe((page: Page) => {
+        this.pagesService.pageDataForEditorChange$.subscribe((page: Page) => {
             if (page) {
                 this.currentPage = page;
                 const pageSize = this.utilitiesService.getObjectSize(page, 'kb');
@@ -205,7 +209,7 @@ export class PageManagerComponent implements OnInit {
     }
 
     togglePreviewMode() {
-        this.showEditor = !this.showEditor;
+        this.pagesService.notifyPreviewModeChange(!this.previewMode);
         this.updateViewportWidth();
     }
 

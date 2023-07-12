@@ -58,9 +58,10 @@ export class PagesValidatorService {
         // Validate Key
         this.validateObjectProperty(block, 'Key', blocksPropertyBreadcrumb);
 
-        // Validate Relation
-        this.validateObjectProperty(block, 'Relation', blocksPropertyBreadcrumb, false, 'object');
-        this.validateBlockRelationProperties(blocksPropertyBreadcrumb, block.Relation);
+        // *** Relation is depricated ***
+        // // Validate Relation
+        // this.validateObjectProperty(block, 'Relation', blocksPropertyBreadcrumb, false, 'object');
+        // this.validateBlockRelationProperties(blocksPropertyBreadcrumb, block.Relation);
         
         // Validate Configuration
         this.validateObjectProperty(block, 'Configuration', blocksPropertyBreadcrumb, false, 'object');
@@ -79,30 +80,31 @@ export class PagesValidatorService {
         }
     }
 
-    private validateBlockRelationProperties(blockPropertyBreadcrumb: string, relation: NgComponentRelation): void {
-        const relationPropertyBreadcrumb = `${blockPropertyBreadcrumb} -> Relation`;
+    // *** Relation is depricated ***
+    // private validateBlockRelationProperties(blockPropertyBreadcrumb: string, relation: NgComponentRelation): void {
+    //     const relationPropertyBreadcrumb = `${blockPropertyBreadcrumb} -> Relation`;
 
-        // Validate only AddonUUID all the rest properties are read only and copy from the relation object.
-        this.validateObjectProperty(relation, 'AddonUUID', relationPropertyBreadcrumb);
+    //     // Validate only AddonUUID all the rest properties are read only and copy from the relation object.
+    //     this.validateObjectProperty(relation, 'AddonUUID', relationPropertyBreadcrumb);
 
-        // Validate Name
-        // this.validateObjectProperty(relation, 'Name', relationPropertyBreadcrumb);
+    //     // Validate Name
+    //     // this.validateObjectProperty(relation, 'Name', relationPropertyBreadcrumb);
         
-        // // Validate SubType
-        // this.validateObjectProperty(relation, 'SubType', relationPropertyBreadcrumb);
+    //     // // Validate SubType
+    //     // this.validateObjectProperty(relation, 'SubType', relationPropertyBreadcrumb);
 
-        // // Validate AddonRelativeURL
-        // this.validateObjectProperty(relation, 'AddonRelativeURL', relationPropertyBreadcrumb);
+    //     // // Validate AddonRelativeURL
+    //     // this.validateObjectProperty(relation, 'AddonRelativeURL', relationPropertyBreadcrumb);
 
-        // // Validate ModuleName
-        // this.validateObjectProperty(relation, 'ModuleName', relationPropertyBreadcrumb);
+    //     // // Validate ModuleName
+    //     // this.validateObjectProperty(relation, 'ModuleName', relationPropertyBreadcrumb);
 
-        // // Validate ComponentName
-        // this.validateObjectProperty(relation, 'ComponentName', relationPropertyBreadcrumb);
+    //     // // Validate ComponentName
+    //     // this.validateObjectProperty(relation, 'ComponentName', relationPropertyBreadcrumb);
 
-        // // Validate Schema
-        // this.validateObjectProperty(relation, 'Schema', relationPropertyBreadcrumb, true, 'object');
-    }
+    //     // // Validate Schema
+    //     // this.validateObjectProperty(relation, 'Schema', relationPropertyBreadcrumb, true, 'object');
+    // }
 
     private validateBlockConfigurationProperties(blockPropertyBreadcrumb: string, configuration: ResourceDataConfiguration): void {
         const configurationPropertyBreadcrumb = `${blockPropertyBreadcrumb} -> Configuration`;
@@ -284,19 +286,20 @@ export class PagesValidatorService {
             }
             
             // Validate if the block is in the available blocks.
-            if (availableBlocks.findIndex(ab => ab.relation.AddonUUID === block.Relation?.AddonUUID) === -1) {
-                throw new Error(`Block with AddonUUID ${block.Relation.AddonUUID} doesn't exist as available page block.`);
+            if (availableBlocks.findIndex(ab => ab.relation.AddonUUID === block.Configuration.AddonUUID) === -1) {
+                throw new Error(`Block with AddonUUID ${block.Configuration.AddonUUID} doesn't exist as available page block.`);
             }
 
-            // Validate that Configuration.Resource is the same as Relation.Name
-            if (block.Configuration.Resource !== block.Relation.Name) {
-                throw new Error(`Block -> Configuration -> Resource should be the same as Block -> Relation -> Name`);
-            }
+            // *** Relation is depricated ***
+            // // Validate that Configuration.Resource is the same as Relation.Name
+            // if (block.Configuration.Resource !== block.Relation.Name) {
+            //     throw new Error(`Block -> Configuration -> Resource should be the same as Block -> Relation -> Name`);
+            // }
 
-            // Validate that Configuration.AddonUUID is the same as Relation.AddonUUID
-            if (block.Configuration.AddonUUID !== block.Relation.AddonUUID) {
-                throw new Error(`Block -> Configuration -> AddonUUID should be the same as Block -> Relation -> AddonUUID`);
-            }
+            // // Validate that Configuration.AddonUUID is the same as Relation.AddonUUID
+            // if (block.Configuration.AddonUUID !== block.Relation.AddonUUID) {
+            //     throw new Error(`Block -> Configuration -> AddonUUID should be the same as Block -> Relation -> AddonUUID`);
+            // }
         }
 
         const sectionsBlockKeys = new Map<string, string>();
@@ -465,22 +468,23 @@ export class PagesValidatorService {
         // Add Blocks specific properties.
         for (let blockIndex = 0; blockIndex < page.Blocks.length; blockIndex++) {
             const currentBlock = page.Blocks[blockIndex];
-            const currentRelation = availableBlocks.find(ab => ab.relation.AddonUUID === currentBlock.Relation?.AddonUUID && ab.relation.Name === currentBlock.Relation?.Name)?.relation;
+            const currentRelation = availableBlocks.find(ab => ab.relation.AddonUUID === currentBlock.Configuration.AddonUUID && ab.relation.Name === currentBlock.Configuration.Resource)?.relation;
 
             // The relation must exist else throw exception.
             if (currentRelation) {
                 const blockToAdd: PageBlock = {
                     Key: currentBlock.Key,
-                    Relation: {
-                        AddonUUID: currentBlock.Relation?.AddonUUID,
-                        RelationName: currentRelation.RelationName,
-                        Type: currentRelation.Type,
-                        Name: currentRelation.Name,
-                        SubType: currentRelation.SubType,
-                        AddonRelativeURL: currentRelation.AddonRelativeURL,
-                        ModuleName: currentRelation.ModuleName,
-                        ComponentName: currentRelation.ComponentName
-                    },
+                    // *** Relation is depricated ***
+                    // Relation: {
+                    //     AddonUUID: currentBlock.Relation?.AddonUUID,
+                    //     RelationName: currentRelation.RelationName,
+                    //     Type: currentRelation.Type,
+                    //     Name: currentRelation.Name,
+                    //     SubType: currentRelation.SubType,
+                    //     AddonRelativeURL: currentRelation.AddonRelativeURL,
+                    //     ModuleName: currentRelation.ModuleName,
+                    //     ComponentName: currentRelation.ComponentName
+                    // },
                     Configuration: {
                         Resource: currentBlock.Configuration.Resource,
                         AddonUUID: currentBlock.Configuration.AddonUUID,
@@ -488,14 +492,16 @@ export class PagesValidatorService {
                     }
                 };
     
+                // *** Relation is depricated ***
                 // Add Schema to relation (optional)
-                this.addOptionalPropertyIfExist(currentRelation, blockToAdd.Relation, 'Schema');
+                // this.addOptionalPropertyIfExist(currentRelation, blockToAdd.Relation, 'Schema');
+
                 this.addOptionalPropertyIfExist(currentBlock, blockToAdd, 'ConfigurationPerScreenSize');
                 this.addOptionalPropertyIfExist(currentBlock, blockToAdd, 'PageConfiguration');
     
                 res.Blocks.push(blockToAdd);
             } else {
-                throw new Error(`Block with AddonUUID ${currentBlock.Relation.AddonUUID} doesn't exist as available page block.`);
+                throw new Error(`Block with AddonUUID ${currentBlock.Configuration.AddonUUID} doesn't exist as available page block.`);
             }
         } 
 
