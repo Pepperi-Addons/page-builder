@@ -46,6 +46,19 @@
             }
         }
         
+        &.main-editor-state {
+            .mobile {
+                .is-hidden {
+                    display: none;
+                }
+            }
+        }
+        .mobile {
+            .is-hidden {
+                display: block;
+            }
+        }
+
         .section-toolbar {
             position: absolute;
             top: calc(#{variables.$draggable-item-height} * -1 + #{mixins.$border-width} * -1);
@@ -86,22 +99,6 @@
         }
     }
 
-    &.main-editor-state{
-        .mobile{
-            .is-hidden{
-                display: none;
-            }
-        }
-    }
-
-    &.editable-state{
-        .mobile{
-            .is-hidden{
-                display: block;
-            }
-        }
-    }
-
     // // This is for runtime only (to allow scrolling in section)
     // &:not(.editable-state) {
     //     .columns-wrapper {
@@ -116,6 +113,10 @@
         height: inherit;
         max-height: inherit;
         overflow: auto;
+
+        &.is-dragging {
+            overflow: unset; // Make it visible for see the focus.
+        }
 
         // &.mobile {
         //     display: block;

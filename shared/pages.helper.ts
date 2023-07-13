@@ -30,13 +30,13 @@ export function getAvailableBlockData(availableBlocks: IBlockLoaderData[], devBl
             RelationAddonUUID: ab.relation.AddonUUID,
             PageRemoteLoaderOptions: {
                 RemoteEntry: getRemoteEntry(devBlocks, ab),
-                ModuleName: ab.relation.ElementModule,
+                ModuleName: ab.relation.ElementsModule,
                 ElementName: ab.relation.ElementName,
                 // EditorElementName: ab.relation.EditorElementName,
                 ...(ab.relation.EditorElementName?.length > 0 && { EditorElementName: ab.relation.EditorElementName }),
             }
         }
-    })
+    });
 
     return availableBlocksData;
 }

@@ -105,6 +105,7 @@ export class SectionComponent implements OnInit {
     selectedBlockKey = '';
     
     containsBlocks = false;
+    shouldSetDefaultHeight = false;
     pepScreenSizeToFlipToVertical = PepScreenSizeType.SM;
     screenType: DataViewScreenSize;
     hideForCurrentScreenType = false;
@@ -120,6 +121,7 @@ export class SectionComponent implements OnInit {
 
     private calculateIfSectionContainsBlocks() {
         this.containsBlocks = this.columns.some(column => column.BlockContainer);
+        this.shouldSetDefaultHeight = !this.containsBlocks;
     }
 
     private setScreenType() {
@@ -205,6 +207,10 @@ export class SectionComponent implements OnInit {
         }
     }
 
+    getIsDragging(): boolean {
+        return this.draggingBlockKey.length > 0 && this.draggingSectionKey.length > 0;
+    }
+
     getIsHidden(hideIn: DataViewScreenSize[], currentScreenType: DataViewScreenSize) {
         return this.pagesService.getIsHidden(hideIn, currentScreenType);
     }
@@ -221,6 +227,12 @@ export class SectionComponent implements OnInit {
 
             this.pagesService.draggingBlockKey.subscribe((draggingBlockKey) => {
                 this.draggingBlockKey = draggingBlockKey;
+
+                // If there is only one block in the section and now it's this block that the user is dragging.
+                const blocksLength = this.columns.filter(column => column.BlockContainer).length;
+                if (blocksLength === 1 && this.columns.find(c => c.BlockContainer?.BlockKey === this.draggingBlockKey)) {
+                    this.shouldSetDefaultHeight = true;
+                }
             });
 
             this.pagesService.draggingSectionKey.subscribe((draggingSectionKey) => {
@@ -277,6 +289,7 @@ export class SectionComponent implements OnInit {
 
             if (blocksLength === 1) {
                 this.containsBlocks = false;
+                this.shouldSetDefaultHeight = !this.containsBlocks;
             }
         }
     }

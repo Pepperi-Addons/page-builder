@@ -142,12 +142,6 @@ export class PagesService {
         return this._editorSubject.asObservable().pipe(distinctUntilChanged());
     }
 
-    // This subject is for load available blocks on the main editor (Usage only in edit mode).
-    // private _availableBlocksSubject: BehaviorSubject<NgComponentRelation[]> = new BehaviorSubject<NgComponentRelation[]>([]);
-    // get availableBlocksLoadedSubject$(): Observable<NgComponentRelation[]> {
-    //     return this._availableBlocksSubject.asObservable().pipe(distinctUntilChanged());
-    // }
-
     // This subject is for load available blocks data on the main editor (Usage only in edit mode).
     private _availableBlocksDataSubject: BehaviorSubject<IAvailableBlockData[]> = new BehaviorSubject<IAvailableBlockData[]>([]);
     get availableBlocksDataLoadedSubject$(): Observable<IAvailableBlockData[]> {
@@ -158,10 +152,6 @@ export class PagesService {
     private _blocksRemoteLoaderOptionsMap = new Map<string, PepRemoteLoaderOptions>();
     // For load the blocks editors
     private _blocksEditorsRemoteLoaderOptionsMap = new Map<string, PepRemoteLoaderOptions>();
-
-    // This is the sections subject (a pare from the page object) 
-    // Note. all use is _sectionsInEditorSubject is only in edit mode !!!
-    private _sectionsInEditorSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
 
     // This is the sections subject (a pare from the page view object)
     private _sectionsViewSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
@@ -210,14 +200,14 @@ export class PagesService {
         return this._pageViewSubject.asObservable().pipe(filter(page => !!page));
     }
 
+    private _pageParameters: BehaviorSubject<any> = new BehaviorSubject<any>({});
+    get pageParametersChange$(): Observable<any> {
+        return this._pageParameters.asObservable().pipe(distinctUntilChanged());
+    }
     // This is only for edit mode when we in preview mode for not override the page parameters.
     private _pageParametersForPreview: BehaviorSubject<any> = new BehaviorSubject<any>({});
     get pageParametersForPreviewChange$(): Observable<any> {
         return this._pageParametersForPreview.asObservable().pipe(distinctUntilChanged());
-    }
-    private _pageParameters: BehaviorSubject<any> = new BehaviorSubject<any>({});
-    get pageParametersChange$(): Observable<any> {
-        return this._pageParameters.asObservable().pipe(distinctUntilChanged());
     }
 
     // This subject is for edit mode when block is dragging now or not.
@@ -526,10 +516,13 @@ export class PagesService {
         }
 
         // Update the page view.
-        const pageView: IPageView = {
-            ...page,
-            Key: page.Key,
-            Blocks: page.Blocks.map(block => { return this.getPageViewBlock(block) })
+        let pageView: IPageView = null;
+        if (page) {
+            pageView = {
+                ...page,
+                Key: page.Key,
+                Blocks: page.Blocks.map(block => { return this.getPageViewBlock(block) })
+            }
         }
 
         this.notifyPageViewChange(pageView);
@@ -540,19 +533,17 @@ export class PagesService {
         this._pageViewSubject.next(pageView);
         
         // Update the sections for the view.
-        this._sectionsViewSubject.next(pageView.Layout.Sections);
+        this._sectionsViewSubject.next(pageView?.Layout.Sections || []);
     }
 
-    private notifySectionsInEditorChange(sections: PageSection[]) {
-        const page = this._pageInEditorSubject.getValue();
+    // private notifySectionsInEditorChange(sections: PageSection[]) {
+    //     const page = this._pageInEditorSubject.getValue();
 
-        if (page) {
-            page.Layout.Sections = sections;
-
-            this._sectionsInEditorSubject.next(page.Layout.Sections);
-            this.notifyPageInEditorChange(page);
-        }
-    }
+    //     if (page) {
+    //         page.Layout.Sections = sections;
+    //         this.notifyPageInEditorChange(page);
+    //     }
+    // }
 
     private notifyBlockChange(block: PageBlock) {
         // The blocks are saved by value (in some of the cases) so we need to update the block property and notify that page is change (existing block in blocks).
@@ -685,8 +676,9 @@ export class PagesService {
     }
 
     private getSectionEditor(sectionId: string): IEditor {
-        // Get the current block.
-        const sections = this._sectionsInEditorSubject.getValue();
+        const page = this._pageInEditorSubject.getValue();
+        const sections = page?.Layout.Sections || [];
+        // const sections = this._sectionsInEditorSubject.getValue();
         const sectionIndex = sections.findIndex(section => section.Key === sectionId);
 
         if (sectionIndex >= 0) {
@@ -718,7 +710,9 @@ export class PagesService {
         const sectionColumnArr = sectionColumnId.split(sectionColumnPatternSeparator);
 
         if (sectionColumnArr.length === 2) {
-            const sections = this._sectionsInEditorSubject.getValue();
+            const page = this._pageInEditorSubject.getValue();
+            const sections = page?.Layout.Sections || [];
+            // const sections = this._sectionsInEditorSubject.getValue();
 
             // Get the section id to get the section index.
             const sectionId = sectionColumnArr[0];
@@ -787,10 +781,8 @@ export class PagesService {
         this._blocksEditorsRemoteLoaderOptionsMap.clear();
 
         availableBlocksData.forEach(data => {
-            availableBlocksData.forEach(data => {
-                const key = this.getRemoteLoaderMapKey(data.RelationName, data.RelationAddonUUID);
-                this._blocksRemoteLoaderOptionsMap.set(key, this.getRemoteLoaderOptions(data, true));
-            });
+            const key = this.getRemoteLoaderMapKey(data.RelationName, data.RelationAddonUUID);
+            this._blocksEditorsRemoteLoaderOptionsMap.set(key, this.getRemoteLoaderOptions(data, true));
         });
     }
 
@@ -905,7 +897,9 @@ export class PagesService {
             const blockParameter = blockParameterKeys.get(parameter.Key)[0];
 
             if (parameter.Type !== blockParameter?.parameter?.Type) {
-                const sections = this._sectionsInEditorSubject.getValue();
+                const page = this._pageInEditorSubject.getValue();
+                const sections = page?.Layout.Sections || [];
+                // const sections = this._sectionsInEditorSubject.getValue();
 
                 // Find section and column index of the block to show this details to the user.
                 let sectionName = '';
@@ -1137,7 +1131,8 @@ export class PagesService {
     }
 
     updateSectionFromEditor(sectionData: ISectionEditor) {
-        const sections = this._sectionsInEditorSubject.getValue();
+        const page = this._pageInEditorSubject.getValue();
+        const sections = page?.Layout.Sections || [];
         const sectionIndex = sections.findIndex(section => section.Key === sectionData.id);
 
         // Update section details.
@@ -1177,7 +1172,8 @@ export class PagesService {
             }
 
             // Update sections change.
-            this.notifySectionsInEditorChange(sections);
+            // this.notifySectionsInEditorChange(sections);
+            this.notifyPageInEditorChange(page);
         }
     }
 
@@ -1192,13 +1188,17 @@ export class PagesService {
         }
 
         // Add the new section to page layout.
-        const sections = this._pageInEditorSubject.getValue().Layout.Sections;
+        const page = this._pageInEditorSubject.getValue();
+        const sections = page?.Layout.Sections || [];
         sections.push(section);
-        this.notifySectionsInEditorChange(sections);
+        // this.notifySectionsInEditorChange(sections);
+        this.notifyPageInEditorChange(page);
     }
 
     removeSection(sectionId: string) {
-        const sections = this._sectionsInEditorSubject.getValue();
+        const page = this._pageInEditorSubject.getValue();
+        const sections = page?.Layout.Sections || [];
+        // const sections = this._sectionsInEditorSubject.getValue();
         const index = sections.findIndex(section => section.Key === sectionId);
         if (index > -1) {
             let needToRaiseLoad = false;
@@ -1214,23 +1214,30 @@ export class PagesService {
 
             // Remove section.
             sections.splice(index, 1);
-            this.notifySectionsInEditorChange(sections);
+            // this.notifySectionsInEditorChange(sections);
+            this.notifyPageInEditorChange(page);
         }
     }
 
     hideSection(sectionId: string, hideIn: DataViewScreenSize[]) {
-        const sections = this._sectionsInEditorSubject.getValue();
+        const page = this._pageInEditorSubject.getValue();
+        const sections = page?.Layout.Sections || [];
+        // const sections = this._sectionsInEditorSubject.getValue();
         const index = sections.findIndex(section => section.Key === sectionId);
         if (index > -1) {
             sections[index].Hide = hideIn;
-            this.notifySectionsInEditorChange(sections);
+            // this.notifySectionsInEditorChange(sections);
+            this.notifyPageInEditorChange(page);
         }
     }
 
     onSectionDropped(event: CdkDragDrop<any[]>) {
-        const sections = this._sectionsInEditorSubject.getValue();
+        const page = this._pageInEditorSubject.getValue();
+        const sections = page?.Layout.Sections || [];
+        // const sections = this._sectionsInEditorSubject.getValue();
         moveItemInArray(sections, event.previousIndex, event.currentIndex);
-        this.notifySectionsInEditorChange(sections);
+        // this.notifySectionsInEditorChange(sections);
+        this.notifyPageInEditorChange(page);
     }
 
     onSectionDragStart(event: CdkDragStart) {
@@ -1248,7 +1255,9 @@ export class PagesService {
         this.removePageBlocks([blockId]);
 
         // Remove the block from section column.
-        const sections = this._sectionsInEditorSubject.getValue();
+        const page = this._pageInEditorSubject.getValue();
+        const sections = page?.Layout.Sections || [];
+        // const sections = this._sectionsInEditorSubject.getValue();
 
         for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
             const section = sections[sectionIndex];
@@ -1257,7 +1266,8 @@ export class PagesService {
             const columnIndex = section.Columns.findIndex(column => column.BlockContainer?.BlockKey === blockId);
             if (columnIndex > -1) {
                 delete section.Columns[columnIndex].BlockContainer;
-                this.notifySectionsInEditorChange(sections);
+                // this.notifySectionsInEditorChange(sections);
+                this.notifyPageInEditorChange(page);
 
                 return;
             }
@@ -1265,14 +1275,17 @@ export class PagesService {
     }
 
     hideBlock(sectionId: string, blockId: string, hideIn: DataViewScreenSize[]) {
-        const sections = this._sectionsInEditorSubject.getValue();
+        const page = this._pageInEditorSubject.getValue();
+        const sections = page?.Layout.Sections || [];
+        // const sections = this._sectionsInEditorSubject.getValue();
 
         const index = sections.findIndex(section => section.Key === sectionId);
         if (index > -1) {
             const columnIndex = sections[index].Columns.findIndex(column => column.BlockContainer?.BlockKey === blockId);
             if (columnIndex > -1) {
                 sections[index].Columns[columnIndex].BlockContainer.Hide = hideIn;
-                this.notifySectionsInEditorChange(sections);
+                // this.notifySectionsInEditorChange(sections);
+                this.notifyPageInEditorChange(page);
             }
         }
     }
@@ -1484,7 +1497,8 @@ export class PagesService {
 
     doesColumnContainBlock(sectionId: string, columnIndex: number): boolean {
         let res = false;
-        const section = this._sectionsInEditorSubject.getValue().find(section => section.Key === sectionId);
+        const page = this._pageInEditorSubject.getValue();
+        const section = page?.Layout.Sections.find(section => section.Key === sectionId);
 
         if (section && columnIndex >= 0 && section.Columns.length > columnIndex) {
             res = !!section.Columns[columnIndex].BlockContainer;
@@ -1567,7 +1581,7 @@ export class PagesService {
     loadPageBuilder(addonUUID: string, pageKey: string, editable: boolean, queryParameters: Params): void {
         //  If is't not edit mode get the page from the CPI side.
         const baseUrl = this.getBaseUrl(addonUUID);
-
+        
         // Raise the PageLoad event to get all neccessary data.
         if (!editable) {
             const event = {
@@ -1609,8 +1623,8 @@ export class PagesService {
     }
 
     unloadPageBuilder() {
-        this.notifySectionsInEditorChange([]);
-        this.removeAllBlocks()
+        // this.notifySectionsInEditorChange([]);
+        this.removeAllBlocks();
         this.notifyPageInEditorChange(null, true);
         this.notifyPageParametersChange({});
         this.notifyPageParametersForPreviewChange({});
