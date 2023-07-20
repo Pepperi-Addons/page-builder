@@ -3,7 +3,7 @@ import { CdkDragEnd, CdkDragEnter, CdkDragExit, CdkDragStart } from '@angular/cd
 import { IPageBlockHostObject, PagesService } from '../../services/pages.service';
 import { DataViewScreenSize, PageBlock, PageConfiguration, PageBlockContainer } from '@pepperi-addons/papi-sdk';
 import { PepRemoteLoaderOptions } from '@pepperi-addons/ngx-lib/remote-loader';
-import { PageBlockView } from 'shared';
+import { IPageState, PageBlockView } from 'shared';
 
 @Component({
     selector: 'section-block',
@@ -42,9 +42,13 @@ export class SectionBlockComponent implements OnInit {
     private _screenType: DataViewScreenSize;
     @Input()
     set screenType(value: DataViewScreenSize) {
+        const isNotFirstTime = this._screenType?.length > 0;
         this._screenType = value;
         this.setIfHideForCurrentScreenType();
-        this.setHostObject();
+
+        if (isNotFirstTime) {
+            this.setConfigurationOnScreenSizeChanged();
+        }
     }
     get screenType(): DataViewScreenSize {
         return this._screenType;
@@ -59,6 +63,8 @@ export class SectionBlockComponent implements OnInit {
     get hostObject() {
         return this._hostObject;
     }
+
+    private _state = {};
 
     protected remoteLoaderOptions: PepRemoteLoaderOptions;
     
@@ -77,10 +83,25 @@ export class SectionBlockComponent implements OnInit {
         this.remoteLoaderOptions = options;
     }
 
-    private setHostObject(): void {
-        if (this.pageBlock && this.screenType) {
-            this._hostObject = this.pagesService.getBlockHostObject(this.pageBlock);
+    private setConfigurationOnScreenSizeChanged() {
+        const bp = this.pagesService.pageBlockProgressMap.get(this.pageBlock.Key);
+
+        // If this is new code (handle screen size change with callback function and not change the host object).
+        if (bp.registerScreenSizeChangeCallback) {
+            const data: { state: any, configuration: any } = {
+                state: this._state,
+                configuration: this.pagesService.getMergedConfigurationData(this.pageBlock)
+            };
+
+            bp.registerScreenSizeChangeCallback(data);
+        } else {
+            // This is for support old blocks.
+            this.setHostObject();
         }
+    }
+
+    private setHostObject(): void {
+        this._hostObject = this.pagesService.getBlockHostObject(this.pageBlock);
     }
 
     private setIfHideForCurrentScreenType(): void {
@@ -89,35 +110,32 @@ export class SectionBlockComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        // When block change call to his callback if declared, Else override the host object.
         this.pagesService.pageBlockChange$.subscribe((pageBlockKey: string) => {
             if (this.pageBlock.Key === pageBlockKey) {
-                this.pageBlock = this.pagesService.pageBlockProgressMap.get(pageBlockKey).block;
+                const bp = this.pagesService.pageBlockProgressMap.get(this.pageBlock.Key);
+                
+                if (bp?.registerStateChangeCallback) {
+                    const data: { state: any, configuration: any } = {
+                        state: this._state,
+                        configuration: bp.blockLastChanges.Configuration
+                    };
+
+                    bp.registerStateChangeCallback(data);
+                } else { 
+                    // This is for support old blocks.
+                    this._pageBlock = bp.block;
+                    this.setHostObject();
+                }
             }
         });
 
-        // TODO: Update the changed blocks
-        // Set the whole host object cause if we want that the hostObject will update we need to change the reference.
-        // this.setHostObject();
-
-        // this.pagesService.consumerParametersMapChange$.subscribe((map: Map<string, any>) => {
-        //     if (!map) return;
-
-        //     // Only if this block is consumer than set hostObject (cause some parameter was change).
-        //     const blockIsConsumeParameters = this.pageBlock?.PageConfiguration?.Parameters.some(param => param.Consume);
-            
-        //     if (blockIsConsumeParameters) {
-        //         const currentParameters = map?.get(this.pageBlock.Key);
-
-        //         // Check that the updated filter is not equals to the old one.
-        //         const oldParametersAsString = JSON.stringify(this.hostObject.parameters || {});
-        //         const newParametersAsString = JSON.stringify(currentParameters || {});
-
-        //         if (newParametersAsString !== oldParametersAsString) {
-        //             // Set the whole host object cause if we want that the hostObject will update we need to change the reference.
-        //             this.setHostObject();
-        //         }
-        //     }
-        // });
+        // Update the changed state
+        this.pagesService.pageStateChange$.subscribe((state: IPageState) => {
+            if (state?.BlocksState.hasOwnProperty(this.pageBlock.Key)) {
+                this._state = state.BlocksState[this.pageBlock.Key];
+            }
+        });
     }
 
     onEditBlockClick() {
@@ -125,7 +143,7 @@ export class SectionBlockComponent implements OnInit {
     }
 
     onRemoveBlockClick() {
-        this.pagesService.removeBlock(this.pageBlock.Key);
+        this.pagesService.removeBlockFromSection(this.pageBlock.Key);
     }
 
     onHideBlockChange(hideIn: DataViewScreenSize[]) {
@@ -134,20 +152,38 @@ export class SectionBlockComponent implements OnInit {
     }
 
     onBlockHostEvents(event: any) {
-        // In runtime (or preview mode).
-        if (!this.editable) {
-            // Implement blocks events.
-            switch(event.action) {
-                case 'set-parameter':
-                    this.pagesService.setBlockParameter(this.pageBlock.Key, event);
-                    break;
-                case 'set-parameters':
-                    this.pagesService.setBlockParameters(this.pageBlock.Key, event);
-                    break;
-                case 'emit-event':
-                    this.pagesService.emitEvent(event);
-                    break;
-            }
+    
+        // Implement blocks events.
+        switch(event.action) {
+            // // *** Deprecated ***
+            // case 'set-parameter':
+            //     this.pagesService.setBlockParameter(this.pageBlock.Key, event);
+            //     break;
+            // // *** Deprecated ***
+            // case 'set-parameters':
+            //     this.pagesService.setBlockParameters(this.pageBlock.Key, event);
+            //     break;
+            case 'state-change':
+                // In runtime (or preview mode).
+                if (!this.editable) {
+                    this.pagesService.onBlockStateChange(this.pageBlock.Key, event);
+                }
+                break;
+            case 'buton-click':
+                // In runtime (or preview mode).
+                if (!this.editable) {
+                    this.pagesService.onBlockButtonClick(this.pageBlock.Key, event);
+                }
+                break;
+            case 'register-state-change':
+                this.pagesService.onRegisterStateChange(this.pageBlock.Key, event);
+                break;
+            case 'register-screen-size-change':
+                this.pagesService.onRegisterScreenSizeChange(this.pageBlock.Key, event);
+                break;
+            case 'emit-event':
+                this.pagesService.emitEvent(event);
+                break;
         }
     }
 

@@ -391,6 +391,7 @@ export class PagesValidatorService {
     /***********************************************************************************************/
     /*                                  Public functions
     /***********************************************************************************************/
+    
     validatePagesLimitNumber(page: Page, publishedPages: Array<Page>): void {
         const softLimitPagesNumber = PAGES_NUBER_LIMITATION;
         const pageExist = publishedPages.findIndex(p => p.Key === page.Key) >= 0;

@@ -28,6 +28,7 @@ export function getAvailableBlockData(availableBlocks: IBlockLoaderData[], devBl
         return {
             RelationName: ab.relation.Name,
             RelationAddonUUID: ab.relation.AddonUUID,
+            RelationSchema: ab.relation.Schema,
             PageRemoteLoaderOptions: {
                 RemoteEntry: getRemoteEntry(devBlocks, ab),
                 ModuleName: ab.relation.ElementsModule,

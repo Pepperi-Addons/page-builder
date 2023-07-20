@@ -1,13 +1,14 @@
 import { CdkDragDrop, CdkDragEnd, CdkDragStart, copyArrayItem, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
 import { Injectable } from "@angular/core";
-import { Params } from "@angular/router";
+import { ActivatedRoute, Params, Router } from "@angular/router";
 import { TranslateService } from "@ngx-translate/core";
 import { PepAddonService, PepGuid, PepHttpService, PepScreenSizeType, PepSessionService, PepUtilitiesService } from "@pepperi-addons/ngx-lib";
 import { PepRemoteLoaderOptions, PepRemoteLoaderService } from "@pepperi-addons/ngx-lib/remote-loader";
 import { IPepDraggableItem } from "@pepperi-addons/ngx-lib/draggable-items";
 import { Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize,ResourceType, 
     PageConfigurationParameterFilter, PageConfiguration, PageConfigurationParameterBase, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
-import { PageRowProjection, IPageBuilderData, IBlockLoaderData, IPageClientEventResult, CLIENT_ACTION_ON_CLIENT_PAGE_LOAD, IAvailableBlockData, CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, PageBlockView, IPageView, getAvailableBlockData } from 'shared';
+import { PageRowProjection, IPageBuilderData, IBlockLoaderData, IPageClientEventResult, CLIENT_ACTION_ON_CLIENT_PAGE_LOAD, IAvailableBlockData, 
+    CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, PageBlockView, IPageView, CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK } from 'shared';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { NavigationService } from "./navigation.service";
 import { distinctUntilChanged, filter } from 'rxjs/operators';
@@ -15,6 +16,8 @@ import { UtilitiesService } from "./utilities.service";
 import * as _ from 'lodash';
 import { coerceNumberProperty } from "@angular/cdk/coercion";
 import { PepSnackBarData, PepSnackBarService } from "@pepperi-addons/ngx-lib/snack-bar";
+import { IPageState } from 'shared';
+import { QueryParamsService } from "./query-params.service";
 
 export type UiPageSizeType = PageSizeType | 'none';
 
@@ -59,25 +62,28 @@ export interface IBlockProgress {
     loaded: boolean;
     openEditorOnLoaded: boolean,
     priority: number;
+    blockLastChanges?: PageBlockView;
+    registerStateChangeCallback?: (data: {state: any, configuration: any}) => void;
+    registerScreenSizeChangeCallback?: (data: {state: any, configuration: any}) => void;
 }
 
-interface IProducerFilterData {
-    FieldType: string;
-    ApiName: string
-    Operation: string
-    Values: string[]
-}
+// interface IProducerFilterData {
+//     FieldType: string;
+//     ApiName: string
+//     Operation: string
+//     Values: string[]
+// }
 
-interface IProducerFilter {
-    // key: string;
-    resource: ResourceType;
-    filter: IProducerFilterData;
-}
+// interface IProducerFilter {
+//     // key: string;
+//     resource: ResourceType;
+//     filter: IProducerFilterData;
+// }
 
-interface IProducerParameters {
-    // key is the block key, value is string | IProduceFilter[]
-    producerParametersMap: Map<string, string | IProducerFilter[]>;
-}
+// interface IProducerParameters {
+//     // key is the block key, value is string | IProduceFilter[]
+//     producerParametersMap: Map<string, string | IProducerFilter[]>;
+// }
 
 export interface IPageBlockHostObject {
     configuration: any;
@@ -85,12 +91,14 @@ export interface IPageBlockHostObject {
     pageConfiguration?: PageConfiguration;
     pageParameters?: any;
     parameters?: any;
+    state?: any;
+    page?: Page
 }
 
-interface IMappingResource {
-    ResourceApiNames: string[];
-    SearchIn: string[]
-}
+// interface IMappingResource {
+//     ResourceApiNames: string[];
+//     SearchIn: string[]
+// }
 
 @Injectable(
 //     {
@@ -99,9 +107,9 @@ interface IMappingResource {
 )
 export class PagesService {
     private readonly CONSUMERS_PRIORITY = 1;
-    private readonly PRODUCERS_AND_CONSUMERS_PRIORITY = 2;
-    private readonly PRODUCERS_PRIORITY = 3;
-    private readonly SYSTEM_PARAMETER_KEY = 'SystemParameter';
+    // private readonly PRODUCERS_AND_CONSUMERS_PRIORITY = 2;
+    // private readonly PRODUCERS_PRIORITY = 3;
+    // private readonly SYSTEM_PARAMETER_KEY = 'SystemParameter';
 
     static readonly AVAILABLE_BLOCKS_CONTAINER_ID = 'availableBlocks';
 
@@ -169,12 +177,6 @@ export class PagesService {
         return this._pageBlockProgressMapSubject.asObservable();
     }
 
-    // This is for the current stage of the priority to know what to load in each step.
-    private _currentBlocksPriority: number = this.CONSUMERS_PRIORITY;
-    get currentBlocksPriority() {
-        return this._currentBlocksPriority;
-    }
-
     // This subject is for page block change.
     private _pageBlockSubject: BehaviorSubject<string> = new BehaviorSubject<string>('');
     get pageBlockChange$(): Observable<string> {
@@ -190,6 +192,9 @@ export class PagesService {
     get pageDataForEditorChange$(): Observable<Page> {
         return this._pageInEditorSubject.asObservable().pipe(filter(page => !!page));
     }
+    get isEditMode(): boolean {
+        return this._pageInEditorSubject.getValue() != null;
+    }
 
     // This subject is for page view change.
     private _pageViewSubject: BehaviorSubject<IPageView> = new BehaviorSubject<IPageView>(null);
@@ -200,16 +205,11 @@ export class PagesService {
         return this._pageViewSubject.asObservable().pipe(filter(page => !!page));
     }
 
-    private _pageParameters: BehaviorSubject<any> = new BehaviorSubject<any>({});
-    get pageParametersChange$(): Observable<any> {
-        return this._pageParameters.asObservable().pipe(distinctUntilChanged());
+    private _pageState: BehaviorSubject<IPageState> = new BehaviorSubject<IPageState>(null);
+    get pageStateChange$(): Observable<IPageState> {
+        return this._pageState.asObservable().pipe(distinctUntilChanged());
     }
-    // This is only for edit mode when we in preview mode for not override the page parameters.
-    private _pageParametersForPreview: BehaviorSubject<any> = new BehaviorSubject<any>({});
-    get pageParametersForPreviewChange$(): Observable<any> {
-        return this._pageParametersForPreview.asObservable().pipe(distinctUntilChanged());
-    }
-
+    
     // This subject is for edit mode when block is dragging now or not.
     private _draggingBlockKey: BehaviorSubject<string> = new BehaviorSubject('');
     get draggingBlockKey(): Observable<string> {
@@ -239,68 +239,38 @@ export class PagesService {
 
     constructor(
         private utilitiesService: UtilitiesService,
-        private pepUtilitiesService: PepUtilitiesService,
         private pepSnackBarService: PepSnackBarService,
         private translate: TranslateService,
         private sessionService: PepSessionService,
         private httpService: PepHttpService,
-        private remoteLoaderService: PepRemoteLoaderService,
         private navigationService: NavigationService,
-        private addonService: PepAddonService
+        private queryParamsService: QueryParamsService
     ) {
         this.pageViewLoad$.subscribe((pageView: IPageView) => {
-            this.loadDefaultEditor(pageView);
+            if (this.isEditMode) {
+                this.loadDefaultEditor(pageView);
+            }
+
             this.loadBlocks(pageView);
         });
 
-        this.previewModeChange$.subscribe((previewMode: boolean) => {
-            // If this is preview mode then run the page load event
-            if (previewMode) {
-                const parametersForPreview = { ...this._pageParameters.getValue() };
-                const event = {
-                    eventKey: CLIENT_ACTION_ON_CLIENT_PAGE_LOAD,
-                    eventData: {
-                        Page: this._pageInEditorSubject.getValue(),
-                        State: {
-                            PageParameters: parametersForPreview
-                        }
-                    },
-                    completion: (res: IPageClientEventResult) => {
-                        if (res?.PageView) {
-                            // Load the preview parameters.
-                            this.notifyPageParametersForPreviewChange(res.State?.PageParameters);
+        this.availableBlocksDataLoadedSubject$.subscribe(availableBlocksData => {
+            // Load the blocks remote loader options.
+            this.loadBlocksRemoteLoaderOptionsMap(availableBlocksData);
 
-                            // Load the page.
-                            this.notifyPageViewChange(res.PageView);
-                        }
-                    }
-                }
-        
-                this.emitEvent(event);
-            } else {
-                // Load the preview parameters.
-                this.notifyPageParametersForPreviewChange(this._pageParameters.getValue());
-
-                // Load the Page view by the current page in editor (init all preview calculations).
-                this.notifyPageInEditorChange(this._pageInEditorSubject.getValue());
+            if (this.isEditMode) {
+                // Load the blocks editors remote loader options.
+                this.loadBlocksEditorsRemoteLoaderOptionsMap(availableBlocksData);
             }
         });
-    }
-    
-    private loadPageBuilderCommonResult(parameters: any, availableBlocksData: IAvailableBlockData[], editable: boolean) {
-        // Load the PageParameters.
-        this.notifyPageParametersChange(parameters);
-                    
-        // Load the available blocks.
-        this._availableBlocksDataSubject.next(availableBlocksData);
 
-        // Load the blocks remote loader options.
-        this.loadBlocksRemoteLoaderOptionsMap(availableBlocksData);
-
-        if (editable) {
-            // Load the blocks editors remote loader options.
-            this.loadBlocksEditorsRemoteLoaderOptionsMap(availableBlocksData);
-        }
+        this.pageStateChange$.subscribe((state: IPageState) => {
+            // Handle the page state - set it on the url.
+            if (state) {
+                const queryParams = this.queryParamsService.getQueryParamsFromState(state);
+                this.navigationService.updateQueryParams(queryParams);
+            }
+        });
     }
     
     private loadBlocks(pageView: IPageView) {
@@ -311,13 +281,7 @@ export class PagesService {
                     const isUIBlock = this.doesBlockExistInUI(block.Key);
 
                     if (isUIBlock) {
-                        const bp = this.addBlockProgress(block);
-
-                        // If the currentBlocksPriority is smaller then bp.priority set the bp.priority as the current.
-                        if (this.currentBlocksPriority < bp.priority) {
-                            // Set the current priority to start load all blocks by the current priority.
-                            this._currentBlocksPriority = bp.priority;
-                        }
+                        this.addBlockProgress(block);
                     } else {
                         // If this block is not declared on any section (not UI block) do nothing.
                     }
@@ -328,57 +292,8 @@ export class PagesService {
         }
     }
 
-    private setBlockAsLoadedAndCalculateCurrentPriority(blockKey: string) {
-        const bpToUpdate = this._pageBlockProgressMap.get(blockKey);
-
-        if (bpToUpdate && !bpToUpdate.loaded) {
-            // Load editor only for the first time if openEditorOnLoaded is true.
-            if (bpToUpdate.openEditorOnLoaded) {
-                // setTimeout 0 for navigate on the UI thread.
-                setTimeout(() => {
-                    this.navigateToEditor('block', bpToUpdate.block.Key);
-
-                    // unlock the screen.
-                    this._lockScreenSubject.next(false);
-                }, 0);
-            }
-
-            bpToUpdate.loaded = true;
-
-            let allBlocksWithSamePriorityLoaded = true;
-
-            this._pageBlockProgressMap.forEach(bp => {
-                if (bp.priority === this.currentBlocksPriority && !bp.loaded) {
-                    allBlocksWithSamePriorityLoaded = false;
-                }
-            });
-
-            // Only if all blocks from the same priority are loaded then move on to the next priority.
-            if (allBlocksWithSamePriorityLoaded) {
-                // Start from the lowest priority and change to the higest priority if exist
-                let nextPriority = this.CONSUMERS_PRIORITY;
-
-                // Find the next priority to load.
-                this._pageBlockProgressMap.forEach(bp => {
-                    if (!bp.loaded && bp.priority > nextPriority) {
-                        nextPriority = bp.priority;
-                    }
-                });
-
-                // Set the next priority.
-                if (this._currentBlocksPriority != nextPriority) {
-                    this._currentBlocksPriority = nextPriority;
-
-                    // Note: The parameters already return from the CPI side so we don't need to buildConsumersParameters
-                }
-            }
-
-            this.notifyBlockProgressMapChange();
-        }
-    }
-
-    // Check if the block key exist in layout -> sections -> columns (if shows in the UI).
     private doesBlockExistInUI(blockKey: string) {
+        // Check if the block key exist in layout -> sections -> columns (if shows in the UI).
         const page = this._pageInEditorSubject.getValue();
 
         for (let sectionIndex = 0; sectionIndex < page.Layout.Sections.length; sectionIndex++) {
@@ -396,28 +311,8 @@ export class PagesService {
         return false;
     }
 
-    // private getBlockPriority(block: PageBlock): number {
-    //     // first none or Produce only, second Consume & Produce, third Consume only
-    //     let priority = this.PRODUCERS_PRIORITY;
-
-    //     if (block.PageConfiguration?.Parameters.length > 0) {
-    //         const isConsumeFilters = block.PageConfiguration.Parameters.some(param => param.Consume);
-    //         const isProduceFilters = block.PageConfiguration.Parameters.some(param => param.Produce);
-
-    //         if (isConsumeFilters) {
-    //             if (isProduceFilters) {
-    //                 priority = this.PRODUCERS_AND_CONSUMERS_PRIORITY;
-    //             } else {
-    //                 priority = this.CONSUMERS_PRIORITY;
-    //             }
-    //         }
-    //     }
-
-    //     return priority;
-    // }
-
     private addBlockProgress(blockView: PageBlockView, openEditorOnLoaded: boolean = false): IBlockProgress {
-        const priority = 1; // this.getBlockPriority(block); Not in use anymore this step happens in the CPI level
+        const priority = this.CONSUMERS_PRIORITY;
 
         // Create block progress and add it to the map.
         const initialProgress: IBlockProgress = {
@@ -446,28 +341,128 @@ export class PagesService {
         return blockView;
     }
 
-    private addPageBlock(block: PageBlock, openEditorOnLoaded: boolean) {
-        // Add the block to the page blocks.
-        const page = this._pageInEditorSubject.getValue();
-        page.Blocks.push(block);
+    private handlePageBlockViewChangeResult(res: IPageClientEventResult, addedBlockKey: string = '') {
+        // Set the state.
+        this.notifyStateChange(res.State);
+
+        const pageView = this._pageViewSubject.getValue();
         
-        const blockView: PageBlockView = this.getPageViewBlock(block);
+        // Merge the page view blocks.
+        for (let index = 0; index < res.PageView.Blocks.length; index++) {
+            const blockView = res.PageView.Blocks[index];
+            
+            // If it's the new block add it, Else just update it.
+            if (blockView.Key === addedBlockKey) {
+                // Add the block view to the block progress.
+                this.addBlockProgress(blockView, true);
 
-        // Add the block progress.
-        this.addBlockProgress(blockView, openEditorOnLoaded);
-        this.notifyBlockProgressMapChange();
+                // Add the block view to the page view blocks.
+                pageView.Blocks.push(blockView);
 
-        this.notifyPageInEditorChange(page);
+                // Update the page view
+                this.notifyPageViewChange(pageView);
+
+                // Update the progress.
+                this.notifyBlockProgressMapChange();
+            } else {
+                // Update the block view last changes in the block progress.
+                const bpToUpdate = this._pageBlockProgressMap.get(blockView.Key);
+                
+                // We don't override blocks changes in the page view subject, only in the progress map.
+                if (bpToUpdate?.registerStateChangeCallback) {
+                    bpToUpdate.blockLastChanges = blockView;
+                } else {
+                    bpToUpdate.block = blockView; // This is for support old blocks.
+                }
+
+                // Update the page block as change.
+                this._pageBlockSubject.next(blockView.Key);
+            }
+        }
+    }
+    
+    private raiseClientEventForPageLoad(queryParameters: Params, eventDataExtra: any) {
+        const initialPageState: IPageState = this.queryParamsService.getStateFromQueryParams(queryParameters);
+
+        const event = {
+            eventKey: CLIENT_ACTION_ON_CLIENT_PAGE_LOAD,
+            eventData: {
+                ...eventDataExtra,
+                State: initialPageState
+            },
+            completion: (res: IPageClientEventResult) => {
+                if (res && res.PageView && res.AvailableBlocksData) {
+                    // Load the available blocks.
+                    this._availableBlocksDataSubject.next(res.AvailableBlocksData);
+
+                    // Load the state.
+                    this.notifyStateChange(res.State);
+                    
+                    // Load the page view for the first time.
+                    this.notifyPageViewChange(res.PageView);
+                    
+                } else {
+                    // TODO: Show error?
+                }
+            }
+        }
+
+        this.emitEvent(event);
+    }
+
+    private raiseClientEventForBlock(eventKey: string, blockKey: string, eventDataExtra: any, newBlock: boolean = false) {
+        const eventData = {
+            BlockKey: blockKey,
+            State: this._pageState.getValue(), // Get the current state.
+            ...eventDataExtra,
+        };
+
+        // For editor (also in preview mode take the page object, Else take the page key).
+        if (this.isEditMode) {
+            eventData['Page'] = this._pageInEditorSubject.getValue();
+        } else {
+            eventData['PageKey'] = this._pageViewSubject.getValue().Key;
+        }
+
+        this.emitEvent({
+            eventKey: eventKey,
+            eventData: eventData,
+            completion: (res: IPageClientEventResult) => {
+                if (res && res.PageView) {
+                    // Update all the data (State and updated blocks).
+                    this.handlePageBlockViewChangeResult(res, newBlock ? blockKey : '');
+                } else {
+                    // TODO: Show error?
+                }
+            }
+        });
     }
 
     private removePageBlock(blockId: string) {
-        const page = this._pageInEditorSubject.getValue();
-        const index = page.Blocks.findIndex(block => block.Key === blockId);
+        // First remove the block from the page view.
+        const pageView = this._pageViewSubject.getValue();
+        const bvIndex = pageView?.Blocks.findIndex(block => block.Key === blockId);
 
-        if (index > -1) {
-            page.Blocks.splice(index, 1);
-            this.notifyPageInEditorChange(page);
+        if (bvIndex > -1) {
+            pageView.Blocks.splice(bvIndex, 1);
+            this.notifyPageViewChange(pageView);
         }
+
+        // Remove the block also from the page in editor.
+        const page = this._pageInEditorSubject.getValue();
+        const blockIndex = page?.Blocks.findIndex(block => block.Key === blockId);
+
+        if (blockIndex > -1) {
+            page.Blocks.splice(blockIndex, 1);
+            this.notifyPageInEditorChange(page, false);
+        }
+
+        // Remove the block data from the state
+        const pageState = this._pageState.getValue();
+        if (pageState?.BlocksState.hasOwnProperty(blockId)) {
+            delete pageState.BlocksState[blockId];
+            this.notifyStateChange(pageState);
+        } 
     }
 
     private removePageBlocks(blockIds: string[]) {
@@ -482,50 +477,58 @@ export class PagesService {
                 }
             });
 
-            this.notifyBlockProgressMapChange();
+            // We don't need this here
+            // this.notifyBlockProgressMapChange();
         }
     }
 
     private removeAllBlocks() {
+        // First remove the blocks from the page view.
+        const pageView = this._pageViewSubject.getValue();
+
+        if (pageView) {
+            pageView.Blocks = [];
+            this.notifyPageViewChange(pageView);
+        }
+
+        // Remove the blocks from the page in editor.
         const page = this._pageInEditorSubject.getValue();
 
         if (page) {
             page.Blocks = [];
-            this.notifyPageInEditorChange(page);
+            this.notifyPageInEditorChange(page, false);
         }
 
         this._pageBlockProgressMap.clear();
-        this.notifyBlockProgressMapChange();
+
+        // We don't need this here
+        // this.notifyBlockProgressMapChange();
     }
     
-    private notifyPageParametersChange(parameters: any) {
-        this._pageParameters.next(parameters);
-
-        // TODO: Handle the page parameters state - set them on the url?
+    private notifyStateChange(state: IPageState) {
+        this._pageState.next(state);
     }
 
-    private notifyPageParametersForPreviewChange(parameters: any) {
-        this._pageParametersForPreview.next({});
-    }
-
-    private notifyPageInEditorChange(page: Page, setLastSavedPage = false) {
+    private notifyPageInEditorChange(page: Page, changePageView = true, setLastSavedPage = false) {
         this._pageInEditorSubject.next(page);
         
         if (setLastSavedPage) {
             this._pageAfterLastSave = page ?JSON.parse(JSON.stringify(page)) : null;
         }
 
-        // Update the page view.
-        let pageView: IPageView = null;
-        if (page) {
-            pageView = {
-                ...page,
-                Key: page.Key,
-                Blocks: page.Blocks.map(block => { return this.getPageViewBlock(block) })
+        if (changePageView) {
+            // Update the page view (except the blocks cause maybe the blocks are changed with data from the CPI).
+            let pageView: IPageView = this._pageViewSubject.getValue();
+            if (page) {
+                pageView.Name = page.Name;
+                pageView.Description = page.Description;
+                pageView.Layout = page.Layout;
+            } else {
+                pageView = null;
             }
+                
+            this.notifyPageViewChange(pageView);
         }
-
-        this.notifyPageViewChange(pageView);
     }
 
     private notifyPageViewChange(pageView: IPageView) {
@@ -536,35 +539,23 @@ export class PagesService {
         this._sectionsViewSubject.next(pageView?.Layout.Sections || []);
     }
 
-    // private notifySectionsInEditorChange(sections: PageSection[]) {
-    //     const page = this._pageInEditorSubject.getValue();
-
-    //     if (page) {
-    //         page.Layout.Sections = sections;
-    //         this.notifyPageInEditorChange(page);
-    //     }
-    // }
-
-    private notifyBlockChange(block: PageBlock) {
-        // The blocks are saved by value (in some of the cases) so we need to update the block property and notify that page is change (existing block in blocks).
-        this._pageBlockSubject.next(block.Key);
-        
+    private notifyBlockChange(block: PageBlock, newBlock = false) {
         const page = this._pageInEditorSubject.getValue();
         
-        for (let blockIndex = 0; blockIndex < page.Blocks.length; blockIndex++) {
-            // If this is the block, set it.
-            if (page.Blocks[blockIndex].Key === block.Key) {
-                page.Blocks[blockIndex] = block;
-                break;
+        if (newBlock) {
+            // Add the block to the page blocks and raise OnClientPageBlockLoad event for calculating the block view.
+            page.Blocks.push(block);
+        } else {
+            // Update the block in the page blocks.
+            const currentBlockIndex = page.Blocks.findIndex(b => b.Key === block.Key);
+            if (currentBlockIndex > -1) {
+                page.Blocks[currentBlockIndex] = block;
             }
         }
         
+        // Here we update the page editor and the page view cause the layout is updated.
         this.notifyPageInEditorChange(page);
-        
-        // After update the page that updates the PageView we gonna update the map blocks
-        const bpToUpdate = this._pageBlockProgressMap.get(block.Key);
-        bpToUpdate.block = this.getPageViewBlock(block); 
-        this.notifyBlockProgressMapChange();
+        this.raiseClientEventForBlock(CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, block.Key, null, newBlock);
     }
 
     private notifyEditorChange(editor: IEditor) {
@@ -572,6 +563,7 @@ export class PagesService {
     }
 
     private notifyBlockProgressMapChange() {
+        // This is only when added new block progress or when the block progress loaded changed.
         this._pageBlockProgressMapSubject.next(this.pageBlockProgressMap);
     }
 
@@ -623,50 +615,21 @@ export class PagesService {
         return editor;
     }
 
-    private getMergedConfigurationData(block: PageBlock, configurationSource = false): any {
-        // Copy the object data.
-        let configurationData = JSON.parse(JSON.stringify(block.Configuration.Data));
-        const currentScreenType = this.getScreenType(this._screenSizeSubject.getValue());
-
-        // Get the configuration data by the current screen size (if exist then merge it up to Tablet and up to Landscape).
-        if (currentScreenType !== 'Landscape' && block.ConfigurationPerScreenSize) {
-            if (configurationSource) {
-                if (currentScreenType === 'Phablet') {
-                    configurationData = this.utilitiesService.mergeDeep(configurationData, block.ConfigurationPerScreenSize.Tablet);
-                }
-            } else {
-                // Merge from Tablet
-                configurationData = this.utilitiesService.mergeDeep(configurationData, block.ConfigurationPerScreenSize.Tablet);
-
-                // If currentScreenType === 'Phablet' merge from mobile
-                if (currentScreenType === 'Phablet') {
-                    configurationData = this.utilitiesService.mergeDeep(configurationData, block.ConfigurationPerScreenSize.Mobile);
-                }
-            }
-        }
-
-        return configurationData;
-    }
-
-    private getCommonHostObject(block: PageBlock, addConfigurationSource = false): IPageBlockHostObject {
-
+    private getCommonHostObject(block: PageBlockView): IPageBlockHostObject {
         let hostObject: IPageBlockHostObject = {
             configuration: this.getMergedConfigurationData(block)
         };
 
-        // To let the block editor the option to know if to show reset (used for ConfigurationPerScreenSize).
-        // with this property the editor can show the reset button if configuration property isn't equal to configurationSource property.
-        if (addConfigurationSource) {
-            let configurationSource = this.getMergedConfigurationData(block, true)
-            hostObject.configurationSource = configurationSource;
-        }
+        const pageState = this._pageState.getValue();
 
-        // Add pageConfiguration if exist.
-        if (block.PageConfiguration) {
-            hostObject.pageConfiguration = block.PageConfiguration;
-        }
+        // Add page parameters (obsolete).
+        hostObject.pageParameters = pageState?.PageParameters;
 
-        hostObject.pageParameters = this._pageParameters.getValue();
+        // Add parameters (obsolete).
+        hostObject.parameters = pageState?.BlocksState[block.Key] || null;
+
+        // Add block state
+        hostObject.state = pageState?.BlocksState[block.Key];
 
         return hostObject;
     }
@@ -678,7 +641,6 @@ export class PagesService {
     private getSectionEditor(sectionId: string): IEditor {
         const page = this._pageInEditorSubject.getValue();
         const sections = page?.Layout.Sections || [];
-        // const sections = this._sectionsInEditorSubject.getValue();
         const sectionIndex = sections.findIndex(section => section.Key === sectionId);
 
         if (sectionIndex >= 0) {
@@ -712,8 +674,7 @@ export class PagesService {
         if (sectionColumnArr.length === 2) {
             const page = this._pageInEditorSubject.getValue();
             const sections = page?.Layout.Sections || [];
-            // const sections = this._sectionsInEditorSubject.getValue();
-
+            
             // Get the section id to get the section index.
             const sectionId = sectionColumnArr[0];
             const sectionIndex = sections.findIndex(section => section.Key === sectionId);
@@ -790,13 +751,13 @@ export class PagesService {
         return `${relationName}_${addonUUID}`;
     }
 
-    // Update the block configuration data by the propertyNamePath and set the field value (deep set).
-    private updateConfigurationDataFieldValue(block: PageBlock, propertyNamePath: string, fieldValue: any) {
+    private updateConfigurationDataFieldValue(block: PageBlock, propertyNamePath: string, fieldValue: any): void {
+        // Update the block configuration data by the propertyNamePath and set the field value (deep set).
         this.setObjectPropertyValue(block.Configuration.Data, propertyNamePath, fieldValue);
     }
 
-    // Update the block configuration per screen size according the current screen sizes and the saved values (deep set).
     private updateConfigurationPerScreenSizeFieldValue(block: PageBlock, propertyNamePath: string, fieldValue: any, currentScreenType: DataViewScreenSize) {
+        // Update the block configuration per screen size according the current screen sizes and the saved values (deep set).
         if (block.ConfigurationPerScreenSize === undefined) {
             block.ConfigurationPerScreenSize = {};
         }
@@ -820,8 +781,8 @@ export class PagesService {
         this.setObjectPropertyValue(objectToUpdate, propertyNamePath, fieldValue);
     }
 
-    // Set the object field value by propertyNamePath (deep set).
     private setObjectPropertyValue(object: any, propertyNamePath: string, value: any): void {
+        // Set the object field value by propertyNamePath (deep set).
         if (value !== undefined) {
             _.set(object, propertyNamePath, value);
         } else {
@@ -899,8 +860,7 @@ export class PagesService {
             if (parameter.Type !== blockParameter?.parameter?.Type) {
                 const page = this._pageInEditorSubject.getValue();
                 const sections = page?.Layout.Sections || [];
-                // const sections = this._sectionsInEditorSubject.getValue();
-
+                
                 // Find section and column index of the block to show this details to the user.
                 let sectionName = '';
                 let sectionIndex = -1;
@@ -975,7 +935,7 @@ export class PagesService {
 
         const page = this._pageInEditorSubject.getValue();
 
-        for (let index = 0; index < page.Blocks.length; index++) {
+        for (let index = 0; index < page?.Blocks.length; index++) {
             const pb = page.Blocks[index];
             if (pb.Key === blockKey) {
                 blockToFind = pb;
@@ -1017,10 +977,22 @@ export class PagesService {
                 const abRelation = this._availableBlocksDataSubject.getValue().find(ab => 
                     ab.RelationAddonUUID === block.Configuration.AddonUUID && ab.RelationName === block.Configuration.Resource);
                 
-                const hostObject = this.getCommonHostObject(block, abRelation?.RelationSchema !== null); 
+                const blockView: PageBlockView = this.getPageViewBlock(block);
+                const hostObject = this.getCommonHostObject(blockView); 
     
+                // To let the block editor the option to know if to show reset (used for ConfigurationPerScreenSize).
+                // with this property the editor can show the reset button if configuration property isn't equal to configurationSource property.
+                if (abRelation?.RelationSchema !== null) {
+                    hostObject.configurationSource = this.getMergedConfigurationData(blockView, true);
+                }
+                
+                // Add pageConfiguration if exist.
+                if (block.PageConfiguration) {
+                    hostObject.pageConfiguration = block.PageConfiguration;
+                }
+
                 // Added page to the host object of the editor (only for edit).
-                hostObject['page'] = this._pageInEditorSubject.getValue();
+                hostObject.page = this._pageInEditorSubject.getValue();
 
                 res = {
                     id: blockKey,
@@ -1044,9 +1016,6 @@ export class PagesService {
     getBlockHostObject(block: PageBlockView): IPageBlockHostObject {
         // For the block host object we send PageBlockView and not PageBlock
         let hostObject = this.getCommonHostObject(block);
-
-        // Add parameters (obsolete).
-        hostObject.parameters = this._pageParameters.getValue(); // this._consumerParametersMapSubject.getValue()?.get(block.Key) || null;
 
         return hostObject;
     }
@@ -1104,6 +1073,31 @@ export class PagesService {
             const lastEditor = this._editorsBreadCrumb.pop();
             this.changeCurrentEditor();
         }
+    }
+
+    getMergedConfigurationData(block: PageBlockView, configurationSource = false): any {
+        // Copy the object data.
+        let configurationData = JSON.parse(JSON.stringify(block.Configuration.Data));
+        const currentScreenType = this.getScreenType(this._screenSizeSubject.getValue());
+
+        // Get the configuration data by the current screen size (if exist then merge it up to Tablet and up to Landscape).
+        if (currentScreenType !== 'Landscape' && block.ConfigurationPerScreenSize) {
+            if (configurationSource) {
+                if (currentScreenType === 'Phablet') {
+                    configurationData = this.utilitiesService.mergeDeep(configurationData, block.ConfigurationPerScreenSize.Tablet);
+                }
+            } else {
+                // Merge from Tablet
+                configurationData = this.utilitiesService.mergeDeep(configurationData, block.ConfigurationPerScreenSize.Tablet);
+
+                // If currentScreenType === 'Phablet' merge from mobile
+                if (currentScreenType === 'Phablet') {
+                    configurationData = this.utilitiesService.mergeDeep(configurationData, block.ConfigurationPerScreenSize.Mobile);
+                }
+            }
+        }
+
+        return configurationData;
     }
 
     updatePageFromEditor(pageData: IPageEditor) {
@@ -1172,7 +1166,6 @@ export class PagesService {
             }
 
             // Update sections change.
-            // this.notifySectionsInEditorChange(sections);
             this.notifyPageInEditorChange(page);
         }
     }
@@ -1191,30 +1184,24 @@ export class PagesService {
         const page = this._pageInEditorSubject.getValue();
         const sections = page?.Layout.Sections || [];
         sections.push(section);
-        // this.notifySectionsInEditorChange(sections);
         this.notifyPageInEditorChange(page);
     }
 
     removeSection(sectionId: string) {
         const page = this._pageInEditorSubject.getValue();
         const sections = page?.Layout.Sections || [];
-        // const sections = this._sectionsInEditorSubject.getValue();
         const index = sections.findIndex(section => section.Key === sectionId);
         if (index > -1) {
-            let needToRaiseLoad = false;
-
             // Get the blocks id's to remove.
             const blocksIdsToRemove = sections[index].Columns.map(column => column?.BlockContainer?.BlockKey);
 
             // Remove the blocks by ids.
             if (blocksIdsToRemove.length > 0) {
-                needToRaiseLoad = true;
                 this.removePageBlocks(blocksIdsToRemove)
             }
 
             // Remove section.
             sections.splice(index, 1);
-            // this.notifySectionsInEditorChange(sections);
             this.notifyPageInEditorChange(page);
         }
     }
@@ -1222,11 +1209,9 @@ export class PagesService {
     hideSection(sectionId: string, hideIn: DataViewScreenSize[]) {
         const page = this._pageInEditorSubject.getValue();
         const sections = page?.Layout.Sections || [];
-        // const sections = this._sectionsInEditorSubject.getValue();
         const index = sections.findIndex(section => section.Key === sectionId);
         if (index > -1) {
             sections[index].Hide = hideIn;
-            // this.notifySectionsInEditorChange(sections);
             this.notifyPageInEditorChange(page);
         }
     }
@@ -1234,9 +1219,7 @@ export class PagesService {
     onSectionDropped(event: CdkDragDrop<any[]>) {
         const page = this._pageInEditorSubject.getValue();
         const sections = page?.Layout.Sections || [];
-        // const sections = this._sectionsInEditorSubject.getValue();
         moveItemInArray(sections, event.previousIndex, event.currentIndex);
-        // this.notifySectionsInEditorChange(sections);
         this.notifyPageInEditorChange(page);
     }
 
@@ -1250,15 +1233,14 @@ export class PagesService {
         this._draggingSectionKey.next('');
     }
 
-    removeBlock(blockId: string) {
+    removeBlockFromSection(blockId: string) {
         // Remove the block.
         this.removePageBlocks([blockId]);
 
         // Remove the block from section column.
         const page = this._pageInEditorSubject.getValue();
         const sections = page?.Layout.Sections || [];
-        // const sections = this._sectionsInEditorSubject.getValue();
-
+        
         for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
             const section = sections[sectionIndex];
 
@@ -1266,7 +1248,6 @@ export class PagesService {
             const columnIndex = section.Columns.findIndex(column => column.BlockContainer?.BlockKey === blockId);
             if (columnIndex > -1) {
                 delete section.Columns[columnIndex].BlockContainer;
-                // this.notifySectionsInEditorChange(sections);
                 this.notifyPageInEditorChange(page);
 
                 return;
@@ -1277,23 +1258,22 @@ export class PagesService {
     hideBlock(sectionId: string, blockId: string, hideIn: DataViewScreenSize[]) {
         const page = this._pageInEditorSubject.getValue();
         const sections = page?.Layout.Sections || [];
-        // const sections = this._sectionsInEditorSubject.getValue();
-
+        
         const index = sections.findIndex(section => section.Key === sectionId);
         if (index > -1) {
             const columnIndex = sections[index].Columns.findIndex(column => column.BlockContainer?.BlockKey === blockId);
             if (columnIndex > -1) {
                 sections[index].Columns[columnIndex].BlockContainer.Hide = hideIn;
-                // this.notifySectionsInEditorChange(sections);
                 this.notifyPageInEditorChange(page);
             }
         }
     }
 
     onBlockDropped(event: CdkDragDrop<any[]>, sectionId: string) {
+        const page = this._pageInEditorSubject.getValue();
+
         if (event.previousContainer.id === PagesService.AVAILABLE_BLOCKS_CONTAINER_ID) {
             // Check that the blocks number are less then the limit.
-            const page = this._pageInEditorSubject.getValue();
 
             // Validate if blocks number allow.
             if (page.Blocks.length >= this.BLOCKS_NUMBER_LIMITATION_OBJECT.value) {
@@ -1328,8 +1308,7 @@ export class PagesService {
                             BlockKey: block.Key
                         };
 
-                        // Add the block to the page blocks and navigate to block editor when the block will loaded.
-                        this.addPageBlock(block, true);
+                        this.notifyBlockChange(block, true);
                     }
                 } else {
                     console.log("draggableItem is not a IPepDraggableItem type");
@@ -1346,8 +1325,7 @@ export class PagesService {
                 currentColumn.BlockContainer = previuosColumn.BlockContainer;
                 delete previuosColumn.BlockContainer;
 
-                // Raise block progress change to update the subject.
-                this.notifyBlockProgressMapChange();
+                this.notifyPageInEditorChange(page);
             }
         }
     }
@@ -1365,10 +1343,77 @@ export class PagesService {
     }
 
     updateBlockLoaded(blockKey: string) {
-        this.setBlockAsLoadedAndCalculateCurrentPriority(blockKey);
+        const bpToUpdate = this._pageBlockProgressMap.get(blockKey);
+
+        if (bpToUpdate && !bpToUpdate.loaded) {
+            // Load editor only for the first time if openEditorOnLoaded is true.
+            if (bpToUpdate.openEditorOnLoaded) {
+                // setTimeout 0 for navigate on the UI thread.
+                setTimeout(() => {
+                    this.navigateToEditor('block', bpToUpdate.block.Key);
+
+                    // unlock the screen.
+                    this._lockScreenSubject.next(false);
+                }, 0);
+            }
+
+            bpToUpdate.loaded = true;
+
+            this.notifyBlockProgressMapChange();
+        }
+    }
+    
+    doesColumnContainBlock(sectionId: string, columnIndex: number): boolean {
+        let res = false;
+        const page = this._pageInEditorSubject.getValue();
+        const section = page?.Layout.Sections.find(section => section.Key === sectionId);
+
+        if (section && columnIndex >= 0 && section.Columns.length > columnIndex) {
+            res = !!section.Columns[columnIndex].BlockContainer;
+        }
+
+        return res;
     }
 
-    updateBlockConfiguration(blockKey: string, configuration: any) {
+    setScreenWidth(value: string) {
+        let width = coerceNumberProperty(value, 0);
+        if (width === 0) {
+            this._screenWidthSubject.next('100%');
+            this._screenSizeSubject.next(PepScreenSizeType.XL);
+        } else {
+            this._screenWidthSubject.next(`${width}px`);
+
+            // Change the size according the width.
+            if (width >= 1920) {
+                this._screenSizeSubject.next(PepScreenSizeType.XL);
+            } else if (width >= 1280 && width < 1920) {
+                this._screenSizeSubject.next(PepScreenSizeType.LG);
+            } else if (width >= 960 && width < 1280) {
+                this._screenSizeSubject.next(PepScreenSizeType.MD);
+            } else if (width >= 600 && width < 960) {
+                this._screenSizeSubject.next(PepScreenSizeType.SM);
+            } else if (width < 600) {
+                this._screenSizeSubject.next(PepScreenSizeType.XS);
+            }
+        }
+    }
+
+    doesCurrentPageHasChanges(): boolean {
+        let res = false;
+        const currentPage = this._pageInEditorSubject.getValue();
+
+        if (this._pageAfterLastSave != null && currentPage != null && JSON.stringify(currentPage) !== JSON.stringify(this._pageAfterLastSave)) {
+            res = true;
+        }
+
+        return res;
+    }
+
+    /**************************************************************************************/
+    /*                            Blocks editor events handle.
+    /**************************************************************************************/
+    
+    onBlockEditorSetConfiguration(blockKey: string, configuration: any) {
         const block = this.getBlockByKey(blockKey);
 
         if (block) {
@@ -1377,7 +1422,7 @@ export class PagesService {
         }
     }
 
-    updateBlockConfigurationField(blockKey: string, fieldKey: string, fieldValue: any) {
+    onBlockEditorConfigurationField(blockKey: string, fieldKey: string, fieldValue: any) {
         const block = this.getBlockByKey(blockKey);
 
         try {
@@ -1418,19 +1463,15 @@ export class PagesService {
         }
     }
 
-    updateBlockPageConfiguration(blockKey: string, pageConfiguration: PageConfiguration) {
+    onBlockEditorSetPageConfiguration(blockKey: string, pageConfiguration: PageConfiguration) {
         const block = this.getBlockByKey(blockKey);
         
         if (block) {
             try {
                 // Validate the block page configuration data, if validation failed an error will be thrown.
                 this.validatePageConfigurationData(blockKey, pageConfiguration);
-
                 block.PageConfiguration = pageConfiguration;
                 this.notifyBlockChange(block);
-
-                // // Calculate all filters by the updated page configuration.
-                // this.buildConsumersParameters();
             } catch (err) {
                 // Go back from block editor.
                 this.navigateBackFromEditor();
@@ -1438,96 +1479,35 @@ export class PagesService {
                 // Remove the block and show message.
                 const title = this.translate.instant('MESSAGES.PARAMETER_VALIDATION.BLOCK_HAS_REMOVED');
                 this.utilitiesService.showDialogMsg(err.message, title);
-                this.removeBlock(block.Key);
+                this.removeBlockFromSection(block.Key);
             }
         }
     }
 
-    setBlockParameter(blockKey: string, event: { key: string, value: any }) {
-        const parameters = {};
-        parameters[event.key] = event.value;
-        this.setBlockParameters(blockKey, { parameters });
+    /**************************************************************************************/
+    /*                            Blocks events handle.
+    /**************************************************************************************/
+    
+    onBlockStateChange(blockKey: string, event: { changes: any }): void {
+        // Create the changes object.
+        const changes = { BlocksState: {} };
+        changes.BlocksState[blockKey] = event.changes;
+        
+        this.raiseClientEventForBlock(CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, blockKey, { Changes: changes });
+    }
+
+    onBlockButtonClick(blockKey: string, event: { buttonKey: string }): void {
+        this.raiseClientEventForBlock(CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, blockKey, { ButtonKey: event.buttonKey });
     }
     
-    setBlockParameters(blockKey: string, event: { parameters: any }) {
-        // If wew are in preview mode then we use the params for preview mode for not override the page parameters.
-        const previewMode = this._previewModeSubject.getValue();
-        const paramsToSend = previewMode ? this._pageParametersForPreview.getValue() : this._pageParameters.getValue()
-        const eventData = {
-            BlockKey: blockKey,
-            State: {
-                PageParameters: paramsToSend
-            },
-            Changes: {
-                PageParameters: event.parameters
-            },
-        };
-
-        // For editor (preview mode take the _pageInEditorSubject else take the page key from _pageViewSubject).
-        if (this._pageInEditorSubject.getValue()) {
-            eventData['Page'] = this._pageInEditorSubject.getValue();
-        } else {
-            eventData['PageKey'] = this._pageViewSubject.getValue().Key;
-        }
-
-        this.emitEvent({
-            eventKey: CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE,
-            eventData: eventData,
-            completion: (res: IPageClientEventResult) => {
-                debugger;
-
-                if (res && res.PageView) {
-                    if (previewMode) {
-                        // Load the preview parameters.
-                        this.notifyPageParametersForPreviewChange(res.State.PageParameters);
-                    } else {
-                        // Load the PageParameters.
-                        this.notifyPageParametersChange(res.State.PageParameters);
-                    }
-                
-                    // Load the page.
-                    this.notifyPageViewChange(res.PageView);
-                } else {
-                    // TODO: Show error
-                    // console.error('The raised parameters is not declared in the block -> pageConfiguration -> parameters array as producer');
-                }
-            }
-        });
+    onRegisterStateChange(blockKey: string, event: { callback: (data: {state: any, configuration: any}) => void }): void {
+        const bpToUpdate = this._pageBlockProgressMap.get(blockKey);
+        bpToUpdate.registerStateChangeCallback = event.callback;
     }
 
-    doesColumnContainBlock(sectionId: string, columnIndex: number): boolean {
-        let res = false;
-        const page = this._pageInEditorSubject.getValue();
-        const section = page?.Layout.Sections.find(section => section.Key === sectionId);
-
-        if (section && columnIndex >= 0 && section.Columns.length > columnIndex) {
-            res = !!section.Columns[columnIndex].BlockContainer;
-        }
-
-        return res;
-    }
-
-    setScreenWidth(value: string) {
-        let width = coerceNumberProperty(value, 0);
-        if (width === 0) {
-            this._screenWidthSubject.next('100%');
-            this._screenSizeSubject.next(PepScreenSizeType.XL);
-        } else {
-            this._screenWidthSubject.next(`${width}px`);
-
-            // Change the size according the width.
-            if (width >= 1920) {
-                this._screenSizeSubject.next(PepScreenSizeType.XL);
-            } else if (width >= 1280 && width < 1920) {
-                this._screenSizeSubject.next(PepScreenSizeType.LG);
-            } else if (width >= 960 && width < 1280) {
-                this._screenSizeSubject.next(PepScreenSizeType.MD);
-            } else if (width >= 600 && width < 960) {
-                this._screenSizeSubject.next(PepScreenSizeType.SM);
-            } else if (width < 600) {
-                this._screenSizeSubject.next(PepScreenSizeType.XS);
-            }
-        }
+    onRegisterScreenSizeChange(blockKey: string, event: { callback: (data: {state: any, configuration: any}) => void }): void {
+        const bpToUpdate = this._pageBlockProgressMap.get(blockKey);
+        bpToUpdate.registerScreenSizeChangeCallback = event.callback;
     }
 
     emitEvent(event: any) {
@@ -1537,17 +1517,6 @@ export class PagesService {
 
         const customEvent = new CustomEvent('emit-event', eventData);
         window.dispatchEvent(customEvent);
-    }
-
-    doesCurrentPageHasChanges(): boolean {
-        let res = false;
-        const currentPage = this._pageInEditorSubject.getValue();
-
-        if (this._pageAfterLastSave != null && currentPage != null && JSON.stringify(currentPage) !== JSON.stringify(this._pageAfterLastSave)) {
-            res = true;
-        }
-
-        return res;
     }
 
     /**************************************************************************************/
@@ -1581,53 +1550,33 @@ export class PagesService {
     loadPageBuilder(addonUUID: string, pageKey: string, editable: boolean, queryParameters: Params): void {
         //  If is't not edit mode get the page from the CPI side.
         const baseUrl = this.getBaseUrl(addonUUID);
-        
+
         // Raise the PageLoad event to get all neccessary data.
         if (!editable) {
-            const event = {
-                eventKey: CLIENT_ACTION_ON_CLIENT_PAGE_LOAD,
-                eventData: {
-                    PageKey: pageKey,
-                    State: {
-                        PageParameters: queryParameters
-                    }
-                },
-                completion: (res: IPageClientEventResult) => {
-                    if (res && res.PageView && res.AvailableBlocksData) {
-                        this.loadPageBuilderCommonResult(res.State?.PageParameters, res.AvailableBlocksData, false);
-    
-                        // Load the page view.
-                        this.notifyPageViewChange(res.PageView);
-                    }
-                }
-            }
-    
-            this.emitEvent(event);
+            this.raiseClientEventForPageLoad(queryParameters, { PageKey: pageKey });
         } else { 
             // If is't edit mode get the data of the page from the Server side and then raise the PageLoad event to get all the neccessary data.
             // Get the page (sections and the blocks data) from the server.
             this.httpService.getHttpCall(`${baseUrl}/get_page_builder_data?key=${pageKey}`)
-                .subscribe((res: IPageBuilderData) => {
-                    if (res && res.page && res.availableBlocks && res.pagesVariables) {
+                .subscribe((serverResult: IPageBuilderData) => {
+                    if (serverResult && serverResult.page && serverResult.availableBlocks && serverResult.pagesVariables) {
                         // Set the pages variables into the service variables.
-                        this.setPagesVariables(res.pagesVariables);
-
-                        const availableBlocksData: IAvailableBlockData[] = getAvailableBlockData(res.availableBlocks, queryParameters['devBlocks']);
-                        this.loadPageBuilderCommonResult(queryParameters, availableBlocksData, true);
+                        this.setPagesVariables(serverResult.pagesVariables);
 
                         // Load the page for edit mode.
-                        this.notifyPageInEditorChange(res.page);
+                        this.notifyPageInEditorChange(serverResult.page, false);
+                               
+                        // Here we send the page object (instead of the PageKey).
+                        this.raiseClientEventForPageLoad(queryParameters, { Page: this._pageInEditorSubject.getValue() });
                     }
             });
         }
     }
 
     unloadPageBuilder() {
-        // this.notifySectionsInEditorChange([]);
         this.removeAllBlocks();
-        this.notifyPageInEditorChange(null, true);
-        this.notifyPageParametersChange({});
-        this.notifyPageParametersForPreviewChange({});
+        this.notifyPageInEditorChange(null, true, true);
+        this.notifyStateChange(null);
         this._availableBlocksDataSubject.next([]);
     }
 
@@ -1646,7 +1595,7 @@ export class PagesService {
         const baseUrl = this.getBaseUrl(addonUUID);
         
         this.httpService.postHttpCall(`${baseUrl}/save_draft_page`, body).subscribe(savedPage => {
-            this.notifyPageInEditorChange(savedPage, true);
+            this.notifyPageInEditorChange(savedPage, true, true);
 
             // Show message
             const data: PepSnackBarData = {
@@ -1668,7 +1617,7 @@ export class PagesService {
         const body = JSON.stringify(page);
         const baseUrl = this.getBaseUrl(addonUUID);
         this.httpService.postHttpCall(`${baseUrl}/publish_page`, body).subscribe(savedPage => {
-            this.notifyPageInEditorChange(savedPage, true);
+            this.notifyPageInEditorChange(savedPage, true, true);
 
             // Show message
             const data: PepSnackBarData = {

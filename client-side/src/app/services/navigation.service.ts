@@ -94,6 +94,13 @@ export class NavigationService {
         return queryParamsAsObject;
     }
 
+    updateQueryParams(queryParams: any) {
+        this.router.navigate([], { 
+            queryParams: queryParams, 
+            queryParamsHandling: 'merge'
+        });
+    }
+
     unloadRouter() {
         if (this.router) {
             // debugger;

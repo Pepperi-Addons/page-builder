@@ -62,7 +62,6 @@ export class SectionComponent implements OnInit {
     @Input()
     set columns(value: Array<PageSectionColumn>) {
         this._columns = value || [];
-        this.calculateIfSectionContainsBlocks();
     }
     get columns(): Array<PageSectionColumn> {
         return this._columns;
@@ -85,7 +84,6 @@ export class SectionComponent implements OnInit {
     @Input()
     set pageBlocksMap(value: Map<string, PageBlock>) {
         this._pageBlocksMap = value || new Map<string, PageBlock>();
-        this.calculateIfSectionContainsBlocks();
     }
     get pageBlocksMap(): Map<string, PageBlock> {
         return this._pageBlocksMap;
@@ -223,6 +221,11 @@ export class SectionComponent implements OnInit {
                 this.isMainEditorState = editor && editor.type === 'page-builder';
                 this.isEditing = editor && editor.type === 'section' && editor.id === this.key;
                 this.selectedBlockKey = editor && editor.type === 'block' ? editor.id : '';
+            });
+
+            // Just to calculate if sections contains blocks
+            this.pagesService.sectionsChange$.subscribe(res => {
+                this.calculateIfSectionContainsBlocks();
             });
 
             this.pagesService.draggingBlockKey.subscribe((draggingBlockKey) => {

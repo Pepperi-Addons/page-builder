@@ -121,12 +121,13 @@ export class PageManagerComponent implements OnInit {
             this.currentEditor = editor;
         });
 
-        // For update editor data in case that the editor is block editor and the id is the updated block key.
-        this.pagesService.pageBlockChange$.subscribe((pageBlockKey: string) => {
-            if (this.currentEditor?.type === 'block' && this.currentEditor.id === pageBlockKey) {
-                this.setCurrentEditor();
-            }
-        });
+        // TODO: Do we need this??
+        // // For update editor data in case that the editor is block editor and the id is the updated block key.
+        // this.pagesService.pageBlockChange$.subscribe((pageBlockKey: string) => {
+        //     if (this.currentEditor?.type === 'block' && this.currentEditor.id === pageBlockKey) {
+        //         this.setCurrentEditor();
+        //     }
+        // });
 
         this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
             const screenType = this.pagesService.getScreenType(size);
@@ -225,13 +226,13 @@ export class PageManagerComponent implements OnInit {
         // Implement editors events.
         switch(event.action){
             case 'set-configuration':
-                this.pagesService.updateBlockConfiguration(this.currentEditor.id, event.configuration);
+                this.pagesService.onBlockEditorSetConfiguration(this.currentEditor.id, event.configuration);
                 break;
             case 'set-configuration-field':
-                this.pagesService.updateBlockConfigurationField(this.currentEditor.id, event.key, event.value);
+                this.pagesService.onBlockEditorConfigurationField(this.currentEditor.id, event.key, event.value);
                 break;
             case 'set-page-configuration':
-                this.pagesService.updateBlockPageConfiguration(this.currentEditor.id, event.pageConfiguration);
+                this.pagesService.onBlockEditorSetPageConfiguration(this.currentEditor.id, event.pageConfiguration);
                 break;
         }
     }

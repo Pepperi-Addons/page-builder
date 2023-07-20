@@ -153,9 +153,7 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
             // When running slug in runtime mode the route?.snapshot?.queryParams is empty. (Need to fix this somehow).
             // const queryParams = this.hostObject?.pageParams || this.route?.snapshot?.queryParams;
             const urlParams = this.navigationService.getQueryParamsAsObject();
-
             const queryParams = this.hostObject?.pageParams || urlParams;
-            
             this.pagesService.loadPageBuilder(addonUUID, pageKey, this.editMode, queryParams);
 
             this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
@@ -175,18 +173,16 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
                 blocksProgress.forEach(bp => {
                     // Only if the block should not be hidden
                     if (!this.isBlockShouldBeHidden(bp.block.Key)) {
-                        if (bp.priority >= this.pagesService.currentBlocksPriority) {
-                            // Check that there is no other block with the same relation name that need to load 
-                            // (cause the module deferation throw error when we try to load two blocks from the same relation).
-                            if (bp.loaded || !pbRelationsNames.has(bp.block.RelationData.Name)) {
-                                
-                                // Add to the map only relations that not added yet.
-                                if (!bp.loaded) {
-                                    pbRelationsNames.set(bp.block.RelationData.Name, true);
-                                }
-    
-                                pageBlocksMap.set(bp.block.Key, bp.block);
+                        // Check that there is no other block with the same relation name that need to load 
+                        // (cause the module deferation throw error when we try to load two blocks from the same relation).
+                        if (bp.loaded || !pbRelationsNames.has(bp.block.RelationData.Name)) {
+                            
+                            // Add to the map only relations that not added yet.
+                            if (!bp.loaded) {
+                                pbRelationsNames.set(bp.block.RelationData.Name, true);
                             }
+
+                            pageBlocksMap.set(bp.block.Key, bp.block);
                         }
                     }
                 });
