@@ -132,6 +132,8 @@ export const DEFAULT_BLANK_PAGE_DATA: Page = {
     }
 }
 
+export const SYSTEM_PARAMETERS = { 'AccountUUID': '' };
+
 import homepage_blank from './template_pages/homepage_blank.json';
 import homepage_gridy from './template_pages/homepage_gridy.json';
 

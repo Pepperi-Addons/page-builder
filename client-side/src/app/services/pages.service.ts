@@ -18,6 +18,7 @@ import { coerceNumberProperty } from "@angular/cdk/coercion";
 import { PepSnackBarData, PepSnackBarService } from "@pepperi-addons/ngx-lib/snack-bar";
 import { IPageState } from 'shared';
 import { QueryParamsService } from "./query-params.service";
+import { IParamemeter } from "@pepperi-addons/ngx-composite-lib/manage-parameters";
 
 export type UiPageSizeType = PageSizeType | 'none';
 
@@ -36,6 +37,8 @@ export interface IPageEditor {
     id: string,
     pageName: string,
     pageDescription: string,
+    parameters: IParamemeter[],
+    onLoadFlow: any,
     maxWidth: number,
     horizontalSpacing?: UiPageSizeType,
     verticalSpacing?: UiPageSizeType,
@@ -247,10 +250,6 @@ export class PagesService {
         private queryParamsService: QueryParamsService
     ) {
         this.pageViewLoad$.subscribe((pageView: IPageView) => {
-            if (this.isEditMode) {
-                this.loadDefaultEditor(pageView);
-            }
-
             this.loadBlocks(pageView);
         });
 
@@ -567,26 +566,28 @@ export class PagesService {
         this._pageBlockProgressMapSubject.next(this.pageBlockProgressMap);
     }
 
-    private loadDefaultEditor(pageView: IPageView) {
+    private loadDefaultEditor(page: Page) {
         this._editorsBreadCrumb = new Array<IEditor>();
 
-        if (pageView) {
+        if (page) {
             const pageEditor: IPageEditor = {
-                id: pageView?.Key,
-                pageName: pageView?.Name,
-                pageDescription: pageView?.Description,
-                maxWidth: pageView?.Layout.MaxWidth,
-                verticalSpacing: pageView?.Layout.VerticalSpacing,
-                horizontalSpacing: pageView?.Layout.HorizontalSpacing,
-                sectionsGap: pageView?.Layout.SectionsGap,
-                columnsGap: pageView?.Layout.ColumnsGap,
+                id: page?.Key,
+                pageName: page?.Name,
+                pageDescription: page?.Description,
+                parameters: page.Parameters,
+                onLoadFlow: page.OnLoadFlow,
+                maxWidth: page?.Layout.MaxWidth,
+                verticalSpacing: page?.Layout.VerticalSpacing,
+                horizontalSpacing: page?.Layout.HorizontalSpacing,
+                sectionsGap: page?.Layout.SectionsGap,
+                columnsGap: page?.Layout.ColumnsGap,
                 // roundedCorners: page?.Layout.
             };
 
             this._editorsBreadCrumb.push({
                 id: 'main',
                 type : 'page-builder',
-                title: pageView?.Name,
+                title: page?.Name,
                 hostObject: pageEditor
             });
 
@@ -626,7 +627,7 @@ export class PagesService {
         hostObject.pageParameters = pageState?.PageParameters;
 
         // Add parameters (obsolete).
-        hostObject.parameters = pageState?.BlocksState[block.Key] || null;
+        hostObject.parameters = pageState?.BlocksState[block.Key];
 
         // Add block state
         hostObject.state = pageState?.BlocksState[block.Key];
@@ -1565,7 +1566,10 @@ export class PagesService {
 
                         // Load the page for edit mode.
                         this.notifyPageInEditorChange(serverResult.page, false);
-                               
+                        
+                        // Load the page editor.
+                        this.loadDefaultEditor(serverResult.page);
+                        
                         // Here we send the page object (instead of the PageKey).
                         this.raiseClientEventForPageLoad(queryParameters, { Page: this._pageInEditorSubject.getValue() });
                     }

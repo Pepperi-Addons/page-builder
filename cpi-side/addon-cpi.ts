@@ -9,7 +9,7 @@ export async function load(configuration: any) {
     // Handle on page load.
     pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_LOAD as any, {}, async (data): Promise<IPageClientEventResult> => {
         const service = new ClientPagesService();
-        const result = await service.getPageLoadData(data, data.client?.context);
+        const result = await service.getPageLoadData(data, data);
         return result;
     });
 

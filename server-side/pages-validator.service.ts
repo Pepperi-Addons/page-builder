@@ -182,6 +182,22 @@ export class PagesValidatorService {
         }
     }
 
+    private validatePageParameterProperties(pagePropertyBreadcrumb: string, parameter: any, parameterIndex: number): void {
+        const ParametersPropertyBreadcrumb = `${pagePropertyBreadcrumb} -> Parameters at index ${parameterIndex}`;
+
+        // Validate Name
+        this.validateObjectProperty(parameter, 'Name', ParametersPropertyBreadcrumb);
+
+        // Validate Type if exist
+        this.validateObjectProperty(parameter, 'Type', ParametersPropertyBreadcrumb);
+        
+        // Validate Description if exist (Optional)
+        this.validateObjectProperty(parameter, 'Description', ParametersPropertyBreadcrumb, true);
+
+        // Validate DefaultValue if exist (Optional)
+        this.validateObjectProperty(parameter, 'DefaultValue', ParametersPropertyBreadcrumb, true);
+    }
+
     private validatePageSectionProperties(pagePropertyBreadcrumb: string, section: PageSection, sectionIndex: number): void {
         const sectionsPropertyBreadcrumb = `${pagePropertyBreadcrumb} -> Sections at index ${sectionIndex}`;
 
@@ -341,8 +357,8 @@ export class PagesValidatorService {
                     const paramType = parameter.Type;
 
                     // Validate parameter Type.
-                    if (paramType !== 'String' && paramType !== 'Filter') {
-                        throw new Error(`Parameter type - ${paramType} is not supported, The supported types are ["String", "Filter"].`);
+                    if (paramType !== 'String') {
+                        throw new Error(`Parameter type - ${paramType} is not supported, The supported types are ["String"].`);
                     }
 
                     // If the parameter key isn't exist insert it to the map, else, check the type if isn't the same then throw error.
@@ -432,6 +448,15 @@ export class PagesValidatorService {
         // Validate Description if exist (Optional)
         this.validateObjectProperty(page, 'Description', pagePropertyBreadcrumb, true);
         
+        // Validate Parameters
+        this.validateArrayProperty(page, 'Parameters', pagePropertyBreadcrumb);
+        for (let index = 0; index < page.Parameters.length; index++) {
+            this.validatePageParameterProperties(pagePropertyBreadcrumb, page.Parameters[index], index);
+        }
+
+        // Validate OnLoadFlow
+        this.validateObjectProperty(page, 'OnLoadFlow', pagePropertyBreadcrumb, true, 'object');
+
         // Validate Blocks
         this.validateArrayProperty(page, 'Blocks', pagePropertyBreadcrumb);
         for (let index = 0; index < page.Blocks.length; index++) {
@@ -454,6 +479,7 @@ export class PagesValidatorService {
     getPageCopyAccordingInterface(page: Page, availableBlocks: IBlockLoaderData[]): Page {
         // Init with the mandatories properties.
         let res: Page = {
+            Parameters: [],
             Blocks: [],
             Layout: {
                 Sections: []
@@ -465,6 +491,21 @@ export class PagesValidatorService {
         this.addOptionalPropertyIfExist(page, res, 'Key');
         this.addOptionalPropertyIfExist(page, res, 'Name');
         this.addOptionalPropertyIfExist(page, res, 'Description');
+        
+        // Add Parameters specific properties.
+        for (let paramIndex = 0; paramIndex < page.Parameters.length; paramIndex++) {
+            const currentParam = page.Parameters[paramIndex];
+            const paramToAdd: any = {
+                Name: currentParam.Name,
+                Type: currentParam.Type
+            };
+
+            this.addOptionalPropertyIfExist(currentParam, paramToAdd, 'Description');
+            this.addOptionalPropertyIfExist(currentParam, paramToAdd, 'DefaultValue');
+        }
+
+        // Add OnLoadFlow
+        this.addOptionalPropertyIfExist(page, res, 'OnLoadFlow');
         
         // Add Blocks specific properties.
         for (let blockIndex = 0; blockIndex < page.Blocks.length; blockIndex++) {

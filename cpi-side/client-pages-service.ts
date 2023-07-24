@@ -1,12 +1,12 @@
 import { IContext } from "@pepperi-addons/cpi-node/build/cpi-side/events";
 import { NgComponentRelation, Page, PageBlock } from "@pepperi-addons/papi-sdk";
-import { IBlockLoaderData, IPageBuilderData, IPageClientEventResult, IPageView, getAvailableBlockData, IBlockEndpointResult } from "shared";
+import { RunFlowBody } from '@pepperi-addons/cpi-node';
+import { IBlockLoaderData, IPageBuilderData, IPageClientEventResult, IPageView, getAvailableBlockData, IBlockEndpointResult, SYSTEM_PARAMETERS } from "shared";
 import config from "../addon.config.json";
 
 type PagesClientActionType = 'depricated-page-load' | 'page-load' | 'state-change' | 'button-click';
 
 class ClientPagesService {
-
     readonly LIMIT_COUNTER = 3;
 
     private convertRelationToBlockLoaderData(relations: NgComponentRelation[], name: string = ''): IBlockLoaderData[] {
@@ -374,6 +374,60 @@ class ClientPagesService {
         return result;
     }
 
+    private async runOnLoadFlow(page: Page, pageParameters: any, eventData: any): Promise<void> {
+        // If the OnLoadFlow exist run it.
+        if (page?.OnLoadFlow?.FlowKey?.length > 0) {
+            const savedPageParams = {};
+
+            for (let index = 0; index < page.Parameters?.length; index++) {
+                const pageParam = page.Parameters[index];
+                savedPageParams[pageParam.Name] = pageParam.DefaultValue || '';
+            }
+
+            const mergedParameters = { ...SYSTEM_PARAMETERS, ...savedPageParams, ...pageParameters };
+            const dynamicParamsData: any = {};
+            
+            if (page.OnLoadFlow?.FlowParams) {
+                const dynamicParams: any = [];
+
+                // Get all dynamic parameters to set their value on the data property later.
+                const keysArr = Object.keys(page.OnLoadFlow.FlowParams);
+                for (let index = 0; index < keysArr.length; index++) {
+                    const key = keysArr[index];
+                    
+                    if (page.OnLoadFlow.FlowParams[key].Source === 'Dynamic') {
+                        dynamicParams.push(page.OnLoadFlow.FlowParams[key].Value);
+                    }
+                }
+                
+                // Set the dynamic parameters values on the dynamicParamsData property.
+                for (let index = 0; index < dynamicParams.length; index++) {
+                    const param = dynamicParams[index];
+                    dynamicParamsData[param] = mergedParameters[param] || '';
+                }
+            }
+        
+            const flowToRun: RunFlowBody = {
+                RunFlow: page.OnLoadFlow,
+                Data: dynamicParamsData,
+                context: eventData
+            };
+
+            // Run the flow and set the result in pageParameters.
+            const flowResult = await pepperi.flows.run(flowToRun);
+            const resultKeys = Object.keys(flowResult);
+
+            for (let index = 0; index < resultKeys.length; index++) {
+                const key = resultKeys[index];
+                
+                // Override only parameters that declared in page parameters and returned in the flow result
+                if (pageParameters.hasOwnProperty(key)) {
+                    pageParameters[key] = flowResult[key];
+                }
+            }
+        }
+    }
+
     /***********************************************************************************************/
     /*                                  Public functions
     /***********************************************************************************************/
@@ -413,7 +467,7 @@ class ClientPagesService {
         return result;
     }
     
-    async getPageLoadData(data: any, context: IContext | undefined): Promise<IPageClientEventResult> {
+    async getPageLoadData(data: any, eventData: any): Promise<IPageClientEventResult> {
         let tmpResult: IPageBuilderData;
         
         let page = data.Page || null;
@@ -430,8 +484,11 @@ class ClientPagesService {
             const availableBlocks: IBlockLoaderData[] = await this.getBlocksData('PageBlock');
             const availableBlocksMap = this.getAvailableBlocksMap(availableBlocks);
 
+            // Run the OnLoadFlow before we start (for override page parameters data).
+            await this.runOnLoadFlow(page, pageParameters, data);
+
             // This function override blocks data properties in page object.
-            await this.runAllPageBlocksEndpointForEvent('page-load', page, availableBlocksMap, pageParameters, blocksState, context);
+            await this.runAllPageBlocksEndpointForEvent('page-load', page, availableBlocksMap, pageParameters, blocksState, data.client?.context);
 
             tmpResult = {
                 page: page,
@@ -442,6 +499,9 @@ class ClientPagesService {
             // data.Page and the page that will return here should be the same cause this is load event).
             const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}`);
             tmpResult = temp.ok ? await(temp.json()) : { page: null, availableBlocks: [] };
+
+            // Run the OnLoadFlow for override page parameters data.
+            await this.runOnLoadFlow(tmpResult.page, pageParameters, data);
         }
 
         const result = this.getPageClientEventResult(pageParameters, blocksState, tmpResult.page, true, tmpResult.availableBlocks);

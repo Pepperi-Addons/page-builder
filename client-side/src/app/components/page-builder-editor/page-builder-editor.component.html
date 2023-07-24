@@ -1,20 +1,36 @@
 <mat-tab-group  #tabGroup class="page-builder-editor-tabs" animationDuration="0ms">
     <mat-tab label="{{'PAGE_MANAGER.GENERAL' | translate}}">
-        <div class="general-container ">
+        <div class="page-builder-editor-tab">
             <pep-textbox [value]="pageName" [label]="'PAGE_MANAGER.PAGE_NAME_TITLE' | translate" (valueChange)="onPageNameChange($event)"></pep-textbox>
             <pep-textarea [value]="pageDescription" [label]="'PAGE_MANAGER.PAGE_DESCRIPTION_TITLE' | translate" rowSpan="2" (valueChange)="onPageDescriptionChange($event)"></pep-textarea>
             
-            <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.SECTIONS_TITLE' | translate}}</label>
-            <pep-button class="add-section-button" value="{{'PAGE_MANAGER.ADD_SECTION' | translate}}" styleType="regular" iconName="number_plus" iconPosition="end"
-                (buttonClick)="onAddSectionClick($event)"></pep-button>
-
-            <pep-draggable-items [containerId]="availableBlocksContainerId" [items]="availableBlocksForDrag" [title]="'PAGE_MANAGER.BLOCKS_TITLE' | translate" [dropAreaIds]="sectionsColumnsDropList"
-                (itemDragStarted)="onDragStart($event)" (itemDragEnded)="onDragEnd($event)">
+            <div>
+                <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.PARAMETERS_TITLE' | translate}}</label>
+                <pep-button class="script-button" [value]="('PAGE_MANAGER.MANAGE_PARAMETERS' | translate)" 
+                    (buttonClick)="openParametersPickerDialog();">
+                </pep-button>
+            </div>
+            <div>
+                <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.ON_LOAD_FLOW_TITLE' | translate}}</label>
+                <pep-button class="script-button" 
+                    [value]="onLoadFlow?.FlowKey || ('PAGE_MANAGER.CHOOSE_FLOW' | translate)" 
+                    (buttonClick)="openOnLoadFlowPickerDialog();">
+                </pep-button>
+            </div>
+            <div>
+                <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.SECTIONS_TITLE' | translate}}</label>
+                <pep-button class="add-section-button" value="{{'PAGE_MANAGER.ADD_SECTION' | translate}}" styleType="regular" iconName="number_plus" iconPosition="end"
+                    (buttonClick)="onAddSectionClick($event)"></pep-button>
+            </div>
+    
+            <pep-draggable-items class="available-blocks" [containerId]="availableBlocksContainerId" [items]="availableBlocksForDrag" [title]="'PAGE_MANAGER.BLOCKS_TITLE' | translate"
+                titleSizeType="xl" [dropAreaIds]="sectionsColumnsDropList" (itemDragStarted)="onDragStart($event)" (itemDragEnded)="onDragEnd($event)">
             </pep-draggable-items>
+            <!-- [showSearch]="true"  -->
         </div>
     </mat-tab>
     <mat-tab label="{{'PAGE_MANAGER.DESIGN' | translate}}">
-        <div class="tab-container">
+        <div class="page-builder-editor-tab">
             <pep-checkbox class="checkbox-as-title" [value]="isFullWidth" [label]="'PAGE_MANAGER.FULL_WIDTH_TITLE' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
             <pep-textbox [label]="'PAGE_MANAGER.MAX_WIDTH_TITLE' | translate" type="int" [disabled]="isFullWidth" [value]="maxWidth" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
             
@@ -53,7 +69,13 @@
     </mat-tab>
 </mat-tab-group>
 
-
+<ng-template #parametersDialogTemplate let-data>
+    <pep-dialog [showClose]="true" [title]="'PAGE_MANAGER.MANAGE_PARAMETERS' | translate" [showFooter]="false" (close)="closeParametersDialog($event)">
+        <ng-container pep-dialog-content>
+            <pep-manage-parameters [parameters]="data.parameters" (parametersChange)="onParametersChange($event)"></pep-manage-parameters>
+        </ng-container>
+    </pep-dialog>
+</ng-template>
 
 
 

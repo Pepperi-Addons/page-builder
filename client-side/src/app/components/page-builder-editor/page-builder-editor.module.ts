@@ -24,6 +24,9 @@ import { PepImageModule } from '@pepperi-addons/ngx-lib/image';
 import { PepGroupButtonsSettingsModule } from '@pepperi-addons/ngx-composite-lib/group-buttons-settings';
 import { PepDraggableItemsModule } from '@pepperi-addons/ngx-lib/draggable-items';
 import { MatSliderModule } from '@angular/material/slider'
+import { PepDialogModule } from '@pepperi-addons/ngx-lib/dialog';
+import { PepManageParametersModule } from '@pepperi-addons/ngx-composite-lib/manage-parameters';
+
 // import { config } from '../addon.config';
 // const pepIcons = [
 //     pepIconSystemClose,
@@ -56,8 +59,10 @@ import { MatSliderModule } from '@angular/material/slider'
         PepImageModule,
         PepGroupButtonsSettingsModule,
         PepDraggableItemsModule,
+        PepDialogModule,
         MatSliderModule,
         PepTextareaModule,
+        PepManageParametersModule,
         SectionEditorModule,
         // ToolbarModule,
         // TranslateModule.forChild()
