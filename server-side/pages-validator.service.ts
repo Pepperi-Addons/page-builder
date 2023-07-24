@@ -496,7 +496,7 @@ export class PagesValidatorService {
         for (let paramIndex = 0; paramIndex < page.Parameters.length; paramIndex++) {
             const currentParam = page.Parameters[paramIndex];
             const paramToAdd: any = {
-                Name: currentParam.Name,
+                Key: currentParam.Key,
                 Type: currentParam.Type
             };
 
