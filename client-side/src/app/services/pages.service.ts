@@ -510,6 +510,9 @@ export class PagesService {
 
     private notifyPageInEditorChange(page: Page, changePageView = true, setLastSavedPage = false) {
         this._pageInEditorSubject.next(page);
+        if (page) {
+            this.updatePageBuilderEditorProperties(page);
+        }
         
         if (setLastSavedPage) {
             this._pageAfterLastSave = page ?JSON.parse(JSON.stringify(page)) : null;
@@ -566,10 +569,8 @@ export class PagesService {
         this._pageBlockProgressMapSubject.next(this.pageBlockProgressMap);
     }
 
-    private loadDefaultEditor(page: Page) {
-        this._editorsBreadCrumb = new Array<IEditor>();
-
-        if (page) {
+    private updatePageBuilderEditorProperties(page: Page) {
+        if (this._editorsBreadCrumb[0]) {
             const pageEditor: IPageEditor = {
                 id: page?.Key,
                 pageName: page?.Name,
@@ -583,14 +584,23 @@ export class PagesService {
                 columnsGap: page?.Layout.ColumnsGap,
                 // roundedCorners: page?.Layout.
             };
+            
+            this._editorsBreadCrumb[0].hostObject = pageEditor;
+        }
+    }
 
+    private loadDefaultEditor(page: Page) {
+        this._editorsBreadCrumb = new Array<IEditor>();
+
+        if (page) {
             this._editorsBreadCrumb.push({
                 id: 'main',
                 type : 'page-builder',
                 title: page?.Name,
-                hostObject: pageEditor
+                // hostObject: {}
             });
 
+            this.updatePageBuilderEditorProperties(page);
             this.notifyEditorChange(this._editorsBreadCrumb[0]);
         } else {
             this.notifyEditorChange(null);
@@ -1114,6 +1124,8 @@ export class PagesService {
         if (currentPage) {
             currentPage.Name = pageData.pageName;
             currentPage.Description = pageData.pageDescription;
+            currentPage.Parameters = pageData.parameters;
+            currentPage.OnLoadFlow = pageData.onLoadFlow;
             currentPage.Layout.MaxWidth = pageData.maxWidth;
             currentPage.Layout.HorizontalSpacing = pageData.horizontalSpacing;
             currentPage.Layout.VerticalSpacing = pageData.verticalSpacing;

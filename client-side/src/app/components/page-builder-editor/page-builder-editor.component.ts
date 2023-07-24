@@ -185,17 +185,15 @@ export class PageBuilderEditorComponent implements OnInit {
     }
 
     openOnLoadFlowPickerDialog() {
-        debugger;
         const resource = {};
         const runFlowData = this.onLoadFlow;
 
         const fields = {};
         
-        const paramsKeys = Object.keys(this.parameters || {});
-        for (let index = 0; index < paramsKeys.length; index++) {
-            const paramKey = paramsKeys[index];
-            fields[paramKey] = {
-                Type: 'String'
+        for (let index = 0; index < this.parameters.length; index++) {
+            const param = this.parameters[index];
+            fields[param.Key] = {
+                Type: param.Type
             }                
         }
         

@@ -43,7 +43,7 @@ export class PagesValidatorService {
                 } else {
                     for (let index = 0; index < objectToValidate[propName].length; index++) {
                         const value = objectToValidate[propName][index];
-                        if (!arrayType.some(atv => atv === value)) {
+                        if (arrayType.length > 0 && !arrayType.some(atv => atv === value)) {
                             throw new Error(this.getWrongTypeError(propertyBreadcrumb, propName, `value from [${arrayType}]`));
                         }
                     }
@@ -185,8 +185,8 @@ export class PagesValidatorService {
     private validatePageParameterProperties(pagePropertyBreadcrumb: string, parameter: any, parameterIndex: number): void {
         const ParametersPropertyBreadcrumb = `${pagePropertyBreadcrumb} -> Parameters at index ${parameterIndex}`;
 
-        // Validate Name
-        this.validateObjectProperty(parameter, 'Name', ParametersPropertyBreadcrumb);
+        // Validate Key
+        this.validateObjectProperty(parameter, 'Key', ParametersPropertyBreadcrumb);
 
         // Validate Type if exist
         this.validateObjectProperty(parameter, 'Type', ParametersPropertyBreadcrumb);
@@ -449,8 +449,8 @@ export class PagesValidatorService {
         this.validateObjectProperty(page, 'Description', pagePropertyBreadcrumb, true);
         
         // Validate Parameters
-        this.validateArrayProperty(page, 'Parameters', pagePropertyBreadcrumb);
-        for (let index = 0; index < page.Parameters.length; index++) {
+        this.validateArrayProperty(page, 'Parameters', pagePropertyBreadcrumb, true);
+        for (let index = 0; index < page.Parameters?.length; index++) {
             this.validatePageParameterProperties(pagePropertyBreadcrumb, page.Parameters[index], index);
         }
 
@@ -479,7 +479,6 @@ export class PagesValidatorService {
     getPageCopyAccordingInterface(page: Page, availableBlocks: IBlockLoaderData[]): Page {
         // Init with the mandatories properties.
         let res: Page = {
-            Parameters: [],
             Blocks: [],
             Layout: {
                 Sections: []
@@ -493,7 +492,9 @@ export class PagesValidatorService {
         this.addOptionalPropertyIfExist(page, res, 'Description');
         
         // Add Parameters specific properties.
-        for (let paramIndex = 0; paramIndex < page.Parameters.length; paramIndex++) {
+        res.Parameters = [];
+    
+        for (let paramIndex = 0; paramIndex < page.Parameters?.length; paramIndex++) {
             const currentParam = page.Parameters[paramIndex];
             const paramToAdd: any = {
                 Key: currentParam.Key,
@@ -502,8 +503,10 @@ export class PagesValidatorService {
 
             this.addOptionalPropertyIfExist(currentParam, paramToAdd, 'Description');
             this.addOptionalPropertyIfExist(currentParam, paramToAdd, 'DefaultValue');
-        }
 
+            res.Parameters.push(paramToAdd);
+        }
+        
         // Add OnLoadFlow
         this.addOptionalPropertyIfExist(page, res, 'OnLoadFlow');
         
