@@ -381,7 +381,7 @@ class ClientPagesService {
 
             for (let index = 0; index < page.Parameters?.length; index++) {
                 const pageParam = page.Parameters[index];
-                savedPageParams[pageParam.Name] = pageParam.DefaultValue || '';
+                savedPageParams[pageParam.Key] = pageParam.DefaultValue || '';
             }
 
             const mergedParameters = { ...SYSTEM_PARAMETERS, ...savedPageParams, ...pageParameters };

@@ -24,7 +24,7 @@
             </div>
     
             <pep-draggable-items class="available-blocks" [containerId]="availableBlocksContainerId" [items]="availableBlocksForDrag" [title]="'PAGE_MANAGER.BLOCKS_TITLE' | translate"
-                titleSizeType="xl" [dropAreaIds]="sectionsColumnsDropList" (itemDragStarted)="onDragStart($event)" (itemDragEnded)="onDragEnd($event)">
+                titleSizeType="xl" titleType="with-bottom-border" [showSearch]="true" [dropAreaIds]="sectionsColumnsDropList" (itemDragStarted)="onDragStart($event)" (itemDragEnded)="onDragEnd($event)">
             </pep-draggable-items>
             <!-- [showSearch]="true"  -->
         </div>
