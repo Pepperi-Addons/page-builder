@@ -6,7 +6,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { IParamemeter } from '@pepperi-addons/ngx-composite-lib/manage-parameters';
 import { PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { IPepDraggableItem } from '@pepperi-addons/ngx-lib/draggable-items/draggable-items.model';
-import { PepAddonBlockLoaderService } from '@pepperi-addons/ngx-lib/remote-loader';
 import { IAvailableBlockData } from 'shared';
 import { PagesService, IPageEditor, UiPageSizeType } from '../../services/pages.service';
 
@@ -51,8 +50,25 @@ export class PageBuilderEditorComponent implements OnInit {
     
     pageName: string = '';
     pageDescription: string = '';
-    parameters: IParamemeter[] = [];
-    onLoadFlow: any = {};
+    
+    private _parameters: IParamemeter[] = [];
+    set parameters(value: IParamemeter[]) {
+        this._parameters = value;
+        this.prepareOnLoadFlowHostObject();
+    }
+    get parameters(): IParamemeter[] {
+        return this._parameters;
+    }
+    
+    private _onLoadFlow: any = {};
+    set onLoadFlow(value: any) {
+        this._onLoadFlow = value;
+        this.prepareOnLoadFlowHostObject();
+    }
+    get onLoadFlow(): any {
+        return this._onLoadFlow;
+    }
+
     isFullWidth: boolean;
     maxWidth: number;
     horizontalSpacing: UiPageSizeType = 'md';
@@ -67,13 +83,12 @@ export class PageBuilderEditorComponent implements OnInit {
     
     availableBlocksContainerId = PagesService.AVAILABLE_BLOCKS_CONTAINER_ID;
     
+    onLoadFlowHostObject;
     parametersDialogRef: MatDialogRef<any> = null;
 
     constructor(
         private translate: TranslateService,
         private pagesService: PagesService,
-        private viewContainerRef: ViewContainerRef,
-        private addonBlockLoaderService: PepAddonBlockLoaderService,
         private dialogService: PepDialogService
     ) { 
         
@@ -176,7 +191,6 @@ export class PageBuilderEditorComponent implements OnInit {
 
     openParametersPickerDialog() {
         const config = this.dialogService.getDialogConfig({ disableClose: false }, 'full-screen');
-        // const convertParameters = 
         const data = {
             parameters: this.parameters || []
         };
@@ -184,8 +198,8 @@ export class PageBuilderEditorComponent implements OnInit {
         this.parametersDialogRef = this.dialogService.openDialog(this.parametersDialogTemplate, data, config);
     }
 
-    openOnLoadFlowPickerDialog() {
-        const resource = {};
+    private prepareOnLoadFlowHostObject() {
+        this.onLoadFlowHostObject = {};
         const runFlowData = this.onLoadFlow;
 
         const fields = {};
@@ -197,25 +211,14 @@ export class PageBuilderEditorComponent implements OnInit {
             }                
         }
         
-        resource['runFlowData'] = runFlowData;
-        resource['fields'] = fields;
+        this.onLoadFlowHostObject['runFlowData'] = runFlowData;
+        this.onLoadFlowHostObject['fields'] = fields;
+    }
 
-        const dialogRef = this.addonBlockLoaderService.loadAddonBlockInDialog({
-            container: this.viewContainerRef,
-            name: 'FlowPicker',
-            size: 'large',
-            hostObject: resource,
-            hostEventsCallback: (event) => {
-                if (event.action === 'on-done') {
-                    this.onLoadFlow = event.data || {};
-                    this.updateHostObject();
-                    
-                    dialogRef.close();
-                } else if (event.action === 'on-cancel') {
-                    dialogRef.close();
-                }
-            }
-        });
+    onLoadFlowChange(flowData: any) {
+        debugger;
+        this.onLoadFlow = flowData;
+        this.updateHostObject();
     }
 
     onParametersChange(parameters: IParamemeter[]): void {

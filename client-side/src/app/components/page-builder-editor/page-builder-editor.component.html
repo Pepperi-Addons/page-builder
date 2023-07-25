@@ -5,17 +5,14 @@
             <pep-textarea [value]="pageDescription" [label]="'PAGE_MANAGER.PAGE_DESCRIPTION_TITLE' | translate" rowSpan="2" (valueChange)="onPageDescriptionChange($event)"></pep-textarea>
             
             <div>
-                <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.PARAMETERS_TITLE' | translate}}</label>
+                <label class="body-xs mat-form-title ellipsis">{{'PAGE_MANAGER.PARAMETERS_TITLE' | translate}}</label>
                 <pep-button class="script-button" [value]="('PAGE_MANAGER.MANAGE_PARAMETERS' | translate)" 
                     (buttonClick)="openParametersPickerDialog();">
                 </pep-button>
             </div>
             <div>
-                <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.ON_LOAD_FLOW_TITLE' | translate}}</label>
-                <pep-button class="script-button" 
-                    [value]="onLoadFlow?.FlowKey || ('PAGE_MANAGER.CHOOSE_FLOW' | translate)" 
-                    (buttonClick)="openOnLoadFlowPickerDialog();">
-                </pep-button>
+                <label class="body-xs mat-form-title ellipsis">{{'PAGE_MANAGER.ON_LOAD_FLOW_TITLE' | translate}}</label>
+                <pep-flow-picker-button [flowHostObject]="onLoadFlowHostObject" (flowChange)="onLoadFlowChange($event)"></pep-flow-picker-button>
             </div>
             <div>
                 <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.SECTIONS_TITLE' | translate}}</label>
