@@ -37,7 +37,7 @@ export interface PageBlockView {
         Name: string;
         AddonUUID: string;
     }
-    Configuration: ResourceDataConfiguration;
+    Configuration: any;
     ConfigurationPerScreenSize?: ScreenSizeDataConfiguration;    
 }
 

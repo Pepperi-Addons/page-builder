@@ -4,6 +4,7 @@ import { IEditor, PagesService, UiPageSizeType } from 'src/app/services/pages.se
 import { DataViewScreenSize, PageBlock, PageSectionColumn, PageSizeType, SplitType } from '@pepperi-addons/papi-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
+import { PageBlockView } from 'shared';
 
 @Component({
     selector: 'section',
@@ -80,13 +81,13 @@ export class SectionComponent implements OnInit {
     @Input() columnsGap: UiPageSizeType;
     @Input() sectionsColumnsDropList = [];
     
-    private _pageBlocksMap = new Map<string, PageBlock>();
+    private _pageBlockViewsMap = new Map<string, PageBlockView>();
     @Input()
-    set pageBlocksMap(value: Map<string, PageBlock>) {
-        this._pageBlocksMap = value || new Map<string, PageBlock>();
+    set pageBlockViewsMap(value: Map<string, PageBlockView>) {
+        this._pageBlockViewsMap = value || new Map<string, PageBlockView>();
     }
-    get pageBlocksMap(): Map<string, PageBlock> {
-        return this._pageBlocksMap;
+    get pageBlockViewsMap(): Map<string, PageBlockView> {
+        return this._pageBlockViewsMap;
     }
 
     @HostBinding('style.max-height')

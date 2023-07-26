@@ -1,4 +1,4 @@
-<div *ngIf="pageBlock && (editable || !hideForCurrentScreenType)" 
+<div *ngIf="pageBlockView && (editable || !hideForCurrentScreenType)" 
     class="section-block-container"
     [ngClass]="{ 'editable-state': editable, 'block-hidden-state': hideForCurrentScreenType, 'active-block': active }"
     cdkDrag [cdkDragData]="blockContainer" [cdkDragDisabled]="!editable || !isMainEditorState" 
@@ -6,7 +6,7 @@
     (cdkDragExited)="onDragExited($event)" (cdkDragEntered)="onDragEntered($event)">
    
     <pep-draggable-item *ngIf="editable && isMainEditorState" cdkDragHandle style="cursor: grab;"
-        class="block-toolbar" [title]="pageBlock.RelationData?.Name" >
+        class="block-toolbar" [title]="pageBlockView.RelationData?.Name" >
         <ng-container pep-actions>
             <pep-button classNames="caution" sizeType="xs" iconName="system_bin" (buttonClick)="onRemoveBlockClick();"></pep-button>
             <hide-in [hideIn]="blockContainer.Hide" (hideInChange)="onHideBlockChange($event)"></hide-in>

@@ -18,15 +18,15 @@ export class SectionBlockComponent implements OnInit {
     @Input() editable = false;
     @Input() active = false;
     
-    private _pageBlock: PageBlockView;
+    private _pageBlockView: PageBlockView;
     @Input()
-    set pageBlock(value: PageBlockView) {
-        this._pageBlock = value;
+    set pageBlockView(value: PageBlockView) {
+        this._pageBlockView = value;
         this.setRemotePathOptions();
         this.setHostObject();
     }
-    get pageBlock(): PageBlockView {
-        return this._pageBlock;
+    get pageBlockView(): PageBlockView {
+        return this._pageBlockView;
     }
 
     private _blockContainer: PageBlockContainer;
@@ -79,18 +79,18 @@ export class SectionBlockComponent implements OnInit {
     }
     
     private setRemotePathOptions() {
-        const options = this.pagesService.getBlocksRemoteLoaderOptions(this.pageBlock.RelationData.Name, this.pageBlock.RelationData.AddonUUID);
+        const options = this.pagesService.getBlocksRemoteLoaderOptions(this.pageBlockView.RelationData.Name, this.pageBlockView.RelationData.AddonUUID);
         this.remoteLoaderOptions = options;
     }
 
     private setConfigurationOnScreenSizeChanged() {
-        const bp = this.pagesService.pageBlockProgressMap.get(this.pageBlock.Key);
+        const bp = this.pagesService.pageBlockProgressMap.get(this.pageBlockView.Key);
 
         // If this is new code (handle screen size change with callback function and not change the host object).
         if (bp.registerScreenSizeChangeCallback) {
             const data: { state: any, configuration: any } = {
                 state: this._state,
-                configuration: this.pagesService.getMergedConfigurationData(this.pageBlock)
+                configuration: this.pagesService.getMergedConfigurationData(this.pageBlockView)
             };
 
             bp.registerScreenSizeChangeCallback(data);
@@ -101,7 +101,7 @@ export class SectionBlockComponent implements OnInit {
     }
 
     private setHostObject(): void {
-        this._hostObject = this.pagesService.getBlockHostObject(this.pageBlock);
+        this._hostObject = this.pagesService.getBlockHostObject(this.pageBlockView);
     }
 
     private setIfHideForCurrentScreenType(): void {
@@ -112,8 +112,8 @@ export class SectionBlockComponent implements OnInit {
     ngOnInit(): void {
         // When block change call to his callback if declared, Else override the host object.
         this.pagesService.pageBlockChange$.subscribe((pageBlockKey: string) => {
-            if (this.pageBlock.Key === pageBlockKey) {
-                const bp = this.pagesService.pageBlockProgressMap.get(this.pageBlock.Key);
+            if (this.pageBlockView.Key === pageBlockKey) {
+                const bp = this.pagesService.pageBlockProgressMap.get(this.pageBlockView.Key);
                 
                 if (bp?.registerStateChangeCallback) {
                     const data: { state: any, configuration: any } = {
@@ -124,7 +124,7 @@ export class SectionBlockComponent implements OnInit {
                     bp.registerStateChangeCallback(data);
                 } else { 
                     // This is for support old blocks.
-                    this._pageBlock = bp.block;
+                    this._pageBlockView = bp.block;
                     this.setHostObject();
                 }
             }
@@ -132,22 +132,22 @@ export class SectionBlockComponent implements OnInit {
 
         // Update the changed state
         this.pagesService.pageStateChange$.subscribe((state: IPageState) => {
-            if (state?.BlocksState.hasOwnProperty(this.pageBlock.Key)) {
-                this._state = state.BlocksState[this.pageBlock.Key];
+            if (state?.BlocksState.hasOwnProperty(this.pageBlockView.Key)) {
+                this._state = state.BlocksState[this.pageBlockView.Key];
             }
         });
     }
 
     onEditBlockClick() {
-        this.pagesService.navigateToEditor('block', this.pageBlock.Key);
+        this.pagesService.navigateToEditor('block', this.pageBlockView.Key);
     }
 
     onRemoveBlockClick() {
-        this.pagesService.removeBlockFromSection(this.pageBlock.Key);
+        this.pagesService.removeBlockFromSection(this.pageBlockView.Key);
     }
 
     onHideBlockChange(hideIn: DataViewScreenSize[]) {
-        this.pagesService.hideBlock(this.sectionKey, this.pageBlock.Key, hideIn);
+        this.pagesService.hideBlock(this.sectionKey, this.pageBlockView.Key, hideIn);
         this.setIfHideForCurrentScreenType();
     }
 
@@ -166,20 +166,20 @@ export class SectionBlockComponent implements OnInit {
             case 'state-change':
                 // In runtime (or preview mode).
                 if (!this.editable) {
-                    this.pagesService.onBlockStateChange(this.pageBlock.Key, event);
+                    this.pagesService.onBlockStateChange(this.pageBlockView.Key, event);
                 }
                 break;
             case 'buton-click':
                 // In runtime (or preview mode).
                 if (!this.editable) {
-                    this.pagesService.onBlockButtonClick(this.pageBlock.Key, event);
+                    this.pagesService.onBlockButtonClick(this.pageBlockView.Key, event);
                 }
                 break;
             case 'register-state-change':
-                this.pagesService.onRegisterStateChange(this.pageBlock.Key, event);
+                this.pagesService.onRegisterStateChange(this.pageBlockView.Key, event);
                 break;
             case 'register-screen-size-change':
-                this.pagesService.onRegisterScreenSizeChange(this.pageBlock.Key, event);
+                this.pagesService.onRegisterScreenSizeChange(this.pageBlockView.Key, event);
                 break;
             case 'emit-event':
                 this.pagesService.emitEvent(event);
@@ -188,7 +188,7 @@ export class SectionBlockComponent implements OnInit {
     }
 
     onBlockLoad(event: any) {
-        this.pagesService.updateBlockLoaded(this.pageBlock.Key);
+        this.pagesService.updateBlockLoaded(this.pageBlockView.Key);
     }
 
     onDragStart(event: CdkDragStart) {

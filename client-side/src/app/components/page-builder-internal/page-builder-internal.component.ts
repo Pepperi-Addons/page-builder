@@ -8,7 +8,7 @@ import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@peppe
 import { DataViewScreenSize, Page, PageBlock, PageSection, PageSizeType } from '@pepperi-addons/papi-sdk';
 import { NavigationService } from 'src/app/services/navigation.service';
 import { coerceNumberProperty } from '@angular/cdk/coercion';
-import { IPageView } from 'shared';
+import { IPageView, PageBlockView } from 'shared';
 
 export interface IPageBuilderHostObject {
     pageKey: string;
@@ -65,9 +65,9 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
         return this._sectionsSubject.asObservable();
     }
 
-    private _pageBlocksMap = new Map<string, PageBlock>();
-    get pageBlocksMap(): ReadonlyMap<string, PageBlock> {
-        return this._pageBlocksMap;
+    private _pageBlockViewsMap = new Map<string, PageBlockView>();
+    get pageBlockViewsMap(): ReadonlyMap<string, PageBlockView> {
+        return this._pageBlockViewsMap;
     }
 
     constructor(
@@ -166,7 +166,7 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
 
             this.pagesService.pageBlockProgressMapChange$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
                 // Clear the blocks map and set it again.
-                const pageBlocksMap = new Map<string, PageBlock>();
+                const pageBlockViewsMap = new Map<string, PageBlockView>();
                 // const remoteEntriesMap = new Map<string, boolean>();
                 const pbRelationsNames = new Map<string, boolean>();
 
@@ -182,12 +182,12 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
                                 pbRelationsNames.set(bp.block.RelationData.Name, true);
                             }
 
-                            pageBlocksMap.set(bp.block.Key, bp.block);
+                            pageBlockViewsMap.set(bp.block.Key, bp.block);
                         }
                     }
                 });
 
-                this._pageBlocksMap = pageBlocksMap;
+                this._pageBlockViewsMap = pageBlockViewsMap;
             });
 
             this.pagesService.pageViewDataChange$.subscribe((pageView: IPageView) => {

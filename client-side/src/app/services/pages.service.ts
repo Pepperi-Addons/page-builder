@@ -326,14 +326,14 @@ export class PagesService {
         return initialProgress;
     }
 
-    private getPageViewBlock(block: PageBlock): PageBlockView {
+    private getPageViewBlockForEditor(block: PageBlock): PageBlockView {
         const blockView: PageBlockView = {
             Key: block.Key,
             RelationData: { 
                 Name: block.Configuration.Resource,
                 AddonUUID: block.Configuration.AddonUUID
             },
-            Configuration: block.Configuration,
+            Configuration: block.Configuration.Data,
             ConfigurationPerScreenSize: block.ConfigurationPerScreenSize
         };
 
@@ -988,7 +988,7 @@ export class PagesService {
                 const abRelation = this._availableBlocksDataSubject.getValue().find(ab => 
                     ab.RelationAddonUUID === block.Configuration.AddonUUID && ab.RelationName === block.Configuration.Resource);
                 
-                const blockView: PageBlockView = this.getPageViewBlock(block);
+                const blockView: PageBlockView = this.getPageViewBlockForEditor(block);
                 const hostObject = this.getCommonHostObject(blockView); 
     
                 // To let the block editor the option to know if to show reset (used for ConfigurationPerScreenSize).
@@ -1088,7 +1088,7 @@ export class PagesService {
 
     getMergedConfigurationData(block: PageBlockView, configurationSource = false): any {
         // Copy the object data.
-        let configurationData = JSON.parse(JSON.stringify(block.Configuration.Data));
+        let configurationData = JSON.parse(JSON.stringify(block.Configuration));
         const currentScreenType = this.getScreenType(this._screenSizeSubject.getValue());
 
         // Get the configuration data by the current screen size (if exist then merge it up to Tablet and up to Landscape).

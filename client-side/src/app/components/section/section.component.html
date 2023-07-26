@@ -32,8 +32,8 @@
             (cdkDropListDropped)="onBlockDropped($event)"
             [cdkDropListEnterPredicate]="canDropPredicate(i)"
         >
-            <section-block *ngIf="column.BlockContainer && pageBlocksMap.has(column.BlockContainer.BlockKey)" class="section-block" 
-                [sectionKey]="key" [pageBlock]="pageBlocksMap.get(column.BlockContainer.BlockKey)"
+            <section-block *ngIf="column.BlockContainer && pageBlockViewsMap.has(column.BlockContainer.BlockKey)" class="section-block" 
+                [sectionKey]="key" [pageBlockView]="pageBlockViewsMap.get(column.BlockContainer.BlockKey)"
                 [blockContainer]="column.BlockContainer" [editable]="editable" [isMainEditorState]="isMainEditorState" [sectionHeight]="styleHeight"
                 [active]="selectedBlockKey === column.BlockContainer?.BlockKey" [screenType]="screenType"
                 (dragExited)="onSectionBlockDragExited($event)" (dragEntered)="onSectionBlockDragEntered($event)"></section-block>

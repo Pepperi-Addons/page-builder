@@ -88,7 +88,7 @@ class ClientPagesService {
                     body: {
                         State: state,
                         ...(bodyExtra && bodyExtra), // If there is bodyExtra set them too (This is happens in all events except PageLoad).
-                        Configuration: block.Configuration,
+                        Configuration: block.Configuration.Data, // Set only the Configuration.Data into Configuration
                         ...(pageLoadEvent && { ConfigurationPerScreenSize: block.ConfigurationPerScreenSize }) // Add this only for page load event
                     },
                     ...(context && { context }) // Add context if not undefined.
@@ -121,11 +121,15 @@ class ClientPagesService {
         if (blockDataToOverride) {
             // Only if load merge the data, Else set it as is.
             if (pageLoadEvent) {
-                block.Configuration = blockDataToOverride.Configuration ?? block.Configuration;
+                // NOTE: If blockDataToOverride has Configuration take it into Configuration.Data, Else take the page block Configuration.Data.
+                // (cause we save it as PageBlock and only before return to client we convert it to PageBlockView).
+                block.Configuration.Data = blockDataToOverride.Configuration ?? block.Configuration.Data;
                 block.ConfigurationPerScreenSize = blockDataToOverride.ConfigurationPerScreenSize ?? block.ConfigurationPerScreenSize;
                 state = { ...state, ...blockDataToOverride.State };
             } else {
-                block.Configuration = blockDataToOverride.Configuration;
+                // NOTE: Set blockDataToOverride Configuration into Configuration.Data
+                // (cause we save it as PageBlock and only before return to client we convert it to PageBlockView).
+                block.Configuration.Data = blockDataToOverride.Configuration;
                 // block.ConfigurationPerScreenSize = blockDataToOverride.ConfigurationPerScreenSize;
                 state = blockDataToOverride.State;
             }
@@ -331,7 +335,8 @@ class ClientPagesService {
                     Name: block.Configuration.Resource,
                     AddonUUID: block.Configuration.AddonUUID
                 },
-                Configuration: block.Configuration,
+                // Set only the Configuration.Data into Configuration (the ResourceDataConfiguration object is neccessary only in PageBlock).
+                Configuration: block.Configuration.Data, 
                 ...((pageLoadEvent || pageBlockLoadEvent) && { ConfigurationPerScreenSize: block.ConfigurationPerScreenSize })
             }}),
             // Layout: page.Layout
