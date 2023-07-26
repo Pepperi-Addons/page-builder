@@ -94,6 +94,23 @@ export class PageBuilderEditorComponent implements OnInit {
         
     }
 
+    private prepareOnLoadFlowHostObject() {
+        this.onLoadFlowHostObject = {};
+        const runFlowData = this.onLoadFlow;
+
+        const fields = {};
+        
+        for (let index = 0; index < this.parameters.length; index++) {
+            const param = this.parameters[index];
+            fields[param.Key] = {
+                Type: param.Type
+            }                
+        }
+        
+        this.onLoadFlowHostObject['runFlowData'] = runFlowData;
+        this.onLoadFlowHostObject['fields'] = fields;
+    }
+
     private updateHostObject() {
         this._hostObject.pageName = this.pageName;
         this._hostObject.pageDescription = this.pageDescription;
@@ -189,6 +206,11 @@ export class PageBuilderEditorComponent implements OnInit {
         this.pagesService.onBlockDragEnd(event);
     }
 
+    onLoadFlowChange(flowData: any) {
+        this.onLoadFlow = flowData;
+        this.updateHostObject();
+    }
+
     openParametersPickerDialog() {
         const config = this.dialogService.getDialogConfig({ disableClose: false }, 'full-screen');
         const data = {
@@ -196,29 +218,6 @@ export class PageBuilderEditorComponent implements OnInit {
         };
 
         this.parametersDialogRef = this.dialogService.openDialog(this.parametersDialogTemplate, data, config);
-    }
-
-    private prepareOnLoadFlowHostObject() {
-        this.onLoadFlowHostObject = {};
-        const runFlowData = this.onLoadFlow;
-
-        const fields = {};
-        
-        for (let index = 0; index < this.parameters.length; index++) {
-            const param = this.parameters[index];
-            fields[param.Key] = {
-                Type: param.Type
-            }                
-        }
-        
-        this.onLoadFlowHostObject['runFlowData'] = runFlowData;
-        this.onLoadFlowHostObject['fields'] = fields;
-    }
-
-    onLoadFlowChange(flowData: any) {
-        debugger;
-        this.onLoadFlow = flowData;
-        this.updateHostObject();
     }
 
     onParametersChange(parameters: IParamemeter[]): void {
