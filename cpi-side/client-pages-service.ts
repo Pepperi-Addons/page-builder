@@ -1,4 +1,4 @@
-import { IContext } from "@pepperi-addons/cpi-node/build/cpi-side/events";
+import { IContext, IContextWithData } from "@pepperi-addons/cpi-node/build/cpi-side/events";
 import { NgComponentRelation, Page, PageBlock } from "@pepperi-addons/papi-sdk";
 import { RunFlowBody } from '@pepperi-addons/cpi-node';
 import { IBlockLoaderData, IPageBuilderData, IPageClientEventResult, IPageView, getAvailableBlockData, IBlockEndpointResult, SYSTEM_PARAMETERS } from "shared";
@@ -379,7 +379,7 @@ class ClientPagesService {
         return result;
     }
 
-    private async runOnLoadFlow(page: Page, pageParameters: any, eventData: any): Promise<void> {
+    private async runOnLoadFlow(page: Page, pageParameters: any, eventData: IContextWithData): Promise<void> {
         // If the OnLoadFlow exist run it.
         if (page?.OnLoadFlow?.FlowKey?.length > 0) {
             const savedPageParams = {};
@@ -472,13 +472,13 @@ class ClientPagesService {
         return result;
     }
     
-    async getPageLoadData(data: any, eventData: any): Promise<IPageClientEventResult> {
+    async getPageLoadData(eventData: IContextWithData): Promise<IPageClientEventResult> {
         let tmpResult: IPageBuilderData;
         
-        let page = data.Page || null;
-        const pageKey = data.PageKey || page?.Key || '';
-        const pageParameters = data.State?.PageParameters || {};
-        const blocksState = data.State?.BlocksState;
+        let page = eventData.Page || null;
+        const pageKey = eventData.PageKey || page?.Key || '';
+        const pageParameters = eventData.State?.PageParameters || {};
+        const blocksState = eventData.State?.BlocksState;
         const isSyncInstalled = await this.isSyncInstalled();
 
         if (isSyncInstalled) {
@@ -490,10 +490,10 @@ class ClientPagesService {
             const availableBlocksMap = this.getAvailableBlocksMap(availableBlocks);
 
             // Run the OnLoadFlow before we start (for override page parameters data).
-            await this.runOnLoadFlow(page, pageParameters, data);
+            await this.runOnLoadFlow(page, pageParameters, eventData);
 
             // This function override blocks data properties in page object.
-            await this.runAllPageBlocksEndpointForEvent('page-load', page, availableBlocksMap, pageParameters, blocksState, data.client?.context);
+            await this.runAllPageBlocksEndpointForEvent('page-load', page, availableBlocksMap, pageParameters, blocksState, eventData);
 
             tmpResult = {
                 page: page,
@@ -506,21 +506,21 @@ class ClientPagesService {
             tmpResult = temp.ok ? await(temp.json()) : { page: null, availableBlocks: [] };
 
             // Run the OnLoadFlow for override page parameters data.
-            await this.runOnLoadFlow(tmpResult.page, pageParameters, data);
+            await this.runOnLoadFlow(tmpResult.page, pageParameters, eventData);
         }
 
         const result = this.getPageClientEventResult(pageParameters, blocksState, tmpResult.page, true, tmpResult.availableBlocks);
         return result;
     }
 
-    async getPageStateChangeData(data: any, context: IContext | undefined): Promise<IPageClientEventResult> {
-        let page: Page = data.Page || null;
-        const pageKey = data.PageKey || page?.Key || '';
-        const pageParameters = data.State?.PageParameters || {};
-        const blocksState = data.State?.BlocksState;
+    async getPageStateChangeData(eventData: IContextWithData): Promise<IPageClientEventResult> {
+        let page: Page = eventData.Page || null;
+        const pageKey = eventData.PageKey || page?.Key || '';
+        const pageParameters = eventData.State?.PageParameters || {};
+        const blocksState = eventData.State?.BlocksState;
         const isSyncInstalled = await this.isSyncInstalled();
         
-        const keys = Object.keys(data.Changes.BlocksState);
+        const keys = Object.keys(eventData.Changes.BlocksState);
         const blockKey = keys.length > 0 ? keys[0] : ''; // Take the first key - this is the block that made this change
 
         if (isSyncInstalled) {
@@ -536,14 +536,14 @@ class ClientPagesService {
                 const availableBlocksMap = this.getAvailableBlocksMap(availableBlocks);
                 
                 // Get the changes from the data (Here we send the state and the state changes to the function).
-                const changes = data.Changes.BlocksState[block.Key];
+                const changes = eventData.Changes.BlocksState[block.Key];
 
                 // Set the changes to the body extra
                 const bodyExtra = { Changes: changes }; 
 
                 // This function override blocks data properties in page object.
                 const updatedBlocksMap: Map<string, PageBlock> = new Map<string, PageBlock>();
-                await this.runPageBlockEndpointForEvent('state-change', page, block, availableBlocksMap, pageParameters, blocksState, bodyExtra, updatedBlocksMap, context);
+                await this.runPageBlockEndpointForEvent('state-change', page, block, availableBlocksMap, pageParameters, blocksState, bodyExtra, updatedBlocksMap, eventData);
             }
         } else {
             if (!page) {
@@ -557,12 +557,12 @@ class ClientPagesService {
         return result;
     }
 
-    async getPageButtonClickData(data: any, context: IContext | undefined): Promise<IPageClientEventResult> {
-        let page: Page = data.Page || null;
-        const pageKey = data.PageKey || page?.Key || '';
-        const blockKey = data.BlockKey;
-        const pageParameters = data.State?.PageParameters || {};
-        const blocksState = data.State?.BlocksState;
+    async getPageButtonClickData(eventData: IContextWithData): Promise<IPageClientEventResult> {
+        let page: Page = eventData.Page || null;
+        const pageKey = eventData.PageKey || page?.Key || '';
+        const blockKey = eventData.BlockKey;
+        const pageParameters = eventData.State?.PageParameters || {};
+        const blocksState = eventData.State?.BlocksState;
         const isSyncInstalled = await this.isSyncInstalled();
         
         if (isSyncInstalled) {
@@ -578,11 +578,11 @@ class ClientPagesService {
                 const availableBlocksMap = this.getAvailableBlocksMap(availableBlocks);
                 
                 // Set the button key to the body extra
-                const bodyExtra = { ButtonKey: data.ButtonKey }; 
+                const bodyExtra = { ButtonKey: eventData.ButtonKey }; 
 
                 // This function override blocks data properties in page object.
                 const updatedBlocksMap: Map<string, PageBlock> = new Map<string, PageBlock>();
-                await this.runPageBlockEndpointForEvent('button-click', page, block, availableBlocksMap, pageParameters, blocksState, bodyExtra, updatedBlocksMap, context);
+                await this.runPageBlockEndpointForEvent('button-click', page, block, availableBlocksMap, pageParameters, blocksState, bodyExtra, updatedBlocksMap, eventData);
             }
         } else {
             if (!page) {
@@ -597,11 +597,11 @@ class ClientPagesService {
     }
 
     // This is for editor
-    async getPageBlockLoadData(data: any, context: IContext | undefined): Promise<IPageClientEventResult> {
-        let page: Page = data.Page;
-        const pageParameters = data.State?.PageParameters || {};
-        const blocksState = data.State?.BlocksState;
-        const blockKey = data.BlockKey;
+    async getPageBlockLoadData(eventData: IContextWithData): Promise<IPageClientEventResult> {
+        let page: Page = eventData.Page;
+        const pageParameters = eventData.State?.PageParameters || {};
+        const blocksState = eventData.State?.BlocksState;
+        const blockKey = eventData.BlockKey;
         const isSyncInstalled = await this.isSyncInstalled();
         
         if (isSyncInstalled) {
@@ -614,7 +614,7 @@ class ClientPagesService {
                 
                 // This function override blocks data properties in page object.
                 const updatedBlocksMap: Map<string, PageBlock> = new Map<string, PageBlock>();
-                await this.runPageBlockEndpointForEvent('page-load', page, block, availableBlocksMap, pageParameters, blocksState, null, updatedBlocksMap, context);
+                await this.runPageBlockEndpointForEvent('page-load', page, block, availableBlocksMap, pageParameters, blocksState, null, updatedBlocksMap, eventData);
             }
         }
 

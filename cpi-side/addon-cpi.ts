@@ -1,4 +1,5 @@
 import '@pepperi-addons/cpi-node'
+import { IContextWithData } from '@pepperi-addons/cpi-node/build/cpi-side/events';
 import { CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, CLIENT_ACTION_ON_CLIENT_PAGE_LOAD, 
     CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, IPageClientEventResult } from 'shared';
 import ClientPagesService from './client-pages-service';
@@ -7,30 +8,31 @@ export const router = Router();
 
 export async function load(configuration: any) {
     // Handle on page load.
-    pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_LOAD as any, {}, async (data): Promise<IPageClientEventResult> => {
+    pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_LOAD as any, {}, async (data: IContextWithData): Promise<IPageClientEventResult> => {
+        debugger;
         const service = new ClientPagesService();
-        const result = await service.getPageLoadData(data, data);
+        const result = await service.getPageLoadData(data);
         return result;
     });
 
     // Handle on page state change.
-    pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE as any, {}, async (data): Promise<IPageClientEventResult> => {
+    pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE as any, {}, async (data: IContextWithData): Promise<IPageClientEventResult> => {
         const service = new ClientPagesService();
-        const result = await service.getPageStateChangeData(data, data.client?.context);
+        const result = await service.getPageStateChangeData(data);
         return result;
     });
 
     // Handle on page state change.
-    pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK as any, {}, async (data): Promise<IPageClientEventResult> => {
+    pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK as any, {}, async (data: IContextWithData): Promise<IPageClientEventResult> => {
         const service = new ClientPagesService();
-        const result = await service.getPageButtonClickData(data, data.client?.context);
+        const result = await service.getPageButtonClickData(data);
         return result;
     });
     
     // Handle on block load - For editor.
-    pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD as any, {}, async (data): Promise<IPageClientEventResult> => {
+    pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD as any, {}, async (data: IContextWithData): Promise<IPageClientEventResult> => {
         const service = new ClientPagesService();
-        const result = await service.getPageBlockLoadData(data, data.client?.context);
+        const result = await service.getPageBlockLoadData(data);
         return result;
     });
 
@@ -51,7 +53,7 @@ router.get('/get_page_data', async (req, res, next) => {
         const pageKey = req.query['key']?.toString();
         if (pageKey) {
             const service = new ClientPagesService();
-            result = await service.getPageDataOld(pageKey, req?.context);
+            result = await service.getPageDataOld(pageKey, req.context);
         }
     } catch (err) {
         console.log(err);

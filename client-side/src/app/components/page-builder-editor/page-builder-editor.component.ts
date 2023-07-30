@@ -53,7 +53,7 @@ export class PageBuilderEditorComponent implements OnInit {
     
     private _parameters: IParamemeter[] = [];
     set parameters(value: IParamemeter[]) {
-        this._parameters = value;
+        this._parameters = value || [];
         this.prepareOnLoadFlowHostObject();
     }
     get parameters(): IParamemeter[] {
