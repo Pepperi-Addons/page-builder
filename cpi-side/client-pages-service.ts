@@ -234,7 +234,7 @@ class ClientPagesService {
     }
 
     private async runBlockEndpointForEventInternal(eventType: PagesClientActionType, page: Page, block: PageBlock, availableBlocksMap: Map<string, IBlockLoaderData>, 
-        pageState: IPageState, bodyExtra: any, context: IContext | undefined): Promise<any> {
+        pageState: IPageState, bodyExtra: any, updatedBlocksMap: Map<string, PageBlock> | null, context: IContext | undefined): Promise<any> {
     
         let changedParameters = {};
 
@@ -258,7 +258,7 @@ class ClientPagesService {
                     blockEndpoint = currentAvailableBlock.relation.BlockButtonClickEndpoint;
                 }
     
-                changedParameters = await this.runBlockEndpointAndSetData(pageLoadEvent, blockEndpoint, block, pageState, bodyExtra, null, context);
+                changedParameters = await this.runBlockEndpointAndSetData(pageLoadEvent, blockEndpoint, block, pageState, bodyExtra, updatedBlocksMap, context);
             }
         }
         
@@ -273,7 +273,7 @@ class ClientPagesService {
 
         // Let the blocks manipulate there data and replace it in page blocks
         await Promise.all(blocks.map(async (block: any) => {
-            const res = await this.runBlockEndpointForEventInternal(eventType, page, block, availableBlocksMap, pageState, null, context);
+            const res = await this.runBlockEndpointForEventInternal(eventType, page, block, availableBlocksMap, pageState, null, null, context);
             changedParameters = { ...changedParameters, ...res };
         }));
 
@@ -286,7 +286,7 @@ class ClientPagesService {
     private async runPageBlockEndpointForEvent(eventType: PagesClientActionType, page: Page, block: PageBlock, availableBlocksMap: Map<string, IBlockLoaderData>, 
         pageState: IPageState, bodyExtra: any, updatedBlocksMap: Map<string, PageBlock>, context: IContext | undefined): Promise<any> {
         
-        const changedParameters = await this.runBlockEndpointForEventInternal(eventType, page, block, availableBlocksMap, pageState, bodyExtra, context);
+        const changedParameters = await this.runBlockEndpointForEventInternal(eventType, page, block, availableBlocksMap, pageState, bodyExtra, updatedBlocksMap, context);
         
         // Call to override blocks data when parameters change.
         if (Object.keys(changedParameters).length > 0) {
