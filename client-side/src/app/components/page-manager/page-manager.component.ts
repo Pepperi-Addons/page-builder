@@ -112,19 +112,6 @@ export class PageManagerComponent extends BaseDestroyerComponent implements OnIn
             this.currentEditor = editor;
         });
 
-        // TODO: Do we need this??
-        // // For update editor data in case that the editor is block editor and the id is the updated block key.
-        // this.pagesService.pageBlockChange$.subscribe((pageBlockKey: string) => {
-        //     if (this.currentEditor?.type === 'block' && this.currentEditor.id === pageBlockKey) {
-        //         this.setCurrentEditor();
-        //     }
-        // });
-
-        this.layoutService.onResize$.pipe(this.getDestroyer()).subscribe((size: PepScreenSizeType) => {
-            const screenType = this.pagesService.getScreenType(size);
-            this.setScreenWidth(screenType);
-        });
-
         this.pagesService.screenSizeChange$.pipe(this.getDestroyer()).subscribe((size: PepScreenSizeType) => {
             this.screenSize = size;
             const screenType = this.pagesService.getScreenType(this.screenSize);

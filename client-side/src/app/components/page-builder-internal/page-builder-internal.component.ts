@@ -43,6 +43,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
     set screenSize(value: PepScreenSizeType) {
         this._screenSize = value;
         this.screenType = this.pagesService.getScreenType(value);
+        this.pagesService.setScreenWidth(this.screenType);
     }
     get screenSize(): PepScreenSizeType {
         return this._screenSize;
@@ -158,7 +159,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
             const queryParams = this.hostObject?.pageParams || urlParams;
             this.pagesService.loadPageBuilder(addonUUID, pageKey, this.editMode, queryParams);
 
-            this.layoutService.onResize$.pipe(this.getDestroyer()).subscribe((size: PepScreenSizeType) => {
+            this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
                 this.screenSize = size;
             });
 
