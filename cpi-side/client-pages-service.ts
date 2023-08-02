@@ -58,7 +58,7 @@ class ClientPagesService {
                 if (!pageParameters.hasOwnProperty(paramKey) || pageParameters[paramKey] !== changedParameters[paramKey]) {
                     // If this block is consume this parameter || consume all ('*').
                     if (block?.PageConfiguration?.Parameters.some(param => (param.Key === '*' || param.Key === paramKey) && param.Consume)) {
-                        blocksMap.set(block.Configuration.AddonUUID, block);
+                        blocksMap.set(block.Key, block);
                         return;
                     }
                 }
@@ -175,7 +175,7 @@ class ClientPagesService {
             throw new Error('Exceeded limit counter');
         } else {
             // Get the cosumers of the changed params.
-            const blocksMap = this.getConsumedParametersBlocks(page.Blocks, pageState.PageParameters, changedParameters);
+            const consumerBlocksMap = this.getConsumedParametersBlocks(page.Blocks, pageState.PageParameters, changedParameters);
             
             // After we found the blocks that cosume these changedParameters, set the changedParameters in changedParametersToFilterFrom for filter from it after.
             let changedParametersToFilterFrom: any = { ...changedParameters }; 
@@ -189,7 +189,7 @@ class ClientPagesService {
             changedParameters = {};
             
             // Let the blocks manipulate there data and replace it in page blocks
-            const blocks: PageBlock[] = Array.from(blocksMap.values());
+            const blocks: PageBlock[] = Array.from(consumerBlocksMap.values());
             await Promise.all(blocks.map(async (block: PageBlock) => {
                 const currentAvailableBlock = availableBlocksMap.get(this.getAvailableBlockKey(block.Configuration.AddonUUID, block.Configuration.Resource));
     
@@ -234,7 +234,7 @@ class ClientPagesService {
     }
 
     private async runBlockEndpointForEventInternal(eventType: PagesClientActionType, page: Page, block: PageBlock, availableBlocksMap: Map<string, IBlockLoaderData>, 
-        pageState: IPageState, bodyExtra: any, updatedBlocksMap: Map<string, PageBlock> | null, context: IContext | undefined): Promise<any> {
+        pageState: IPageState, bodyExtra: any, context: IContext | undefined): Promise<any> {
     
         let changedParameters = {};
 
@@ -258,7 +258,7 @@ class ClientPagesService {
                     blockEndpoint = currentAvailableBlock.relation.BlockButtonClickEndpoint;
                 }
     
-                changedParameters = await this.runBlockEndpointAndSetData(pageLoadEvent, blockEndpoint, block, pageState, bodyExtra, updatedBlocksMap, context);
+                changedParameters = await this.runBlockEndpointAndSetData(pageLoadEvent, blockEndpoint, block, pageState, bodyExtra, null, context);
             }
         }
         
@@ -273,7 +273,7 @@ class ClientPagesService {
 
         // Let the blocks manipulate there data and replace it in page blocks
         await Promise.all(blocks.map(async (block: any) => {
-            const res = await this.runBlockEndpointForEventInternal(eventType, page, block, availableBlocksMap, pageState, null, null, context);
+            const res = await this.runBlockEndpointForEventInternal(eventType, page, block, availableBlocksMap, pageState, null, context);
             changedParameters = { ...changedParameters, ...res };
         }));
 
@@ -286,7 +286,7 @@ class ClientPagesService {
     private async runPageBlockEndpointForEvent(eventType: PagesClientActionType, page: Page, block: PageBlock, availableBlocksMap: Map<string, IBlockLoaderData>, 
         pageState: IPageState, bodyExtra: any, updatedBlocksMap: Map<string, PageBlock>, context: IContext | undefined): Promise<any> {
         
-        const changedParameters = await this.runBlockEndpointForEventInternal(eventType, page, block, availableBlocksMap, pageState, bodyExtra, updatedBlocksMap, context);
+        const changedParameters = await this.runBlockEndpointForEventInternal(eventType, page, block, availableBlocksMap, pageState, bodyExtra, context);
         
         // Call to override blocks data when parameters change.
         if (Object.keys(changedParameters).length > 0) {
@@ -382,17 +382,29 @@ class ClientPagesService {
         return result;
     }
 
+    private getMergedParameters(page: Page, pageParameters: any): any {
+        // Get the system param into object
+        const systemParameters = {};
+        for (let index = 0; index < SYSTEM_PARAMETERS.length; index++) {
+            const sp = SYSTEM_PARAMETERS[index];
+            systemParameters[sp.Key] = sp.DefaultValue;
+        }
+
+        // Get the page.Parameters into object
+        const savedPageParams = {};
+        for (let index = 0; index < page.Parameters?.length; index++) {
+            const pageParam = page.Parameters[index];
+            savedPageParams[pageParam.Key] = pageParam.DefaultValue || '';
+        }
+
+        const mergedParameters = { ...systemParameters, ...savedPageParams, ...pageParameters };
+        return mergedParameters;
+    }
+
     private async runOnLoadFlow(page: Page, pageParameters: any, eventData: IContextWithData): Promise<void> {
         // If the OnLoadFlow exist run it.
         if (page?.OnLoadFlow?.FlowKey?.length > 0) {
-            const savedPageParams = {};
-
-            for (let index = 0; index < page.Parameters?.length; index++) {
-                const pageParam = page.Parameters[index];
-                savedPageParams[pageParam.Key] = pageParam.DefaultValue || '';
-            }
-
-            const mergedParameters = { ...SYSTEM_PARAMETERS, ...savedPageParams, ...pageParameters };
+            const mergedParameters = this.getMergedParameters(page, pageParameters);
             const dynamicParamsData: any = {};
             
             // Create dynamic params map for set the values (also for later usage when set the pageParameters).
@@ -430,13 +442,13 @@ class ClientPagesService {
             for (let index = 0; index < resultKeys.length; index++) {
                 const key = resultKeys[index];
                 
-                // Override only parameters that declared in page parameters and returned in the flow result
+                // Override pageParameters for all the matches keys in mergedParameters object that returned in the flow result.
                 const pagePropName = dynamicParamsMap.get(key);
-                if (pagePropName && pageParameters.hasOwnProperty(pagePropName)) {
+                if (pagePropName && mergedParameters.hasOwnProperty(pagePropName)) {
                     pageParameters[pagePropName] = flowResult[key];
                 } else {
-                    // TODO: Override also params that are not declared??
-                    if (pageParameters.hasOwnProperty(key)) {
+                    // TODO: Override also params that are not declared (not dynamic)??
+                    if (mergedParameters.hasOwnProperty(key)) {
                         pageParameters[key] = flowResult[key];
                     }
                 }

@@ -1,4 +1,4 @@
-import { InstalledAddon, NgComponentRelation, Page, PageLayout, ResourceDataConfiguration, ScreenSizeDataConfiguration } from "@pepperi-addons/papi-sdk";
+import { InstalledAddon, NgComponentRelation, Page, PageLayout, ResourceDataConfiguration, SchemeFieldType, ScreenSizeDataConfiguration } from "@pepperi-addons/papi-sdk";
 
 // **********************************************************************************************
 //                          Client & User events const
@@ -132,7 +132,14 @@ export const DEFAULT_BLANK_PAGE_DATA: Page = {
     }
 }
 
-export const SYSTEM_PARAMETERS = { 'AccountUUID': '' };
+interface IParamemeter {
+    Key: string;
+    Type: SchemeFieldType;
+    DefaultValue: any;
+}
+export const SYSTEM_PARAMETERS: IParamemeter[] = [
+    { Key: 'AccountUUID', Type: 'String', DefaultValue: '' }
+];
 
 import homepage_blank from './template_pages/homepage_blank.json';
 import homepage_gridy from './template_pages/homepage_gridy.json';

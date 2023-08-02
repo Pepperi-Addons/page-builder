@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { IParamemeter } from '@pepperi-addons/ngx-composite-lib/manage-parameters';
 import { PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { IPepDraggableItem } from '@pepperi-addons/ngx-lib/draggable-items/draggable-items.model';
-import { IAvailableBlockData } from 'shared';
+import { IAvailableBlockData, SYSTEM_PARAMETERS } from 'shared';
 import { PagesService, IPageEditor, UiPageSizeType } from '../../services/pages.service';
 import { BaseDestroyerComponent } from '../base/base-destroyer.component';
 
@@ -105,7 +105,14 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
             const param = this.parameters[index];
             fields[param.Key] = {
                 Type: param.Type
-            }                
+            }
+        }
+
+        for (let index = 0; index < SYSTEM_PARAMETERS.length; index++) {
+            const sp = SYSTEM_PARAMETERS[index];
+            fields[sp.Key] = {
+                Type: sp.Type
+            }
         }
         
         this.onLoadFlowHostObject['runFlowData'] = runFlowData;
@@ -125,7 +132,7 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
         this._hostObject.roundedCorners = this.roundedCorners === 'none' ? undefined : this.roundedCorners;
 
         this.prepareOnLoadFlowHostObject();
-        
+
         this.hostObjectChange.emit(this.hostObject);
     }
 
