@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core'
 import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { PepDialogData, PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
+import { DataViewScreenSize } from '@pepperi-addons/papi-sdk';
 
 @Injectable({ providedIn: 'root' })
 export class UtilitiesService {
@@ -100,5 +101,17 @@ export class UtilitiesService {
         });
 
         return this.dialogService.openDefaultDialog(data);
+    }
+
+    getCssScreenWidh(screenType: DataViewScreenSize): string {
+        let widthToSet = '100%';
+
+        if (screenType === 'Tablet') {
+            widthToSet = '720';
+        } else if (screenType === 'Phablet') {
+            widthToSet = '360';
+        }
+
+        return widthToSet;
     }
 }

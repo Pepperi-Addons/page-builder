@@ -59,17 +59,14 @@ export class PageManagerComponent extends BaseDestroyerComponent implements OnIn
     constructor(
         private renderer: Renderer2,
         private translate: TranslateService,
-        private pepUtilitiesService: PepUtilitiesService,
         private dialogService: PepDialogService,
         private pepAddonService: PepAddonService,
         private layoutService: PepLayoutService,
         private pagesService: PagesService,
         private utilitiesService: UtilitiesService,
-        private pepSnackBarService: PepSnackBarService,
         public navigationService: NavigationService,
         private viewContainerRef: ViewContainerRef,
         private dimxService: DIMXService,
-        private cd: ChangeDetectorRef,
     ) {
         super();
         this.pepAddonService.setShellRouterData({ showSidebar: false, addPadding: false});
@@ -86,15 +83,7 @@ export class PageManagerComponent extends BaseDestroyerComponent implements OnIn
     }
 
     private setScreenWidth(screenType: DataViewScreenSize) {
-        let widthToSet = '100%';
-
-        if (screenType === 'Tablet') {
-            widthToSet = '720';
-        } else if (screenType === 'Phablet') {
-            widthToSet = '360';
-        }
-
-        this.pagesService.setScreenWidth(widthToSet);
+        this.pagesService.setScreenWidth(screenType);
     }
 
     private updateViewportWidth() {

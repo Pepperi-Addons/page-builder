@@ -1397,7 +1397,9 @@ export class PagesService {
         return res;
     }
 
-    setScreenWidth(value: string) {
+    setScreenWidth(screenType: DataViewScreenSize) {
+        const value = this.utilitiesService.getCssScreenWidh(screenType)
+
         let width = coerceNumberProperty(value, 0);
         if (width === 0) {
             this._screenWidthSubject.next('100%');
