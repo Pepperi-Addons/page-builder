@@ -9,6 +9,7 @@ import { DataViewScreenSize, Page, PageBlock, PageSection, PageSizeType } from '
 import { NavigationService } from 'src/app/services/navigation.service';
 import { coerceNumberProperty } from '@angular/cdk/coercion';
 import { IPageView, PageBlockView } from 'shared';
+import { BaseDestroyerComponent } from '../base/base-destroyer.component';
 
 export interface IPageBuilderHostObject {
     pageKey: string;
@@ -21,7 +22,7 @@ export interface IPageBuilderHostObject {
     templateUrl: './page-builder-internal.component.html',
     styleUrls: ['./page-builder-internal.component.scss']
 })
-export class PageBuilderInternalComponent implements OnInit, OnDestroy {
+export class PageBuilderInternalComponent extends BaseDestroyerComponent implements OnInit, OnDestroy {
     @ViewChild('sectionsCont', { static: true }) sectionsContainer: ElementRef;
 
     @Input() editMode: boolean = false;
@@ -78,6 +79,7 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
         private layoutService: PepLayoutService,
         private pagesService: PagesService
     ) {
+        super();
     }
 
     private convertPageSizeType(size: PageSizeType | 'none') {
@@ -156,15 +158,15 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
             const queryParams = this.hostObject?.pageParams || urlParams;
             this.pagesService.loadPageBuilder(addonUUID, pageKey, this.editMode, queryParams);
 
-            this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
+            this.layoutService.onResize$.pipe(this.getDestroyer()).subscribe((size: PepScreenSizeType) => {
                 this.screenSize = size;
             });
 
-            this.pagesService.sectionsChange$.subscribe(res => {
-                this._sectionsSubject.next(res);
+            this.pagesService.sectionsChange$.pipe(this.getDestroyer()).subscribe((sections: PageSection[]) => {
+                this._sectionsSubject.next(sections);
             });
 
-            this.pagesService.pageBlockProgressMapChange$.subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
+            this.pagesService.pageBlockProgressMapChange$.pipe(this.getDestroyer()).subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
                 // Clear the blocks map and set it again.
                 const pageBlockViewsMap = new Map<string, PageBlockView>();
                 // const remoteEntriesMap = new Map<string, boolean>();
@@ -190,7 +192,7 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
                 this._pageBlockViewsMap = pageBlockViewsMap;
             });
 
-            this.pagesService.pageViewDataChange$.subscribe((pageView: IPageView) => {
+            this.pagesService.pageViewDataChange$.pipe(this.getDestroyer()).subscribe((pageView: IPageView) => {
                 this.setPageDataProperties(pageView);
             });
         } else {
@@ -210,9 +212,9 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
     getSectionsTemplateRows() {
         let templateRows = '';
         let fillHeightCount = 0;
-        this.sections$.subscribe(res => {    
-               if(res?.length){
-                    res.forEach(sec => {
+        this.sections$.pipe(this.getDestroyer()).subscribe((sections: PageSection[]) => {    
+               if(sections?.length){
+                    sections.forEach(sec => {
                         if(sec.FillHeight === true){
                             fillHeightCount++;
                             templateRows += ' auto';

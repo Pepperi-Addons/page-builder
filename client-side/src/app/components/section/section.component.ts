@@ -5,13 +5,14 @@ import { DataViewScreenSize, PageBlock, PageSectionColumn, PageSizeType, SplitTy
 import { TranslateService } from '@ngx-translate/core';
 import { PepLayoutService, PepScreenSizeType } from '@pepperi-addons/ngx-lib';
 import { PageBlockView } from 'shared';
+import { BaseDestroyerComponent } from '../base/base-destroyer.component';
 
 @Component({
     selector: 'section',
     templateUrl: './section.component.html',
     styleUrls: ['./section.component.scss', './section.component.theme.scss']
 })
-export class SectionComponent implements OnInit {
+export class SectionComponent extends BaseDestroyerComponent implements OnInit {
     @ViewChild('sectionContainer') sectionContainerRef: ElementRef;
     @ViewChildren('columnsWrapper') columnsElementRef: QueryList<ElementRef>;
 
@@ -116,11 +117,16 @@ export class SectionComponent implements OnInit {
         private renderer: Renderer2,
         // private translate: TranslateService,
         private pagesService: PagesService
-    ) { }
+    ) { 
+        super();
+    }
 
     private calculateIfSectionContainsBlocks() {
         this.containsBlocks = this.columns.some(column => column.BlockContainer);
-        this.shouldSetDefaultHeight = !this.containsBlocks;
+
+        if (this.editable) {
+            this.shouldSetDefaultHeight = !this.containsBlocks;
+        }
     }
 
     private setScreenType() {
@@ -217,29 +223,34 @@ export class SectionComponent implements OnInit {
     ngOnInit(): void {
         this.refreshSplit();
 
+        // Just to calculate if sections contains blocks
+        this.pagesService.sectionsChange$.pipe(this.getDestroyer()).subscribe(res => {
+            this.calculateIfSectionContainsBlocks();
+        });
+
         if (this.editable) {
-            this.pagesService.editorChange$.subscribe((editor: IEditor) => {
+            this.pagesService.editorChange$.pipe(this.getDestroyer()).subscribe((editor: IEditor) => {
                 this.isMainEditorState = editor && editor.type === 'page-builder';
                 this.isEditing = editor && editor.type === 'section' && editor.id === this.key;
                 this.selectedBlockKey = editor && editor.type === 'block' ? editor.id : '';
             });
-
-            // Just to calculate if sections contains blocks
-            this.pagesService.sectionsChange$.subscribe(res => {
-                this.calculateIfSectionContainsBlocks();
-            });
-
-            this.pagesService.draggingBlockKey.subscribe((draggingBlockKey) => {
+            
+            this.pagesService.draggingBlockKey.pipe(this.getDestroyer()).subscribe((draggingBlockKey: string) => {
                 this.draggingBlockKey = draggingBlockKey;
 
-                // If there is only one block in the section and now it's this block that the user is dragging.
-                const blocksLength = this.columns.filter(column => column.BlockContainer).length;
-                if (blocksLength === 1 && this.columns.find(c => c.BlockContainer?.BlockKey === this.draggingBlockKey)) {
-                    this.shouldSetDefaultHeight = true;
+                if (draggingBlockKey === '') {
+                    this.calculateIfSectionContainsBlocks();
+                } else {
+                    // If there is only one block in the section and now it's this block that the user is dragging.
+                    const blocksLength = this.columns.filter(column => column.BlockContainer).length;
+                    if (blocksLength === 1 && this.columns.find(c => c.BlockContainer?.BlockKey === this.draggingBlockKey)) {
+                        this.shouldSetDefaultHeight = true;
+                    }
                 }
+
             });
 
-            this.pagesService.draggingSectionKey.subscribe((draggingSectionKey) => {
+            this.pagesService.draggingSectionKey.pipe(this.getDestroyer()).subscribe((draggingSectionKey: string) => {
                 this.draggingSectionKey = draggingSectionKey;
             });
         }
@@ -287,23 +298,25 @@ export class SectionComponent implements OnInit {
     }
 
     onSectionBlockDragExited(event: CdkDragExit) {
-        // If the block is exit from his container and it's the only block in this section.
-        if (this.containsBlocks) {
-            const blocksLength = this.columns.filter(column => column.BlockContainer).length;
+        // TODO: Remove this.
+        // // If the block is exit from his container and it's the only block in this section.
+        // if (this.containsBlocks) {
+        //     const blocksLength = this.columns.filter(column => column.BlockContainer).length;
 
-            if (blocksLength === 1) {
-                this.containsBlocks = false;
-                this.shouldSetDefaultHeight = !this.containsBlocks;
-            }
-        }
+        //     if (blocksLength === 1) {
+        //         this.containsBlocks = false;
+        //         this.shouldSetDefaultHeight = true;
+        //     }
+        // }
     }
 
     onSectionBlockDragEntered(event: CdkDragEnter) {
-        // Only in case that the block entered back to his container and it's the only block in this section.
-        if (event.container.id === event.item.dropContainer.id) {
-            if (!this.containsBlocks) {
-                this.containsBlocks = true;
-            }
-        }
+        // TODO: Remove this.
+        // // Only in case that the block entered back to his container and it's the only block in this section.
+        // if (event.container.id === event.item.dropContainer.id) {
+        //     if (!this.containsBlocks) {
+        //         this.containsBlocks = true;
+        //     }
+        // }
     }
 }

@@ -4,10 +4,64 @@
 // set mat tab as fixed tab just on the editors
 ::ng-deep {
     .page-builder-editor-tabs {
+        height: 100%;
+
         .mat-tab-header {
             position: sticky;
             top: variables.$top-bar-height;
             z-index: 2;
+        }
+
+        .mat-tab-header-pagination {
+            display: none;
+        }
+
+        .mat-tab-labels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            .mat-tab-label {
+                padding: 0 variables.$spacing-md !important;
+            }
+        }
+
+        .mat-tab-body-wrapper {
+            overflow: unset;
+            margin: 0;
+            display: block;
+
+            .mat-tab-body {
+                &.mat-tab-body-active {
+                    overflow: unset;
+
+                    .mat-tab-body-content {
+                        overflow: unset;
+                        display: flex;
+                        flex-direction: column;
+                        padding-inline: 0 !important;
+                    }
+                }
+            }
+        }
+
+        .page-builder-editor-tab {
+            overflow: inherit;
+            display: inherit;
+            flex-direction: inherit;
+            gap: variables.$spacing-lg;
+            
+            .group-buttons-container {
+                .toggle-buttons {
+                    width: 100%;
+                }
+            }
+
+            pep-checkbox,
+            pep-select,
+            pep-textarea, 
+            pep-textbox {
+                margin-bottom: 0 !important;
+            }
         }
     }
 }

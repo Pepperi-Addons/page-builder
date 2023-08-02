@@ -8,6 +8,7 @@ import { PepDialogService } from '@pepperi-addons/ngx-lib/dialog';
 import { IPepDraggableItem } from '@pepperi-addons/ngx-lib/draggable-items/draggable-items.model';
 import { IAvailableBlockData } from 'shared';
 import { PagesService, IPageEditor, UiPageSizeType } from '../../services/pages.service';
+import { BaseDestroyerComponent } from '../base/base-destroyer.component';
 
 export interface ISpacingOption {
     key?: UiPageSizeType; 
@@ -19,7 +20,7 @@ export interface ISpacingOption {
     templateUrl: './page-builder-editor.component.html',
     styleUrls: ['./page-builder-editor.component.scss']
 })
-export class PageBuilderEditorComponent implements OnInit {
+export class PageBuilderEditorComponent extends BaseDestroyerComponent implements OnInit {
     @ViewChild('availableBlocksContainer', { read: ElementRef }) availableBlocksContainer: ElementRef;
     @ViewChild('parametersDialogTemplate', { static: true, read: TemplateRef }) parametersDialogTemplate!: TemplateRef<any>;
         
@@ -41,6 +42,8 @@ export class PageBuilderEditorComponent implements OnInit {
         this.sectionsGap = this._hostObject.sectionsGap || 'md';
         this.columnsGap = this._hostObject.columnsGap || 'md';
         this.roundedCorners = this._hostObject.roundedCorners || 'none';
+
+        this.prepareOnLoadFlowHostObject();
     }
     get hostObject(): IPageEditor {
         return this._hostObject;
@@ -54,7 +57,6 @@ export class PageBuilderEditorComponent implements OnInit {
     private _parameters: IParamemeter[] = [];
     set parameters(value: IParamemeter[]) {
         this._parameters = value || [];
-        this.prepareOnLoadFlowHostObject();
     }
     get parameters(): IParamemeter[] {
         return this._parameters;
@@ -63,7 +65,6 @@ export class PageBuilderEditorComponent implements OnInit {
     private _onLoadFlow: any = {};
     set onLoadFlow(value: any) {
         this._onLoadFlow = value;
-        this.prepareOnLoadFlowHostObject();
     }
     get onLoadFlow(): any {
         return this._onLoadFlow;
@@ -91,7 +92,7 @@ export class PageBuilderEditorComponent implements OnInit {
         private pagesService: PagesService,
         private dialogService: PepDialogService
     ) { 
-        
+        super();
     }
 
     private prepareOnLoadFlowHostObject() {
@@ -123,6 +124,8 @@ export class PageBuilderEditorComponent implements OnInit {
         this._hostObject.columnsGap = this.columnsGap;
         this._hostObject.roundedCorners = this.roundedCorners === 'none' ? undefined : this.roundedCorners;
 
+        this.prepareOnLoadFlowHostObject();
+        
         this.hostObjectChange.emit(this.hostObject);
     }
 
@@ -135,7 +138,7 @@ export class PageBuilderEditorComponent implements OnInit {
             { key: 'lg', value: this.translate.instant('GROUP_SIZE.LG') }
         ];
         
-        this.pagesService.availableBlocksDataLoadedSubject$.subscribe(availableBlocksData => {
+        this.pagesService.availableBlocksDataLoadedSubject$.pipe(this.getDestroyer()).subscribe((availableBlocksData: IAvailableBlockData[]) => {
             this.availableBlocksData = availableBlocksData;
             
             this.availableBlocksForDrag = this.availableBlocksData.map(abd => {

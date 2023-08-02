@@ -3,7 +3,7 @@ import { PepAddonService, PepLayoutService, PepScreenSizeType, PepUtilitiesServi
 import { PepButton } from '@pepperi-addons/ngx-lib/button';
 import { pepIconDeviceDesktop, pepIconDeviceMobile, pepIconDeviceTablet } from '@pepperi-addons/ngx-lib/icon';
 import { TranslateService } from '@ngx-translate/core';
-import { DataViewScreenSize, Page, PageBlock } from '@pepperi-addons/papi-sdk';
+import { DataViewScreenSize, Page, PageBlock, PageSection } from '@pepperi-addons/papi-sdk';
 import { IEditor, PagesService, IPageEditor, ISectionEditor } from '../../services/pages.service';
 import { DIMXService } from '../../services/dimx.service';
 import { NavigationService } from '../../services/navigation.service';
@@ -14,6 +14,7 @@ import { PepSnackBarData, PepSnackBarService } from "@pepperi-addons/ngx-lib/sna
 import { WebComponentWrapperOptions } from "@angular-architects/module-federation-tools";
 import { coerceNumberProperty } from "@angular/cdk/coercion";
 import { PepDialogActionButton, PepDialogData, PepDialogService } from "@pepperi-addons/ngx-lib/dialog";
+import { BaseDestroyerComponent } from "../base/base-destroyer.component";
 
 @Component({
     selector: 'page-manager',
@@ -21,7 +22,7 @@ import { PepDialogActionButton, PepDialogData, PepDialogService } from "@pepperi
     styleUrls: ['./page-manager.component.scss', './page-manager.component.theme.scss'],
     providers: [DIMXService]
 })
-export class PageManagerComponent implements OnInit {
+export class PageManagerComponent extends BaseDestroyerComponent implements OnInit {
     @ViewChild('pageBuilderWrapper', { static: true }) pageBuilderWrapper: ElementRef;
     
     private readonly RESTORE_TO_LAST_PUBLISH_KEY = 'restore';
@@ -70,6 +71,7 @@ export class PageManagerComponent implements OnInit {
         private dimxService: DIMXService,
         private cd: ChangeDetectorRef,
     ) {
+        super();
         this.pepAddonService.setShellRouterData({ showSidebar: false, addPadding: false});
         this.dimxService.register(this.viewContainerRef, this.onDIMXProcessDone.bind(this));
         this.onBlockEditorHostEventsCallback = (event: CustomEvent) => {
@@ -108,16 +110,16 @@ export class PageManagerComponent implements OnInit {
     }
 
     private subscribeEvents() {
-        this.pagesService.previewModeChange$.subscribe((previewMode) => {
+        this.pagesService.previewModeChange$.pipe(this.getDestroyer()).subscribe((previewMode: boolean) => {
             this.previewMode = previewMode;
         });
 
-        this.pagesService.lockScreenChange$.subscribe((lockScreen) => {
+        this.pagesService.lockScreenChange$.pipe(this.getDestroyer()).subscribe((lockScreen: boolean) => {
             this.lockScreen = lockScreen;
         });
 
         // For update editor.
-        this.pagesService.editorChange$.subscribe((editor) => {
+        this.pagesService.editorChange$.pipe(this.getDestroyer()).subscribe((editor: IEditor) => {
             this.currentEditor = editor;
         });
 
@@ -129,19 +131,19 @@ export class PageManagerComponent implements OnInit {
         //     }
         // });
 
-        this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
+        this.layoutService.onResize$.pipe(this.getDestroyer()).subscribe((size: PepScreenSizeType) => {
             const screenType = this.pagesService.getScreenType(size);
             this.setScreenWidth(screenType);
         });
 
-        this.pagesService.screenSizeChange$.subscribe((size: PepScreenSizeType) => {
+        this.pagesService.screenSizeChange$.pipe(this.getDestroyer()).subscribe((size: PepScreenSizeType) => {
             this.screenSize = size;
             const screenType = this.pagesService.getScreenType(this.screenSize);
             this.selectedScreenType = screenType;
         });
 
         // For update the page data
-        this.pagesService.pageDataForEditorChange$.subscribe((page: Page) => {
+        this.pagesService.pageDataForEditorChange$.pipe(this.getDestroyer()).subscribe((page: Page) => {
             if (page) {
                 this.currentPage = page;
                 const pageSize = this.utilitiesService.getObjectSize(page, 'kb');
@@ -157,7 +159,7 @@ export class PageManagerComponent implements OnInit {
             }
         });
 
-        this.pagesService.screenWidthChange$.subscribe((width: string) => {
+        this.pagesService.screenWidthChange$.pipe(this.getDestroyer()).subscribe((width: string) => {
             if (this.pageBuilderWrapper?.nativeElement) {
                 this.renderer.setStyle(this.pageBuilderWrapper.nativeElement, 'width', width);
                 this.updateViewportWidth();
@@ -165,9 +167,9 @@ export class PageManagerComponent implements OnInit {
         });
 
        // Get the sections id's into sectionsColumnsDropList for the drag & drop.
-       this.pagesService.sectionsChange$.subscribe(res => {
+       this.pagesService.sectionsChange$.pipe(this.getDestroyer()).subscribe((sections: PageSection[]) => {
             // Concat all results into one array.
-            this.sectionsColumnsDropList = [].concat(...res.map(section => {
+            this.sectionsColumnsDropList = [].concat(...sections.map(section => {
                 return section.Columns.map((column, index) => 
                     this.pagesService.getSectionColumnKey(section.Key, index.toString())
                 )
