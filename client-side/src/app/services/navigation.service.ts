@@ -94,10 +94,11 @@ export class NavigationService {
         return queryParamsAsObject;
     }
 
-    updateQueryParams(queryParams: any) {
+    updateQueryParams(queryParams: any, replaceUrl: boolean) {
         this.router.navigate([], { 
             queryParams: queryParams, 
-            queryParamsHandling: 'merge'
+            queryParamsHandling: 'merge',
+            replaceUrl: replaceUrl
         });
     }
 

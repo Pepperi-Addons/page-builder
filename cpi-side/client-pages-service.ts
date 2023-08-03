@@ -417,15 +417,12 @@ class ClientPagesService {
                     const key = keysArr[index];
                     
                     if (page.OnLoadFlow.FlowParams[key].Source === 'Dynamic') {
-                        dynamicParamsMap.set(key, page.OnLoadFlow.FlowParams[key].Value);
+                        const value = page.OnLoadFlow.FlowParams[key].Value;
+                        dynamicParamsMap.set(key, value);
+
+                        // Set the dynamic parameter value on the dynamicParamsData property.
+                        dynamicParamsData[value] = mergedParameters[value] || '';
                     }
-                }
-                
-                // Set the dynamic parameters values on the dynamicParamsData property.
-                const dynamicParams: any = dynamicParamsMap.values();
-                for (let index = 0; index < dynamicParams.length; index++) {
-                    const param = dynamicParams[index];
-                    dynamicParamsData[param] = mergedParameters[param] || '';
                 }
             }
         

@@ -268,7 +268,7 @@ export class PagesService {
             // Handle the page state - set it on the url.
             if (state) {
                 const queryParams = this.queryParamsService.getQueryParamsFromState(state);
-                this.navigationService.updateQueryParams(queryParams);
+                this.navigationService.updateQueryParams(queryParams, true);
             }
         });
     }
