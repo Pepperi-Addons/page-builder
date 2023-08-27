@@ -8,7 +8,7 @@ import { IPepDraggableItem } from "@pepperi-addons/ngx-lib/draggable-items";
 import { Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize,ResourceType, 
     PageConfigurationParameterFilter, PageConfiguration, PageConfigurationParameterBase, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
 import { PageRowProjection, IPageBuilderData, IBlockLoaderData, IPageClientEventResult, CLIENT_ACTION_ON_CLIENT_PAGE_LOAD, IAvailableBlockData, 
-    CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, PageBlockView, IPageView, CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK } from 'shared';
+    CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, PageBlockView, IPageView, CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, SYSTEM_PARAMETERS } from 'shared';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { NavigationService } from "./navigation.service";
 import { distinctUntilChanged, filter } from 'rxjs/operators';
@@ -1012,7 +1012,17 @@ export class PagesService {
                 }
 
                 // Added page to the host object of the editor (only for edit).
-                hostObject.page = this._pageInEditorSubject.getValue();
+                const pageCopy = JSON.parse(JSON.stringify(this._pageInEditorSubject.getValue()));
+                // Add the system parameters to the page.
+                for (let index = 0; index < SYSTEM_PARAMETERS.length; index++) {
+                    const sp = SYSTEM_PARAMETERS[index];
+                    pageCopy.Parameters.push({
+                        Key: sp.Key,
+                        Type: sp.Type,
+                        DefaultValue: sp.DefaultValue,
+                    });
+                }
+                hostObject.page = pageCopy;
 
                 res = {
                     id: blockKey,

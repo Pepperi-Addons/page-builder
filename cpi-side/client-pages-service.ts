@@ -458,19 +458,19 @@ class ClientPagesService {
         let page = eventData.Page;
         const pageKey = eventData.PageKey || page?.Key || '';
         
-        const isSyncInstalled = await this.isSyncInstalled();
+        // const isSyncInstalled = await this.isSyncInstalled();
 
-        if (isSyncInstalled) {
+        // if (isSyncInstalled) {
             tmpResult = {
                 page: page || await this.getPage(pageKey), // If page supply take it, Else populate the page by pageKey
                 availableBlocks: await this.getBlocksData('PageBlock') || [],
             }
-        } else {
-            // Get the page data online if sync isn't installed (in case of editor the page already exist in the data.Page,
-            // data.Page and the page that will return here should be the same cause this is load event).
-            const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}`);
-            tmpResult = temp.ok ? await(temp.json()) : { page: null, availableBlocks: [] };
-        }
+        // } else {
+        //     // Get the page data online if sync isn't installed (in case of editor the page already exist in the data.Page,
+        //     // data.Page and the page that will return here should be the same cause this is load event).
+        //     const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}`);
+        //     tmpResult = temp.ok ? await(temp.json()) : { page: null, availableBlocks: [] };
+        // }
 
         return tmpResult;
     }

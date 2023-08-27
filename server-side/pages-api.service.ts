@@ -1,4 +1,4 @@
-import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView, RecursiveImportInput, RecursiveExportInput } from '@pepperi-addons/papi-sdk';
+import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView, RecursiveImportInput, RecursiveExportInput, Draft } from '@pepperi-addons/papi-sdk';
 import { Client } from '@pepperi-addons/debug-server';
 import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, DEFAULT_PAGES_DATA } from 'shared';
 import { PagesValidatorService } from './pages-validator.service';
@@ -112,20 +112,20 @@ export class PagesApiService {
         return availableBlocks;
     }
 
-    private async hidePage(page: Page, tableName: string): Promise<boolean> {
-        if (!page) {
-            return Promise.reject(null);
-        }
+    // private async hidePage(page: Page, tableName: string): Promise<boolean> {
+    //     if (!page) {
+    //         return Promise.reject(null);
+    //     }
 
-        page.Hidden = true;
-        const res = await this.upsertPageInternal(page, tableName);
-        return Promise.resolve(res != null);
-    }
+    //     page.Hidden = true;
+    //     const res = await this.upsertPageInternal(page, tableName);
+    //     return Promise.resolve(res != null);
+    // }
 
     private async validateAndOverridePageAccordingInterface(page: Page, validatePagesLimit: boolean): Promise<Page> {
         // Validate pages limit number.
         if (validatePagesLimit) {
-            const publishedPages = await this.getPages();
+            const publishedPages = await this.getPublishedPages();
             this.pagesValidatorService.validatePagesLimitNumber(page, publishedPages);
         }
 
@@ -144,7 +144,8 @@ export class PagesApiService {
         return this.pagesValidatorService.getPageCopyAccordingInterface(page, availableBlocks);
     }
 
-    private async upsertPageInternal(page: Page, tableName = PAGES_TABLE_NAME): Promise<Page> {
+    // private async upsertPageInternal(page: Page, tableName = PAGES_TABLE_NAME, validate = true): Promise<Page> {
+    private async upsertPageInternal(page: Page, validate = true): Promise<Page> {
         if (!page) {
             return Promise.reject(null);
         }
@@ -154,9 +155,17 @@ export class PagesApiService {
         }
 
         // Validate page object before upsert.
-        page = await this.validateAndOverridePageAccordingInterface(page, tableName === PAGES_TABLE_NAME);
-        
-        return this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page) as Promise<Page>;
+        if (validate) {
+            // page = await this.validateAndOverridePageAccordingInterface(page, tableName === PAGES_TABLE_NAME);
+            page = await this.validateAndOverridePageAccordingInterface(page, true);
+        }
+
+        const draft = this.convertPageToDraft(page);
+        // const tmp = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(page.Key).get();
+        const res = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.upsert(draft);
+
+        return this.convertDraftToPage(res);
+        // return this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page) as Promise<Page>;
     }
 
     private async getPagesVariablesInternal(options: FindOptions | undefined = undefined): Promise<any> {
@@ -183,57 +192,121 @@ export class PagesApiService {
         return pagesVariables;
     }
     
-    private upsertRelation(relation): Promise<any> {
-        return this.papiClient.addons.data.relations.upsert(relation);
+    private convertDraftToPage(draft: any): Page {
+        return {
+            Key: draft.Key,
+            Name: draft.Name,
+            Description: draft.Description,
+            // CreationDateTime: draft.CreationDateTime,
+            // ModificationDateTime: draft.ModificationDateTime,
+            ...draft.Data
+        } as Page
+    }
+
+    private convertPageToDraft(page: Page): Draft {
+        const { Key, Name, Description, ...rest } = page;
+
+        const draft = {
+            Key: Key,
+            ConfigurationSchemaName: PAGES_TABLE_NAME,
+            AddonUUID: this.addonUUID,
+            Data: rest,
+            Name: Name || '',
+            Description: Description || '',
+            Profiles: []
+        };
+
+        return draft;
     }
 
     /***********************************************************************************************/
     /*                                  Protected functions
     /***********************************************************************************************/
 
-    protected async getPagesFrom(tableName: string, options: FindOptions | undefined = undefined): Promise<Page[]> {
-        return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).find(options) as Page[];
+    protected upsertRelation(relation): Promise<any> {
+        return this.papiClient.addons.data.relations.upsert(relation);
+    }
+
+    // protected async getPagesFrom(tableName: string, options: FindOptions | undefined = undefined): Promise<Page[]> {
+    protected async getPagesFrom(options: FindOptions | undefined = undefined): Promise<Page[]> {
+        const drafts = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.find(options);
+
+        const pages: Page[] = drafts.map(draft => {
+            return this.convertDraftToPage(draft);
+        });
+        return pages
+        // return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).find(options) as Page[];
     }
 
     /***********************************************************************************************/
     /*                                  Public functions
     /***********************************************************************************************/
     
-    async getPage(pagekey: string, tableName: string = PAGES_TABLE_NAME): Promise<Page> {
-        return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).key(pagekey).get() as Page;
+    // async getPage(pagekey: string, tableName: string = PAGES_TABLE_NAME): Promise<Page> {
+    async getPage(pagekey: string): Promise<Page> {
+        const draft = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(pagekey).get();
+        
+        return this.convertDraftToPage(draft);
+        // return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).key(pagekey).get() as Page;
     }
 
     async createPagesTablesSchemes(): Promise<AddonDataScheme[]> {
         const promises: AddonDataScheme[] = [];
         
-        const DIMXSchema = {
-            Blocks: {
-                Type: "Array",
-                Items: {
+        // const DIMXSchema = {
+        //     Blocks: {
+        //         Type: "Array",
+        //         Items: {
+        //             Type: "Object",
+        //             Fields: {
+        //                 Configuration: {
+        //                     Type: "ContainedDynamicResource"
+        //                 }
+        //             }
+        //         }
+        //     },
+        // };
+
+        // // Create pages table
+        // const createPagesTable = await this.papiClient.addons.data.schemes.post({
+        //     Name: PAGES_TABLE_NAME,
+        //     Type: 'meta_data',
+        //     SyncData: {
+        //         Sync: true
+        //     }
+        // });
+        
+        // // Create pages draft table
+        // const createPagesDraftTable = await this.papiClient.addons.data.schemes.post({
+        //     Name: DRAFT_PAGES_TABLE_NAME,
+        //     Type: 'meta_data',
+        //     Fields: DIMXSchema as any // Declare the schema for the import & export.
+        // });
+
+        // The input type is defined inside the papi sdk package, and called ConfigurationScheme
+        const createPagesConfigurationTable = await this.papiClient.addons.configurations.schemes.upsert({
+            Name: PAGES_TABLE_NAME, //the name of the configuration scheme
+            AddonUUID: this.addonUUID, //the addonUUID of the addon that own this configuration
+            //the interface of the configurations object
+            Fields: {
+                Parameters: {
+                    Type: "Array",
+                },
+                OnLoadFlow: {
                     Type: "Object",
-                    Fields: {
-                        Configuration: {
-                            Type: "ContainedDynamicResource"
-                        }
-                    }
+                },
+                Blocks: {
+                    Type: "Array"
+                },
+                Layout: {
+                    Type: "Object",
                 }
             },
-        };
-
-        // Create pages table
-        const createPagesTable = await this.papiClient.addons.data.schemes.post({
-            Name: PAGES_TABLE_NAME,
-            Type: 'meta_data',
             SyncData: {
                 Sync: true
-            }
-        });
-        
-        // Create pages draft table
-        const createPagesDraftTable = await this.papiClient.addons.data.schemes.post({
-            Name: DRAFT_PAGES_TABLE_NAME,
-            Type: 'meta_data',
-            Fields: DIMXSchema as any // Declare the schema for the import & export.
+            },
+            ImportRelation: this.getImportRelation(),
+            ExportRelation: this.getExportRelation()
         });
 
         // Create pages variables table
@@ -250,22 +323,29 @@ export class PagesApiService {
             }
         });
 
-        promises.push(createPagesTable);
-        promises.push(createPagesDraftTable);
+        // promises.push(createPagesTable);
+        // promises.push(createPagesDraftTable);
+        promises.push(createPagesConfigurationTable);
         promises.push(createPagesVariablesTable);
         return Promise.all(promises);
     }
 
     upsertPagesRelations(): void {
         this.upsertVarSettingsRelation();
-        this.upsertImportRelation();
-        this.upsertExportRelation();
+        // this.upsertImportRelation();
+        // this.upsertExportRelation();
         this.upsertAddonBlockRelation();
         this.upsertSettingsRelation();
     }
 
-    async getPages(options: FindOptions | undefined = undefined): Promise<Page[]> {
-        return await this.getPagesFrom(PAGES_TABLE_NAME, options);
+    async getPublishedPages(options: FindOptions | undefined = undefined): Promise<Page[]> {
+        const drafts = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.find(options);
+        const publishedDrafts = drafts.filter(draft => { return draft.PublishedVersion && draft.PublishedVersion.length > 0 });
+
+        const pages: Page[] = publishedDrafts.map(draft => {
+            return this.convertDraftToPage(draft);
+        });
+        return pages;
     }
 
     // savePage(page: Page): Promise<Page> {
@@ -274,7 +354,8 @@ export class PagesApiService {
 
     saveDraftPage(page: Page): Promise<Page>  {
         page.Hidden = false;
-        return this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
+        // return this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
+        return this.upsertPageInternal(page);
     }
 
     async createTemplatePage(query: any): Promise<Page> {
@@ -307,95 +388,97 @@ export class PagesApiService {
         page.Description = `${page.Description} ${pageNum}`;
 
         page.Key = '';
-        return this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
+        // return this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
+        return this.upsertPageInternal(page);
     }
 
     async removePage(query: any): Promise<boolean> {
         const pagekey = query['key'] || '';
         
-        let draftRes = false;
-        let res = false;
-
         if (pagekey.length > 0) {
-            let pageDeleted = false;
-            let draftExceptionMessage;
-            let exceptionMessage;
-
-            try {
-                let page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
-                draftRes = await this.hidePage(page, DRAFT_PAGES_TABLE_NAME);
-                pageDeleted = true;
-            } catch (e) {
-                draftExceptionMessage = e;
-            }
-    
-            try {
-                let page = await this.getPage(pagekey, PAGES_TABLE_NAME);
-                res = await this.hidePage(page, PAGES_TABLE_NAME);
-                pageDeleted = true;
-            } catch (e) {
-                exceptionMessage = e;
-            }
-
-            if (!pageDeleted) {
-                throw new Error(`${draftExceptionMessage} and ${exceptionMessage}.`);
-            }
+            const draft = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(pagekey).get();
+            draft.Hidden = true;
+            const res = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.upsert(draft);
+            return Promise.resolve(res != null);
+        } else {
+            return Promise.resolve(false);
         }
 
-        return Promise.resolve(draftRes || res);
+        // Old code
+        // let draftRes = false;
+        // let res = false;
+
+        // if (pagekey.length > 0) {
+        //     let pageDeleted = false;
+        //     let draftExceptionMessage;
+        //     let exceptionMessage;
+
+        //     try {
+        //         let page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
+        //         draftRes = await this.hidePage(page, DRAFT_PAGES_TABLE_NAME);
+        //         pageDeleted = true;
+        //     } catch (e) {
+        //         draftExceptionMessage = e;
+        //     }
+    
+        //     try {
+        //         let page = await this.getPage(pagekey, PAGES_TABLE_NAME);
+        //         res = await this.hidePage(page, PAGES_TABLE_NAME);
+        //         pageDeleted = true;
+        //     } catch (e) {
+        //         exceptionMessage = e;
+        //     }
+
+        //     if (!pageDeleted) {
+        //         throw new Error(`${draftExceptionMessage} and ${exceptionMessage}.`);
+        //     }
+        // }
+
+        // return Promise.resolve(draftRes || res);
     }
 
-    async duplicatePage(query: any, lookForDraft = false): Promise<Page> {
-        const pageData: IPageBuilderData = await this.getPageData(query, true);
+    async duplicatePage(query: any): Promise<Page> {
+        const pagekey = query['key'];
+        
+        if (pagekey) {
+            // TODO: *** Maybe we should use import export here ***
+            let draft: Draft = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(pagekey).get();
+            
+            // const pageData: IPageBuilderData = await this.getPageData(query);
 
-        const dupplicatePage: Page = JSON.parse(JSON.stringify(pageData.page));
-        dupplicatePage.Name = `${dupplicatePage.Name} copy`;
-        delete dupplicatePage.Key;
-        return await this.upsertPageInternal(dupplicatePage, DRAFT_PAGES_TABLE_NAME);
+            const dupplicateDraft: Draft = JSON.parse(JSON.stringify(draft));
+            dupplicateDraft.Name = `${dupplicateDraft.Name} copy`;
+            delete dupplicateDraft.Key;
+            // return await this.upsertPageInternal(dupplicatePage, DRAFT_PAGES_TABLE_NAME);
+            return await this.upsertPageInternal(this.convertDraftToPage(dupplicateDraft));
+        }
+        
+        return Promise.reject(null);
     }
 
     async getPagesData(options: FindOptions | undefined = undefined): Promise<PageRowProjection[]> {
-        let pages: Page[] = await this.getPagesFrom(PAGES_TABLE_NAME);
-        let draftPages: Page[] = await this.getPagesFrom(DRAFT_PAGES_TABLE_NAME);
-
-        //  Add the pages into map for distinct them.
-        const distinctPagesMap = new Map<string, Page>();
-        pages.forEach(page => {
-            if (page.Key) {
-                distinctPagesMap.set(page.Key, page);
-            }
-        });
-        draftPages.forEach(draftPage => {
-            if (draftPage.Key) {
-                distinctPagesMap.set(draftPage.Key, draftPage);
-            }
-        });
-
-        // Convert the map values to array.
-        let distinctPagesArray = Array.from(distinctPagesMap.values());
+        const drafts = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.find(options);
         
         // Filter.
+        let filteredDrafts: Draft[] = drafts;
+        
         if (options?.where !== undefined && options?.where?.length > 0) {
             const searchString = options?.where;
-            distinctPagesArray = distinctPagesArray.filter(page => page.Name?.includes(searchString) || page.Description?.includes(searchString))
+            filteredDrafts = drafts.filter(draft => draft.Name?.includes(searchString) || draft.Description?.includes(searchString))
         }
 
         const promise = new Promise<any[]>((resolve, reject): void => {
-            let allPages = distinctPagesArray.map((page: Page) => {
-                const isPublished = pages.some(published => published.Key === page.Key);
-                const draftPage = draftPages.find(draft => draft.Key === page.Key);
-                const isDraft = draftPage != null && !draftPage.Hidden;
-
+            let allPages = filteredDrafts.map((draft: Draft) => {
+                
                 // Return projection object.
                 const prp: PageRowProjection = {
-                    Key: page.Key,
-                    Name: page.Name,
-                    Description: page.Description,
-                    CreationDate: page.CreationDateTime,
-                    ModificationDate: page.ModificationDateTime,
-                    Published: isPublished,
-                    Draft: isDraft
-                    // Status: draftPages.some(draft => draft.Key === page.Key) ? 'draft' : 'published',
+                    Key: draft.Key,
+                    Name: draft.Name,
+                    Description: draft.Description,
+                    CreationDate: draft.CreationDateTime,
+                    ModificationDate: draft.ModificationDateTime,
+                    Published: draft.PublishedVersion !== undefined && draft.PublishedVersion.length > 0,
+                    IsDirty: draft.IsDirty
                 };
 
                 return prp;
@@ -420,49 +503,24 @@ export class PagesApiService {
         return promise;
     }
 
-    async getPageData(query: any, lookForDraft = false): Promise<IPageBuilderData> {
+    async getPageData(query: any): Promise<IPageBuilderData> {
         let res: any;
         const pageKey = query['key'] || '';
         
         if (pageKey) {
             let needToFixDraftIfNotExist = false;
-            let page;
             
-            // If lookForDraft try to get the page from the draft first (for runtime the lookForDraft will be false).
-            if (lookForDraft) {
-                try {
-                    // Get the page from the drafts.
-                    page = await this.getPage(pageKey, DRAFT_PAGES_TABLE_NAME);
-                } catch {
-                }
-            }
-
             const dataPromises: Promise<any>[] = [];
             dataPromises.push(this.getAvailableBlocks());
             dataPromises.push(this.getPagesVariablesInternal());
-            
-            // If draft is hidden or not exist add call to bring the publish page.
-            if (!page || page.Hidden) {
-                dataPromises.push(this.getPage(pageKey, PAGES_TABLE_NAME));
-
-                if (lookForDraft) {
-                    // This is can't be, draft must exist so here we will set a flag to save the draft later.
-                    needToFixDraftIfNotExist = true;
-                }
-            }
+            dataPromises.push(this.getPage(pageKey));
                 
             const arr = await Promise.all(dataPromises).then(res => res);
 
             res = {
                 availableBlocks: arr[0] || [],
                 pagesVariables: arr[1] || [],
-                page: arr.length > 2 ? arr[2] : page, // Get the publish page if exist in the array cause we populate it only if the draft is hidden or not exist.
-            }
-
-            if (needToFixDraftIfNotExist) {
-                await this.upsertPageInternal(res.page, DRAFT_PAGES_TABLE_NAME);
-                // const pageCopy = JSON.parse(JSON.stringify(page));
-                // await this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
+                page: arr[2],
             }
         }
 
@@ -475,22 +533,31 @@ export class PagesApiService {
     
     async restoreToLastPublish(query: any): Promise<Page> {
         const pagekey = query['key'];
-
+        
         if (pagekey) {
-            let page = await this.getPage(pagekey, PAGES_TABLE_NAME);
-
-            // In case that the page was never published.
-            if (!page) {
-                page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
-                return await this.upsertPageInternal(page, PAGES_TABLE_NAME);
-                // return this.publishPage(page);
-            } else {
-                // const pageCopy = JSON.parse(JSON.stringify(page));
-                // await this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
-                // return pageCopy;
-
-                return await this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
+            let draft = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(pagekey).get();
+            
+            if (draft.PublishedVersion?.length > 0) {
+                draft = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(pagekey).restore(draft.PublishedVersion);
             }
+
+            return Promise.resolve(this.convertDraftToPage(draft));
+
+            // Old code
+            // let page = await this.getPage(pagekey, PAGES_TABLE_NAME);
+
+            // // In case that the page was never published.
+            // if (!page) {
+            //     page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
+            //     return await this.upsertPageInternal(page, PAGES_TABLE_NAME);
+            //     // return this.publishPage(page);
+            // } else {
+            //     // const pageCopy = JSON.parse(JSON.stringify(page));
+            //     // await this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
+            //     // return pageCopy;
+
+            //     return await this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
+            // }
         }
         
         return Promise.reject(null);
@@ -498,19 +565,24 @@ export class PagesApiService {
 
     async publishPage(page: Page): Promise<Page> {
         let res: Page | null = null;
-
-        if (page) {
-            // Save the current page in pages table
-            res = await this.upsertPageInternal(page, PAGES_TABLE_NAME);
-
-            // Update the draft page and hide it.
-            if (res != null) {
-                // const pageCopy = JSON.parse(JSON.stringify(page));
-                // this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
-                await this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
-            }
+        
+        if (page?.Key) {
+            res = await this.upsertPageInternal(page);
+            res = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(page.Key).publish();
+            return this.convertDraftToPage(res);
             
-            return Promise.resolve(res);
+            // Old code
+            // // Save the current page in pages table
+            // res = await this.upsertPageInternal(page, PAGES_TABLE_NAME);
+
+            // // Update the draft page and hide it.
+            // if (res != null) {
+            //     // const pageCopy = JSON.parse(JSON.stringify(page));
+            //     // this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
+            //     await this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
+            // }
+            
+            // return Promise.resolve(res);
         }
 
         return Promise.reject(null);
@@ -628,33 +700,6 @@ export class PagesApiService {
     //                              Import & Export functions
     /************************************************************************************************/
     
-    private upsertImportRelation(): void {
-        const importRelation: Relation = {
-            RelationName: 'DataImportResource',
-            Name: DRAFT_PAGES_TABLE_NAME,
-            Description: 'Pages import',
-            Type: 'AddonAPI',
-            AddonUUID: this.addonUUID,
-            AddonRelativeURL: '/internal_api/draft_pages_import', // '/api/pages_import',
-            MappingRelativeURL: ''// '/internal_api/draft_pages_import_mapping', // '/api/pages_import_mapping',
-        };                
-
-        this.upsertRelation(importRelation);
-    }
-
-    private upsertExportRelation(): void {
-        const exportRelation: Relation = {
-            RelationName: 'DataExportResource',
-            Name: DRAFT_PAGES_TABLE_NAME,
-            Description: 'Pages export',
-            Type: 'AddonAPI',
-            AddonUUID: this.addonUUID,
-            AddonRelativeURL: '/internal_api/draft_pages_export', // '/api/pages_export',
-        };                
-
-        this.upsertRelation(exportRelation);
-    }
-
     private async getDIMXResult(body: any, isImport: boolean): Promise<any> {
         // Validate the pages.
         if (body.DIMXObjects?.length > 0) {
@@ -683,6 +728,35 @@ export class PagesApiService {
         }
         
         return body;
+    }
+
+    protected getImportRelation(): Relation {
+        const importRelation: Relation = {
+            RelationName: 'DataImportResource',
+            Name: PAGES_TABLE_NAME, //DRAFT_PAGES_TABLE_NAME,
+            Description: 'Pages import',
+            Type: 'AddonAPI',
+            AddonUUID: this.addonUUID,
+            AddonRelativeURL: '/internal_api/draft_pages_import', // '/api/pages_import',
+            MappingRelativeURL: ''// '/internal_api/draft_pages_import_mapping', // '/api/pages_import_mapping',
+        };                
+
+        // this.upsertRelation(importRelation);
+        return importRelation;
+    }
+
+    protected getExportRelation(): Relation {
+        const exportRelation: Relation = {
+            RelationName: 'DataExportResource',
+            Name: PAGES_TABLE_NAME, //DRAFT_PAGES_TABLE_NAME,
+            Description: 'Pages export',
+            Type: 'AddonAPI',
+            AddonUUID: this.addonUUID,
+            AddonRelativeURL: '/internal_api/draft_pages_export', // '/api/pages_export',
+        };                
+
+        // this.upsertRelation(exportRelation);
+        return exportRelation;
     }
 
     async importPages(body: any, draft = true): Promise<any> {
@@ -720,50 +794,53 @@ export class PagesApiService {
     }
 
     async importPageFile(body: RecursiveImportInput) {
-        return await this.papiClient.addons.data.import.file.recursive.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).upsert(body);
+        // TODO: need to call configuration
+        // return await this.papiClient.addons.data.import.file.recursive.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).upsert(body);
     }
 
     async exportPageFile(body: RecursiveExportInput) {
-        return await this.papiClient.addons.data.export.file.recursive.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).get(body);
+        // TODO: need to call configuration
+        // return await this.papiClient.addons.data.export.file.recursive.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).get(body);
     }
 
     /***********************************************************************************************/
     //                              PNS functions
     /************************************************************************************************/
     
-    private async deleteBlockFromPage(page: Page, addonUUID: string, tableName: string) {
-        try {
-            // Get the blocks to remove by the addon UUID
-            const blocksToRemove = page.Blocks.filter(block => block.Configuration.AddonUUID === addonUUID);
+    private async deleteBlockFromPage(draft: Draft, addonUUID: string) {
+        const page = this.convertDraftToPage(draft);
+        
+        // Get the blocks to remove by the addon UUID
+        const blocksToRemove = page.Blocks.filter(block => block.Configuration.AddonUUID === addonUUID);
 
-            if (blocksToRemove?.length > 0) {
-                    console.log(`page blocks before - ${JSON.stringify(page.Blocks)}`);
+        if (blocksToRemove?.length > 0) {
+            console.log(`page blocks before - ${JSON.stringify(page.Blocks)}`);
 
-                    // Remove the page blocks with the addonUUID
-                    page.Blocks = page.Blocks.filter(block => block.Configuration.AddonUUID !== addonUUID);
+            // Remove the page blocks with the addonUUID
+            page.Blocks = page.Blocks.filter(block => block.Configuration.AddonUUID !== addonUUID);
 
-                    console.log(`page blocks after - ${JSON.stringify(page.Blocks)}`);
+            console.log(`page blocks after - ${JSON.stringify(page.Blocks)}`);
 
-                    // Remove the blocks from the columns.
-                    for (let sectioIndex = 0; sectioIndex < page.Layout.Sections.length; sectioIndex++) {
-                        const section = page.Layout.Sections[sectioIndex];
-                        
-                        for (let columnIndex = 0; columnIndex < section.Columns.length; columnIndex++) {
-                            const column = section.Columns[columnIndex];
-                            
-                            if (column.BlockContainer && blocksToRemove.some(btr => btr.Key === column.BlockContainer?.BlockKey)) {
-                                console.log(`delete block with the key - ${JSON.stringify(column.BlockContainer.BlockKey)}`);
-                                delete column.BlockContainer;
-                            }
-                        }
+            // Remove the blocks from the columns.
+            for (let sectioIndex = 0; sectioIndex < page.Layout.Sections.length; sectioIndex++) {
+                const section = page.Layout.Sections[sectioIndex];
+                
+                for (let columnIndex = 0; columnIndex < section.Columns.length; columnIndex++) {
+                    const column = section.Columns[columnIndex];
+                    
+                    if (column.BlockContainer && blocksToRemove.some(btr => btr.Key === column.BlockContainer?.BlockKey)) {
+                        console.log(`delete block with the key - ${JSON.stringify(column.BlockContainer.BlockKey)}`);
+                        delete column.BlockContainer;
                     }
-
-                    // Update the page
-                    await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page);
+                }
             }
-        } catch (err) {
-            console.log(`err - ${JSON.stringify(err)}`);
-            // Do nothing.
+
+            await this.upsertPageInternal(page, false);
+
+            // Old code
+            // Update the page with no validation here.
+            // this.upsertPageInternal(page, tableName, false);
+            // await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).upsert(page);
         }
     }
 
@@ -806,7 +883,8 @@ export class PagesApiService {
         });
     }
 
-    async deleteBlockFromPages(body: any, draft = false): Promise<void> {
+    // async deleteBlockFromPages(body: any, draft = false): Promise<void> {
+    async deleteBlockFromPages(body: any): Promise<void> {
         for (let modifiedObjectIndex = 0; modifiedObjectIndex < body?.Message?.ModifiedObjects.length; modifiedObjectIndex++) {
             const obj = body?.Message?.ModifiedObjects[modifiedObjectIndex];
             
@@ -821,21 +899,34 @@ export class PagesApiService {
                     console.log(`addonUUID - ${addonUUID}`);
 
                     if (addonUUID) {
-                        const tableName = draft ? DRAFT_PAGES_TABLE_NAME : PAGES_TABLE_NAME;
-                        console.log(`tableName - ${tableName}`);
+                        // const tableName = draft ? DRAFT_PAGES_TABLE_NAME : PAGES_TABLE_NAME;
+                        // console.log(`tableName - ${tableName}`);
 
-                        let pages = await this.getPagesFrom(tableName);
+                        const drafts = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.find();
+                        // let pages = await this.getPagesFrom();
                         
-                        console.log(`pages length - ${pages.length}`);
+                        console.log(`pages length - ${drafts.length}`);
 
                         // Delete the blocks with this addonUUID from all the pages.
-                        for (let index = 0; index < pages.length; index++) {
-                            const page = pages[index];
-                            console.log(`page before - ${JSON.stringify(page)}`);
+                        for (let index = 0; index < drafts.length; index++) {
+                            const draft = drafts[index];
+                            console.log(`draft before - ${JSON.stringify(draft)}`);
 
-                            await this.deleteBlockFromPage(page, addonUUID, tableName);
+                            // Copy the draft to a new object.
+                            let draftCopy = JSON.parse(JSON.stringify(draft));
 
-                            console.log(`page after - ${JSON.stringify(page)}`);
+                            // If this draft is dirty then remove the blocks from the published version and publish it again, then remove the blocks from the draft copy.
+                            if (draft.Dirty) {
+                                if (draft.Key && draft.PublishedVersion && draft.PublishedVersion.length > 0) {
+                                    const publishedDraft = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(draft.Key).restore(draft.PublishedVersion);
+                                    await this.deleteBlockFromPage(publishedDraft, addonUUID);
+                                    await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(draft.Key).publish();
+                                }
+                            }
+
+                            await this.deleteBlockFromPage(draftCopy, addonUUID);
+
+                            console.log(`draft after - ${JSON.stringify(draft)}`);
                         }
                     }
                 }

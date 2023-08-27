@@ -15,7 +15,7 @@
     "license": "ISC",
     "dependencies": {
         "@pepperi-addons/cpi-node": "^1.3.4",
-        "@pepperi-addons/papi-sdk": "1.45.3",
+        "@pepperi-addons/papi-sdk": "^1.57.1",
         "encoding": "^0.1.13",
         "jwt-decode": "^3.1.2",
         "rollup-plugin-typescript2": "^0.30.0",

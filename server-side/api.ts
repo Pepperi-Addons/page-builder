@@ -18,7 +18,7 @@ export async function pages(client: Client, request: Request): Promise<any> {
         if (request.method === 'POST') {
             res = service.publishPage(request.body);
         } else if (request.method === 'GET') {
-            res = service.getPages(request.query);
+            res = service.getPublishedPages(request.query);
         } else {
             throw new Error(`Method ${request.method} is not supported.`);
         }

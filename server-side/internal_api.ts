@@ -38,19 +38,19 @@ export async function get_pages_data(client: Client, request: Request): Promise<
     }
 };
 
-export async function get_page_data(client: Client, request: Request): Promise<any> {
-    try {
-        const service = new PagesApiService(client);
-        return service.getPageData(request?.query);
-    } catch(err) {
-        throw new Error(`Failed to get page data. error - ${err}`);
-    }
-}
+// export async function get_page_data(client: Client, request: Request): Promise<any> {
+//     try {
+//         const service = new PagesApiService(client);
+//         return service.getPageData(request?.query);
+//     } catch(err) {
+//         throw new Error(`Failed to get page data. error - ${err}`);
+//     }
+// }
 
 export async function get_page_builder_data(client: Client, request: Request): Promise<any> {
     try {
         const service = new PagesApiService(client);
-        return service.getPageData(request?.query, true);
+        return service.getPageData(request?.query);
     } catch(err) {
         throw new Error(`Failed to get page builder data. error - ${err}`);
     }
@@ -83,14 +83,14 @@ export async function publish_page(client: Client, request: Request): Promise<an
     }
 };
 
-export async function on_uninstall_block_draft(client:Client, request: Request): Promise<any> {
-    try {
-        const service = new PagesApiService(client);
-        await service.deleteBlockFromPages(request.body, true);
-    } catch(err) {
-        throw new Error(`Failed to remove uninstall block from pages. error - ${err}`);
-    }
-}
+// export async function on_uninstall_block_draft(client:Client, request: Request): Promise<any> {
+//     try {
+//         const service = new PagesApiService(client);
+//         await service.deleteBlockFromPages(request.body, true);
+//     } catch(err) {
+//         throw new Error(`Failed to remove uninstall block from pages. error - ${err}`);
+//     }
+// }
 
 export async function draft_pages_import(client:Client, request: Request): Promise<any> {
     try {

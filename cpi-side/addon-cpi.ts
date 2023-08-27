@@ -9,7 +9,7 @@ export const router = Router();
 export async function load(configuration: any) {
     // Handle on page load.
     pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_LOAD as any, {}, async (data: IContextWithData): Promise<IPageClientEventResult> => {
-        // debugger;
+        debugger;
         const service = new ClientPagesService();
         const result = await service.getPageLoadData(data);
         return result;
@@ -17,7 +17,7 @@ export async function load(configuration: any) {
 
     // Handle on page state change.
     pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE as any, {}, async (data: IContextWithData): Promise<IPageClientEventResult> => {
-        // debugger;
+        debugger;
         const service = new ClientPagesService();
         const result = await service.getPageStateChangeData(data);
         return result;

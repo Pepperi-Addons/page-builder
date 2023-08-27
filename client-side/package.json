@@ -29,6 +29,7 @@
         "@mat-datetimepicker/moment": "^9.0.68",
         "@ngx-translate/core": "^14.0.0",
         "@ngx-translate/http-loader": "^7.0.0",
+        "@pepperi-addons/cpi-node": "^1.4.1",
         "@pepperi-addons/data-views": "^0.0.2",
         "@pepperi-addons/ngx-composite-lib": "^0.4.2-beta.22",
         "@pepperi-addons/ngx-lib": "^0.4.2-beta.112",

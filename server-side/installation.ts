@@ -13,9 +13,9 @@ import { PagesUpgradeService } from './pages-upgrade.service';
 import semver from 'semver';
 
 const pnsKeyForPages = 'uninstall_blocks_subscription';
-const pnsKeyForDraftPages = 'uninstall_blocks_subscription_draft';
 const pnsFunctionPathForPages = '/api/on_uninstall_block';
-const pnsFunctionPathForDraftPages = '/internal_api/on_uninstall_block_draft';
+// const pnsKeyForDraftPages = 'uninstall_blocks_subscription_draft';
+// const pnsFunctionPathForDraftPages = '/internal_api/on_uninstall_block_draft';
 
 export async function install(client: Client, request: Request): Promise<any> {
     try {
@@ -23,7 +23,7 @@ export async function install(client: Client, request: Request): Promise<any> {
         await pageService.createPagesTablesSchemes();
         await pageService.upsertPagesRelations();
         await pageService.subscribeUninstallAddons(pnsKeyForPages, pnsFunctionPathForPages);
-        await pageService.subscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
+        // await pageService.subscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
     } catch (err) {
         throw new Error(`Failed to create ADAL Tables. error - ${err}`);
     }
@@ -35,7 +35,7 @@ export async function uninstall(client: Client, request: Request): Promise<any> 
     try {
         const pageService = new PagesApiService(client);
         await pageService.unsubscribeUninstallAddons(pnsKeyForPages, pnsFunctionPathForPages);
-        await pageService.unsubscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
+        // await pageService.unsubscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
     } catch (err) {
         throw new Error(`Failed to unsubscribe from PNS. error - ${err}`);
     }
@@ -48,6 +48,9 @@ export async function upgrade(client: Client, request: Request): Promise<any> {
         const pageService = new PagesApiService(client);
         await pageService.createPagesTablesSchemes();
         await pageService.upsertPagesRelations();
+
+        const pageUpgradeService = new PagesUpgradeService(client);
+        await pageUpgradeService.performMigration(request.body.FromVersion, request.body.ToVersion);
 
         // Example how to use migration code.
         // if (request.body.FromVersion && semver.compare(request.body.FromVersion, '0.7.61') < 0) {
