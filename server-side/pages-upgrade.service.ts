@@ -3,6 +3,7 @@ import { Client } from '@pepperi-addons/debug-server';
 //     PageBlock, PageSectionColumn, PageSizeTypes, PageLayout, Subscription, FindOptions, ResourceDataConfiguration } from '@pepperi-addons/papi-sdk'
 import { DRAFT_PAGES_TABLE_NAME, PagesApiService, PAGES_TABLE_NAME } from "./pages-api.service";
 import semver from 'semver';
+import { Page } from '@pepperi-addons/papi-sdk';
 
 const pnsKeyForDraftPages = 'uninstall_blocks_subscription_draft';
 const pnsFunctionPathForDraftPages = '/internal_api/on_uninstall_block_draft';
@@ -129,12 +130,49 @@ export class PagesUpgradeService extends PagesApiService {
         });
     }
 
+    private async copyOldPagesToConfigurations() {
+        // Copy the published pages to configuration
+        try {
+            const publishedPages = await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_TABLE_NAME).find() as Page[];
+
+            for (let index = 0; index < publishedPages.length; index++) {
+                const page = publishedPages[index];
+                if (page?.Key) {
+                    const draft = this.convertPageToDraft(page);
+                    // Save it
+                    await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.upsert(draft);
+                    // Publish it
+                    await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(page.Key).publish();
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        
+        // Copy the draft pages to configuration
+        try {
+            const draftPages = await this.papiClient.addons.data.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).find() as Page[];
+
+            for (let index = 0; index < draftPages.length; index++) {
+                const page = draftPages[index];
+                if (page?.Key) {
+                    const draft = this.convertPageToDraft(page);
+                    // Save it
+                    await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.upsert(draft);
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     private async migrateToV2_0_0(fromVersion) {
         // check if the upgrade is from versions before 2.0.0
         console.log('semver comperation' + semver.lt(fromVersion, '2.0.0') + ' fromVersion: ' + fromVersion);
         if (fromVersion && semver.lt(fromVersion, '2.0.0')) {
-            // TODO: Copy all pages from publish to configuration and publish it and after that copy from draft into configuration without publishing it.
-
+            // Copy all pages from publish to configuration and publish it and after that copy from draft into configuration without publishing it.
+            this.copyOldPagesToConfigurations();
+            
             // Remove the import export relations
             await this.removeDimxRelations();
             

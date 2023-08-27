@@ -298,22 +298,22 @@ class ClientPagesService {
         page.Blocks = Array.from(updatedBlocksMap.values());
     }
 
-    private async isSyncInstalled(): Promise<boolean> {
-        let isSyncInstalled = false;
+    // private async isSyncInstalled(): Promise<boolean> {
+    //     let isSyncInstalled = false;
 
-        try {
-            const res = await pepperi.api.adal.getList({
-                addon: 'bb6ee826-1c6b-4a11-9758-40a46acb69c5', // CPI Node addon uuid
-                table: 'addons'
-            }); 
+    //     try {
+    //         const res = await pepperi.api.adal.getList({
+    //             addon: 'bb6ee826-1c6b-4a11-9758-40a46acb69c5', // CPI Node addon uuid
+    //             table: 'addons'
+    //         }); 
             
-            isSyncInstalled = res?.objects?.length > 0 ? true : false;
-        } catch {
-            isSyncInstalled = false;
-        }
+    //         isSyncInstalled = res?.objects?.length > 0 ? true : false;
+    //     } catch {
+    //         isSyncInstalled = false;
+    //     }
 
-        return isSyncInstalled;
-    }
+    //     return isSyncInstalled;
+    // }
 
     private async getBlocksData(blockType: string = 'AddonBlock', name: string = ''): Promise<IBlockLoaderData[]> {
         let blocks;
@@ -491,9 +491,9 @@ class ClientPagesService {
 
     async getPageDataOld(pageKey: string, context: IContext | undefined): Promise<IPageBuilderData> {
         let result: IPageBuilderData;
-        const isSyncInstalled = await this.isSyncInstalled();
+        // const isSyncInstalled = await this.isSyncInstalled();
 
-        if (isSyncInstalled) {
+        // if (isSyncInstalled) {
             let page = await this.getPage(pageKey);
             const availableBlocks: IBlockLoaderData[] = await this.getBlocksData('PageBlock');
             const availableBlocksMap = this.getAvailableBlocksMap(availableBlocks);
@@ -506,11 +506,11 @@ class ClientPagesService {
                 page: page,           
                 availableBlocks: availableBlocks || [],
             }
-        } else {
-            // Get the page data online if sync isn't installed.
-            const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}`);
-            result = temp.ok ? await(temp.json()) : null;
-        }
+        // } else {
+        //     // Get the page data online if sync isn't installed.
+        //     const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}`);
+        //     result = temp.ok ? await(temp.json()) : null;
+        // }
 
         return result;
     }
@@ -605,19 +605,19 @@ class ClientPagesService {
 
     async getBlockData(blockType: string = 'AddonBlock', name: string = ''): Promise<IBlockLoaderData | null> {
         let result: IBlockLoaderData | null = null;
-        const isSyncInstalled = await this.isSyncInstalled();
+        // const isSyncInstalled = await this.isSyncInstalled();
 
-        if (isSyncInstalled) {
+        // if (isSyncInstalled) {
             let resultArr = await this.getBlocksData(blockType, name);
             
             if (resultArr.length > 0) {
                 result = resultArr[0];
             }
-        } else {
-            // Get the page data online if sync isn't installed.
-            const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/addon_blocks/get_addon_block_loader_data?blockType=${blockType}&name=${name}`);
-            result = temp.ok ? await(temp.json()) : null;
-        }
+        // } else {
+        //     // Get the page data online if sync isn't installed.
+        //     const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/addon_blocks/get_addon_block_loader_data?blockType=${blockType}&name=${name}`);
+        //     result = temp.ok ? await(temp.json()) : null;
+        // }
         
         return result;
     }

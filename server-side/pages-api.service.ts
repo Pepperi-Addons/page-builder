@@ -202,8 +202,12 @@ export class PagesApiService {
             ...draft.Data
         } as Page
     }
+    
+    /***********************************************************************************************/
+    /*                                  Protected functions
+    /***********************************************************************************************/
 
-    private convertPageToDraft(page: Page): Draft {
+    protected convertPageToDraft(page: Page): Draft {
         const { Key, Name, Description, ...rest } = page;
 
         const draft = {
@@ -218,10 +222,6 @@ export class PagesApiService {
 
         return draft;
     }
-
-    /***********************************************************************************************/
-    /*                                  Protected functions
-    /***********************************************************************************************/
 
     protected upsertRelation(relation): Promise<any> {
         return this.papiClient.addons.data.relations.upsert(relation);
