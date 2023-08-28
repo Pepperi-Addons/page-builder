@@ -1,9 +1,10 @@
 import { Client } from '@pepperi-addons/debug-server';
 // import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, PageSection, SplitTypes, DataViewScreenSizes, 
 //     PageBlock, PageSectionColumn, PageSizeTypes, PageLayout, Subscription, FindOptions, ResourceDataConfiguration } from '@pepperi-addons/papi-sdk'
-import { DRAFT_PAGES_TABLE_NAME, PagesApiService, PAGES_TABLE_NAME } from "./pages-api.service";
+import { DRAFT_PAGES_TABLE_NAME, PagesApiService } from "./pages-api.service";
 import semver from 'semver';
 import { Page } from '@pepperi-addons/papi-sdk';
+import { PAGES_TABLE_NAME } from 'shared';
 
 const pnsKeyForDraftPages = 'uninstall_blocks_subscription_draft';
 const pnsFunctionPathForDraftPages = '/internal_api/on_uninstall_block_draft';
@@ -171,7 +172,7 @@ export class PagesUpgradeService extends PagesApiService {
         console.log('semver comperation' + semver.lt(fromVersion, '2.0.0') + ' fromVersion: ' + fromVersion);
         if (fromVersion && semver.lt(fromVersion, '2.0.0')) {
             // Copy all pages from publish to configuration and publish it and after that copy from draft into configuration without publishing it.
-            this.copyOldPagesToConfigurations();
+            await this.copyOldPagesToConfigurations();
             
             // Remove the import export relations
             await this.removeDimxRelations();

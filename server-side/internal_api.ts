@@ -11,32 +11,32 @@ export async function create_page(client: Client, request: Request): Promise<any
     }
 }
 
-export async function remove_page(client: Client, request: Request): Promise<any> {
-    try {
-        const service = new PagesApiService(client);
-        return service.removePage(request.query);
-    } catch(err) {
-        throw new Error(`Failed to remove page. error - ${err}`);
-    }
-}
+// export async function remove_page(client: Client, request: Request): Promise<any> {
+//     try {
+//         const service = new PagesApiService(client);
+//         return service.removePage(request.query);
+//     } catch(err) {
+//         throw new Error(`Failed to remove page. error - ${err}`);
+//     }
+// }
 
-export async function duplicate_page(client: Client, request: Request): Promise<any> {
-    try {
-        const service = new PagesApiService(client);
-        return service.duplicatePage(request.query);
-    } catch(err) {
-        throw new Error(`Failed to duplicate page. error - ${err}`);
-    }
-}
+// export async function duplicate_page(client: Client, request: Request): Promise<any> {
+//     try {
+//         const service = new PagesApiService(client);
+//         return service.duplicatePage(request.query);
+//     } catch(err) {
+//         throw new Error(`Failed to duplicate page. error - ${err}`);
+//     }
+// }
 
-export async function get_pages_data(client: Client, request: Request): Promise<any> {
-    try {
-        const service = new PagesApiService(client);
-        return service.getPagesData(request.query);
-    } catch(err) {
-        throw new Error(`Failed to get pages data. error - ${err}`);
-    }
-};
+// export async function get_pages_data(client: Client, request: Request): Promise<any> {
+//     try {
+//         const service = new PagesApiService(client);
+//         return service.getPagesData(request.query);
+//     } catch(err) {
+//         throw new Error(`Failed to get pages data. error - ${err}`);
+//     }
+// };
 
 // export async function get_page_data(client: Client, request: Request): Promise<any> {
 //     try {
@@ -65,14 +65,14 @@ export async function save_draft_page(client: Client, request: Request): Promise
     }
 }
 
-export async function restore_to_last_publish(client: Client, request: Request): Promise<any> {
-    try {
-        const service = new PagesApiService(client);
-        return service.restoreToLastPublish(request.query);
-    } catch(err) {
-        throw new Error(`Failed to restore to last publish. error - ${err}`);
-    }
-}
+// export async function restore_to_last_publish(client: Client, request: Request): Promise<any> {
+//     try {
+//         const service = new PagesApiService(client);
+//         return service.restoreToLastPublish(request.query);
+//     } catch(err) {
+//         throw new Error(`Failed to restore to last publish. error - ${err}`);
+//     }
+// }
 
 export async function publish_page(client: Client, request: Request): Promise<any> {
     try {

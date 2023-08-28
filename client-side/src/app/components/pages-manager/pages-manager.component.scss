@@ -3,6 +3,12 @@
 
 @import url('https://fonts.googleapis.com/css?family=Permanent+Marker:200,300,400,500,600,700,800');
 
+:host {
+    .configuration-list {
+        height: 100%;
+    }
+}
+
 .pageExplanation{
     display: flex;
     flex-direction: row;

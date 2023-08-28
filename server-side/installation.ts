@@ -58,7 +58,7 @@ export async function upgrade(client: Client, request: Request): Promise<any> {
         //     await pageUpgradeService.upgradeToVersion61(true);
         // }
     } catch (err) {
-        throw new Error(`Failed to upgrade to version 61. error - ${err}`);
+        throw new Error(`Failed to upgrade to. error - ${err}`);
     }
 
     return { success:true, resultObject: {} };

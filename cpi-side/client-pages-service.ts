@@ -1,7 +1,7 @@
 import { IContext, IContextWithData } from "@pepperi-addons/cpi-node/build/cpi-side/events";
 import { NgComponentRelation, Page, PageBlock } from "@pepperi-addons/papi-sdk";
 import { RunFlowBody } from '@pepperi-addons/cpi-node';
-import { IBlockLoaderData, IPageBuilderData, IPageClientEventResult, IPageView, getAvailableBlockData, IBlockEndpointResult, SYSTEM_PARAMETERS, IPageState } from "shared";
+import { IBlockLoaderData, IPageBuilderData, IPageClientEventResult, IPageView, getAvailableBlockData, IBlockEndpointResult, SYSTEM_PARAMETERS, IPageState, PAGES_TABLE_NAME } from "shared";
 import config from "../addon.config.json";
 
 type PagesClientActionType = 'depricated-page-load' | 'page-load' | 'state-change' | 'button-click';
@@ -482,7 +482,7 @@ class ClientPagesService {
     async getPage(pageKey: string): Promise<Page> {
         const res = await pepperi.api.adal.get({
             addon: config.AddonUUID,
-            table: 'Pages',
+            table: PAGES_TABLE_NAME,
             key: pageKey
         }); 
         const page =  res.object as Page;

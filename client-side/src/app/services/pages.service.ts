@@ -1559,29 +1559,29 @@ export class PagesService {
     /*                            CPI & Server side calls.
     /**************************************************************************************/
 
-    // Get the pages (distinct with the drafts)
-    getPages(addonUUID: string, options: any): Observable<PageRowProjection[]> {
-        // Get the pages from the server.
-        const baseUrl = this.getBaseUrl(addonUUID);
-        return this.httpService.getHttpCall(`${baseUrl}/get_pages_data?${options}`);
-    }
+    // // Get the pages (distinct with the drafts)
+    // getPages(addonUUID: string, options: any): Observable<PageRowProjection[]> {
+    //     // Get the pages from the server.
+    //     const baseUrl = this.getBaseUrl(addonUUID);
+    //     return this.httpService.getHttpCall(`${baseUrl}/get_pages_data?${options}`);
+    // }
 
     createNewPage(addonUUID: string, templateFileName: any, totalPages: number = 0): Observable<Page> {
         const baseUrl = this.getBaseUrl(addonUUID);
         return this.httpService.getHttpCall(`${baseUrl}/create_page?templateFileName=${templateFileName}&pageNum=${totalPages+1}`);
     }
     
-    // Duplicate the page
-    duplicatePage(addonUUID: string, pageKey: string): Observable<any> {
-        const baseUrl = this.getBaseUrl(addonUUID);
-        return this.httpService.getHttpCall(`${baseUrl}/duplicate_page?key=${pageKey}`);
-    }
+    // // Duplicate the page
+    // duplicatePage(addonUUID: string, pageKey: string): Observable<any> {
+    //     const baseUrl = this.getBaseUrl(addonUUID);
+    //     return this.httpService.getHttpCall(`${baseUrl}/duplicate_page?key=${pageKey}`);
+    // }
     
-    // Delete the page
-    deletePage(addonUUID: string, pageKey: string): Observable<any> {
-        const baseUrl = this.getBaseUrl(addonUUID);
-        return this.httpService.getHttpCall(`${baseUrl}/remove_page?key=${pageKey}`);
-    }
+    // // Delete the page
+    // deletePage(addonUUID: string, pageKey: string): Observable<any> {
+    //     const baseUrl = this.getBaseUrl(addonUUID);
+    //     return this.httpService.getHttpCall(`${baseUrl}/remove_page?key=${pageKey}`);
+    // }
     
     loadPageBuilder(addonUUID: string, pageKey: string, editable: boolean, queryParameters: Params): void {
         //  If is't not edit mode get the page from the CPI side.
@@ -1619,13 +1619,13 @@ export class PagesService {
         this._availableBlocksDataSubject.next([]);
     }
 
-    // Restore the page to tha last publish
-    restoreToLastPublish(addonUUID: string): Observable<Page> {
-        const page = this._pageInEditorSubject.getValue();
-        const baseUrl = this.getBaseUrl(addonUUID);
+    // // Restore the page to tha last publish
+    // restoreToLastPublish(addonUUID: string): Observable<Page> {
+    //     const page = this._pageInEditorSubject.getValue();
+    //     const baseUrl = this.getBaseUrl(addonUUID);
 
-        return this.httpService.getHttpCall(`${baseUrl}/restore_to_last_publish?key=${page.Key}`);
-    }
+    //     return this.httpService.getHttpCall(`${baseUrl}/restore_to_last_publish?key=${page.Key}`);
+    // }
 
     // Save the current page in drafts.
     saveCurrentPage(addonUUID: string): void {

@@ -253,21 +253,21 @@ export class PageManagerComponent extends BaseDestroyerComponent implements OnIn
         }
     }
 
-    onMenuItemClick(action: IPepMenuItemClickEvent) {
-        // Restore to last publish
-        if (action.source.key === this.RESTORE_TO_LAST_PUBLISH_KEY) { 
-            this.pagesService.restoreToLastPublish(this.navigationService.addonUUID).subscribe(res => {
-                this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.PAGE_RESTORED')).afterClosed().subscribe(res => {
-                    window.location.reload();
-                });
-            });
-        } else if (action.source.key === this.IMPORT_KEY) { // Import page
-            // TODO: Should work only for the same page Key (override this page).
-            // this.dimxService.import();
-        } else if (action.source.key === this.EXPORT_KEY) { // Export page
-            this.dimxService.export(this.currentPage.Key, this.currentPage.Name);
-        }
-    }
+    // onMenuItemClick(action: IPepMenuItemClickEvent) {
+    //     // Restore to last publish
+    //     if (action.source.key === this.RESTORE_TO_LAST_PUBLISH_KEY) { 
+    //         this.pagesService.restoreToLastPublish(this.navigationService.addonUUID).subscribe(res => {
+    //             this.utilitiesService.showDialogMsg(this.translate.instant('MESSAGES.PAGE_RESTORED')).afterClosed().subscribe(res => {
+    //                 window.location.reload();
+    //             });
+    //         });
+    //     } else if (action.source.key === this.IMPORT_KEY) { // Import page
+    //         // TODO: Should work only for the same page Key (override this page).
+    //         // this.dimxService.import();
+    //     } else if (action.source.key === this.EXPORT_KEY) { // Export page
+    //         this.dimxService.export(this.currentPage.Key, this.currentPage.Name);
+    //     }
+    // }
     
     onSaveClick() {
         this.pagesService.saveCurrentPage(this.navigationService.addonUUID);

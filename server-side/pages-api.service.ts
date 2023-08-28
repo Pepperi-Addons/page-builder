@@ -1,10 +1,9 @@
 import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView, RecursiveImportInput, RecursiveExportInput, Draft } from '@pepperi-addons/papi-sdk';
 import { Client } from '@pepperi-addons/debug-server';
-import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, DEFAULT_PAGES_DATA } from 'shared';
+import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, DEFAULT_PAGES_DATA, PAGES_TABLE_NAME } from 'shared';
 import { PagesValidatorService } from './pages-validator.service';
 import { v4 as uuidv4 } from 'uuid';
 
-export const PAGES_TABLE_NAME = 'Pages';
 export const DRAFT_PAGES_TABLE_NAME = 'PagesDrafts';
 export const PAGES_VARIABLES_TABLE_NAME = 'PagesVariables';
 
@@ -150,7 +149,8 @@ export class PagesApiService {
             return Promise.reject(null);
         }
 
-        if (!page.Key) {
+        let isNewPage = !page.Key;
+        if (isNewPage) {
             page.Key = uuidv4();
         }
 
@@ -208,16 +208,17 @@ export class PagesApiService {
     /***********************************************************************************************/
 
     protected convertPageToDraft(page: Page): Draft {
-        const { Key, Name, Description, ...rest } = page;
+        // Unstructured data (Key, Name, Description, Hidden, CreationDateTime, ModificationDateTime, ExpirationDateTime should not be in page anymore).
+        const { Key, Name, Description, Hidden, CreationDateTime, ModificationDateTime, ExpirationDateTime, ...rest } = page;
 
-        const draft = {
+        const draft: Draft = {
             Key: Key,
             ConfigurationSchemaName: PAGES_TABLE_NAME,
             AddonUUID: this.addonUUID,
+            Profiles: [],
             Data: rest,
             Name: Name || '',
             Description: Description || '',
-            Profiles: []
         };
 
         return draft;
@@ -305,8 +306,8 @@ export class PagesApiService {
             SyncData: {
                 Sync: true
             },
-            ImportRelation: this.getImportRelation(),
-            ExportRelation: this.getExportRelation()
+            // ImportRelation: this.getImportRelation(),
+            // ExportRelation: this.getExportRelation()
         });
 
         // Create pages variables table

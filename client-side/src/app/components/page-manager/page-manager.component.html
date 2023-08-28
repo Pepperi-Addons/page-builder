@@ -53,7 +53,7 @@
                             <span class="title-xs">{{ 'MESSAGES.PAGE_SIZE_LIMIT_TITLE' | translate }}&nbsp;</span>
                             <span class="title-sm color-caution bold">{{ pageSizeString }}</span>
                         </div>
-                        <pep-menu sizeType="sm" classNames="pep-spacing-element" [items]="menuItems" (menuItemClick)="onMenuItemClick($event)" [disabled]="isOverPageSizeLimit"></pep-menu>
+                        <!-- <pep-menu sizeType="sm" classNames="pep-spacing-element" [items]="menuItems" (menuItemClick)="onMenuItemClick($event)" [disabled]="isOverPageSizeLimit"></pep-menu> -->
                         <pep-button key='Preview' [value]="'ACTIONS.PREVIEW' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="togglePreviewMode()" [disabled]="isOverPageSizeLimit"></pep-button>
                         <pep-button key='Save' [value]="'ACTIONS.SAVE' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="onSaveClick()" [disabled]="isOverPageSizeLimit"></pep-button>
                         <pep-button key='Publish' [value]="'ACTIONS.PUBLISH' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="onPublishClick();" [disabled]="isOverPageSizeLimit">

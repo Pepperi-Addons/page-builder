@@ -26,36 +26,25 @@
         <div class="pageExplanation">
             <span class="body-md">{{ 'PAGES_MANAGER.MAIN_EXPLANATION' | translate }}</span>
         </div>
-        <pep-generic-list [emptyState]="emptyState" [dataSource]="pagesDataSource" [actions]="actions" [inline]="true" [showTopBar]="true" [showSearch]="true"
+        
+        <pep-addon-block-loader *ngIf="configurationHostObject" class="configuration-list" name="ConfigurationList" [hostObject]="configurationHostObject" [remoteEntry]="remoteEntry"
+            (hostEvents)="onConfigurationHostEvent($event)" ></pep-addon-block-loader>
+        
+        <!-- <pep-generic-list [emptyState]="emptyState" [dataSource]="pagesDataSource" [actions]="actions" [inline]="true" [showTopBar]="true" [showSearch]="true"
                 [supportSorting]="true" [uuidMapping]="'Key'" [title]="'PAGES_MANAGER.SECONDARY_HEADER' | translate" (fieldClick)="onCustomizeFieldClick($event)"> 
             <ng-container right-buttons >
                 <ng-container *ngTemplateOutlet="topBarEnd"></ng-container>
             </ng-container>
-        </pep-generic-list>
-        <!-- <ng-container *ngIf="!hasPages">
-            <pep-top-bar class="main-top-header" [inline]="true">
-                <div header-end-content>
-                    <ng-container *ngTemplateOutlet="topBarEnd"></ng-container>
-                </div>
-            </pep-top-bar>
-            <div class="PagesNotFoundMsg">
-                    <div class="leaf-background">
-                        <img [src]="imagesPath + 'brand-leaf-skiny.svg'">
-                        <img [src]="imagesPath + 'brand-leaf-round.svg'">
-                    </div>
-                    <h2>{{ "PAGES_MANAGER.PAGES_HEADER" | translate}}</h2>
-                    <span>{{ "PAGES_MANAGER.NO_PAGES_MSG" | translate}}</span>
-            </div>
-        </ng-container> -->
+        </pep-generic-list> -->
     </div>
 </ng-template>
 
-<ng-template #topBarEnd>
+<!-- <ng-template #topBarEnd>
     <pep-menu class="pep-spacing-element" [items]="[{key: 'import', text: 'ACTIONS.IMPORT' | translate }]" [sizeType]="'sm'" (menuItemClick)="onMenuItemClicked($event)">
     </pep-menu>
     <pep-button class="pep-spacing-element" [value]="'PAGES_MANAGER.A_PAGE' | translate" [sizeType]="'sm'" [styleType]="'strong'" (buttonClick)="addNewPage();">
     </pep-button>
-</ng-template>
+</ng-template> -->
 
 <ng-template #addNewBlock>
     <div class="add-on-width">

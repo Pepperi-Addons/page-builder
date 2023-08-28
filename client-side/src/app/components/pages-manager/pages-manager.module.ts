@@ -23,6 +23,7 @@ import { PepNgxCompositeLibModule } from '@pepperi-addons/ngx-composite-lib';
 import { PepGenericListModule } from '@pepperi-addons/ngx-composite-lib/generic-list';
 
 import { TranslateModule } from '@ngx-translate/core';
+import { PepRemoteLoaderModule } from '@pepperi-addons/ngx-lib/remote-loader';
 
 const routes: Routes = [
     {
@@ -55,7 +56,7 @@ const routes: Routes = [
         PepCheckboxModule,
         // PepIconModule,
         MatIconModule,
-        // PepRemoteLoaderModule,
+        PepRemoteLoaderModule,
         TranslateModule.forChild(),
         RouterModule.forChild(routes)
     ],

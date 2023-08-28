@@ -13,6 +13,8 @@ export const CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK = 'OnClientPageButttonCli
 
 // **********************************************************************************************
 
+export const PAGES_TABLE_NAME = 'Pages';
+
 export interface IPageState {
     PageParameters: {
         [key: string]: any;
@@ -75,14 +77,13 @@ export interface BlockFiles {
     Files: BlockFile[];
 }
 export interface PageRowProjection {
-    Key?: string,
-    Name?: string,
-    Description?: string,
-    CreationDate?: string,
-    ModificationDate?: string,
-    Published: boolean,
-    Draft: boolean,
-    // Status: string
+    Key?: string;
+    Name?: string;
+    Description?: string;
+    CreationDate?: string;
+    ModificationDate?: string;
+    Published: boolean;
+    IsDirty: boolean;
 }
 
 export interface IPageBuilderData {
