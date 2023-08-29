@@ -1,5 +1,5 @@
 import { IContext, IContextWithData } from "@pepperi-addons/cpi-node/build/cpi-side/events";
-import { NgComponentRelation, Page, PageBlock } from "@pepperi-addons/papi-sdk";
+import { ConfigurationObject, NgComponentRelation, Page, PageBlock } from "@pepperi-addons/papi-sdk";
 import { RunFlowBody } from '@pepperi-addons/cpi-node';
 import { IBlockLoaderData, IPageBuilderData, IPageClientEventResult, IPageView, getAvailableBlockData, IBlockEndpointResult, SYSTEM_PARAMETERS, IPageState, PAGES_TABLE_NAME } from "shared";
 import config from "../addon.config.json";
@@ -298,22 +298,22 @@ class ClientPagesService {
         page.Blocks = Array.from(updatedBlocksMap.values());
     }
 
-    // private async isSyncInstalled(): Promise<boolean> {
-    //     let isSyncInstalled = false;
+    private async isSyncInstalled(): Promise<boolean> {
+        let isSyncInstalled = false;
 
-    //     try {
-    //         const res = await pepperi.api.adal.getList({
-    //             addon: 'bb6ee826-1c6b-4a11-9758-40a46acb69c5', // CPI Node addon uuid
-    //             table: 'addons'
-    //         }); 
+        try {
+            const res = await pepperi.api.adal.getList({
+                addon: 'bb6ee826-1c6b-4a11-9758-40a46acb69c5', // CPI Node addon uuid
+                table: 'addons'
+            }); 
             
-    //         isSyncInstalled = res?.objects?.length > 0 ? true : false;
-    //     } catch {
-    //         isSyncInstalled = false;
-    //     }
+            isSyncInstalled = res?.objects?.length > 0 ? true : false;
+        } catch {
+            isSyncInstalled = false;
+        }
 
-    //     return isSyncInstalled;
-    // }
+        return isSyncInstalled;
+    }
 
     private async getBlocksData(blockType: string = 'AddonBlock', name: string = ''): Promise<IBlockLoaderData[]> {
         let blocks;
@@ -458,19 +458,19 @@ class ClientPagesService {
         let page = eventData.Page;
         const pageKey = eventData.PageKey || page?.Key || '';
         
-        // const isSyncInstalled = await this.isSyncInstalled();
+        const isSyncInstalled = await this.isSyncInstalled();
 
-        // if (isSyncInstalled) {
+        if (isSyncInstalled) {
             tmpResult = {
                 page: page || await this.getPage(pageKey), // If page supply take it, Else populate the page by pageKey
                 availableBlocks: await this.getBlocksData('PageBlock') || [],
             }
-        // } else {
-        //     // Get the page data online if sync isn't installed (in case of editor the page already exist in the data.Page,
-        //     // data.Page and the page that will return here should be the same cause this is load event).
-        //     const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}`);
-        //     tmpResult = temp.ok ? await(temp.json()) : { page: null, availableBlocks: [] };
-        // }
+        } else {
+            // Get the page data online if sync isn't installed (in case of editor the page already exist in the data.Page,
+            // data.Page and the page that will return here should be the same cause this is load event).
+            const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}`);
+            tmpResult = temp.ok ? await(temp.json()) : { page: null, availableBlocks: [] };
+        }
 
         return tmpResult;
     }
@@ -480,20 +480,25 @@ class ClientPagesService {
     /***********************************************************************************************/
 
     async getPage(pageKey: string): Promise<Page> {
-        const res = await pepperi.api.adal.get({
-            addon: config.AddonUUID,
-            table: PAGES_TABLE_NAME,
-            key: pageKey
-        }); 
-        const page =  res.object as Page;
-        return page;
+        // New code.
+        const configurationObject: ConfigurationObject = await pepperi.addons.configurations.get(pageKey);
+        return (configurationObject.Data) as Page;
+
+        // Old code.
+        // const res = await pepperi.api.adal.get({
+        //     addon: config.AddonUUID,
+        //     table: PAGES_TABLE_NAME,
+        //     key: pageKey
+        // }); 
+        // const page =  res.object as Page;
+        // return page;
     }
 
     async getPageDataOld(pageKey: string, context: IContext | undefined): Promise<IPageBuilderData> {
         let result: IPageBuilderData;
-        // const isSyncInstalled = await this.isSyncInstalled();
+        const isSyncInstalled = await this.isSyncInstalled();
 
-        // if (isSyncInstalled) {
+        if (isSyncInstalled) {
             let page = await this.getPage(pageKey);
             const availableBlocks: IBlockLoaderData[] = await this.getBlocksData('PageBlock');
             const availableBlocksMap = this.getAvailableBlocksMap(availableBlocks);
@@ -506,11 +511,11 @@ class ClientPagesService {
                 page: page,           
                 availableBlocks: availableBlocks || [],
             }
-        // } else {
-        //     // Get the page data online if sync isn't installed.
-        //     const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}`);
-        //     result = temp.ok ? await(temp.json()) : null;
-        // }
+        } else {
+            // Get the page data online if sync isn't installed.
+            const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}`);
+            result = temp.ok ? await(temp.json()) : null;
+        }
 
         return result;
     }

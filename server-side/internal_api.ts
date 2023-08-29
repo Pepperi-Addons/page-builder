@@ -38,19 +38,19 @@ export async function create_page(client: Client, request: Request): Promise<any
 //     }
 // };
 
-// export async function get_page_data(client: Client, request: Request): Promise<any> {
-//     try {
-//         const service = new PagesApiService(client);
-//         return service.getPageData(request?.query);
-//     } catch(err) {
-//         throw new Error(`Failed to get page data. error - ${err}`);
-//     }
-// }
+export async function get_page_data(client: Client, request: Request): Promise<any> {
+    try {
+        const service = new PagesApiService(client);
+        return service.getPageData(request?.query);
+    } catch(err) {
+        throw new Error(`Failed to get page data. error - ${err}`);
+    }
+}
 
 export async function get_page_builder_data(client: Client, request: Request): Promise<any> {
     try {
         const service = new PagesApiService(client);
-        return service.getPageData(request?.query);
+        return service.getPageBuilderData(request?.query);
     } catch(err) {
         throw new Error(`Failed to get page builder data. error - ${err}`);
     }

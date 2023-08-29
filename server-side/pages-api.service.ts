@@ -1,4 +1,4 @@
-import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView, RecursiveImportInput, RecursiveExportInput, Draft } from '@pepperi-addons/papi-sdk';
+import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView, RecursiveImportInput, RecursiveExportInput, Draft, ConfigurationObject } from '@pepperi-addons/papi-sdk';
 import { Client } from '@pepperi-addons/debug-server';
 import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, DEFAULT_PAGES_DATA, PAGES_TABLE_NAME } from 'shared';
 import { PagesValidatorService } from './pages-validator.service';
@@ -251,6 +251,11 @@ export class PagesApiService {
         // return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).key(pagekey).get() as Page;
     }
 
+    async getPublishedPage(pagekey: string): Promise<Page> {
+        const configurationObject: ConfigurationObject = await this.papiClient.addons.configurations.key(pagekey).get();
+        return configurationObject.Data as Page;
+    }
+
     async createPagesTablesSchemes(): Promise<AddonDataScheme[]> {
         const promises: AddonDataScheme[] = [];
         
@@ -393,69 +398,69 @@ export class PagesApiService {
         return this.upsertPageInternal(page);
     }
 
-    async removePage(query: any): Promise<boolean> {
-        const pagekey = query['key'] || '';
+    // async removePage(query: any): Promise<boolean> {
+    //     const pagekey = query['key'] || '';
         
-        if (pagekey.length > 0) {
-            const draft = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(pagekey).get();
-            draft.Hidden = true;
-            const res = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.upsert(draft);
-            return Promise.resolve(res != null);
-        } else {
-            return Promise.resolve(false);
-        }
+    //     if (pagekey.length > 0) {
+    //         const draft = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(pagekey).get();
+    //         draft.Hidden = true;
+    //         const res = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.upsert(draft);
+    //         return Promise.resolve(res != null);
+    //     } else {
+    //         return Promise.resolve(false);
+    //     }
 
-        // Old code
-        // let draftRes = false;
-        // let res = false;
+    //     // Old code
+    //     // let draftRes = false;
+    //     // let res = false;
 
-        // if (pagekey.length > 0) {
-        //     let pageDeleted = false;
-        //     let draftExceptionMessage;
-        //     let exceptionMessage;
+    //     // if (pagekey.length > 0) {
+    //     //     let pageDeleted = false;
+    //     //     let draftExceptionMessage;
+    //     //     let exceptionMessage;
 
-        //     try {
-        //         let page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
-        //         draftRes = await this.hidePage(page, DRAFT_PAGES_TABLE_NAME);
-        //         pageDeleted = true;
-        //     } catch (e) {
-        //         draftExceptionMessage = e;
-        //     }
+    //     //     try {
+    //     //         let page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
+    //     //         draftRes = await this.hidePage(page, DRAFT_PAGES_TABLE_NAME);
+    //     //         pageDeleted = true;
+    //     //     } catch (e) {
+    //     //         draftExceptionMessage = e;
+    //     //     }
     
-        //     try {
-        //         let page = await this.getPage(pagekey, PAGES_TABLE_NAME);
-        //         res = await this.hidePage(page, PAGES_TABLE_NAME);
-        //         pageDeleted = true;
-        //     } catch (e) {
-        //         exceptionMessage = e;
-        //     }
+    //     //     try {
+    //     //         let page = await this.getPage(pagekey, PAGES_TABLE_NAME);
+    //     //         res = await this.hidePage(page, PAGES_TABLE_NAME);
+    //     //         pageDeleted = true;
+    //     //     } catch (e) {
+    //     //         exceptionMessage = e;
+    //     //     }
 
-        //     if (!pageDeleted) {
-        //         throw new Error(`${draftExceptionMessage} and ${exceptionMessage}.`);
-        //     }
-        // }
+    //     //     if (!pageDeleted) {
+    //     //         throw new Error(`${draftExceptionMessage} and ${exceptionMessage}.`);
+    //     //     }
+    //     // }
 
-        // return Promise.resolve(draftRes || res);
-    }
+    //     // return Promise.resolve(draftRes || res);
+    // }
 
-    async duplicatePage(query: any): Promise<Page> {
-        const pagekey = query['key'];
+    // async duplicatePage(query: any): Promise<Page> {
+    //     const pagekey = query['key'];
         
-        if (pagekey) {
-            // TODO: *** Maybe we should use import export here ***
-            let draft: Draft = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(pagekey).get();
+    //     if (pagekey) {
+    //         // TODO: *** Maybe we should use import export here ***
+    //         let draft: Draft = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(pagekey).get();
             
-            // const pageData: IPageBuilderData = await this.getPageData(query);
+    //         // const pageData: IPageBuilderData = await this.getPageData(query);
 
-            const dupplicateDraft: Draft = JSON.parse(JSON.stringify(draft));
-            dupplicateDraft.Name = `${dupplicateDraft.Name} copy`;
-            delete dupplicateDraft.Key;
-            // return await this.upsertPageInternal(dupplicatePage, DRAFT_PAGES_TABLE_NAME);
-            return await this.upsertPageInternal(this.convertDraftToPage(dupplicateDraft));
-        }
+    //         const dupplicateDraft: Draft = JSON.parse(JSON.stringify(draft));
+    //         dupplicateDraft.Name = `${dupplicateDraft.Name} copy`;
+    //         delete dupplicateDraft.Key;
+    //         // return await this.upsertPageInternal(dupplicatePage, DRAFT_PAGES_TABLE_NAME);
+    //         return await this.upsertPageInternal(this.convertDraftToPage(dupplicateDraft));
+    //     }
         
-        return Promise.reject(null);
-    }
+    //     return Promise.reject(null);
+    // }
 
     async getPagesData(options: FindOptions | undefined = undefined): Promise<PageRowProjection[]> {
         const drafts = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.find(options);
@@ -513,6 +518,32 @@ export class PagesApiService {
             
             const dataPromises: Promise<any>[] = [];
             dataPromises.push(this.getAvailableBlocks());
+            dataPromises.push(this.getPublishedPage(pageKey));
+                
+            const arr = await Promise.all(dataPromises).then(res => res);
+
+            res = {
+                availableBlocks: arr[0] || [],
+                page: arr[1],
+            }
+        }
+
+        const promise = new Promise<IPageBuilderData>((resolve, reject): void => {
+            resolve(res);
+        });
+
+        return promise;
+    }
+
+    async getPageBuilderData(query: any): Promise<IPageBuilderData> {
+        let res: any;
+        const pageKey = query['key'] || '';
+        
+        if (pageKey) {
+            let needToFixDraftIfNotExist = false;
+            
+            const dataPromises: Promise<any>[] = [];
+            dataPromises.push(this.getAvailableBlocks());
             dataPromises.push(this.getPagesVariablesInternal());
             dataPromises.push(this.getPage(pageKey));
                 
@@ -532,45 +563,45 @@ export class PagesApiService {
         return promise;
     }
     
-    async restoreToLastPublish(query: any): Promise<Page> {
-        const pagekey = query['key'];
+    // async restoreToLastPublish(query: any): Promise<Page> {
+    //     const pagekey = query['key'];
         
-        if (pagekey) {
-            let draft = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(pagekey).get();
+    //     if (pagekey) {
+    //         let draft = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(pagekey).get();
             
-            if (draft.PublishedVersion?.length > 0) {
-                draft = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(pagekey).restore(draft.PublishedVersion);
-            }
+    //         if (draft.PublishedVersion?.length > 0) {
+    //             draft = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(pagekey).restore(draft.PublishedVersion);
+    //         }
 
-            return Promise.resolve(this.convertDraftToPage(draft));
+    //         return Promise.resolve(this.convertDraftToPage(draft));
 
-            // Old code
-            // let page = await this.getPage(pagekey, PAGES_TABLE_NAME);
+    //         // Old code
+    //         // let page = await this.getPage(pagekey, PAGES_TABLE_NAME);
 
-            // // In case that the page was never published.
-            // if (!page) {
-            //     page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
-            //     return await this.upsertPageInternal(page, PAGES_TABLE_NAME);
-            //     // return this.publishPage(page);
-            // } else {
-            //     // const pageCopy = JSON.parse(JSON.stringify(page));
-            //     // await this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
-            //     // return pageCopy;
+    //         // // In case that the page was never published.
+    //         // if (!page) {
+    //         //     page = await this.getPage(pagekey, DRAFT_PAGES_TABLE_NAME);
+    //         //     return await this.upsertPageInternal(page, PAGES_TABLE_NAME);
+    //         //     // return this.publishPage(page);
+    //         // } else {
+    //         //     // const pageCopy = JSON.parse(JSON.stringify(page));
+    //         //     // await this.hidePage(pageCopy, DRAFT_PAGES_TABLE_NAME);
+    //         //     // return pageCopy;
 
-            //     return await this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
-            // }
-        }
+    //         //     return await this.upsertPageInternal(page, DRAFT_PAGES_TABLE_NAME);
+    //         // }
+    //     }
         
-        return Promise.reject(null);
-    }
+    //     return Promise.reject(null);
+    // }
 
     async publishPage(page: Page): Promise<Page> {
         let res: Page | null = null;
         
         if (page?.Key) {
             res = await this.upsertPageInternal(page);
-            res = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(page.Key).publish();
-            return this.convertDraftToPage(res);
+            await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(page.Key).publish();
+            return res;
             
             // Old code
             // // Save the current page in pages table
