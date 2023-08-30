@@ -482,7 +482,7 @@ class ClientPagesService {
     async getPage(pageKey: string): Promise<Page> {
         // New code.
         const configurationObject: ConfigurationObject = await pepperi.addons.configurations.get(pageKey);
-        return (configurationObject.Data) as Page;
+        return (configurationObject?.Data) as Page;
 
         // Old code.
         // const res = await pepperi.api.adal.get({
