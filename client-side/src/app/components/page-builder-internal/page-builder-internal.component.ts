@@ -123,38 +123,38 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
         }
     }
 
-    private isBlockShouldBeHidden(blockKey: string): boolean {
-        let res = false;
+    // private isBlockShouldBeHidden(blockKey: string): boolean {
+    //     let res = false;
 
-        if (!this.editMode) {
-            let blockFound = false;
-            const sections = this._sectionsSubject.getValue();
+    //     if (!this.editMode) {
+    //         let blockFound = false;
+    //         const sections = this._sectionsSubject.getValue();
 
-            for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
-                const section = sections[sectionIndex];
+    //         for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
+    //             const section = sections[sectionIndex];
                 
-                for (let columnIndex = 0; columnIndex < section.Columns.length; columnIndex++) {
-                    const column = section.Columns[columnIndex];
+    //             for (let columnIndex = 0; columnIndex < section.Columns.length; columnIndex++) {
+    //                 const column = section.Columns[columnIndex];
                     
-                    if (column.BlockContainer?.BlockKey === blockKey) {
-                        // Check if the block should be hidden
-                        const sectionShouldBeHidden = this.pagesService.getIsHidden(section.Hide, this.screenType);
-                        const blockShouldBeHidden = this.pagesService.getIsHidden(column.BlockContainer.Hide, this.screenType);
+    //                 if (column.BlockContainer?.BlockKey === blockKey) {
+    //                     // Check if the block should be hidden
+    //                     const sectionShouldBeHidden = this.pagesService.getIsHidden(section.Hide, this.screenType);
+    //                     const blockShouldBeHidden = this.pagesService.getIsHidden(column.BlockContainer.Hide, this.screenType);
     
-                        res = (sectionShouldBeHidden || blockShouldBeHidden);
-                        blockFound = true;
-                        break;
-                    }
-                }
+    //                     res = (sectionShouldBeHidden || blockShouldBeHidden);
+    //                     blockFound = true;
+    //                     break;
+    //                 }
+    //             }
     
-                if (blockFound) {
-                    break;
-                }
-            }
-        }
+    //             if (blockFound) {
+    //                 break;
+    //             }
+    //         }
+    //     }
 
-        return res;
-    }
+    //     return res;
+    // }
 
     ngOnInit() {
         const addonUUID = this.navigationService.addonUUID;
@@ -187,7 +187,7 @@ export class PageBuilderInternalComponent implements OnInit, OnDestroy {
 
                 blocksProgress.forEach(bp => {
                     // Only if the block should not be hidden
-                    if (!this.isBlockShouldBeHidden(bp.block.Key)) {
+                    if (!this.pagesService.isBlockShouldBeHidden(bp.block.Key, this.editMode)) {
                         if (bp.priority >= this.pagesService.currentBlocksPriority) {
                             // Check that there is no other block with the same relation name that need to load 
                             // (cause the module deferation throw error when we try to load two blocks from the same relation).

@@ -143,7 +143,7 @@ export class SectionBlockComponent implements OnInit {
     }
 
     onBlockLoad(event: any) {
-        this.pagesService.updateBlockLoaded(this.pageBlock.Key);
+        this.pagesService.updateBlockLoaded(this.pageBlock.Key, this.editable);
     }
 
     onDragStart(event: CdkDragStart) {

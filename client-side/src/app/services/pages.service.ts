@@ -292,9 +292,10 @@ export class PagesService {
 
                     if (isUIBlock) {
                         const bp = this.addBlockProgress(block);
+                        let isBlockShouldBeHidden = this.isBlockShouldBeHidden(bp.block.Key, false);
 
                         // If the currentBlocksPriority is smaller then bp.priority set the bp.priority as the current.
-                        if (this.currentBlocksPriority < bp.priority) {
+                        if (!isBlockShouldBeHidden && this.currentBlocksPriority < bp.priority) {
                             // Set the current priority to start load all blocks by the current priority.
                             this._currentBlocksPriority = bp.priority;
                         }
@@ -328,7 +329,7 @@ export class PagesService {
         return priority;
     }
 
-    private setBlockAsLoadedAndCalculateCurrentPriority(blockKey: string) {
+    private setBlockAsLoadedAndCalculateCurrentPriority(blockKey: string, editMode: boolean) {
         const bpToUpdate = this._pageBlockProgressMap.get(blockKey);
 
         if (bpToUpdate && !bpToUpdate.loaded) {
@@ -346,9 +347,10 @@ export class PagesService {
             bpToUpdate.loaded = true;
 
             let allBlocksWithSamePriorityLoaded = true;
-
             this._pageBlockProgressMap.forEach(bp => {
-                if (bp.priority === this.currentBlocksPriority && !bp.loaded) {
+                let isBlockShouldBeHidden = this.isBlockShouldBeHidden(bp.block.Key, editMode);
+
+                if (bp.priority === this.currentBlocksPriority && !bp.loaded && !isBlockShouldBeHidden) {
                     allBlocksWithSamePriorityLoaded = false;
                 }
             });
@@ -1136,6 +1138,40 @@ export class PagesService {
     /*                                  Public functions
     /***********************************************************************************************/
 
+    isBlockShouldBeHidden(blockKey: string, editMode: boolean): boolean {
+        let res = false;
+
+        if (!editMode) {
+            let blockFound = false;
+            const sections = this._sectionsSubject.getValue();
+
+            for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
+                const section = sections[sectionIndex];
+                
+                for (let columnIndex = 0; columnIndex < section.Columns.length; columnIndex++) {
+                    const column = section.Columns[columnIndex];
+                    
+                    if (column.BlockContainer?.BlockKey === blockKey) {
+                        const currentScreenType = this.getScreenType(this._screenSizeSubject.getValue());
+                        // Check if the block should be hidden
+                        const sectionShouldBeHidden = this.getIsHidden(section.Hide, currentScreenType);
+                        const blockShouldBeHidden = this.getIsHidden(column.BlockContainer.Hide, currentScreenType);
+    
+                        res = (sectionShouldBeHidden || blockShouldBeHidden);
+                        blockFound = true;
+                        break;
+                    }
+                }
+    
+                if (blockFound) {
+                    break;
+                }
+            }
+        }
+
+        return res;
+    }
+
     getBlockEditor(blockId: string): IEditor {
         let res = null;
         const blockProgress = this._pageBlockProgressMap.get(blockId);
@@ -1471,8 +1507,8 @@ export class PagesService {
         this._draggingBlockKey.next('');
     }
 
-    updateBlockLoaded(blockKey: string) {
-        this.setBlockAsLoadedAndCalculateCurrentPriority(blockKey);
+    updateBlockLoaded(blockKey: string, editMode: boolean) {
+        this.setBlockAsLoadedAndCalculateCurrentPriority(blockKey, editMode);
     }
 
     updateBlockConfiguration(blockKey: string, configuration: any) {
