@@ -362,7 +362,9 @@ export class PagesService {
 
                 // Find the next priority to load.
                 this._pageBlockProgressMap.forEach(bp => {
-                    if (!bp.loaded && bp.priority > nextPriority) {
+                    let isBlockShouldBeHidden = this.isBlockShouldBeHidden(bp.block.Key, false);
+
+                    if (!isBlockShouldBeHidden && !bp.loaded && bp.priority > nextPriority) {
                         nextPriority = bp.priority;
                     }
                 });
