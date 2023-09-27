@@ -187,7 +187,7 @@ export class SectionBlockComponent extends BaseDestroyerComponent implements OnI
                     this.pagesService.onBlockStateChange(this.pageBlockView.Key, event);
                 }
                 break;
-            case 'buton-click':
+            case 'button-click':
                 // In runtime (or preview mode).
                 if (!this.editable) {
                     this.pagesService.onBlockButtonClick(this.pageBlockView.Key, event);
