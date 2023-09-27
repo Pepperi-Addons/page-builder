@@ -25,6 +25,7 @@ export async function load(configuration: any) {
 
     // Handle on page state change.
     pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK as any, {}, async (data: IContextWithData): Promise<IPageClientEventResult> => {
+        // debugger;
         const service = new ClientPagesService();
         const result = await service.getPageButtonClickData(data);
         return result;

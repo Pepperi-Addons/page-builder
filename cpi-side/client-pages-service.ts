@@ -472,6 +472,11 @@ class ClientPagesService {
             tmpResult = temp.ok ? await(temp.json()) : { page: null, availableBlocks: [] };
         }
 
+        // Set the page key cause it's not exist in the page object (it's related to the configuration now).
+        if (tmpResult.page?.Key !== pageKey) {
+            tmpResult.page.Key = pageKey;
+        }
+
         return tmpResult;
     }
 
