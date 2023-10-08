@@ -9,9 +9,9 @@ import { Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitT
     PageConfigurationParameterFilter, PageConfiguration, PageConfigurationParameterBase, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
 import { PageRowProjection, IPageBuilderData, IBlockLoaderData, IPageClientEventResult, CLIENT_ACTION_ON_CLIENT_PAGE_LOAD, IAvailableBlockData, 
     CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, PageBlockView, IPageView, CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, SYSTEM_PARAMETERS } from 'shared';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { NavigationService } from "./navigation.service";
-import { distinctUntilChanged, filter } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { UtilitiesService } from "./utilities.service";
 import * as _ from 'lodash';
 import { coerceNumberProperty } from "@angular/cdk/coercion";
@@ -238,6 +238,13 @@ export class PagesService {
         return this._previewModeSubject.asObservable().pipe(distinctUntilChanged());
     }
 
+    // This is for editor mode for load the blocks (with the CPI events only once) after the block is changed.
+    private _blockLoadEventSubject = new BehaviorSubject<{ blockKey: string, newBlock: boolean}>({ blockKey: '', newBlock: false });
+    get blockLoadEventDebouncedSubject$(): Observable<{ blockKey: string, newBlock: boolean}> {
+        return this._blockLoadEventSubject.asObservable().pipe(debounceTime(250));
+    }
+    
+
     // Indicates if the pages should run on offline mode.
     public isOffline: boolean = false;
 
@@ -269,6 +276,13 @@ export class PagesService {
             if (state) {
                 const queryParams = this.queryParamsService.getQueryParamsFromState(state);
                 this.navigationService.updateQueryParams(queryParams, true);
+            }
+        });
+
+        // Create subject for load the events for block load only once when there is changes in the blocks editor.
+        this.blockLoadEventDebouncedSubject$.subscribe((eventValue: { blockKey: string, newBlock: boolean}) => {
+            if (this.isEditMode) {
+                this.raiseClientEventForBlock(CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, eventValue.blockKey, null, eventValue.newBlock);
             }
         });
     }
@@ -431,7 +445,7 @@ export class PagesService {
         } else {
             eventData['PageKey'] = this._pageViewSubject.getValue().Key;
         }
-
+ 
         this.emitEvent({
             eventKey: eventKey,
             eventData: eventData,
@@ -566,7 +580,9 @@ export class PagesService {
         
         // Here we update the page editor and the page view cause the layout is updated.
         this.notifyPageInEditorChange(page);
-        this.raiseClientEventForBlock(CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, block.Key, null, newBlock);
+
+        // Notify that the block is changed (to raise the CPI event).
+        this._blockLoadEventSubject.next({ blockKey: block.Key, newBlock: newBlock });
     }
 
     private notifyEditorChange(editor: IEditor) {
