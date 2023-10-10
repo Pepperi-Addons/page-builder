@@ -26,7 +26,7 @@
       "webapp": "17.15.109",
       "themes": "1.1.21",
       "cpi_node": "1.1.76",
-      "configuration": "0.6.104"
+      "configurations": "0.6.104"
     },
     "CPISide": [
       "addon-cpi.ts"
