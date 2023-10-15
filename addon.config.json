@@ -8,7 +8,8 @@
     "installation.ts",
     "api.ts",
     "internal_api.ts",
-    "addon_blocks.ts"
+    "addon_blocks.ts",
+    "event_filters.ts"
   ],
   "Editors": [
     "main"

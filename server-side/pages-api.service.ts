@@ -1,11 +1,12 @@
 import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView, RecursiveImportInput, RecursiveExportInput, Draft, ConfigurationObject } from '@pepperi-addons/papi-sdk';
 import { Client } from '@pepperi-addons/debug-server';
-import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, DEFAULT_PAGES_DATA, PAGES_TABLE_NAME } from 'shared';
+import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, DEFAULT_PAGES_DATA, PAGES_TABLE_NAME, CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK } from 'shared';
 import { PagesValidatorService } from './pages-validator.service';
 import { v4 as uuidv4 } from 'uuid';
 
 export const DRAFT_PAGES_TABLE_NAME = 'PagesDrafts';
 export const PAGES_VARIABLES_TABLE_NAME = 'PagesVariables';
+export const JOURNEY_EVENTS_RELATION_NAME = 'JourneyEvent'
 
 const bundleFileName = 'page_builder';
 export class PagesApiService {
@@ -32,7 +33,7 @@ export class PagesApiService {
         return this.papiClient.addons.data.relations.find({where: `RelationName=${relationName}`});
     }
     
-    private upsertAddonBlockRelation() {
+    private async upsertAddonBlockRelation() {
         const name = 'Pages';
         const blockName = 'PageBuilder';
 
@@ -50,10 +51,10 @@ export class PagesApiService {
             ElementName: `pages-element-${this.addonUUID}`,
         }; 
         
-        this.upsertRelation(addonBlockRelation);
+        await this.upsertRelation(addonBlockRelation);
     }
 
-    private upsertSettingsRelation() {
+    private async upsertSettingsRelation() {
         const settingsName = 'Settings';
         const name = 'Pages';
 
@@ -73,7 +74,7 @@ export class PagesApiService {
             ElementName: `settings-element-${this.addonUUID}`,
         }; 
         
-        this.upsertRelation(settingsBlockRelation);
+        await this.upsertRelation(settingsBlockRelation);
     }
 
     private getInstalledAddon(uuid: string): Promise<InstalledAddon> {
@@ -202,7 +203,21 @@ export class PagesApiService {
             ...draft.Data
         } as Page
     }
-    
+
+    private async upsertEventsRelation(eventName, displayEventName) {
+        const relation = {
+            Type: "AddonAPI",
+            AddonRelativeURL: `/event-filters/get_filter_by_event?event=${eventName}`,
+            AddonUUID: this.addonUUID,
+            DisplayEventName: displayEventName,
+            RelationName: JOURNEY_EVENTS_RELATION_NAME,
+            Name: eventName,
+            Description: "",
+        };
+
+        await this.upsertRelation(relation);
+    }
+
     /***********************************************************************************************/
     /*                                  Protected functions
     /***********************************************************************************************/
@@ -224,8 +239,8 @@ export class PagesApiService {
         return draft;
     }
 
-    protected upsertRelation(relation): Promise<any> {
-        return this.papiClient.addons.data.relations.upsert(relation);
+    protected async upsertRelation(relation): Promise<any> {
+        return await this.papiClient.addons.data.relations.upsert(relation);
     }
 
     // protected async getPagesFrom(tableName: string, options: FindOptions | undefined = undefined): Promise<Page[]> {
@@ -336,12 +351,21 @@ export class PagesApiService {
         return Promise.all(promises);
     }
 
-    upsertPagesRelations(): void {
-        this.upsertVarSettingsRelation();
+    async upsertJourneyEventsRelation() {
+        const promises = [
+            this.upsertEventsRelation(CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, "Page block state change"),
+            this.upsertEventsRelation(CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, "Page block button click"),
+        ];
+        Promise.all(promises);
+    }
+
+    async upsertPagesRelations(): Promise<void> {
+        await this.upsertVarSettingsRelation();
         // this.upsertImportRelation();
         // this.upsertExportRelation();
-        this.upsertAddonBlockRelation();
-        this.upsertSettingsRelation();
+        await this.upsertAddonBlockRelation();
+        await this.upsertSettingsRelation();
+        await this.upsertJourneyEventsRelation();
     }
 
     async getPublishedPages(options: FindOptions | undefined = undefined): Promise<Page[]> {
@@ -624,7 +648,7 @@ export class PagesApiService {
     //                              VarSettings functions
     /************************************************************************************************/
     
-    private upsertVarSettingsRelation(): void {
+    private async upsertVarSettingsRelation(): Promise<void> {
         const title = 'Pages variables'; // The title of the tab in which the fields will appear;
         const dataView: FormDataView = {
             Type: 'Form',
@@ -699,7 +723,7 @@ export class PagesApiService {
             DataView: dataView
         };                
 
-        this.upsertRelation(varSettingsRelation);
+        await this.upsertRelation(varSettingsRelation);
     }
 
     async savePagesVariables(varSettingsParams: any) {
