@@ -1,6 +1,6 @@
 import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView, RecursiveImportInput, RecursiveExportInput, Draft, ConfigurationObject } from '@pepperi-addons/papi-sdk';
 import { Client } from '@pepperi-addons/debug-server';
-import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, DEFAULT_PAGES_DATA, PAGES_TABLE_NAME, CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK } from 'shared';
+import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, DEFAULT_PAGES_DATA, PAGES_TABLE_NAME, CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, CLIENT_ACTION_ON_CLIENT_PAGE_LOAD } from 'shared';
 import { PagesValidatorService } from './pages-validator.service';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -204,15 +204,16 @@ export class PagesApiService {
         } as Page
     }
 
-    private async upsertEventsRelation(eventName, displayEventName) {
+    private async upsertEventsRelation(eventName, displayEventName, fields) {
         const relation = {
             Type: "AddonAPI",
-            AddonRelativeURL: `/event-filters/get_filter_by_event?event=${eventName}`,
             AddonUUID: this.addonUUID,
             DisplayEventName: displayEventName,
             RelationName: JOURNEY_EVENTS_RELATION_NAME,
             Name: eventName,
             Description: "",
+            AddonRelativeURL: `/event-filters/get_filter_by_event?event=${eventName}`,
+            Fields: fields,
         };
 
         await this.upsertRelation(relation);
@@ -353,8 +354,9 @@ export class PagesApiService {
 
     async upsertJourneyEventsRelation() {
         const promises = [
-            this.upsertEventsRelation(CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, "Page block state change"),
-            this.upsertEventsRelation(CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, "Page block button click"),
+            this.upsertEventsRelation(CLIENT_ACTION_ON_CLIENT_PAGE_LOAD, "Page load", [{"FieldID": "PageKey"}]),
+            this.upsertEventsRelation(CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, "Page block state change", [{"FieldID": "PageKey"}, {"FieldID": "Changes"}]),
+            this.upsertEventsRelation(CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, "Page block button click", [{"FieldID": "PageKey"}, {"FieldID": "BlockKey"}, {"FieldID": "ButtonKey"}]),
         ];
         Promise.all(promises);
     }

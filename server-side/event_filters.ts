@@ -5,7 +5,11 @@ export async function get_filter_by_event(client: Client, request: Request): Pro
 
     if (request.method === 'GET') {
         const eventString = request.query.event;
-        const fields: any[] = [];
+        const fields: any[] = [{
+            FieldID: "PageKey",
+            FieldType: "String",
+            Title: "Page key",
+        }];
 
         if (eventString === CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK) {
             fields.push({
