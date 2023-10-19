@@ -471,6 +471,9 @@ class ClientPagesService {
             const lookForDraftQS = page?.Key ? `&lookForDraft=true` : '';
             const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}${lookForDraftQS}`);
             tmpResult = temp.ok ? await(temp.json()) : { page: null, availableBlocks: [] };
+            if (page) {
+                tmpResult.page = page;
+            }
         }
 
         return tmpResult;
