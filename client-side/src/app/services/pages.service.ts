@@ -1013,6 +1013,9 @@ export class PagesService {
 
                 // Added page to the host object of the editor (only for edit).
                 const pageCopy = JSON.parse(JSON.stringify(this._pageInEditorSubject.getValue()));
+                if (!pageCopy.Parameters) {
+                    pageCopy.Parameters = [];
+                }
                 // Add the system parameters to the page.
                 for (let index = 0; index < SYSTEM_PARAMETERS.length; index++) {
                     const sp = SYSTEM_PARAMETERS[index];
