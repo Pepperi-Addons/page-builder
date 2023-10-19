@@ -429,7 +429,8 @@ export class PagesApiService {
             let page;
             
             // If lookForDraft try to get the page from the draft first (for runtime the lookForDraft will be false).
-            if (lookForDraft) {
+            if (lookForDraft || query['lookForDraft'] === 'true') {
+                lookForDraft = true;
                 try {
                     // Get the page from the drafts.
                     page = await this.getPage(pageKey, DRAFT_PAGES_TABLE_NAME);

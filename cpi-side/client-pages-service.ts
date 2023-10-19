@@ -468,7 +468,8 @@ class ClientPagesService {
         } else {
             // Get the page data online if sync isn't installed (in case of editor the page already exist in the data.Page,
             // data.Page and the page that will return here should be the same cause this is load event).
-            const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}`);
+            const lookForDraftQS = page?.Key ? `&lookForDraft=true` : '';
+            const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}${lookForDraftQS}`);
             tmpResult = temp.ok ? await(temp.json()) : { page: null, availableBlocks: [] };
         }
 
