@@ -212,7 +212,7 @@ export class PagesApiService {
             RelationName: JOURNEY_EVENTS_RELATION_NAME,
             Name: eventName,
             Description: "",
-            AddonRelativeURL: `/event-filters/get_filter_by_event?event=${eventName}`,
+            AddonRelativeURL: `/event_filters/get_filter_by_event?event=${eventName}`,
             Fields: fields,
         };
 
