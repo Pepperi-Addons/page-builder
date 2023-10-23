@@ -245,15 +245,15 @@ export class PagesApiService {
     }
 
     // protected async getPagesFrom(tableName: string, options: FindOptions | undefined = undefined): Promise<Page[]> {
-    protected async getPagesFrom(options: FindOptions | undefined = undefined): Promise<Page[]> {
-        const drafts = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.find(options);
+    // protected async getPagesFrom(options: FindOptions | undefined = undefined): Promise<Page[]> {
+    //     const drafts = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.find(options);
 
-        const pages: Page[] = drafts.map(draft => {
-            return this.convertDraftToPage(draft);
-        });
-        return pages
-        // return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).find(options) as Page[];
-    }
+    //     const pages: Page[] = drafts.map(draft => {
+    //         return this.convertDraftToPage(draft);
+    //     });
+    //     return pages
+    //     // return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).find(options) as Page[];
+    // }
 
     /***********************************************************************************************/
     /*                                  Public functions
@@ -1032,5 +1032,22 @@ export class PagesApiService {
         });
 
         return promise;
+    }
+
+    /***********************************************************************************************/
+    //                              Journey functions
+    /************************************************************************************************/
+    
+    async getPagesOptionalValues(options: FindOptions | undefined = undefined): Promise<{Key: string, Value: any}[]> {
+        let res: {Key: string, Value: any}[] = [];
+        const drafts = await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.find(options);
+
+        if (drafts?.length > 0) {
+            res = drafts.map(draft => {
+                return { Key: draft.Key || '', Value: draft.Name }
+            });
+        }
+
+        return res;
     }
 }
