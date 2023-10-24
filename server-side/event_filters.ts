@@ -11,7 +11,7 @@ export async function get_filter_by_event(client: Client, request: Request): Pro
         const eventString = request.query.event;
         const fields: any[] = [{
             FieldID: "PageKey",
-            FieldType: "String",
+            FieldType: "MultipleStringValues",
             Title: "Page key",
             OptionalValues: pagesOptionalValues
         }];
