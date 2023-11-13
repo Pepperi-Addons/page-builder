@@ -114,7 +114,7 @@ export class PageManagerComponent extends BaseDestroyerComponent implements OnIn
 
         // When block change update the editor cause it can be changed.
         this.pagesService.pageBlockChange$.pipe(this.getDestroyer()).subscribe((pageBlockKey: string) => {
-            if (this.currentEditor.id === pageBlockKey) {
+            if (this.currentEditor?.id === pageBlockKey) {
                 this.setCurrentEditor();
             }
         });
