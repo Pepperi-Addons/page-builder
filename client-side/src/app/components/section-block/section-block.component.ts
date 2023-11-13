@@ -119,17 +119,21 @@ export class SectionBlockComponent extends BaseDestroyerComponent implements OnI
         const bp = this.pagesService.pageBlockProgressMap.get(this.pageBlockView.Key);
                     
         if (bp && bp.registerStateChangeCallback && bp.blockLastChanges) {
+            // Update pageBlockView
+            this._pageBlockView = bp.blockLastChanges;
+
             const data: { state: any, configuration: any } = {
                 state: this._state,
-                configuration: bp.blockLastChanges.Configuration
+                configuration: this.pagesService.getMergedConfigurationData(this.pageBlockView) // bp.blockLastChanges.Configuration
             };
     
             bp.registerStateChangeCallback(data);
         } else {
             // Only if block change then set the hostObject.
             if (onBlockChange) {
-                // This is for support old blocks.
+                // Update pageBlockView
                 this._pageBlockView = bp.block;
+                // This is for support old blocks.
                 this.setHostObject();
             }
         }
