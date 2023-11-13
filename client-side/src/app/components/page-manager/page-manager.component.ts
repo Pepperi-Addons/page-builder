@@ -112,6 +112,13 @@ export class PageManagerComponent extends BaseDestroyerComponent implements OnIn
             this.currentEditor = editor;
         });
 
+        // When block change update the editor cause it can be changed.
+        this.pagesService.pageBlockChange$.pipe(this.getDestroyer()).subscribe((pageBlockKey: string) => {
+            if (this.currentEditor.id === pageBlockKey) {
+                this.setCurrentEditor();
+            }
+        });
+
         this.pagesService.screenSizeChange$.pipe(this.getDestroyer()).subscribe((size: PepScreenSizeType) => {
             this.screenSize = size;
             const screenType = this.pagesService.getScreenType(this.screenSize);
