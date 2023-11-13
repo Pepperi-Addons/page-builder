@@ -177,8 +177,8 @@ export class PagesUpgradeService extends PagesApiService {
             // Remove the import export relations
             await this.removeDimxRelations();
             
-            // TODO: Remove the ADAL scheme from the addon ??
-            // await this.removeAdalSchema();
+            // Remove the ADAL scheme from the addon ??
+            await this.removeAdalSchema();
 
             // Unsubscribe from the uninstall blocks subscription for draft pages.
             await this.unsubscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
