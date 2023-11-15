@@ -488,16 +488,17 @@ class ClientPagesService {
     async getPage(pageKey: string): Promise<Page> {
         // New code.
         const configurationObject: ConfigurationObject = await pepperi.addons.configurations.get(pageKey);
-        return (configurationObject?.Data) as Page;
+        const configurationObjectData = configurationObject?.Data || {};
 
-        // Old code.
-        // const res = await pepperi.api.adal.get({
-        //     addon: config.AddonUUID,
-        //     table: PAGES_TABLE_NAME,
-        //     key: pageKey
-        // }); 
-        // const page =  res.object as Page;
-        // return page;
+        // The Name and the Description is on the draft so we don't need it here (need it for editor only).
+        return {
+            Key: pageKey,
+            Name: configurationObjectData.Name || '',
+            Description: configurationObjectData.Description || '',
+            ...configurationObjectData
+        } as Page
+
+        // return (configurationObject?.Data) as Page;
     }
 
     async getPageDataOld(pageKey: string, context: IContext | undefined): Promise<IPageBuilderData> {

@@ -2,7 +2,7 @@ import '@pepperi-addons/cpi-node'
 import { IContextWithData } from '@pepperi-addons/cpi-node/build/cpi-side/events';
 import { CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, CLIENT_ACTION_ON_CLIENT_PAGE_LOAD, 
     CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, IPageClientEventResult } from 'shared';
-import ClientPagesService from './client-pages-service';
+import ClientPagesService from './client-pages.service';
 
 export const router = Router();
 
