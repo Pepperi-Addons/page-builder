@@ -1,5 +1,5 @@
 <div #sectionsCont cdkDropListGroup class="sections-container gap-{{ sectionsGap }} " [ngClass]="{'mobile': screenType === 'Phablet', 'preview-state': !editMode }"  
-     cdkDropList (cdkDropListDropped)="onSectionDropped($event)" [ngStyle]="{'grid-template-rows': getSectionsTemplateRows()}">
+     cdkDropList (cdkDropListDropped)="onSectionDropped($event)" [ngStyle]="{'grid-auto-rows': getSectionsTemplateRows()}">
 
     <section *ngFor="let section of sections$ | async; let i=index;" 
         [ngClass]="screenType === 'Phablet' ? 'margin-'+sectionsGap : ''"

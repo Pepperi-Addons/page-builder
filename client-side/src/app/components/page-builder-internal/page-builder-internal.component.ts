@@ -220,7 +220,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
                             fillHeightCount++;
                             templateRows += ' auto';
                         }
-                        else{
+                        else {
                             templateRows += ' min-content';
                         }
                     });
@@ -233,5 +233,4 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
 
         return templateRows;
     }
-
 }
