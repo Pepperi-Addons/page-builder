@@ -176,7 +176,7 @@ class ClientPagesService {
         } else {
             // Get the cosumers of the changed params.
             const consumerBlocksMap = this.getConsumedParametersBlocks(page.Blocks, pageState.PageParameters, changedParameters);
-            
+
             // After we found the blocks that cosume these changedParameters, set the changedParameters in changedParametersToFilterFrom for filter from it after.
             let changedParametersToFilterFrom: any = { ...changedParameters }; 
             
@@ -532,6 +532,9 @@ class ClientPagesService {
     async getPageLoadData(eventData: IContextWithData): Promise<IPageClientEventResult> {
         const pageState: IPageState = eventData.State || { PageParameters: {}, BlocksState: {} };
         const tmpResult: IPageBuilderData = await this.getPageBuilderData(eventData);
+
+        // Merge the page parameters.
+        pageState.PageParameters = this.getMergedParameters(tmpResult.page, pageState.PageParameters);
 
         // Convert the availableBlocks to map.
         const availableBlocksMap = this.getAvailableBlocksMap(tmpResult.availableBlocks);
