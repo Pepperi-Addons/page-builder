@@ -91,7 +91,7 @@ class ClientPagesService {
                         State: pageState.BlocksState[block.Key],
                         ...(bodyExtra && bodyExtra), // If there is bodyExtra set them too (This is happens in all events except PageLoad).
                         Configuration: block.Configuration.Data, // Set only the Configuration.Data into Configuration
-                        ...(pageLoadEvent && { ConfigurationPerScreenSize: block.ConfigurationPerScreenSize }) // Add this only for page load event
+                        ...(block.ConfigurationPerScreenSize && { ConfigurationPerScreenSize: block.ConfigurationPerScreenSize }) // Add this only if exist
                     },
                     ...(context && { context }) // Add context if not undefined.
                 };
@@ -132,7 +132,7 @@ class ClientPagesService {
                 // NOTE: Set blockDataToOverride Configuration into Configuration.Data
                 // (cause we save it as PageBlock and only before return to client we convert it to PageBlockView).
                 block.Configuration.Data = blockDataToOverride.Configuration;
-                // block.ConfigurationPerScreenSize = blockDataToOverride.ConfigurationPerScreenSize;
+                block.ConfigurationPerScreenSize = blockDataToOverride.ConfigurationPerScreenSize ?? block.ConfigurationPerScreenSize;
                 pageState.BlocksState[block.Key] = blockDataToOverride.State;
             }
         } else {
@@ -328,7 +328,7 @@ class ClientPagesService {
         return addonBlocksLoaderData;
     }
     
-    private getPageView(page: Page, pageLoadEvent: boolean, pageBlockLoadEvent = false): IPageView {
+    private getPageView(page: Page, pageLoadEvent: boolean): IPageView {
         return {
             Key: page?.Key || '',
             // Name: page.Name,
@@ -343,7 +343,7 @@ class ClientPagesService {
                 },
                 // Set only the Configuration.Data into Configuration (the ResourceDataConfiguration object is neccessary only in PageBlock).
                 Configuration: block.Configuration.Data, 
-                ...((pageLoadEvent || pageBlockLoadEvent) && { ConfigurationPerScreenSize: block.ConfigurationPerScreenSize })
+                ...(block.ConfigurationPerScreenSize && { ConfigurationPerScreenSize: block.ConfigurationPerScreenSize })
             }}),
             // Layout: page.Layout
             ...(pageLoadEvent && { Layout: page?.Layout }),
@@ -370,9 +370,9 @@ class ClientPagesService {
     }
 
     private getPageClientEventResult(pageState: IPageState, page: Page, pageLoadEvent = false, 
-        availableBlocks: IBlockLoaderData[] = [], pageBlockLoadEvent = false): IPageClientEventResult {
+        availableBlocks: IBlockLoaderData[] = []): IPageClientEventResult {
         // Prepare the object as in the API Design.
-        const pageView = this.getPageView(page, pageLoadEvent, pageBlockLoadEvent);
+        const pageView = this.getPageView(page, pageLoadEvent);
         const result: IPageClientEventResult = {
             State: pageState,
             PageView: pageView,
@@ -616,7 +616,7 @@ class ClientPagesService {
             await this.runPageBlockEndpointForEvent('page-load', tmpResult.page, block, availableBlocksMap, pageState, null, updatedBlocksMap, eventData);
         }
 
-        const result = this.getPageClientEventResult(pageState, tmpResult.page, false, [], true);
+        const result = this.getPageClientEventResult(pageState, tmpResult.page, false, []);
         return result;
     }
 
