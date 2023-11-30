@@ -44,6 +44,8 @@ export interface PageBlockView {
 }
 
 export interface IAvailableBlockData {
+    RelationTitle: string,
+    RelationAvailable: boolean;
     RelationName: string,
     RelationAddonUUID: string,
     RelationSchema?: any,

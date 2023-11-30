@@ -146,11 +146,11 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
         ];
         
         this.pagesService.availableBlocksDataLoadedSubject$.pipe(this.getDestroyer()).subscribe((availableBlocksData: IAvailableBlockData[]) => {
-            this.availableBlocksData = availableBlocksData;
+            this.availableBlocksData = availableBlocksData.filter(ab => ab.RelationAvailable);
             
             this.availableBlocksForDrag = this.availableBlocksData.map(abd => {
                 return {
-                    title: abd.RelationName,
+                    title: abd.RelationTitle,
                     disabled: false,
                     data: { key: abd.RelationAddonUUID, availableBlockData: abd }
                 }

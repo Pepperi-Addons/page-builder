@@ -27,6 +27,8 @@ export function getAvailableBlockData(availableBlocks: IBlockLoaderData[], devBl
     const availableBlocksData: IAvailableBlockData[] = availableBlocks.map(ab => {
         return {
             RelationName: ab.relation.Name,
+            RelationTitle: ab.relation.Title || ab.relation.Name, 
+            RelationAvailable: ab.relation.Available ?? true,
             RelationAddonUUID: ab.relation.AddonUUID,
             RelationSchema: ab.relation.Schema,
             PageRemoteLoaderOptions: {
