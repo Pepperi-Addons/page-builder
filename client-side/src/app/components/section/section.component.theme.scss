@@ -3,8 +3,9 @@
 @use '../../../mixins.scss' as mix;
 
 .section-container {
-    background: functions.get-pep-color(color-system-primary-invert, color-base);
-    
+    // background: functions.get-pep-color(color-system-primary-invert, color-base);
+    background: transparent;
+
     // This css is only for edit mode.
     &.editable-state {
         $color-caution: functions.get-pep-color(color-text, color-caution);
