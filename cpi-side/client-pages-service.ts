@@ -523,6 +523,9 @@ class ClientPagesService {
         const pageState: IPageState = eventData.State || { PageParameters: {}, BlocksState: {} };
         const tmpResult: IPageBuilderData = await this.getPageBuilderData(eventData);
 
+        // Merge the page parameters.
+        pageState.PageParameters = this.getMergedParameters(tmpResult.page, pageState.PageParameters);
+
         // Convert the availableBlocks to map.
         const availableBlocksMap = this.getAvailableBlocksMap(tmpResult.availableBlocks);
 
