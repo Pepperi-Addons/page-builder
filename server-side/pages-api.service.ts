@@ -8,12 +8,13 @@ export const DRAFT_PAGES_TABLE_NAME = 'PagesDrafts';
 export const PAGES_VARIABLES_TABLE_NAME = 'PagesVariables';
 export const JOURNEY_EVENTS_RELATION_NAME = 'JourneyEvent'
 
-const bundleFileName = 'page_builder';
+// const bundleFileName = 'page_builder';
 export class PagesApiService {
     papiClient: PapiClient;
     addonUUID: string;
     pagesValidatorService: PagesValidatorService;
     assetsBaseUrl: string;
+    bundleFileName = '';
 
     constructor(client: Client) {
         this.addonUUID = client.AddonUUID;
@@ -27,6 +28,8 @@ export class PagesApiService {
             addonSecretKey: client.AddonSecretKey,
             actionUUID: client.ActionUUID
         });
+
+        this.bundleFileName = `file_${this.addonUUID}`;
     }
 
     private getRelations(relationName: string): Promise<any> {
@@ -44,7 +47,7 @@ export class PagesApiService {
             Type: "NgComponent",
             SubType: "NG14",
             AddonUUID: this.addonUUID,
-            AddonRelativeURL: bundleFileName,
+            AddonRelativeURL: this.bundleFileName,
             ComponentName: `${blockName}Component`,
             ModuleName: `${blockName}Module`,
             ElementsModule: 'WebComponents',
@@ -67,7 +70,7 @@ export class PagesApiService {
             Type: "NgComponent",
             SubType: "NG14",
             AddonUUID: this.addonUUID,
-            AddonRelativeURL: bundleFileName,
+            AddonRelativeURL: this.bundleFileName,
             ComponentName: `${settingsName}Component`,
             ModuleName: `${settingsName}Module`,
             ElementsModule: 'WebComponents',

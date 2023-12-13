@@ -1,9 +1,11 @@
 const { shareAll, share, withModuleFederationPlugin } = require('@angular-architects/module-federation/webpack');
-const filename = 'page_builder';
+const addonConfig = require('../addon.config.json');
+const blockName = `file_${addonConfig.AddonUUID}`;
+// const blockName = 'page_builder';
 
 const webpackConfig = withModuleFederationPlugin({
-    name: filename,
-    filename: `${filename}.js`,
+    name: blockName,
+    filename: `${blockName}.js`,
     exposes: {
         './WebComponents': './src/bootstrap.ts',
     },
@@ -16,6 +18,7 @@ module.exports = {
     ...webpackConfig,
     output: {
         ...webpackConfig.output,
-        uniqueName: 'block',
-    },
+        // chunkLoadingGlobal: blockName,
+        uniqueName: blockName,
+    }
 };
