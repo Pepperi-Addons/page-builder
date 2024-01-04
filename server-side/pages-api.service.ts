@@ -320,6 +320,9 @@ export class PagesApiService {
                 OnLoadFlow: {
                     Type: "Object",
                 },
+                OnChangeFlow: {
+                    Type: "Object",
+                },
                 Blocks: {
                     Type: "Array"
                 },

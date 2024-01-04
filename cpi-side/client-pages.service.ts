@@ -401,23 +401,25 @@ class ClientPagesService {
         return mergedParameters;
     }
 
-    private async runOnLoadFlow(page: Page, pageParameters: any, eventData: IContextWithData): Promise<void> {
-        // If the OnLoadFlow exist run it.
-        if (page?.OnLoadFlow?.FlowKey?.length > 0) {
+    private async runPageFlow(pageFlowType: 'load' | 'change', page: Page, pageParameters: any, eventData: IContextWithData): Promise<void> {
+        const flowToRun: any = pageFlowType === 'load' ? page?.OnLoadFlow : page?.OnChangeFlow;
+
+        // If the flowToRun exist run it.
+        if (flowToRun?.FlowKey?.length > 0) {
             const mergedParameters = this.getMergedParameters(page, pageParameters);
             const dynamicParamsData: any = {};
             
             // Create dynamic params map for set the values (also for later usage when set the pageParameters).
             const dynamicParamsMap = new Map<string, string>();
             
-            if (page.OnLoadFlow?.FlowParams) {
+            if (flowToRun?.FlowParams) {
                 // Get all dynamic parameters to set their value on the data property later.
-                const keysArr = Object.keys(page.OnLoadFlow.FlowParams);
+                const keysArr = Object.keys(flowToRun.FlowParams);
                 for (let index = 0; index < keysArr.length; index++) {
                     const key = keysArr[index];
                     
-                    if (page.OnLoadFlow.FlowParams[key].Source === 'Dynamic') {
-                        const value = page.OnLoadFlow.FlowParams[key].Value;
+                    if (flowToRun.FlowParams[key].Source === 'Dynamic') {
+                        const value = flowToRun.FlowParams[key].Value;
                         dynamicParamsMap.set(key, value);
 
                         // Set the dynamic parameter value on the dynamicParamsData property.
@@ -426,14 +428,14 @@ class ClientPagesService {
                 }
             }
         
-            const flowToRun: RunFlowBody = {
-                RunFlow: page.OnLoadFlow,
+            const runFlowBody: RunFlowBody = {
+                RunFlow: flowToRun,
                 Data: dynamicParamsData,
                 context: eventData
             };
 
             // Run the flow and set the result in pageParameters.
-            const flowResult = await pepperi.flows.run(flowToRun);
+            const flowResult = await pepperi.flows.run(runFlowBody);
             
             const resultKeys = Object.keys(flowResult);
             for (let index = 0; index < resultKeys.length; index++) {
@@ -536,11 +538,11 @@ class ClientPagesService {
         // Merge the page parameters.
         pageState.PageParameters = this.getMergedParameters(tmpResult.page, pageState.PageParameters);
 
+        // Run the OnLoadFlow before we start (for override page parameters data).
+        await this.runPageFlow('load', tmpResult.page, pageState.PageParameters, eventData);
+
         // Convert the availableBlocks to map.
         const availableBlocksMap = this.getAvailableBlocksMap(tmpResult.availableBlocks);
-
-        // Run the OnLoadFlow before we start (for override page parameters data).
-        await this.runOnLoadFlow(tmpResult.page, pageState.PageParameters, eventData);
 
         // This function override blocks data properties in page object.
         await this.runAllPageBlocksEndpointForEvent('page-load', tmpResult.page, availableBlocksMap, pageState, eventData);
@@ -559,8 +561,11 @@ class ClientPagesService {
         const block = tmpResult.page.Blocks.find(b => b.Key === blockKey);
  
         if (block) {
+            // Run the OnChangeFlow before we start (for override page parameters data).
+            await this.runPageFlow('change', tmpResult.page, pageState.PageParameters, eventData);
+
             const availableBlocksMap = this.getAvailableBlocksMap(tmpResult.availableBlocks);
-            
+
             // Get the changes from the data (Here we send the state and the state changes to the function).
             const changes = eventData.Changes.BlocksState[block.Key];
 
@@ -585,6 +590,9 @@ class ClientPagesService {
         const block = tmpResult.page.Blocks.find(b => b.Key === blockKey);
             
         if (block) {
+            // Run the OnChangeFlow before we start (for override page parameters data).
+            await this.runPageFlow('change', tmpResult.page, pageState.PageParameters, eventData);
+
             const availableBlocksMap = this.getAvailableBlocksMap(tmpResult.availableBlocks);
             
             // Set the button key to the body extra

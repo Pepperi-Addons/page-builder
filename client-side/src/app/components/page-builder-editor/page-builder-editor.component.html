@@ -15,6 +15,10 @@
                 <pep-flow-picker-button [flowHostObject]="onLoadFlowHostObject" (flowChange)="onLoadFlowChange($event)"></pep-flow-picker-button>
             </div>
             <div>
+                <label class="body-xs mat-form-title ellipsis">{{'PAGE_MANAGER.ON_CHANGE_FLOW_TITLE' | translate}}</label>
+                <pep-flow-picker-button [flowHostObject]="onChangeFlowHostObject" (flowChange)="onChangeFlowChange($event)"></pep-flow-picker-button>
+            </div>
+            <div>
                 <label class="body-xl bold ellipsis">{{'PAGE_MANAGER.SECTIONS_TITLE' | translate}}</label>
                 <pep-button class="add-section-button" value="{{'PAGE_MANAGER.ADD_SECTION' | translate}}" styleType="regular" iconName="number_plus" iconPosition="end"
                     (buttonClick)="onAddSectionClick($event)"></pep-button>
