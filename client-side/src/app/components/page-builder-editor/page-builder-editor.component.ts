@@ -35,6 +35,7 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
         this.pageDescription = value.pageDescription;
         this.parameters = value.parameters;
         this.onLoadFlow = value.onLoadFlow;
+        this.onChangeFlow = value.onChangeFlow;
         this.isFullWidth = !value.maxWidth || value.maxWidth === 0;
         this.maxWidth = value.maxWidth;
         this.horizontalSpacing = this._hostObject.horizontalSpacing || 'md';
@@ -43,7 +44,8 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
         this.columnsGap = this._hostObject.columnsGap || 'md';
         this.roundedCorners = this._hostObject.roundedCorners || 'none';
 
-        this.prepareOnLoadFlowHostObject();
+        this.prepareFlowHostObject('load');
+        this.prepareFlowHostObject('change');
     }
     get hostObject(): IPageEditor {
         return this._hostObject;
@@ -69,6 +71,14 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
     get onLoadFlow(): any {
         return this._onLoadFlow;
     }
+    
+    private _onChangeFlow: any = {};
+    set onChangeFlow(value: any) {
+        this._onChangeFlow = value;
+    }
+    get onChangeFlow(): any {
+        return this._onChangeFlow;
+    }
 
     isFullWidth: boolean;
     maxWidth: number;
@@ -85,6 +95,7 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
     availableBlocksContainerId = PagesService.AVAILABLE_BLOCKS_CONTAINER_ID;
     
     onLoadFlowHostObject;
+    onChangeFlowHostObject;
     parametersDialogRef: MatDialogRef<any> = null;
 
     constructor(
@@ -95,10 +106,7 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
         super();
     }
 
-    private prepareOnLoadFlowHostObject() {
-        this.onLoadFlowHostObject = {};
-        const runFlowData = this.onLoadFlow;
-
+    private prepareFlowHostObject(pageFlowType: 'load' | 'change') {
         const fields = {};
         
         for (let index = 0; index < this.parameters.length; index++) {
@@ -115,8 +123,15 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
             }
         }
         
-        this.onLoadFlowHostObject['runFlowData'] = runFlowData;
-        this.onLoadFlowHostObject['fields'] = fields;
+        if (pageFlowType === 'load') {
+            this.onLoadFlowHostObject = {};
+            this.onLoadFlowHostObject['runFlowData'] = this.onLoadFlow;
+            this.onLoadFlowHostObject['fields'] = fields;
+        } else if (pageFlowType === 'change') {
+            this.onChangeFlowHostObject = {};
+            this.onChangeFlowHostObject['runFlowData'] = this.onChangeFlow;
+            this.onChangeFlowHostObject['fields'] = fields;
+        }
     }
 
     private updateHostObject() {
@@ -124,6 +139,7 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
         this._hostObject.pageDescription = this.pageDescription;
         this._hostObject.parameters = this.parameters;
         this._hostObject.onLoadFlow = this.onLoadFlow;
+        this._hostObject.onChangeFlow = this.onChangeFlow;
         this._hostObject.maxWidth = this.isFullWidth ? 0 : this.maxWidth;
         this._hostObject.horizontalSpacing = this.horizontalSpacing;
         this._hostObject.verticalSpacing = this.verticalSpacing;
@@ -131,7 +147,8 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
         this._hostObject.columnsGap = this.columnsGap;
         this._hostObject.roundedCorners = this.roundedCorners === 'none' ? undefined : this.roundedCorners;
 
-        this.prepareOnLoadFlowHostObject();
+        this.prepareFlowHostObject('load');
+        this.prepareFlowHostObject('change');
 
         this.hostObjectChange.emit(this.hostObject);
     }
@@ -221,6 +238,11 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
         this.updateHostObject();
     }
 
+    onChangeFlowChange(flowData: any) {
+        this.onChangeFlow = flowData;
+        this.updateHostObject();
+    }
+    
     openParametersPickerDialog() {
         const config = this.dialogService.getDialogConfig({ disableClose: false }, 'full-screen');
         const data = {

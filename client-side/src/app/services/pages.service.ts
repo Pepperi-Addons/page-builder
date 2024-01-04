@@ -39,6 +39,7 @@ export interface IPageEditor {
     pageDescription: string,
     parameters: IParamemeter[],
     onLoadFlow: any,
+    onChangeFlow: any,
     maxWidth: number,
     horizontalSpacing?: UiPageSizeType,
     verticalSpacing?: UiPageSizeType,
@@ -602,6 +603,7 @@ export class PagesService {
                 pageDescription: page?.Description,
                 parameters: page.Parameters,
                 onLoadFlow: page.OnLoadFlow,
+                onChangeFlow: page.OnChangeFlow,
                 maxWidth: page?.Layout.MaxWidth,
                 verticalSpacing: page?.Layout.VerticalSpacing,
                 horizontalSpacing: page?.Layout.HorizontalSpacing,
@@ -1166,6 +1168,7 @@ export class PagesService {
             currentPage.Description = pageData.pageDescription;
             currentPage.Parameters = pageData.parameters;
             currentPage.OnLoadFlow = pageData.onLoadFlow;
+            currentPage.OnChangeFlow = pageData.onChangeFlow;
             currentPage.Layout.MaxWidth = pageData.maxWidth;
             currentPage.Layout.HorizontalSpacing = pageData.horizontalSpacing;
             currentPage.Layout.VerticalSpacing = pageData.verticalSpacing;
