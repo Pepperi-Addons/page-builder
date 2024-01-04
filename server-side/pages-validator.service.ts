@@ -456,6 +456,9 @@ export class PagesValidatorService {
 
         // Validate OnLoadFlow
         this.validateObjectProperty(page, 'OnLoadFlow', pagePropertyBreadcrumb, true, 'object');
+        
+        // Validate OnChangeFlow
+        this.validateObjectProperty(page, 'OnChangeFlow', pagePropertyBreadcrumb, true, 'object');
 
         // Validate Blocks
         this.validateArrayProperty(page, 'Blocks', pagePropertyBreadcrumb);
@@ -509,6 +512,9 @@ export class PagesValidatorService {
         
         // Add OnLoadFlow
         this.addOptionalPropertyIfExist(page, res, 'OnLoadFlow');
+        
+        // Add OnChangeFlow
+        this.addOptionalPropertyIfExist(page, res, 'OnChangeFlow');
         
         // Add Blocks specific properties.
         for (let blockIndex = 0; blockIndex < page.Blocks.length; blockIndex++) {
