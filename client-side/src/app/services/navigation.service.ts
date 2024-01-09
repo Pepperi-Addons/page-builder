@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd, ActivatedRouteSnapshot } from '@angular/router';
 
 import { filter } from 'rxjs/operators';
-import { config } from '../components/addon.config';
+import { config } from '../common/addon.config';
 
 @Injectable({ providedIn: 'root' })
 export class NavigationService {

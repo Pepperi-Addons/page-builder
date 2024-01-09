@@ -11,7 +11,7 @@ import { UtilitiesService } from '../../services/utilities.service';
 import { SettingsComponent } from './settings.component';
 import { SettingsRoutingModule } from './settings.routes';
 
-import { config } from '../addon.config';
+import { config } from '../../common/addon.config';
 
 @NgModule({
     declarations: [

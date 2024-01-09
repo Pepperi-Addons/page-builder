@@ -13,8 +13,10 @@ import { SettingsComponent, SettingsModule } from './components/settings';
 import { PageBuilderComponent, PageBuilderModule } from './components/page-builder';
 import { AppComponent } from './app.component';
 
-import { config } from './components/addon.config';
+import { config } from './common/addon.config';
 import { AppRoutingModule } from './app.routes';
+import { SharedPepNgxLibModule } from './common/shared-ngx-lib.module';
+import { SharedPepNgxCompositeLibModule } from './common/shared-ngx-composite-lib.module';
 
 const pepIcons = [
     pepIconSystemClose,
@@ -37,6 +39,10 @@ const pepIcons = [
         PageManagerModule,
         SettingsModule,
         PageBuilderModule,
+        // SharedAngularCdkModule,
+        // SharedMaterialModule,
+        SharedPepNgxLibModule,
+        SharedPepNgxCompositeLibModule,
         AppRoutingModule,
         TranslateModule.forRoot({
             loader: {
