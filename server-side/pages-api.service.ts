@@ -278,36 +278,6 @@ export class PagesApiService {
     async createPagesTablesSchemes(): Promise<AddonDataScheme[]> {
         const promises: AddonDataScheme[] = [];
         
-        // const DIMXSchema = {
-        //     Blocks: {
-        //         Type: "Array",
-        //         Items: {
-        //             Type: "Object",
-        //             Fields: {
-        //                 Configuration: {
-        //                     Type: "ContainedDynamicResource"
-        //                 }
-        //             }
-        //         }
-        //     },
-        // };
-
-        // // Create pages table
-        // const createPagesTable = await this.papiClient.addons.data.schemes.post({
-        //     Name: PAGES_TABLE_NAME,
-        //     Type: 'meta_data',
-        //     SyncData: {
-        //         Sync: true
-        //     }
-        // });
-        
-        // // Create pages draft table
-        // const createPagesDraftTable = await this.papiClient.addons.data.schemes.post({
-        //     Name: DRAFT_PAGES_TABLE_NAME,
-        //     Type: 'meta_data',
-        //     Fields: DIMXSchema as any // Declare the schema for the import & export.
-        // });
-
         // The input type is defined inside the papi sdk package, and called ConfigurationScheme
         const createPagesConfigurationTable = await this.papiClient.addons.configurations.schemes.upsert({
             Name: PAGES_TABLE_NAME, //the name of the configuration scheme
@@ -332,9 +302,7 @@ export class PagesApiService {
             },
             SyncData: {
                 Sync: true
-            },
-            // ImportRelation: this.getImportRelation(),
-            // ExportRelation: this.getExportRelation()
+            }
         });
 
         // Create pages variables table
@@ -350,6 +318,10 @@ export class PagesApiService {
                 Sync: true
             }
         });
+
+        // Create DIMX relations
+        await this.upsertImportRelation();
+        await this.upsertExportRelation();
 
         // promises.push(createPagesTable);
         // promises.push(createPagesDraftTable);
@@ -794,33 +766,35 @@ export class PagesApiService {
         return body;
     }
 
-    protected getImportRelation(): Relation {
+    protected async upsertImportRelation(): Promise<Relation> {
         const importRelation: Relation = {
             RelationName: 'DataImportResource',
             Name: PAGES_TABLE_NAME, //DRAFT_PAGES_TABLE_NAME,
             Description: 'Pages import',
+            Source: 'configurations',
             Type: 'AddonAPI',
             AddonUUID: this.addonUUID,
             AddonRelativeURL: '/internal_api/draft_pages_import', // '/api/pages_import',
             MappingRelativeURL: ''// '/internal_api/draft_pages_import_mapping', // '/api/pages_import_mapping',
         };                
 
-        // this.upsertRelation(importRelation);
-        return importRelation;
+        return await this.upsertRelation(importRelation);
+        // return importRelation;
     }
 
-    protected getExportRelation(): Relation {
+    protected async upsertExportRelation(): Promise<Relation> {
         const exportRelation: Relation = {
             RelationName: 'DataExportResource',
             Name: PAGES_TABLE_NAME, //DRAFT_PAGES_TABLE_NAME,
             Description: 'Pages export',
+            Source: 'configurations',
             Type: 'AddonAPI',
             AddonUUID: this.addonUUID,
             AddonRelativeURL: '/internal_api/draft_pages_export', // '/api/pages_export',
         };                
 
-        // this.upsertRelation(exportRelation);
-        return exportRelation;
+        return await this.upsertRelation(exportRelation);
+        // return exportRelation;
     }
 
     async importPages(body: any, draft = true): Promise<any> {
