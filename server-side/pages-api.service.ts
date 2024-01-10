@@ -319,10 +319,6 @@ export class PagesApiService {
             }
         });
 
-        // Create DIMX relations
-        await this.upsertRelation(this.getImportRelation());
-        await this.upsertRelation(this.getExportRelation());
-
         // promises.push(createPagesTable);
         // promises.push(createPagesDraftTable);
         promises.push(createPagesConfigurationTable);
@@ -341,8 +337,11 @@ export class PagesApiService {
 
     async upsertPagesRelations(): Promise<void> {
         await this.upsertVarSettingsRelation();
-        // this.upsertImportRelation();
-        // this.upsertExportRelation();
+        
+        // Create DIMX relations
+        await this.upsertRelation(this.getImportRelation());
+        await this.upsertRelation(this.getExportRelation());
+
         await this.upsertAddonBlockRelation();
         await this.upsertSettingsRelation();
         await this.upsertJourneyEventsRelation();
