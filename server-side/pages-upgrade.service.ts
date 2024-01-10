@@ -3,7 +3,7 @@ import { Client } from '@pepperi-addons/debug-server';
 //     PageBlock, PageSectionColumn, PageSizeTypes, PageLayout, Subscription, FindOptions, ResourceDataConfiguration } from '@pepperi-addons/papi-sdk'
 import { DRAFT_PAGES_TABLE_NAME, PagesApiService } from "./pages-api.service";
 import semver from 'semver';
-import { Page } from '@pepperi-addons/papi-sdk';
+import { Page, Relation } from '@pepperi-addons/papi-sdk';
 import { PAGES_TABLE_NAME } from 'shared';
 
 const pnsKeyForDraftPages = 'uninstall_blocks_subscription_draft';
@@ -87,12 +87,39 @@ export class PagesUpgradeService extends PagesApiService {
     //*     Upgrade to version 2.0.0 - change to work with configuration instead of ADAL - Begin
     //*********************************************************************************************
     
+    protected getOldImportRelation(): Relation {
+        const importRelation: Relation = {
+            RelationName: 'DataImportResource',
+            Name: DRAFT_PAGES_TABLE_NAME,
+            Description: 'Pages import',
+            Type: 'AddonAPI',
+            AddonUUID: this.addonUUID,
+            AddonRelativeURL: '/internal_api/draft_pages_import', // '/api/pages_import',
+            MappingRelativeURL: ''// '/internal_api/draft_pages_import_mapping', // '/api/pages_import_mapping',
+        };                
+
+        return importRelation;
+    }
+
+    private getOldExportRelation(): Relation {
+        const exportRelation: Relation = {
+            RelationName: 'DataExportResource',
+            Name: DRAFT_PAGES_TABLE_NAME,
+            Description: 'Pages export',
+            Type: 'AddonAPI',
+            AddonUUID: this.addonUUID,
+            AddonRelativeURL: '/internal_api/draft_pages_export', // '/api/pages_export',
+        };                
+
+        return exportRelation;
+    }
+
     private async removeDimxRelations() {
-        const importRelation = this.getImportRelation();
+        const importRelation = this.getOldImportRelation();
         importRelation.Hidden = true;
         await this.upsertRelation(importRelation);
 
-        const exportRelation = this.getExportRelation();
+        const exportRelation = this.getOldExportRelation();
         exportRelation.Hidden = true;
         await this.upsertRelation(exportRelation);
     }

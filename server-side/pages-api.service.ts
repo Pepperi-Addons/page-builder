@@ -765,7 +765,7 @@ export class PagesApiService {
         return body;
     }
 
-    protected getImportRelation(): Relation {
+    private getImportRelation(): Relation {
         const importRelation: Relation = {
             RelationName: 'DataImportResource',
             Name: PAGES_TABLE_NAME, //DRAFT_PAGES_TABLE_NAME,
@@ -780,7 +780,7 @@ export class PagesApiService {
         return importRelation;
     }
 
-    protected getExportRelation(): Relation {
+    private getExportRelation(): Relation {
         const exportRelation: Relation = {
             RelationName: 'DataExportResource',
             Name: PAGES_TABLE_NAME, //DRAFT_PAGES_TABLE_NAME,
