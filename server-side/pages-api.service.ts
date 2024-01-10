@@ -320,8 +320,8 @@ export class PagesApiService {
         });
 
         // Create DIMX relations
-        await this.upsertImportRelation();
-        await this.upsertExportRelation();
+        await this.upsertRelation(this.getImportRelation());
+        await this.upsertRelation(this.getExportRelation());
 
         // promises.push(createPagesTable);
         // promises.push(createPagesDraftTable);
@@ -766,7 +766,7 @@ export class PagesApiService {
         return body;
     }
 
-    protected async upsertImportRelation(): Promise<Relation> {
+    protected getImportRelation(): Relation {
         const importRelation: Relation = {
             RelationName: 'DataImportResource',
             Name: PAGES_TABLE_NAME, //DRAFT_PAGES_TABLE_NAME,
@@ -778,11 +778,10 @@ export class PagesApiService {
             MappingRelativeURL: ''// '/internal_api/draft_pages_import_mapping', // '/api/pages_import_mapping',
         };                
 
-        return await this.upsertRelation(importRelation);
-        // return importRelation;
+        return importRelation;
     }
 
-    protected async upsertExportRelation(): Promise<Relation> {
+    protected getExportRelation(): Relation {
         const exportRelation: Relation = {
             RelationName: 'DataExportResource',
             Name: PAGES_TABLE_NAME, //DRAFT_PAGES_TABLE_NAME,
@@ -793,8 +792,7 @@ export class PagesApiService {
             AddonRelativeURL: '/internal_api/draft_pages_export', // '/api/pages_export',
         };                
 
-        return await this.upsertRelation(exportRelation);
-        // return exportRelation;
+        return exportRelation;
     }
 
     async importPages(body: any, draft = true): Promise<any> {
