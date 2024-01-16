@@ -171,6 +171,10 @@ export class PagesUpgradeService extends PagesApiService {
                     await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.upsert(draft);
                     // Publish it
                     await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.key(page.Key).publish();
+
+                    // Remove the old page.
+                    page.Hidden = true;
+                    await this.papiClient.addons.data.uuid(this.addonUUID).table(PAGES_TABLE_NAME).upsert(page);
                 }
             }
         } catch (error) {
@@ -187,6 +191,10 @@ export class PagesUpgradeService extends PagesApiService {
                     const draft = this.convertPageToDraft(page);
                     // Save it
                     await this.papiClient.addons.configurations.addonUUID(this.addonUUID).scheme(PAGES_TABLE_NAME).drafts.upsert(draft);
+
+                    // Remove the old draft page.
+                    page.Hidden = true;
+                    await this.papiClient.addons.data.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).upsert(page);
                 }
             }
         } catch (error) {
