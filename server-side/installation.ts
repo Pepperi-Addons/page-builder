@@ -45,12 +45,12 @@ export async function uninstall(client: Client, request: Request): Promise<any> 
 
 export async function upgrade(client: Client, request: Request): Promise<any> {
     try {
-        const pageUpgradeService = new PagesUpgradeService(client);
-        await pageUpgradeService.performMigration(request.body.FromVersion, request.body.ToVersion);
-
         const pageService = new PagesApiService(client);
         await pageService.createPagesTablesSchemes();
         await pageService.upsertPagesRelations();
+
+        const pageUpgradeService = new PagesUpgradeService(client);
+        await pageUpgradeService.performMigration(request.body.FromVersion, request.body.ToVersion);
 
         // Example how to use migration code.
         // if (request.body.FromVersion && semver.compare(request.body.FromVersion, '0.7.61') < 0) {
