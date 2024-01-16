@@ -8,7 +8,9 @@ export const DRAFT_PAGES_TABLE_NAME = 'PagesDrafts';
 export const PAGES_VARIABLES_TABLE_NAME = 'PagesVariables';
 export const JOURNEY_EVENTS_RELATION_NAME = 'JourneyEvent'
 
-// const bundleFileName = 'page_builder';
+const CONFIGUTATION_UUID = '84c999c3-84b7-454e-9a86-71b7abc96554';
+const CONFIGURATION_TABLE_NAME_FOR_DIMX = 'drafts_for_dimx';
+
 export class PagesApiService {
     papiClient: PapiClient;
     addonUUID: string;
@@ -828,14 +830,23 @@ export class PagesApiService {
         return res;
     }
 
+    private getDimxAdditionalData(): any {
+        const additionalData = {
+            AddonUUID: this.addonUUID,
+            ConfigurationSchemeName: PAGES_TABLE_NAME
+        };
+
+        return additionalData;
+    }
+
     async importPageFile(body: RecursiveImportInput) {
-        // TODO: need to call configuration
-        // return await this.papiClient.addons.data.import.file.recursive.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).upsert(body);
+        body["AdditionalData"] = this.getDimxAdditionalData();
+        return await this.papiClient.addons.data.import.file.recursive.uuid(CONFIGUTATION_UUID).table(CONFIGURATION_TABLE_NAME_FOR_DIMX).upsert(body);
     }
 
     async exportPageFile(body: RecursiveExportInput) {
-        // TODO: need to call configuration
-        // return await this.papiClient.addons.data.export.file.recursive.uuid(this.addonUUID).table(DRAFT_PAGES_TABLE_NAME).get(body);
+        body["AdditionalData"] = this.getDimxAdditionalData();
+        return await this.papiClient.addons.data.export.file.recursive.uuid(CONFIGUTATION_UUID).table(CONFIGURATION_TABLE_NAME_FOR_DIMX).get(body);
     }
 
     /***********************************************************************************************/
