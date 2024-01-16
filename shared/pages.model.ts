@@ -1,4 +1,4 @@
-import { InstalledAddon, NgComponentRelation, Page, PageLayout, ResourceDataConfiguration, SchemeFieldType, ScreenSizeDataConfiguration } from "@pepperi-addons/papi-sdk";
+import { InstalledAddon, Page, PageLayout, SchemeFieldType, ScreenSizeDataConfiguration } from "@pepperi-addons/papi-sdk";
 
 // **********************************************************************************************
 //                          Client & User events const
@@ -95,7 +95,7 @@ export interface IPageBuilderData {
 }
 
 export interface IBlockLoaderData {
-    relation: NgComponentRelation, 
+    relation: any, 
     addonPublicBaseURL: string,
     addonVersion?: string,
     addon?: InstalledAddon;

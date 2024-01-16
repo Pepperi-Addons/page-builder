@@ -1,4 +1,4 @@
-import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView, RecursiveImportInput, RecursiveExportInput, Draft, ConfigurationObject } from '@pepperi-addons/papi-sdk';
+import { PapiClient, InstalledAddon, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView, RecursiveImportInput, RecursiveExportInput, Draft, ConfigurationObject } from '@pepperi-addons/papi-sdk';
 import { Client } from '@pepperi-addons/debug-server';
 import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, DEFAULT_PAGES_DATA, PAGES_TABLE_NAME, CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, CLIENT_ACTION_ON_CLIENT_PAGE_LOAD } from 'shared';
 import { PagesValidatorService } from './pages-validator.service';
@@ -88,7 +88,7 @@ export class PagesApiService {
 
     private async getAvailableBlocks(): Promise<IBlockLoaderData[]> {
         // Get the PageBlock relations 
-        const pageBlockRelations: NgComponentRelation[] = await this.getRelations('PageBlock');
+        const pageBlockRelations: any[] = await this.getRelations('PageBlock');
                 
         // Distinct the addons uuid's
         const distinctAddonsUuids = [...new Set(pageBlockRelations.map(obj => obj.AddonUUID))];
@@ -102,7 +102,7 @@ export class PagesApiService {
         const addons: InstalledAddon[] = await Promise.all(addonsPromises).then(res => res);
 
         const availableBlocks: IBlockLoaderData[] = [];
-        pageBlockRelations.forEach((relation: NgComponentRelation) => {
+        pageBlockRelations.forEach((relation: any) => {
             const installedAddon: InstalledAddon | undefined = addons.find((ia: InstalledAddon) => ia?.Addon?.UUID === relation?.AddonUUID);
             if (installedAddon) {
                 availableBlocks.push({
@@ -989,7 +989,7 @@ export class PagesApiService {
             // Get the addon blocks relations 
             const whereName = (name.length > 0) ? `AND Name="${name}"`: '';
 
-            let addonBlockRelations: NgComponentRelation[] = await this.papiClient.addons.data.relations.find(
+            let addonBlockRelations: any[] = await this.papiClient.addons.data.relations.find(
                 {where: `RelationName=${blockType} ${whereName}`}
             );
             
@@ -1004,7 +1004,7 @@ export class PagesApiService {
                     addonBlockRelations = addonBlockRelations.filter(abr => abr.SlugName === slugName);
                 }
 
-                const addonBlockRelation: NgComponentRelation = addonBlockRelations[0];
+                const addonBlockRelation: any = addonBlockRelations[0];
                 const installedAddon: InstalledAddon | undefined = await this.getInstalledAddon(addonBlockRelation.AddonUUID);
                 if (installedAddon) {
                     resolve({

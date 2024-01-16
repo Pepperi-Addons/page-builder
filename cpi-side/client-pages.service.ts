@@ -2,7 +2,7 @@ import { IContext, IContextWithData } from "@pepperi-addons/cpi-node/build/cpi-s
 import { ConfigurationObject, NgComponentRelation, Page, PageBlock } from "@pepperi-addons/papi-sdk";
 import { RunFlowBody } from '@pepperi-addons/cpi-node';
 import { IBlockLoaderData, IPageBuilderData, IPageClientEventResult, IPageView, getAvailableBlockData, IBlockEndpointResult, SYSTEM_PARAMETERS, IPageState, PAGES_TABLE_NAME } from "shared";
-import config from "../addon.config.json";
+// import config from "../addon.config.json";
 
 type PagesClientActionType = 'depricated-page-load' | 'page-load' | 'state-change' | 'button-click';
 

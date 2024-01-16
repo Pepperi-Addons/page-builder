@@ -1,6 +1,4 @@
 import { Client } from '@pepperi-addons/debug-server';
-// import { PapiClient, InstalledAddon, NgComponentRelation, Page, AddonDataScheme, PageSection, SplitTypes, DataViewScreenSizes, 
-//     PageBlock, PageSectionColumn, PageSizeTypes, PageLayout, Subscription, FindOptions, ResourceDataConfiguration } from '@pepperi-addons/papi-sdk'
 import { DRAFT_PAGES_TABLE_NAME, PagesApiService } from "./pages-api.service";
 import semver from 'semver';
 import { Page, Relation } from '@pepperi-addons/papi-sdk';

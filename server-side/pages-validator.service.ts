@@ -1,4 +1,4 @@
-import { DataViewScreenSizes, NgComponentRelation, Page, PageBlock, PageLayout, PageSection, PageSectionColumn, PageSizeTypes, SplitTypes, ResourceDataConfiguration, ScreenSizeDataConfiguration, PageConfiguration, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
+import { DataViewScreenSizes, Page, PageBlock, PageLayout, PageSection, PageSectionColumn, PageSizeTypes, SplitTypes, ResourceDataConfiguration, ScreenSizeDataConfiguration, PageConfiguration, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
 import { DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, IBlockLoaderData, PAGES_NUBER_LIMITATION } from 'shared'
 
 export class PagesValidatorService {
@@ -79,32 +79,6 @@ export class PagesValidatorService {
             this.validateBlockPageConfigurationProperties(blocksPropertyBreadcrumb, block.PageConfiguration);
         }
     }
-
-    // *** Relation is depricated ***
-    // private validateBlockRelationProperties(blockPropertyBreadcrumb: string, relation: NgComponentRelation): void {
-    //     const relationPropertyBreadcrumb = `${blockPropertyBreadcrumb} -> Relation`;
-
-    //     // Validate only AddonUUID all the rest properties are read only and copy from the relation object.
-    //     this.validateObjectProperty(relation, 'AddonUUID', relationPropertyBreadcrumb);
-
-    //     // Validate Name
-    //     // this.validateObjectProperty(relation, 'Name', relationPropertyBreadcrumb);
-        
-    //     // // Validate SubType
-    //     // this.validateObjectProperty(relation, 'SubType', relationPropertyBreadcrumb);
-
-    //     // // Validate AddonRelativeURL
-    //     // this.validateObjectProperty(relation, 'AddonRelativeURL', relationPropertyBreadcrumb);
-
-    //     // // Validate ModuleName
-    //     // this.validateObjectProperty(relation, 'ModuleName', relationPropertyBreadcrumb);
-
-    //     // // Validate ComponentName
-    //     // this.validateObjectProperty(relation, 'ComponentName', relationPropertyBreadcrumb);
-
-    //     // // Validate Schema
-    //     // this.validateObjectProperty(relation, 'Schema', relationPropertyBreadcrumb, true, 'object');
-    // }
 
     private validateBlockConfigurationProperties(blockPropertyBreadcrumb: string, configuration: ResourceDataConfiguration): void {
         const configurationPropertyBreadcrumb = `${blockPropertyBreadcrumb} -> Configuration`;
