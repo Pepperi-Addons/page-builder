@@ -1,4 +1,4 @@
-import { PapiClient, InstalledAddon, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView, RecursiveImportInput, RecursiveExportInput, Draft, ConfigurationObject } from '@pepperi-addons/papi-sdk';
+import { PapiClient, InstalledAddon, Page, AddonDataScheme, Subscription, FindOptions, Relation, FormDataView, RecursiveImportInput, RecursiveExportInput, Draft, ConfigurationObject, SearchData } from '@pepperi-addons/papi-sdk';
 import { Client } from '@pepperi-addons/debug-server';
 import { PageRowProjection, DEFAULT_BLANK_PAGE_DATA, IBlockLoaderData, IPageBuilderData, DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, DEFAULT_PAGES_DATA, PAGES_TABLE_NAME, CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, CLIENT_ACTION_ON_CLIENT_PAGE_LOAD } from 'shared';
 import { PagesValidatorService } from './pages-validator.service';
@@ -272,9 +272,12 @@ export class PagesApiService {
         // return await this.papiClient.addons.data.uuid(this.addonUUID).table(tableName).key(pagekey).get() as Page;
     }
 
-    async getPublishedPage(pagekey: string): Promise<Page> {
-        const configurationObject: ConfigurationObject = await this.papiClient.addons.configurations.key(pagekey).get();
-        return configurationObject.Data as Page;
+    async getPublishedPage(pagekey: string): Promise<Page | undefined> {
+        const configurationObjects: SearchData<ConfigurationObject> = await this.papiClient.addons.configurations.search({
+            Where: `Key like '${pagekey}%'`
+        });
+
+        return configurationObjects.Objects.length > 0 ? configurationObjects.Objects[0].Data as Page : undefined;
     }
 
     async createPagesTablesSchemes(): Promise<AddonDataScheme[]> {
