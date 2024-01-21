@@ -489,6 +489,11 @@ class ClientPagesService {
             // data.Page and the page that will return here should be the same cause this is load event).
             const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}`);
             tmpResult = temp.ok ? await(temp.json()) : { page: null, availableBlocks: [] };
+
+            if (!tmpResult.page) {
+                // If there is no page it means that the page is not published so take it from the eventData.Page input.
+                tmpResult.page = page;
+            }
         }
 
         // Set the page key cause it's not exist in the page object (it's related to the configuration now).
