@@ -165,6 +165,7 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
         this.pagesService.availableBlocksDataLoadedSubject$.pipe(this.getDestroyer()).subscribe((availableBlocksData: IAvailableBlockData[]) => {
             // TODO: For now we don't check if the relation is available or not. 
             // this.availableBlocksData = availableBlocksData.filter(ab => ab.RelationAvailable);
+            this.availableBlocksData = availableBlocksData;
             
             this.availableBlocksForDrag = this.availableBlocksData.map(abd => {
                 return {
