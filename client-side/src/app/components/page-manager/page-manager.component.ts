@@ -116,7 +116,8 @@ export class PageManagerComponent extends BaseDestroyerComponent implements OnIn
         this.pagesService.pageBlockChange$.pipe(this.getDestroyer()).subscribe((pageBlockKey: string) => {
             if (this.currentEditor?.id === pageBlockKey) {
                 // Don't update the editor cause if the user is still editing the focus field will be blur and the entered data will be lose.
-                // this.setCurrentEditor();
+                // Update cause if this in comment the editor dont update after changes like reset etc.
+                this.setCurrentEditor();
             }
         });
 

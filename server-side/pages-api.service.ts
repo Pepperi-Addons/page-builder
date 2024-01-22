@@ -31,7 +31,7 @@ export class PagesApiService {
             actionUUID: client.ActionUUID
         });
 
-        this.bundleFileName = `file_${this.addonUUID}`;
+        this.bundleFileName = 'page_builder'; // `file_${this.addonUUID}`;
     }
 
     private getRelations(relationName: string): Promise<any> {

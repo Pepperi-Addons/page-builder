@@ -207,26 +207,27 @@ export class PagesUpgradeService extends PagesApiService {
             // Copy all pages from publish to configuration and publish it and after that copy from draft into configuration without publishing it.
             await this.copyOldPagesToConfigurations();
             
-            try {
-                // Remove the import export relations
-                await this.removeDimxRelations();
-            } catch (error) {
-                console.log(error);
-            }
+            // TODO: Return this code when Ido.t || Benny.t will say so!!!
+            // try {
+            //     // Remove the import export relations
+            //     await this.removeDimxRelations();
+            // } catch (error) {
+            //     console.log(error);
+            // }
 
-            try {
-                // Remove the ADAL scheme from the addon ??
-                await this.removeAdalSchema();
-            } catch (error) {
-                console.log(error);
-            }
+            // try {
+            //     // Remove the ADAL scheme from the addon ??
+            //     await this.removeAdalSchema();
+            // } catch (error) {
+            //     console.log(error);
+            // }
 
-            try {
-                // Unsubscribe from the uninstall blocks subscription for draft pages.
-                await this.unsubscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
-            } catch (error) {
-                console.log(error);
-            }
+            // try {
+            //     // Unsubscribe from the uninstall blocks subscription for draft pages.
+            //     await this.unsubscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
+            // } catch (error) {
+            //     console.log(error);
+            // }
         }
     }
 

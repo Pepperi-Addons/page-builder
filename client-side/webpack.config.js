@@ -1,7 +1,7 @@
 const { shareAll, share, withModuleFederationPlugin } = require('@angular-architects/module-federation/webpack');
 const addonConfig = require('../addon.config.json');
-const blockName = `file_${addonConfig.AddonUUID}`;
-// const blockName = 'page_builder';
+// const blockName = `file_${addonConfig.AddonUUID}`;
+const blockName = 'page_builder';
 
 const webpackConfig = withModuleFederationPlugin({
     name: blockName,
