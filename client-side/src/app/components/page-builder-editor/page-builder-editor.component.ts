@@ -169,7 +169,7 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
             
             this.availableBlocksForDrag = this.availableBlocksData.map(abd => {
                 return {
-                    title: abd.RelationTitle,
+                    title: abd.RelationTitle || abd.RelationName,
                     disabled: false,
                     data: { key: abd.RelationAddonUUID, availableBlockData: abd }
                 }
