@@ -112,7 +112,7 @@
         grid-auto-flow: column;
         height: inherit;
         max-height: inherit;
-        overflow: auto;
+        overflow: inherit; // changed from auto to inherit for the shadow (BUG DI-26253)
 
         &.is-dragging {
             overflow: unset; // Make it visible for see the focus.

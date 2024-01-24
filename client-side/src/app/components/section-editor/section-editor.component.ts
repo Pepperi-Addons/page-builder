@@ -32,6 +32,7 @@ export class SectionEditorComponent implements OnInit {
         this.split = value.split;
         this.isAutoHeight = !value.height || value.height === 0;
         this.height = this.isAutoHeight ? this.MIN_HEIGHT : value.height;
+        this.collapseOnTablet = value.collapseOnTablet ?? false;
         this.fillHeight = value.fillHeight ?? false;
     }
     get hostObject(): ISectionEditor {
@@ -65,6 +66,7 @@ export class SectionEditorComponent implements OnInit {
 
     @Output() hostObjectChange: EventEmitter<ISectionEditor> = new EventEmitter<ISectionEditor>();
     
+    collapseOnTablet: boolean = false;
     fillHeight: boolean = false;
     subSections: boolean = false;
     partsNumber: string = "2";
@@ -120,6 +122,7 @@ export class SectionEditorComponent implements OnInit {
         this._hostObject.sectionName = this.sectionName;
         this._hostObject.split = this.subSections ? this.split : undefined;
         this._hostObject.height = this.isAutoHeight ? 0 : this.height;
+        this._hostObject.collapseOnTablet = this.collapseOnTablet;
         this._hostObject.fillHeight = this.fillHeight;
 
         this.hostObjectChange.emit(this.hostObject);
@@ -143,6 +146,11 @@ export class SectionEditorComponent implements OnInit {
     
     onSectionNameChange(value: string) {
         this.sectionName = value;
+        this.updateHostObject();
+    }
+
+    onCollapseOnTabletChange(value: boolean){
+        this.collapseOnTablet = value;
         this.updateHostObject();
     }
 

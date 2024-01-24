@@ -53,6 +53,7 @@ export interface ISectionEditor {
     sectionName: string,
     split: SplitType,
     height: number,
+    collapseOnTablet: boolean,
     fillHeight: boolean
 }
 
@@ -688,6 +689,7 @@ export class PagesService {
                 sectionName: section.Name || '',
                 split: section.Split || undefined,
                 height: section.Height || 0,
+                collapseOnTablet: section.CollapseOnTablet ?? false,
                 fillHeight: section.FillHeight ?? false
             }
 
@@ -1191,6 +1193,7 @@ export class PagesService {
             currentSection.Name = sectionData.sectionName;
             currentSection.Split = sectionData.split;
             currentSection.Height = sectionData.height;
+            currentSection.CollapseOnTablet = sectionData.collapseOnTablet;
             currentSection.FillHeight = sectionData.fillHeight;
 
             // Get the new columns number from currentSection.Split, if its undefined put a default 1.

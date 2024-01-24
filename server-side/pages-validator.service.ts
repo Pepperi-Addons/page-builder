@@ -184,6 +184,9 @@ export class PagesValidatorService {
         // Validate Height if exist (Optional)
         this.validateObjectProperty(section, 'Height', sectionsPropertyBreadcrumb, true, 'number');
 
+        // Validate CollapseOnTablet if exist (Optional)
+        this.validateObjectProperty(section, 'CollapseOnTablet', sectionsPropertyBreadcrumb, true, 'boolean');
+
         // Validate FillHeight if exist (Optional)
         this.validateObjectProperty(section, 'FillHeight', sectionsPropertyBreadcrumb, true, 'boolean');
 
@@ -549,6 +552,7 @@ export class PagesValidatorService {
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Height');
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Split');
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Hide');
+            this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'CollapseOnTablet');
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'FillHeight');
 
             // Add Columns -> blocks specific properties.

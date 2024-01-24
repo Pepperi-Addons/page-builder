@@ -60,6 +60,17 @@ export class SectionComponent extends BaseDestroyerComponent implements OnInit {
         return this._height;
     }
 
+    private _collapseOnTablet = false;
+    @Input()
+    set collapseOnTablet(value: boolean) {
+        this._collapseOnTablet = value;
+        this.pepScreenSizeToFlipToVertical = value ? PepScreenSizeType.MD : PepScreenSizeType.SM;
+        this.refreshSplit();
+    }
+    get collapseOnTablet(): boolean {
+        return this._collapseOnTablet;
+    }
+
     private _columns = [];
     @Input()
     set columns(value: Array<PageSectionColumn>) {

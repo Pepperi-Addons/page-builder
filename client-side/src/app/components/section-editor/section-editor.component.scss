@@ -2,11 +2,27 @@
 
 .section-editor-container {
     padding-top: variables.$content-padding;
+    display: flex;
+    flex-direction:column;
+    gap: variables.$spacing-lg;
 
     .split-area {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: variables.$content-margin;
+    }
+
+    .group-buttons-container {
+        .toggle-buttons {
+            width: 100%;
+        }
+    }
+
+    pep-checkbox,
+    pep-select,
+    pep-textarea, 
+    pep-textbox {
+        margin-bottom: 0 !important;
     }
 
     .no-margin-bottom {
