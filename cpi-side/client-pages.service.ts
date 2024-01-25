@@ -271,11 +271,22 @@ class ClientPagesService {
         let changedParameters = {};
         const blocks = page.Blocks;
 
-        // Let the blocks manipulate there data and replace it in page blocks
-        await Promise.all(blocks.map(async (block: any) => {
-            const res = await this.runBlockEndpointForEventInternal(eventType, page, block, availableBlocksMap, pageState, null, null, context);
-            changedParameters = { ...changedParameters, ...res };
-        }));
+        // New code run the blocks parallel.
+        const dataPromises: Promise<any>[] = [];
+        
+        for (let index = 0; index < blocks.length; index++) {
+            const block = blocks[index];
+            dataPromises.push(this.runBlockEndpointForEventInternal(eventType, page, block, availableBlocksMap, pageState, null, null, context));
+        }
+        const arr = await Promise.all(dataPromises).then(res => res);
+        arr.forEach(res => changedParameters = { ...changedParameters, ...res });
+        
+        // Old code.
+        // // Let the blocks manipulate there data and replace it in page blocks
+        // await Promise.all(blocks.map(async (block: any) => {
+        //     const res = await this.runBlockEndpointForEventInternal(eventType, page, block, availableBlocksMap, pageState, null, null, context);
+        //     changedParameters = { ...changedParameters, ...res };
+        // }));
 
         // Call to override blocks data when parameters change.
         if (Object.keys(changedParameters).length > 0) {
