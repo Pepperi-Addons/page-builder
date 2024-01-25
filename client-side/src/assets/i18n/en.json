@@ -9,7 +9,7 @@
         "SECTION": "Section",
         "SECTION_NAME_TITLE": "Section Name (kebab-case)",
         "SUB_SECTION_TITLE": "Sub Section",
-        "COLLAPSE_ON_TABLET_TITLE": "Collapse on tablet",
+        "COLLAPSE_ON_TABLET_TITLE": "Collapse on Tablet",
         "COLLAPSE_ON_TABLET_DESCRIPTION": "Enable this will make the sub section collapse into one column on tablet view",
         "FILL_HEIGHT_SECTION_TITLE": "Fill Height",
         "FILL_HEIGHT_SECTION_DESCRIPTION": "Set Fill Height on to make the section to fill the relative screen size",
