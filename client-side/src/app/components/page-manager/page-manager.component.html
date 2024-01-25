@@ -1,7 +1,7 @@
 <div *ngIf="lockScreen" class="cdk-overlay-backdrop cdk-overlay-dark-backdrop cdk-overlay-backdrop-showing"></div>
 
 <pep-page-layout [showShadow]="!previewMode && currentEditor" >
-    <div pep-side-area *ngIf="!previewMode && currentEditor" style="padding-inline-start: 1rem; height: inherit;">
+    <div pep-side-area *ngIf="!previewMode && currentEditor" style="height: inherit;">
         <pep-side-bar #sideBar [ignoreResize]="true" (stateChange)="onSidebarStateChange($event)">
             <div header-content class="side-bar-title">
                 <pep-button class="back-button" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="onNavigateBackFromEditor();"></pep-button>
