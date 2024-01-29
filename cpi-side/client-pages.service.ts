@@ -562,6 +562,29 @@ class ClientPagesService {
         return result;
     }
     
+    async getPageSkeletonLoadData(eventData: IContextWithData): Promise<IPageClientEventResult> {
+        const pageState: IPageState = eventData.State || { PageParameters: {}, BlocksState: {} };
+        const tmpResult: IPageBuilderData = await this.getPageBuilderData(eventData);
+
+        // Don't need this logic in the pre load (this only for return the blocks layout).
+        // ***********************************************************************************************
+        // // Merge the page parameters.
+        // pageState.PageParameters = this.getMergedParameters(tmpResult.page, pageState.PageParameters);
+
+        // // Run the OnLoadFlow before we start (for override page parameters data).
+        // await this.runPageFlow('load', tmpResult.page, pageState.PageParameters, eventData);
+
+        // // Convert the availableBlocks to map.
+        // const availableBlocksMap = this.getAvailableBlocksMap(tmpResult.availableBlocks);
+
+        // // This function override blocks data properties in page object.
+        // await this.runAllPageBlocksEndpointForEvent('page-load', tmpResult.page, availableBlocksMap, pageState, eventData);
+        // ***********************************************************************************************
+
+        const result = this.getPageClientEventResult(pageState, tmpResult.page, true, tmpResult.availableBlocks);
+        return result;
+    }
+
     async getPageLoadData(eventData: IContextWithData): Promise<IPageClientEventResult> {
         const pageState: IPageState = eventData.State || { PageParameters: {}, BlocksState: {} };
         const tmpResult: IPageBuilderData = await this.getPageBuilderData(eventData);

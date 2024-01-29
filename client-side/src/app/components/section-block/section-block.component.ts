@@ -73,7 +73,8 @@ export class SectionBlockComponent extends BaseDestroyerComponent implements OnI
     private _state = {};
     
     protected remoteLoaderOptions: PepRemoteLoaderOptions;
-    
+    protected showSkeleton = false;
+
     onBlockHostEventsCallback: (event: CustomEvent) => void;
 
     constructor(
@@ -157,6 +158,10 @@ export class SectionBlockComponent extends BaseDestroyerComponent implements OnI
             if (state?.BlocksState.hasOwnProperty(this.pageBlockView.Key)) {
                 this._state = state.BlocksState[this.pageBlockView.Key];
             }
+        });
+
+        this.pagesService.showSkeletonChange$.pipe(this.getDestroyer()).subscribe((showSkeleton: boolean) => {
+            this.showSkeleton = showSkeleton;
         });
     }
 

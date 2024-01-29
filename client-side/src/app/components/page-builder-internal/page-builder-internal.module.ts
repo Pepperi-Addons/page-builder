@@ -10,6 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SectionModule } from '../section/section.module'
 import { PepSizeDetectorModule } from '@pepperi-addons/ngx-lib/size-detector';
 import { PepDialogModule } from '@pepperi-addons/ngx-lib/dialog';
+import { PepSkeletonLoaderModule } from '@pepperi-addons/ngx-lib/skeleton-loader';
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import { PepDialogModule } from '@pepperi-addons/ngx-lib/dialog';
         CommonModule,
         HttpClientModule,
         PepNgxLibModule,
+        PepSkeletonLoaderModule,
         PepRemoteLoaderModule,
         PepSizeDetectorModule,
         PepDialogModule,

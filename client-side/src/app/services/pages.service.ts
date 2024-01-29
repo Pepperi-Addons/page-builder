@@ -8,7 +8,8 @@ import { IPepDraggableItem } from "@pepperi-addons/ngx-lib/draggable-items";
 import { Page, PageBlock, NgComponentRelation, PageSection, PageSizeType, SplitType, PageSectionColumn, DataViewScreenSize,ResourceType, 
     PageConfigurationParameterFilter, PageConfiguration, PageConfigurationParameterBase, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
 import { PageRowProjection, IPageBuilderData, IBlockLoaderData, IPageClientEventResult, CLIENT_ACTION_ON_CLIENT_PAGE_LOAD, IAvailableBlockData, 
-    CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, PageBlockView, IPageView, CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, SYSTEM_PARAMETERS } from 'shared';
+    CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, PageBlockView, IPageView, CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, 
+    SYSTEM_PARAMETERS, CLIENT_ACTION_ON_CLIENT_PAGE_SKELETON_LOAD } from 'shared';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { NavigationService } from "./navigation.service";
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
@@ -246,6 +247,11 @@ export class PagesService {
         return this._blockLoadEventSubject.asObservable().pipe(debounceTime(250));
     }
     
+    // This subject is for skeleton.
+    private _showSkeletonSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    get showSkeletonChange$(): Observable<boolean> {
+        return this._showSkeletonSubject.asObservable().pipe(distinctUntilChanged());
+    }
 
     // Indicates if the pages should run on offline mode.
     public isOffline: boolean = false;
@@ -405,9 +411,41 @@ export class PagesService {
         }
     }
     
-    private raiseClientEventForPageLoad(queryParameters: Params, eventDataExtra: any) {
-        const initialPageState: IPageState = this.queryParamsService.getStateFromQueryParams(queryParameters);
+    private raiseClientEventForPageSkeletonLoad(initialPageState: IPageState, eventDataExtra: any) {
+        
+        const event = {
+            eventKey: CLIENT_ACTION_ON_CLIENT_PAGE_SKELETON_LOAD,
+            eventData: {
+                ...eventDataExtra,
+                State: initialPageState
+            },
+            completion: (res: IPageClientEventResult) => {
+                // Show sceleton.
+                this._showSkeletonSubject.next(true);
 
+                if (res && res.PageView && res.AvailableBlocksData) {
+
+                    // Load the available blocks.
+                    this._availableBlocksDataSubject.next(res.AvailableBlocksData);
+
+                    // Load the state.
+                    this.notifyStateChange(res.State);
+                    
+                    // Load the page view for the first time.
+                    this.notifyPageViewChange(res.PageView);
+
+                    // this.raiseClientEventForPageLoad(initialPageState, eventDataExtra);
+            } else {
+                    // TODO: Show error?
+                }
+            }
+        }
+
+        // Emit the page pre load event.
+        this.emitEvent(event);
+    }
+
+    private raiseClientEventForPageLoad(initialPageState: IPageState, eventDataExtra: any) {
         const event = {
             eventKey: CLIENT_ACTION_ON_CLIENT_PAGE_LOAD,
             eventData: {
@@ -415,6 +453,9 @@ export class PagesService {
                 State: initialPageState
             },
             completion: (res: IPageClientEventResult) => {
+                // Hide skeleton and show blocks instead.
+                this._showSkeletonSubject.next(false);
+
                 if (res && res.PageView && res.AvailableBlocksData) {
                     // Load the available blocks.
                     this._availableBlocksDataSubject.next(res.AvailableBlocksData);
@@ -424,14 +465,20 @@ export class PagesService {
                     
                     // Load the page view for the first time.
                     this.notifyPageViewChange(res.PageView);
-                    
                 } else {
                     // TODO: Show error?
                 }
             }
         }
 
+        // Emit the page load event.
         this.emitEvent(event);
+    }
+
+    private raiseClientEventsForPageLoad(queryParameters: Params, eventDataExtra: any) {
+        const initialPageState: IPageState = this.queryParamsService.getStateFromQueryParams(queryParameters);
+        this.raiseClientEventForPageSkeletonLoad(initialPageState, eventDataExtra);
+        this.raiseClientEventForPageLoad(initialPageState, eventDataExtra);
     }
 
     private raiseClientEventForBlock(eventKey: string, blockKey: string, eventDataExtra: any, newBlock: boolean = false) {
@@ -1616,7 +1663,7 @@ export class PagesService {
 
         // Raise the PageLoad event to get all neccessary data.
         if (!editable) {
-            this.raiseClientEventForPageLoad(queryParameters, { PageKey: pageKey });
+            this.raiseClientEventsForPageLoad(queryParameters, { PageKey: pageKey });
         } else { 
             // If is't edit mode get the data of the page from the Server side and then raise the PageLoad event to get all the neccessary data.
             // Get the page (sections and the blocks data) from the server.
@@ -1633,7 +1680,7 @@ export class PagesService {
                         this.notifyPageInEditorChange(serverResult.page, false);
 
                         // Here we send the page object (instead of the PageKey).
-                        this.raiseClientEventForPageLoad(queryParameters, { Page: this._pageInEditorSubject.getValue() });
+                        this.raiseClientEventsForPageLoad(queryParameters, { Page: this._pageInEditorSubject.getValue() });
                     }
             });
         }

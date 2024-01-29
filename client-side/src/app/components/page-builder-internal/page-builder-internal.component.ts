@@ -71,7 +71,8 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
     get pageBlockViewsMap(): ReadonlyMap<string, PageBlockView> {
         return this._pageBlockViewsMap;
     }
-
+    protected showSkeleton = false;
+    
     constructor(
         private route: ActivatedRoute,
         private renderer: Renderer2,
@@ -195,6 +196,10 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
 
             this.pagesService.pageViewDataChange$.pipe(this.getDestroyer()).subscribe((pageView: IPageView) => {
                 this.setPageDataProperties(pageView);
+            });
+
+            this.pagesService.showSkeletonChange$.pipe(this.getDestroyer()).subscribe((showSkeleton: boolean) => {
+                this.showSkeleton = showSkeleton;
             });
         } else {
             console.log(`pageKey in not valid: ${pageKey}`);

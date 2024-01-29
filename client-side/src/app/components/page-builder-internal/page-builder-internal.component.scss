@@ -5,7 +5,20 @@
     display: block;
     height: 100%;
 }
+.skeleton-page-container {
+    padding: variables.$content-padding;
+    display: grid;
+    height: inherit;
+    gap: variables.$spacing-lg;
+    grid-template-rows: auto auto auto 1fr;
 
+    .split-skeleton-container {
+        display: grid;
+        height: 10rem;
+        gap: 3rem;
+        grid-auto-flow: column;
+    }
+}
 .sections-container {
     width: 100%;
     max-width: inherit;
@@ -16,7 +29,7 @@
     height: inherit;
 
     @include mixins.gap-sizes();
-    
+
     .draggable-section {
         display: block;
         // DI- 21762 - Hidden sections takes up space in the UI (AVNER)

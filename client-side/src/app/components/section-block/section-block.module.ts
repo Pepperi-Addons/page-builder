@@ -8,6 +8,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { PepAddonService } from '@pepperi-addons/ngx-lib';
 import { HideInModule } from '../hide-in/hide-in.module';
 import { PepDraggableItemsModule } from '@pepperi-addons/ngx-lib/draggable-items';
+import { PepSkeletonLoaderModule } from '@pepperi-addons/ngx-lib/skeleton-loader';
 // import { ModuleFederationToolsModule } from '@angular-architects/module-federation-tools';
 
 // import { PepPluginProxyComponent } from '@pepperi-addons/ngx-lib/plugin';
@@ -22,6 +23,7 @@ import { PepDraggableItemsModule } from '@pepperi-addons/ngx-lib/draggable-items
         PepButtonModule,
         // PepPluginProxyComponent,
         // ToolbarModule,
+        PepSkeletonLoaderModule,
         PepRemoteLoaderModule,
         HideInModule,
         PepDraggableItemsModule,

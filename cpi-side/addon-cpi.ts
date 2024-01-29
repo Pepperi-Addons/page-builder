@@ -1,12 +1,20 @@
 import '@pepperi-addons/cpi-node'
 import { IContextWithData } from '@pepperi-addons/cpi-node/build/cpi-side/events';
 import { CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, CLIENT_ACTION_ON_CLIENT_PAGE_LOAD, 
-    CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, IPageClientEventResult } from 'shared';
+    CLIENT_ACTION_ON_CLIENT_PAGE_SKELETON_LOAD, CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, IPageClientEventResult } from 'shared';
 import ClientPagesService from './client-pages.service';
 
 export const router = Router();
 
 export async function load(configuration: any) {
+    // Handle on page before data load.
+    pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_SKELETON_LOAD as any, {}, async (data: IContextWithData): Promise<IPageClientEventResult> => {
+        // debugger;
+        const service = new ClientPagesService();
+        const result = await service.getPageSkeletonLoadData(data);
+        return result;
+    });
+
     // Handle on page load.
     pepperi.events.intercept(CLIENT_ACTION_ON_CLIENT_PAGE_LOAD as any, {}, async (data: IContextWithData): Promise<IPageClientEventResult> => {
         // debugger;

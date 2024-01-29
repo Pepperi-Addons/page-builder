@@ -1,11 +1,29 @@
 <div #sectionsCont cdkDropListGroup class="sections-container gap-{{ sectionsGap }} " [ngClass]="{'mobile': screenType === 'Phablet', 'preview-state': !editMode }"  
-     cdkDropList (cdkDropListDropped)="onSectionDropped($event)" [ngStyle]="{'grid-auto-rows': getSectionsTemplateRows()}">
+    cdkDropList (cdkDropListDropped)="onSectionDropped($event)" [ngStyle]="{'grid-auto-rows': showSkeleton ? 'auto' : getSectionsTemplateRows()}">
 
-    <section *ngFor="let section of sections$ | async; let i=index;" 
-        [ngClass]="screenType === 'Phablet' ? 'margin-'+sectionsGap : ''"
-        class="draggable-section" [sectionsColumnsDropList]="sectionsColumnsDropList" [pageBlockViewsMap]="pageBlockViewsMap"
-        [key]="section.Key" [name]="section.Name || ('PAGE_MANAGER.SECTION' | translate) + ' ' + (i+1)" [split]="section.Split" [height]="section.Height"
-        [columns]="section.Columns" [collapseOnTablet]="section.CollapseOnTablet" [hideIn]="section.Hide" [columnsGap]="columnsGap" [screenSize]="screenSize" [editable]="editMode">
-    </section>
+    <ng-container *ngIf="showSkeleton; then skeletonTemplate; else dataTemplate"></ng-container>
+    <ng-template #skeletonTemplate>
+        <div class="skeleton-page-container">
+            <pep-skeleton-loader rowsNumber="1" lastRowOffset="false" rowHeightType="xl" ></pep-skeleton-loader>
+            <div class="split-skeleton-container">
+                <pep-skeleton-loader rowsNumber="1" lastRowOffset="false" rowHeightType="max" ></pep-skeleton-loader>
+                <pep-skeleton-loader rowsNumber="1" lastRowOffset="false" rowHeightType="max" ></pep-skeleton-loader>
+            </div>
+            <pep-skeleton-loader rowsNumber="1" lastRowOffset="false" rowHeightType="xl" ></pep-skeleton-loader>
+
+            <pep-skeleton-loader rowsNumber="1" lastRowOffset="false" rowHeightType="max" ></pep-skeleton-loader>
+        </div>
+    </ng-template>
+
+    <ng-template #dataTemplate>
+        <section *ngFor="let section of sections$ | async; let i=index;" 
+            [ngClass]="screenType === 'Phablet' ? 'margin-'+sectionsGap : ''"
+            class="draggable-section" [sectionsColumnsDropList]="sectionsColumnsDropList" [pageBlockViewsMap]="pageBlockViewsMap"
+            [key]="section.Key" [name]="section.Name || ('PAGE_MANAGER.SECTION' | translate) + ' ' + (i+1)" [split]="section.Split" [height]="section.Height"
+            [columns]="section.Columns" [collapseOnTablet]="section.CollapseOnTablet" [hideIn]="section.Hide" [columnsGap]="columnsGap" [screenSize]="screenSize" [editable]="editMode">
+        </section>
+    </ng-template>
+        
+
 </div>
 <pep-size-detector></pep-size-detector>
