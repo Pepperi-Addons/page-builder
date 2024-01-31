@@ -3,13 +3,12 @@
 <div #sectionsCont cdkDropListGroup class="sections-container gap-{{ sectionsGap }}" [ngClass]="{'mobile': screenType === 'Phablet', 'preview-state': !editMode }"  
     cdkDropList (cdkDropListDropped)="onSectionDropped($event)" [ngStyle]="{'grid-auto-rows': getSectionsTemplateRows()}">
 
-    
-        <section *ngFor="let section of sections$ | async; let i=index;" 
-            [ngClass]="screenType === 'Phablet' ? 'margin-'+sectionsGap : ''"
-            class="draggable-section " [sectionsColumnsDropList]="sectionsColumnsDropList" [pageBlockViewsMap]="pageBlockViewsMap"
-            [key]="section.Key" [name]="section.Name || ('PAGE_MANAGER.SECTION' | translate) + ' ' + (i+1)" [split]="section.Split" [height]="section.Height"
-            [columns]="section.Columns" [collapseOnTablet]="section.CollapseOnTablet" [hideIn]="section.Hide" [columnsGap]="columnsGap" [screenSize]="screenSize" [editable]="editMode">
-        </section>
+    <section *ngFor="let section of sections$ | async; let i=index;" 
+        [ngClass]="screenType === 'Phablet' ? 'margin-'+sectionsGap : ''"
+        class="draggable-section " [sectionsColumnsDropList]="sectionsColumnsDropList" [pageBlockViewsMap]="pageBlockViewsMap"
+        [key]="section.Key" [name]="section.Name || ('PAGE_MANAGER.SECTION' | translate) + ' ' + (i+1)" [split]="section.Split" [height]="section.Height"
+        [columns]="section.Columns" [collapseOnTablet]="section.CollapseOnTablet" [hideIn]="section.Hide" [columnsGap]="columnsGap" [screenSize]="screenSize" [editable]="editMode">
+    </section>
 </div>
 <div #skeletonCont class="skeleton-page-container ">
     <pep-skeleton-loader rowsNumber="1" lastRowOffset="false" rowHeightType="xl" ></pep-skeleton-loader>

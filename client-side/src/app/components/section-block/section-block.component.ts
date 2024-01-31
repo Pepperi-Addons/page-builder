@@ -73,7 +73,7 @@ export class SectionBlockComponent extends BaseDestroyerComponent implements OnI
     private _state = {};
     
     protected remoteLoaderOptions: PepRemoteLoaderOptions;
-    protected showSkeleton = true;
+    // protected showSkeleton = true;
 
     onBlockHostEventsCallback: (event: CustomEvent) => void;
 
@@ -160,9 +160,9 @@ export class SectionBlockComponent extends BaseDestroyerComponent implements OnI
             }
         });
 
-        this.pagesService.showSkeletonChange$.pipe(this.getDestroyer()).subscribe((showSkeleton: boolean | undefined) => {
-            this.showSkeleton = showSkeleton;
-        });
+        // this.pagesService.showSkeletonChange$.pipe(this.getDestroyer()).subscribe((showSkeleton: boolean | undefined) => {
+        //     this.showSkeleton = showSkeleton;
+        // });
     }
 
     onEditBlockClick() {
