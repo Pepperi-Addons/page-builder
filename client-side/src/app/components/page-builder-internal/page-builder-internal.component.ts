@@ -23,6 +23,7 @@ export interface IPageBuilderHostObject {
     styleUrls: ['./page-builder-internal.component.scss']
 })
 export class PageBuilderInternalComponent extends BaseDestroyerComponent implements OnInit, OnDestroy {
+    @ViewChild('skeletonCont', { static: true }) skeletonContainer: ElementRef;
     @ViewChild('sectionsCont', { static: true }) sectionsContainer: ElementRef;
 
     @Input() editMode: boolean = false;
@@ -49,13 +50,13 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
         return this._screenSize;
     }
 
-    @HostBinding('style.padding-inline')
-    paddingInline = '0';
+    protected isPageDataSet = false;
 
-    @HostBinding('style.padding-top')
-    paddingTop = '0';
-    @HostBinding('style.padding-bottom')
-    paddingBottom = '0';
+    @HostBinding('style.padding-inline')
+    paddingInline = '1rem';
+
+    paddingTop = '1rem';
+    paddingBottom = '1rem';
 
     sectionsGap: PageSizeType | 'none';
     columnsGap: PageSizeType | 'none';
@@ -71,6 +72,8 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
     get pageBlockViewsMap(): ReadonlyMap<string, PageBlockView> {
         return this._pageBlockViewsMap;
     }
+
+    private _pageView: IPageView;
     protected showSkeleton = false;
     
     constructor(
@@ -101,11 +104,15 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
     }
 
     private setPageDataProperties(pageView: IPageView) {
-        if (pageView && this.sectionsContainer?.nativeElement) {
-            let maxWidth = coerceNumberProperty(pageView.Layout.MaxWidth, 0);
-            const maxWidthToSet = maxWidth === 0 ? 'unset' : `${maxWidth}px`;
-            this.renderer.setStyle(this.sectionsContainer.nativeElement, 'max-width', maxWidthToSet);
-          
+        if (pageView) {
+            this.isPageDataSet = true;
+
+            if (this.sectionsContainer?.nativeElement) {
+                let maxWidth = coerceNumberProperty(pageView.Layout.MaxWidth, 0);
+                const maxWidthToSet = maxWidth === 0 ? 'unset' : `${maxWidth}px`;
+                this.renderer.setStyle(this.sectionsContainer.nativeElement, 'max-width', maxWidthToSet);
+            }
+
             this.sectionsGap = pageView.Layout.SectionsGap || 'md';
             this.columnsGap = pageView.Layout.ColumnsGap || 'md';
 
@@ -195,11 +202,26 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
             });
 
             this.pagesService.pageViewDataChange$.pipe(this.getDestroyer()).subscribe((pageView: IPageView) => {
-                this.setPageDataProperties(pageView);
+                this._pageView = pageView;
             });
 
-            this.pagesService.showSkeletonChange$.pipe(this.getDestroyer()).subscribe((showSkeleton: boolean) => {
-                this.showSkeleton = showSkeleton;
+            this.pagesService.showSkeletonChange$.pipe(this.getDestroyer()).subscribe((showSkeleton: boolean | undefined) => {
+                if (showSkeleton !== undefined) {
+                    this.showSkeleton = showSkeleton;
+    
+                    if (showSkeleton) {
+                        this.sectionsContainer?.nativeElement?.classList.add('out');
+                        this.sectionsContainer?.nativeElement?.classList.remove('in');
+                        this.skeletonContainer?.nativeElement?.classList.add('in');
+                        this.skeletonContainer?.nativeElement?.classList.remove('out');
+                    } else {
+                        this.setPageDataProperties(this._pageView);
+                        this.sectionsContainer?.nativeElement?.classList.add('in');
+                        this.sectionsContainer?.nativeElement?.classList.remove('out');
+                        this.skeletonContainer?.nativeElement?.classList.add('out');
+                        this.skeletonContainer?.nativeElement?.classList.remove('in');
+                    }
+                }
             });
         } else {
             console.log(`pageKey in not valid: ${pageKey}`);

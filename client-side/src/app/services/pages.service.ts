@@ -248,8 +248,8 @@ export class PagesService {
     }
     
     // This subject is for skeleton.
-    private _showSkeletonSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    get showSkeletonChange$(): Observable<boolean> {
+    private _showSkeletonSubject: BehaviorSubject<boolean | undefined> = new BehaviorSubject<boolean | undefined>(true);
+    get showSkeletonChange$(): Observable<boolean | undefined> {
         return this._showSkeletonSubject.asObservable().pipe(distinctUntilChanged());
     }
 
@@ -412,7 +412,9 @@ export class PagesService {
     }
     
     private raiseClientEventForPageSkeletonLoad(initialPageState: IPageState, eventDataExtra: any) {
-        
+        // Show sceleton.
+        this._showSkeletonSubject.next(true);
+
         const event = {
             eventKey: CLIENT_ACTION_ON_CLIENT_PAGE_SKELETON_LOAD,
             eventData: {
@@ -420,9 +422,6 @@ export class PagesService {
                 State: initialPageState
             },
             completion: (res: IPageClientEventResult) => {
-                // Show sceleton.
-                this._showSkeletonSubject.next(true);
-
                 if (res && res.PageView && res.AvailableBlocksData) {
 
                     // Load the available blocks.
@@ -433,9 +432,7 @@ export class PagesService {
                     
                     // Load the page view for the first time.
                     this.notifyPageViewChange(res.PageView);
-
-                    // this.raiseClientEventForPageLoad(initialPageState, eventDataExtra);
-            } else {
+                } else {
                     // TODO: Show error?
                 }
             }

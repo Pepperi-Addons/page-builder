@@ -2,24 +2,42 @@
 @use '@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
 
 :host {
-    display: block;
+    display: grid;
+    grid-template-areas:  'top-spacing' 
+                          'content'
+                          'bottom-spacing';
+                
+    grid-template-rows: auto 1fr auto;
     height: 100%;
 }
+
+.top-spacing {
+    grid-area: top-spacing;
+}
+
+.bottom-spacing {
+    grid-area: bottom-spacing;
+}
+
 .skeleton-page-container {
-    padding: variables.$content-padding;
     display: grid;
+    grid-area: content;
     height: inherit;
     gap: variables.$spacing-lg;
     grid-template-rows: auto auto auto 1fr;
-
+    opacity: 0; // For the animations
+    // padding: variables.$spacing-lg;
+    
     .split-skeleton-container {
         display: grid;
         height: 10rem;
-        gap: 3rem;
+        gap: variables.$spacing-lg;
         grid-auto-flow: column;
     }
 }
+
 .sections-container {
+    grid-area: content;
     width: 100%;
     max-width: inherit;
     overflow-x: unset;
@@ -27,6 +45,7 @@
     position: relative;
     display: grid;
     height: inherit;
+    opacity: 0; // For the animations
 
     @include mixins.gap-sizes();
 
@@ -45,3 +64,45 @@
     }
 }
 
+@keyframes out {
+    0% {
+        transform: translateY(0);
+        // opacity: 1;
+        filter: blur(0);
+    }
+    99% {
+        opacity: 0;
+        transform: translateY(80px);
+        filter: blur(20px);
+    }
+    100% {
+        display: none;
+    }
+}
+
+@keyframes in {
+    0% {
+        opacity: 0;
+        transform: translateY(-80);
+        filter: blur(20px);
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+  
+.out {
+    animation-name: out;
+    animation-direction: normal;
+    animation-duration: 1.2s;
+    animation-fill-mode: forwards;
+}
+
+.in {
+    animation-name: in;
+    animation-direction: normal;
+    animation-duration: 1.2s;
+    animation-fill-mode: forwards;
+}

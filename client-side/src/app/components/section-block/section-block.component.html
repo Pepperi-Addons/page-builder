@@ -15,6 +15,12 @@
     </pep-draggable-item>
     <!-- [ngStyle]="{ 'overflow': editable ? 'hidden' : (sectionHeight === 'unset' ? 'unset' : 'auto') }" -->
     <div class="remote-loader-wrapper" [ngStyle]="{ 'overflow': (sectionHeight === 'unset' ? 'unset' : 'auto') }">
+        <!-- <div *ngIf="showSkeleton" style="display: block; margin: 1rem;">
+            <pep-skeleton-loader rowsNumber="2" lastRowOffset="false"></pep-skeleton-loader>
+            <br/>
+            <pep-skeleton-loader rowsNumber="1" lastRowOffset="false" rowHeightType="xl" ></pep-skeleton-loader>
+        </div> -->
+        <!-- [ngStyle]="{ 'visibility': !showSkeleton ? 'visible' : 'hidden' }"  -->
         <pep-remote-loader-element *ngIf="remoteLoaderOptions" class="remote-loader"
             [options]="remoteLoaderOptions"
             [props]="{ hostObject: hostObject }"
