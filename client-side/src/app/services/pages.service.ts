@@ -1674,7 +1674,7 @@ export class PagesService {
                         this.loadDefaultEditor(serverResult.page);
                         
                         // Load the page for edit mode.
-                        this.notifyPageInEditorChange(serverResult.page, false);
+                        this.notifyPageInEditorChange(serverResult.page, false, true);
 
                         // Here we send the page object (instead of the PageKey).
                         this.raiseClientEventsForPageLoad(queryParameters, { Page: this._pageInEditorSubject.getValue() });
