@@ -86,7 +86,7 @@ export class PagesApiService {
         return this.papiClient.addons.installedAddons.addonUUID(uuid).get();
     }
 
-    private async getAvailableBlocks(): Promise<IBlockLoaderData[]> {
+    async getAvailableBlocks(): Promise<IBlockLoaderData[]> {
         // Get the PageBlock relations 
         const pageBlockRelations: any[] = await this.getRelations('PageBlock');
                 

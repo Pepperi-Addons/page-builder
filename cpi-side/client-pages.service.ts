@@ -485,7 +485,7 @@ class ClientPagesService {
 
     private async getPageBuilderData(eventData: IContextWithData): Promise<IPageBuilderData> {
         let tmpResult: IPageBuilderData;
-        let page = eventData.Page;
+        const page = eventData.Page;
         const pageKey = eventData.PageKey || page?.Key || '';
         
         const canWorkOffline = await this.canWorkOffline();
@@ -496,14 +496,19 @@ class ClientPagesService {
                 availableBlocks: await this.getBlocksData('PageBlock') || [],
             }
         } else {
-            // Get the page data online if sync isn't installed (in case of editor the page already exist in the data.Page,
-            // data.Page and the page that will return here should be the same cause this is load event).
-            const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}`);
-            tmpResult = temp.ok ? await(temp.json()) : { page: null, availableBlocks: [] };
+            // Get Only the available blocks if the page exist.
+            if (page) {
+                const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_available_blocks`);
+                const availableBlocks = temp.ok ? await(temp.json()) : null;
 
-            if (!tmpResult.page) {
-                // If there is no page it means that the page is not published so take it from the eventData.Page input.
-                tmpResult.page = page;
+                tmpResult = {
+                    page: page,
+                    availableBlocks: availableBlocks || [],
+                }
+            } else {
+                // Get the whole page data online.
+                const temp = await pepperi.papiClient.apiCall("GET", `addons/api/${config.AddonUUID}/internal_api/get_page_data?key=${pageKey}`);
+                tmpResult = temp.ok ? await(temp.json()) : { page: null, availableBlocks: [] };
             }
         }
 
