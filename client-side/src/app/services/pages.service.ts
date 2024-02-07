@@ -382,23 +382,25 @@ export class PagesService {
             } else {
                 // Update the block view last changes in the block progress.
                 const bpToUpdate = this._pageBlockProgressMap.get(blockView.Key);
-                let needToRaiseChangeEvent = false;
-
-                // We don't override blocks changes in the page view subject, only in the progress map.
-                if (bpToUpdate?.registerStateChangeCallback) {
-                    if (JSON.stringify(bpToUpdate.blockLastChanges) !== JSON.stringify(blockView)) {
-                        bpToUpdate.blockLastChanges = blockView;
+                if (bpToUpdate) {
+                    let needToRaiseChangeEvent = false;
+    
+                    // We don't override blocks changes in the page view subject, only in the progress map.
+                    if (bpToUpdate?.registerStateChangeCallback) {
+                        if (JSON.stringify(bpToUpdate.blockLastChanges) !== JSON.stringify(blockView)) {
+                            bpToUpdate.blockLastChanges = blockView;
+                            needToRaiseChangeEvent = true;
+                        }
+                    } else {
+                        // This is for support old blocks - always raise event.
+                        bpToUpdate.block = blockView;
                         needToRaiseChangeEvent = true;
                     }
-                } else {
-                    // This is for support old blocks - always raise event.
-                    bpToUpdate.block = blockView;
-                    needToRaiseChangeEvent = true;
-                }
-
-                // Update the page block as change.
-                if (needToRaiseChangeEvent) {
-                    this._pageBlockSubject.next(blockView.Key);
+    
+                    // Update the page block as change.
+                    if (needToRaiseChangeEvent) {
+                        this._pageBlockSubject.next(blockView.Key);
+                    }
                 }
             }
         }

@@ -38,6 +38,17 @@ export async function create_page(client: Client, request: Request): Promise<any
 //     }
 // };
 
+
+export async function get_available_blocks(client: Client, request: Request): Promise<any> {
+    try {
+        const service = new PagesApiService(client);
+        let res = await service.getAvailableBlocks();
+        return res;
+    } catch(err) {
+        throw err;
+    }
+}
+
 export async function get_page_data(client: Client, request: Request): Promise<any> {
     try {
         const service = new PagesApiService(client);
