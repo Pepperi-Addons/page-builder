@@ -11,7 +11,7 @@ export const CLIENT_ACTION_ON_CLIENT_PAGE_SKELETON_LOAD = 'OnClientPageSkeletonL
 export const CLIENT_ACTION_ON_CLIENT_PAGE_LOAD = 'OnClientPageLoad';
 export const CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE = 'OnClientPageStateChange';
 export const CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK = 'OnClientPageButttonClick';
-
+ 
 // **********************************************************************************************
 
 export const PAGES_TABLE_NAME = 'Pages';
