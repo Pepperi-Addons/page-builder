@@ -5,24 +5,25 @@
         <pep-side-bar #sideBar [ignoreResize]="true" (stateChange)="onSidebarStateChange($event)">
             <div header-content class="side-bar-title">
                 <pep-button class="back-button" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="onNavigateBackFromEditor();"></pep-button>
-                <div class=" title-xl ellipsis" [title]="currentEditor?.title">
+                <div class="title title-lg ellipsis" [title]="currentEditor?.title">
                     <span>{{ currentEditor?.title }}</span>
                 </div>
             </div>
-            <page-builder-editor *ngIf="currentEditor?.type === 'page-builder'" [sectionsColumnsDropList]="sectionsColumnsDropList"
-                [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onPageEditorObjectChange($event)"></page-builder-editor>
-        
-            <section-editor *ngIf="currentEditor?.type === 'section'" 
-                [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onSectionEditorObjectChange($event)"></section-editor>
-        
-            <ng-container *ngIf="currentEditor?.type === 'block'">
-                <pep-remote-loader-element *ngIf="currentEditor?.remoteModuleOptions"
-                    [options]="currentEditor?.remoteModuleOptions" 
-                    [props]="{ hostObject: currentEditor?.hostObject }"
-                    [events]="{ hostEvents: onBlockEditorHostEventsCallback }">
-                </pep-remote-loader-element>
-            </ng-container>
-
+            <div class="page-builder-editor-wrapper">
+                <page-builder-editor *ngIf="currentEditor?.type === 'page-builder'" [sectionsColumnsDropList]="sectionsColumnsDropList"
+                    [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onPageEditorObjectChange($event)"></page-builder-editor>
+            
+                <section-editor *ngIf="currentEditor?.type === 'section'" 
+                    [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onSectionEditorObjectChange($event)"></section-editor>
+            
+                <ng-container *ngIf="currentEditor?.type === 'block'">
+                    <pep-remote-loader-element *ngIf="currentEditor?.remoteModuleOptions"
+                        [options]="currentEditor?.remoteModuleOptions" 
+                        [props]="{ hostObject: currentEditor?.hostObject }"
+                        [events]="{ hostEvents: onBlockEditorHostEventsCallback }">
+                    </pep-remote-loader-element>
+                </ng-container>
+            </div>
         </pep-side-bar>
     </div>
     <ng-container pep-main-area>

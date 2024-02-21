@@ -2,10 +2,12 @@
 @use '@pepperi-addons/ngx-lib/src/core/style/abstracts/mixins';
 
 // set mat tab as fixed tab just on the editors
-::ng-deep {
-    .page-builder-editor-tabs{
-        .mat-tab-header {
-            background: functions.get-pep-color(color-system-primary-invert, color-base);
+.page-builder-editor-wrapper {
+    ::ng-deep {
+        .page-builder-editor-tabs {
+            .mat-tab-header {
+                background: functions.get-pep-color(color-system-primary-invert, color-base);
+            }
         }
     }
 }
