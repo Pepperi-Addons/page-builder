@@ -62,24 +62,16 @@
             }
     
             .page-builder-editor-tab {
-                overflow: inherit;
-                display: inherit;
-                flex-direction: inherit;
-                gap: variables.$spacing-lg;
-                
-                .group-buttons-container {
-                    .toggle-buttons {
-                        width: 100%;
-                    }
-                }
-    
-                pep-checkbox,
-                pep-select,
-                pep-textarea, 
-                pep-textbox {
-                    margin-bottom: 0 !important;
-                }
+                @include mix.editor-container();
             }
+        }
+
+        .page-builder-editor-container {
+            @include mix.editor-container();
+            display: flex;
+            flex-direction: column;
+            padding-top: variables.$spacing-lg;
+            padding-bottom: variables.$spacing-lg;
         }
     
         .editor-title {
@@ -87,9 +79,10 @@
             @include mixins.ellipsis();
         }
 
-        // .editor-sub-title {
-        //     @include mixins.ellipsis();
-        // }
+        .editor-sub-title {
+            @include mixins.font-title(variables.$fs-md, variables.$lh-md, variables.$font-family-body, variables.$font-weight-normal);
+            @include mixins.ellipsis();
+        }
 
         // Separator between the editor sections
         .editor-separator {

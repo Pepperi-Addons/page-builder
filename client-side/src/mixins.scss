@@ -47,3 +47,24 @@ $border-width: 0.125rem;
 @mixin dash-border($property, $border-width, $color) {
     #{$property}: $border-width dashed $color;
 }
+
+@mixin editor-container() {
+    overflow: inherit;
+    display: inherit;
+    flex-direction: inherit;
+    gap: variables.$spacing-lg;
+    
+    .group-buttons-container {
+        .toggle-buttons {
+            width: 100%;
+        }
+    }
+
+    pep-checkbox,
+    pep-color,
+    pep-select,
+    pep-textarea, 
+    pep-textbox {
+        margin-bottom: 0 !important;
+    }
+}
