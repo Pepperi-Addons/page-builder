@@ -113,6 +113,7 @@ export class SectionComponent extends BaseDestroyerComponent implements OnInit {
     
     isMainEditorState = false;
     isEditing = false;
+    selectedSectionKey = '';
     selectedBlockKey = '';
     
     containsBlocks = false;
@@ -243,6 +244,7 @@ export class SectionComponent extends BaseDestroyerComponent implements OnInit {
             this.pagesService.editorChange$.pipe(this.getDestroyer()).subscribe((editor: IEditor) => {
                 this.isMainEditorState = editor && editor.type === 'page-builder';
                 this.isEditing = editor && editor.type === 'section' && editor.id === this.key;
+                this.selectedSectionKey = editor && editor.type === 'section' ? editor.id : '';
                 this.selectedBlockKey = editor && editor.type === 'block' ? editor.id : '';
             });
             

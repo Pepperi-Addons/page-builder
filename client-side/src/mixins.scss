@@ -1,6 +1,7 @@
 @use '@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
 
 $z-index-min: 0;
+$z-index-for-active-section: $z-index-min + 11;
 
 //**************************************************************************
 // This file contains all mixins.
@@ -10,7 +11,7 @@ $border-width: 0.125rem;
 
 @mixin block-toolbar() {
     @include block-editor-toolbar();
-    z-index: $z-index-min + 2;
+    z-index: $z-index-min + 3;
 }
 
 @mixin block-editor-toolbar() {

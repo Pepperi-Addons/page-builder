@@ -3,7 +3,7 @@
         'mobile': screenType === 'Phablet',
         'editable-state': editable, 'main-editor-state': isMainEditorState, 'default-height': shouldSetDefaultHeight, 'active-section': isEditing,
         'section-hidden-state': hideForCurrentScreenType, 'section-is-dragging': draggingSectionKey !== '', 'show-hover-state': hoverState }" 
-        cdkDragBoundary=".page-builder-wrapper" cdkDrag [cdkDragData]="key" [cdkDragDisabled]="!editable || isEditing || selectedBlockKey?.length > 0" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" 
+        cdkDragBoundary=".page-builder-wrapper" cdkDrag [cdkDragData]="key" [cdkDragDisabled]="!editable || selectedSectionKey?.length > 0 || selectedBlockKey?.length > 0" (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)" 
     >
     <pep-draggable-item *ngIf="editable && isMainEditorState && draggingSectionKey === ''" cdkDragHandle style="cursor: grab;"
         class="section-toolbar" [ngClass]="{ 'hide-toolbar': !hoverState }" [title]="name">

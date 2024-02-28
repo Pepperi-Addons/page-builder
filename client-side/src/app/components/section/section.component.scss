@@ -21,7 +21,20 @@
         }
 
         &.active-section {
-            z-index: mixins.$z-index-min + 11;
+            z-index: mixins.$z-index-for-active-section;
+
+            .columns-wrapper {
+                z-index: mixins.$z-index-min + 1;
+            }
+
+            ::ng-deep {
+                .remote-loader-wrapper {
+                    .remote-loader {
+                        pointer-events: unset !important;
+                        opacity: unset !important;
+                    }
+                }
+            }
         }
         
         // The placeholder of the drop area when dragging a section.
@@ -87,16 +100,17 @@
             }
         }
 
-        .columns-wrapper {
-            .section-column {
-                z-index: mixins.$z-index-min + 1;
+        // Commented out because it is not used version 2.5
+        // .columns-wrapper {
+        //     .section-column {
+        //         z-index: mixins.$z-index-min + 1;
                 
-                &.active-column {
-                    z-index: mixins.$z-index-min + 12;
-                    position: relative;
-                }
-            }
-        }
+        //         &.active-column {
+        //             z-index: mixins.$z-index-for-active-section + 1;
+        //             position: relative;
+        //         }
+        //     }
+        // }
     }
 
     // // This is for runtime only (to allow scrolling in section)

@@ -7,7 +7,7 @@ import { DataViewScreenSize, Page, PageBlock, PageSection } from '@pepperi-addon
 import { IEditor, PagesService, IPageEditor, ISectionEditor } from '../../services/pages.service';
 import { DIMXService } from '../../services/dimx.service';
 import { NavigationService } from '../../services/navigation.service';
-import { IPepSideBarStateChangeEvent } from '@pepperi-addons/ngx-lib/side-bar';
+import { IPepSideBarStateChangeEvent, PepSideBarComponent } from '@pepperi-addons/ngx-lib/side-bar';
 import { IPepMenuItemClickEvent, PepMenuItem } from '@pepperi-addons/ngx-lib/menu';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { PepSnackBarData, PepSnackBarService } from "@pepperi-addons/ngx-lib/snack-bar";
@@ -24,6 +24,7 @@ import { BaseDestroyerComponent } from "../base/base-destroyer.component";
 })
 export class PageManagerComponent extends BaseDestroyerComponent implements OnInit {
     @ViewChild('pageBuilderWrapper', { static: true }) pageBuilderWrapper: ElementRef;
+    @ViewChild(PepSideBarComponent, { read: ElementRef }) private sideBarComponent: ElementRef;
     
     private readonly RESTORE_TO_LAST_PUBLISH_KEY = 'restore';
     private readonly IMPORT_KEY = 'import';
@@ -109,6 +110,12 @@ export class PageManagerComponent extends BaseDestroyerComponent implements OnIn
 
         // For update editor.
         this.pagesService.editorChange$.pipe(this.getDestroyer()).subscribe((editor: IEditor) => {
+            // Init the side bar scroll top to 0.
+            if (this.sideBarComponent) {
+                const sideLayout = this.sideBarComponent.nativeElement.querySelector('.side-layout');
+                sideLayout?.scrollTo(0, 0);
+            }
+
             this.currentEditor = editor;
         });
 

@@ -37,6 +37,7 @@
 }
 
 .sections-container {
+    z-index: mixins.$z-index-for-active-section;
     grid-area: content;
     width: 100%;
     max-width: inherit;

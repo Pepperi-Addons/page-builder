@@ -12,7 +12,12 @@
         $color-system-primary: functions.get-pep-color(color-system-primary, color-base);
         
         &.active-section {
+            background: functions.get-pep-color(color-system-primary-invert, color-base);
             @include mixins.focus();
+
+            .columns-wrapper {
+                background: functions.get-pep-color(color-system-primary-invert, color-base);
+            }
         }
 
         // For section hidden state
