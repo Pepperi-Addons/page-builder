@@ -203,6 +203,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
 
             this.pagesService.pageViewDataChange$.pipe(this.getDestroyer()).subscribe((pageView: IPageView) => {
                 this._pageView = pageView;
+                this.setPageDataProperties(this._pageView);
             });
 
             this.pagesService.showSkeletonChange$.pipe(this.getDestroyer()).subscribe((showSkeleton: boolean | undefined) => {
@@ -215,7 +216,6 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
                         this.skeletonContainer?.nativeElement?.classList.add('in');
                         this.skeletonContainer?.nativeElement?.classList.remove('out');
                     } else {
-                        this.setPageDataProperties(this._pageView);
                         this.sectionsContainer?.nativeElement?.classList.add('in');
                         this.sectionsContainer?.nativeElement?.classList.remove('out');
                         this.skeletonContainer?.nativeElement?.classList.add('out');

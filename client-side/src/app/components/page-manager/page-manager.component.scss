@@ -136,7 +136,7 @@
         display: flex;
         position: sticky;
         top: 0;
-        z-index: variables.$z-index-medium;
+        z-index: mix.$z-index-for-active-section; //variables.$z-index-medium;
         height: 3rem;
         align-items: center;
         justify-content: space-between;
