@@ -77,7 +77,7 @@ export class NavigationService {
         const route: ActivatedRoute = this.getCurrentRoute(this.route);
         return this.router.navigate(['../'], {
             relativeTo: route,
-            queryParamsHandling: 'merge'
+            // queryParamsHandling: 'merge' // Comment this in 2.5.11 for clear all query params when navigating back.
         });
     }
 
