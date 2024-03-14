@@ -230,7 +230,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
 
     ngOnDestroy() {
         this.pagesService.unloadPageBuilder();
-        this.navigationService.unloadRouter();
+        this.navigationService.initRouterToRoot();
     }
 
     onSectionDropped(event: CdkDragDrop<any[]>) {
